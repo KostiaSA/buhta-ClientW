@@ -2,17 +2,21 @@ module.exports = {
 //    entry: "./buhta_modules/components/index.js",
     entry: "./buhta_modules/components/index.js",
     output: {
-        filename: "./dist/BuhtaApp.js",
+        filename: "./dist/BuhtaApp.js"
     },
 
     // Enable sourcemaps for debugging webpack's output.
-    devtool: "source-map",
+    devtool: "inline-source-map",
 
     // resolve: {
     //     // Add '.ts' and '.tsx' as resolvable extensions.
     //     extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"]
     // },
     //
+     resolve: {
+         extensions: ["", ".webpack.js", ".web.js", ".js"]
+     },
+
      module: {
     //     loaders: [
     //         // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.

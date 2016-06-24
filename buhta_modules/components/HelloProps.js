@@ -12,7 +12,7 @@ var Hello = (function (_super) {
         _super.apply(this, arguments);
     }
     Hello.prototype.render = function () {
-        return React.createElement("div", null, "Hello 3++=33222o3m ", this.props.compiler, " and ", this.props.framework, "!", React.createElement(SplitPane, {split: "vertical", minSize: 50, defaultSize: 100}, "2222222", React.createElement("div", null, "3333333"), React.createElement("div", null)));
+        return React.createElement("div", null, "Hello 3++44=66332===22o3m ", this.props.compiler, " and ", this.props.framework, "!", React.createElement(SplitPane, {split: "vertical", minSize: 50, defaultSize: 100}, React.createElement("div", null, "3333=====444==33====333"), React.createElement("div", null)));
     };
     return Hello;
 }(React.Component));
