@@ -9,11 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bulma": "0.0.28",
     "jquery": "^2.2.4",
     "lodash": "^4.13.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "react-split-pane": "^0.1.42"
+    "react-split-pane": "^0.1.42",
+    "socket.io-client": "^1.4.8"
   },
   "devDependencies": {
     "source-map-loader": "^0.1.5",
