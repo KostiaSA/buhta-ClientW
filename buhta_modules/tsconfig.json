@@ -8,7 +8,8 @@
     //"outDir": ".js",
  //   "declaration": true,
     "module": "commonjs",
-    "jsx": "react"
+    "jsx": "react",
+    "experimentalDecorators":true
     //    "reactNamespace": "__React"
   },
   "exclude": [
