@@ -1,6 +1,12 @@
 import * as React from "react";
-import Button from "../buhta-core/Components/Button";
+import {Button} from "../buhta-core/Components/Button";
 import {executeSQL} from "../buhta-core/SQL";
+import SplitPane from "../buhta-core/Components/SplitPane/SplitPane";
+
+
+//import {SplitPane} from "react-split-pane";
+
+//import * as SplitPane from "react-split-pane";
 
 export interface HelloProps { compiler: string; framework: string;
 }
@@ -38,10 +44,10 @@ export class Hello extends React.Component<HelloProps, {}> {
         return <div>
             <button onClick={this.clickHanler.bind(this)}>Кнопка 1</button>
             <Button visible={this.but2visible} onClick={ (e) => alert("Ok1") }>Кнопка 2</Button>
-                <SplitPane split="vertical" minSize={50} defaultSize={100}>
-                    <div>3костяee333===w==444==33====333</div>
-                    <div></div>
-                </SplitPane>
+            <SplitPane split="vertical" minSize={50} defaultSize={100}>
+                <div>3костяee333===w==444==33====333</div>
+                <div></div>
+            </SplitPane>
 
         </div>;
         // return <div>

@@ -14,8 +14,6 @@
     "lodash": "^4.13.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "react-layout-pane": "^0.1.16",
-    "react-split-pane": "^0.1.42",
     "socket.io-client": "^1.4.8",
     "ts-dependency-injection": "^1.2.2"
   },

@@ -16,7 +16,7 @@ export interface ComponentState {
     // style: React.CSSProperties;
 }
 
-
+ 
 export class Component<P extends ComponentProps, S extends ComponentState> extends React.Component<P, S> {
 
     static plugins: any[] = [];
