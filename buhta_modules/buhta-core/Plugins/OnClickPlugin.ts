@@ -1,11 +1,12 @@
-import * as React from "react";
-import * as Core from "../index"
+
+import MouseEventHandler = __React.MouseEventHandler;
+import {ComponentPlugin} from "./Plugin";
 
 export interface OnClickPluginProps {
-    onClick?: React.MouseEventHandler;
+    onClick?: MouseEventHandler;
 }
 
-export class OnClickPlugin extends Core.ComponentPlugin<OnClickPluginProps,{}> {
+class OnClickPluginClass extends ComponentPlugin<OnClickPluginProps,{}> {
 
     protected willMount() {
         super.willMount();
@@ -18,8 +19,8 @@ export class OnClickPlugin extends Core.ComponentPlugin<OnClickPluginProps,{}> {
 
 }
 
-export function OnClick(target) {
-    target.plugins.push(Core.OnClickPlugin);
+export function OnClickPlugin(target) {
+    target.plugins.push(OnClickPluginClass);
     return target;
 }
 

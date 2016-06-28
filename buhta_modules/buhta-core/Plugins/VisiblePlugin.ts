@@ -1,4 +1,5 @@
-import * as Core from "../index"
+
+import {ComponentPlugin} from "./Plugin";
 
 export interface VisiblePluginProps {
     visible?: boolean;
@@ -10,7 +11,7 @@ export interface VisiblePluginState {
 }
 
 
-export class VisiblePlugin extends Core.ComponentPlugin<VisiblePluginProps,VisiblePluginState> {
+class VisiblePluginClass extends ComponentPlugin<VisiblePluginProps,VisiblePluginState> {
     // constructor(owner: any) {
     //     super(owner);
     // }
@@ -47,8 +48,8 @@ export class VisiblePlugin extends Core.ComponentPlugin<VisiblePluginProps,Visib
 
 }
 
-export function Visible(target) {
-    target.plugins.push(Core.VisiblePlugin);
+export function VisiblePlugin(target) {
+    target.plugins.push(VisiblePluginClass);
     return target;
 }
 

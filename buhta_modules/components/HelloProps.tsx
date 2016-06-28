@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as SplitPane from "react-split-pane";
-import * as Core from "../buhta-core";
-import {Button} from "../buhta-core/Components/Button";
+import Button from "../buhta-core/Components/Button/Button";
+import {executeSQL} from "../buhta-core/SQL";
+
 
 export interface HelloProps { compiler: string; framework: string;
 }
@@ -11,7 +12,7 @@ export class Hello extends React.Component<HelloProps, {}> {
     handleClick() {
         console.log("Ok");
 
-        Core.executeSQL("select TOP 50 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+        executeSQL("select TOP 50 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
             .done((table) => {
 
                 // this.dataSource = table.rows.map((r) => {
@@ -34,11 +35,18 @@ export class Hello extends React.Component<HelloProps, {}> {
         this.forceUpdate();
     }
 
+
     render() {
 
         return <div>
             <button onClick={this.clickHanler.bind(this)}>Кнопка 1</button>
-            <Button visible={this.but2visible} onClick={ (e) => alert("Ok1") }>Кнопка 2</Button></div>;
+            <Button visible={this.but2visible} onClick={ (e) => alert("Ok1") }>Кнопка 2</Button>
+                <SplitPane split="vertical" minSize={50} defaultSize={100}>
+                    <div>3костяee333===w==444==33====333</div>
+                    <div></div>
+                </SplitPane>
+
+        </div>;
         // return <div>
         //     <button onClick={ this.handleClick }>get sql</button>
         //     Hello 3++44=66332===22o3m {this.props.compiler} and {this.props.framework}!

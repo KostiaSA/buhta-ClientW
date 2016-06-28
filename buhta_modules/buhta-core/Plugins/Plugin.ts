@@ -1,8 +1,8 @@
-import * as Core from "../index"
+import {Component} from "../Components/Component";
 
 export class ComponentPlugin<P,S> {
 
-    constructor(public owner: Core.Component<P,S>) {
+    constructor(public owner: Component<P,S>) {
 
     }
 

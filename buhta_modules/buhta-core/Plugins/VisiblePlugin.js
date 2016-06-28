@@ -4,16 +4,16 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var Core = require("../index");
-var VisiblePlugin = (function (_super) {
-    __extends(VisiblePlugin, _super);
-    function VisiblePlugin() {
+var Plugin_1 = require("./Plugin");
+var VisiblePluginClass = (function (_super) {
+    __extends(VisiblePluginClass, _super);
+    function VisiblePluginClass() {
         _super.apply(this, arguments);
     }
     // constructor(owner: any) {
     //     super(owner);
     // }
-    VisiblePlugin.prototype.willMount = function () {
+    VisiblePluginClass.prototype.willMount = function () {
         _super.prototype.willMount.call(this);
         //console.log("visible willMount()")
         if (this.props.visible !== undefined && this.props.defaultVisible !== undefined) {
@@ -29,7 +29,7 @@ var VisiblePlugin = (function (_super) {
             this.state.visible = true;
         this.owner.toggleClassName(!this.state.visible, "is-hidden");
     };
-    VisiblePlugin.prototype.willReceiveProps = function (nextProps) {
+    VisiblePluginClass.prototype.willReceiveProps = function (nextProps) {
         //let state = this.owner.state as VisiblePluginState;
         if (nextProps.visible !== undefined) {
             this.state.visible = nextProps.visible;
@@ -38,12 +38,11 @@ var VisiblePlugin = (function (_super) {
             this.state.visible = true;
         this.owner.toggleClassName(!this.state.visible, "is-hidden");
     };
-    return VisiblePlugin;
-}(Core.ComponentPlugin));
-exports.VisiblePlugin = VisiblePlugin;
-function Visible(target) {
-    target.plugins.push(Core.VisiblePlugin);
+    return VisiblePluginClass;
+}(Plugin_1.ComponentPlugin));
+function VisiblePlugin(target) {
+    target.plugins.push(VisiblePluginClass);
     return target;
 }
-exports.Visible = Visible;
+exports.VisiblePlugin = VisiblePlugin;
 //# sourceMappingURL=VisiblePlugin.js.map
