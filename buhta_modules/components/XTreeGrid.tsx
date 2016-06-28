@@ -1,11 +1,12 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import * as _ from "lodash";
+//import * as _ from "lodash";
 
 //import {XComponent, XComponentProps, XVisibleProps, XOnClickProps} from "./XComponent";
 //import {XTreeGridColumnProps} from "./XTreeGridColumn";
 
 import * as X from "./X";
+import _ = require("~lodash/index");
+import {executeSQL} from "../buhta-core/SQL";
 
 export interface XTreeGridProps extends X.XComponentProps, X.XVisibleProps, X.XOnClickProps {
     // style?: React.CSSProperties;
@@ -271,23 +272,23 @@ export class XTreeGrid extends X.XComponent<XTreeGridProps, XTreeGridState> {
 
     private testLoad500() {
 
-        // executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
-        //     .done((table) => {
-        //
-        //         this.dataSource = table.rows.map((r) => {
-        //             return {Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"]};
-        //         });
-        //         this.createColumns();
-        //         this.createNodes();
-        //         this.createRows();
-        //         this.forceUpdate();
-        //
-        //
-        //         console.log("select top 5006* Ключ,Номер,Название from [Вид ТМЦ] order by Ключ --> " + table.rows[0].getValue(2));
-        //     })
-        //     .fail((err) => {
-        //         alert(err.message);
-        //     });
+        executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+            .done((table) => {
+
+                this.dataSource = table.rows.map((r) => {
+                    return {Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"]};
+                });
+                this.createColumns();
+                this.createNodes();
+                this.createRows();
+                this.forceUpdate();
+
+
+                console.log("select top 5006* Ключ,Номер,Название from [Вид ТМЦ] order by Ключ --> " + table.rows[0].getValue(2));
+            })
+            .fail((err) => {
+                alert(err.message);
+            });
 
     }
 

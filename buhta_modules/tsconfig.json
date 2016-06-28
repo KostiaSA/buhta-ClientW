@@ -6,7 +6,7 @@
     "sourceMap": true,
     "target": "es5",
     //"outDir": ".js",
- //   "declaration": true,
+    "declaration": true,
     "module": "commonjs",
     "jsx": "react",
     "experimentalDecorators":true

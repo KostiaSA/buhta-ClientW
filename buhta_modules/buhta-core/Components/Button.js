@@ -11,9 +11,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var React = require("react");
-var VisiblePlugin_1 = require("../../Plugins/VisiblePlugin");
-var OnClickPlugin_1 = require("../../Plugins/OnClickPlugin");
-var Component_1 = require("../Component");
+var VisiblePlugin_1 = require("../Plugins/VisiblePlugin");
+var OnClickPlugin_1 = require("../Plugins/OnClickPlugin");
+var Component_1 = require("./Component");
 var Button = (function (_super) {
     __extends(Button, _super);
     function Button(props, context) {

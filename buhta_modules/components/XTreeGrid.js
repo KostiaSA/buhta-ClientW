@@ -5,10 +5,12 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var React = require("react");
-var _ = require("lodash");
+//import * as _ from "lodash";
 //import {XComponent, XComponentProps, XVisibleProps, XOnClickProps} from "./XComponent";
 //import {XTreeGridColumnProps} from "./XTreeGridColumn";
 var X = require("./X");
+var _ = require("~lodash/index");
+var SQL_1 = require("../buhta-core/SQL");
 var InternalColumn = (function () {
     function InternalColumn() {
     }
@@ -177,23 +179,21 @@ var XTreeGrid = (function (_super) {
         this.forceUpdate();
     };
     XTreeGrid.prototype.testLoad500 = function () {
-        // executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
-        //     .done((table) => {
-        //
-        //         this.dataSource = table.rows.map((r) => {
-        //             return {Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"]};
-        //         });
-        //         this.createColumns();
-        //         this.createNodes();
-        //         this.createRows();
-        //         this.forceUpdate();
-        //
-        //
-        //         console.log("select top 5006* Ключ,Номер,Название from [Вид ТМЦ] order by Ключ --> " + table.rows[0].getValue(2));
-        //     })
-        //     .fail((err) => {
-        //         alert(err.message);
-        //     });
+        var _this = this;
+        SQL_1.executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+            .done(function (table) {
+            _this.dataSource = table.rows.map(function (r) {
+                return { Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"] };
+            });
+            _this.createColumns();
+            _this.createNodes();
+            _this.createRows();
+            _this.forceUpdate();
+            console.log("select top 5006* Ключ,Номер,Название from [Вид ТМЦ] order by Ключ --> " + table.rows[0].getValue(2));
+        })
+            .fail(function (err) {
+            alert(err.message);
+        });
     };
     XTreeGrid.prototype.willUnmount = function () {
     };

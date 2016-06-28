@@ -5,8 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var React = require("react");
-var SplitPane = require("react-split-pane");
-var Button_1 = require("../buhta-core/Components/Button/Button");
+var Button_1 = require("../buhta-core/Components/Button");
 var SQL_1 = require("../buhta-core/SQL");
 var Hello = (function (_super) {
     __extends(Hello, _super);

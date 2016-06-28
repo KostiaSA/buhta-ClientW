@@ -1,8 +1,6 @@
 import * as React from "react";
-import * as SplitPane from "react-split-pane";
-import Button from "../buhta-core/Components/Button/Button";
+import Button from "../buhta-core/Components/Button";
 import {executeSQL} from "../buhta-core/SQL";
-
 
 export interface HelloProps { compiler: string; framework: string;
 }
@@ -34,7 +32,6 @@ export class Hello extends React.Component<HelloProps, {}> {
         this.but2visible = true;
         this.forceUpdate();
     }
-
 
     render() {
 
