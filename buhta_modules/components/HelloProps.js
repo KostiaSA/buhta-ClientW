@@ -32,7 +32,7 @@ var Hello = (function (_super) {
         this.forceUpdate();
     };
     Hello.prototype.render = function () {
-        return React.createElement("div", null, React.createElement("button", {onClick: this.clickHanler.bind(this)}, "Кнопка 1"), React.createElement(Button_1.Button, {visible: this.but2visible}, "Кнопка 2"));
+        return React.createElement("div", null, React.createElement("button", {onClick: this.clickHanler.bind(this)}, "Кнопка 1"), React.createElement(Button_1.Button, {visible: this.but2visible, onClick: function (e) { return alert("Ok1"); }}, "Кнопка 2"));
         // return <div>
         //     <button onClick={ this.handleClick }>get sql</button>
         //     Hello 3++44=66332===22o3m {this.props.compiler} and {this.props.framework}!

@@ -38,7 +38,7 @@ export class Hello extends React.Component<HelloProps, {}> {
 
         return <div>
             <button onClick={this.clickHanler.bind(this)}>Кнопка 1</button>
-            <Button visible={this.but2visible}>Кнопка 2</Button></div>;
+            <Button visible={this.but2visible} onClick={ (e) => alert("Ok1") }>Кнопка 2</Button></div>;
         // return <div>
         //     <button onClick={ this.handleClick }>get sql</button>
         //     Hello 3++44=66332===22o3m {this.props.compiler} and {this.props.framework}!

@@ -33,7 +33,6 @@ export class VisiblePlugin extends Core.ComponentPlugin<VisiblePluginProps,Visib
             this.state.visible = true;
 
         this.owner.toggleClassName(!this.state.visible, "is-hidden");
-        //console.log("жопа13 state.visible=" + state.visible.toString());
     }
 
     protected willReceiveProps(nextProps: VisiblePluginProps) {

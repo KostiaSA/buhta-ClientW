@@ -1,4 +1,6 @@
 ﻿import * as React from "react";
+import * as _ from "lodash";
+
 import * as Core from "../index"
 
 export interface XOnClickProps {
@@ -29,18 +31,39 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
 
         (this as any)["state"] = {};
 
-
-        console.log("Component -constructor");
         Component.plugins.forEach((plug) => {
             let plugInstance: any = new plug(this);
             this.plugins.push(plugInstance);
-            console.log("plugin -push(plugInstance)");
-            console.log(plugInstance);
         });
     }
 
-    renderClasses: string[] = [];
-    renderProps: any = [];
+    private renderClasses: string[] = [];
+    private renderProps: any = {};
+    private renderStyles: any = {};
+
+    addProps(props: Object) {
+        _.assignWith(this.renderProps, props,( objectValue: any, sourceValue: any, key?: string)=>{
+            if (key==="class" || key==="className")
+                console.error("invalid property '"+key+"', use functions addClassName(), toggleClassName()");
+            if (key==="style")
+                console.error("invalid property '"+key+"', use functions addStyles(), removeStyle()");
+            return sourceValue;
+        });
+    }
+
+    addStyles(styles: Object) {
+        _.assign(this.renderStyles, styles);
+    }
+
+    removeStyle(style: string) {
+        delete this.renderStyles[style];
+    }
+
+    removeStyles(styles: string[]) {
+        styles.forEach((style)=>{
+            delete this.renderStyles[style];
+        });
+    }
 
     protected didMount() {
         this.plugins.forEach((plug) => {
@@ -132,19 +155,21 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
     }
 
     getRenderProps() {
-        this.renderProps = {};
         this.renderProps.className = this.renderClassName();
-        let p: any = this.props;
-        if (p.onClick)
-            this.renderProps.onClick = p.onClick;
+        this.renderProps.style = this.renderStyles;
         return this.renderProps;
+    }
+
+
+    getReactElementClassName(element): string {
+        return element && element.type ? element.type.toString().split("(")[0].split(" ")[1] : "";
     }
 
     getChildren(childTypeName: string): JSX.Element[] {
         let ret: JSX.Element[] = [];
         React.Children.toArray(this.props.children).forEach((child: any) => {
-            //if (Util.getReactElementClassName(child) === childTypeName)
-            //  ret.push(child);
+            if (this.getReactElementClassName(child) === childTypeName)
+              ret.push(child);
         });
         return ret;
     }
@@ -152,8 +177,8 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
     getChildrenOfProps(props: any, childTypeName: string): JSX.Element[] {
         let ret: JSX.Element[] = [];
         React.Children.toArray(props.children).forEach((child: any) => {
-            //if (Util.getReactElementClassName(child) === childTypeName)
-            //  ret.push(child);
+            if (this.getReactElementClassName(child) === childTypeName)
+              ret.push(child);
         });
         return ret;
     }

@@ -28,7 +28,6 @@ var VisiblePlugin = (function (_super) {
         else
             this.state.visible = true;
         this.owner.toggleClassName(!this.state.visible, "is-hidden");
-        //console.log("жопа13 state.visible=" + state.visible.toString());
     };
     VisiblePlugin.prototype.willReceiveProps = function (nextProps) {
         //let state = this.owner.state as VisiblePluginState;

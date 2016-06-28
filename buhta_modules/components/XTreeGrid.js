@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var React = require("react");
+var _ = require("lodash");
 //import {XComponent, XComponentProps, XVisibleProps, XOnClickProps} from "./XComponent";
 //import {XTreeGridColumnProps} from "./XTreeGridColumn";
 var X = require("./X");
