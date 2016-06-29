@@ -30,6 +30,5 @@ var Button = (function (_super) {
     ], Button);
     return Button;
 }(Component_1.Component));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Button;
+exports.Button = Button;
 //# sourceMappingURL=Button.js.map
