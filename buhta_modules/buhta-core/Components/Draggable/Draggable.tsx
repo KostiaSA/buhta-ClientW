@@ -17,7 +17,7 @@ export class Draggable extends Component<any,{}> {
 
     render() {
         this.addClassName("draggable");
-        this.addProps()
+        this.addProps({draggable:true});
         //this.addStyles({height: "100%"});
 
         //return React.createElement(propInfo.editorType, editorProps, null)

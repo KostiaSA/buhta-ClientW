@@ -16,7 +16,7 @@ export interface ComponentState {
     // style: React.CSSProperties;
 }
 
- 
+
 export class Component<P extends ComponentProps, S extends ComponentState> extends React.Component<P, S> {
 
     static plugins: any[] = [];
@@ -155,6 +155,7 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
     getRenderProps() {
         this.renderProps.className = this.renderClassName();
         this.renderProps.style = this.renderStyles;
+        _.assign(this.renderProps.style, this.props.style);
         return this.renderProps;
     }
 
