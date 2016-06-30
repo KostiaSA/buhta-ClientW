@@ -1,6 +1,5 @@
 import * as React from "react";
 import {ComponentProps, Component} from "../Component";
-import {DragSource} from "react-dnd";
 
 const boxSource = {
     beginDrag(props) {

@@ -33,7 +33,16 @@ export class Window extends Component<WindowProps,{}> {
         });
     }
 
-    handleOnClick(e){
+    resizeRightBottomConerStart(e: MoveStartEvent) {
+        e.bindX(this, "width", ()=> {
+            this.forceUpdate();
+        });
+        e.bindY(this, "height", ()=> {
+            this.forceUpdate();
+        });
+    }
+
+    handleOnClick(e) {
         console.log("win click");
     }
 
@@ -46,21 +55,29 @@ export class Window extends Component<WindowProps,{}> {
             left: this.left,
             height: this.height,
             width: this.width,
-            padding:0
+            padding: 0
         });
 
         return (
-            <Layout type="column" ref={ (e)=>{ this.nativeElement = e} } {...this.getRenderProps()} onClick={ this.handleOnClick.bind(this)}>
-                <Fixed className="window-header" style={{borderRadius: "5px 5px 0px 0px", position:"relative"}} >
+            <Layout type="column" ref={ (e)=>{ this.nativeElement = e} } {...this.getRenderProps()}
+                    onClick={ this.handleOnClick.bind(this)}>
+                <Fixed className="window-header" style={{borderRadius: "5px 5px 0px 0px", position:"relative"}}>
                     Fixed Header
                     <Movable
                         style={{position:"absolute", top:0, left:0, right:0,bottom:0}}
                         onMoveStart={this.moveStart.bind(this)}
-                    ></Movable>
+                    >
+                    </Movable>
                 </Fixed>
                 <Flex>
                     {this.props.children}
                 </Flex>
+                <Movable
+                    className="window-resizer"
+                    style={{position:"absolute", height:10, width:10, right:0,bottom:0, borderRadius: "0 0 5px 0",cursor: "se-resize"}}
+                    onMoveStart={this.resizeRightBottomConerStart.bind(this)}
+                >
+                </Movable>
             </Layout>
         );
     }
