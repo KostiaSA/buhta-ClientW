@@ -34,6 +34,8 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
             this.plugins.push(plugInstance);
         });
     }
+    
+    nativeElement: Element;
 
     private renderClasses: string[] = [];
     private renderProps: any = {};

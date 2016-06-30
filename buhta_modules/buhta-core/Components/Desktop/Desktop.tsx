@@ -18,7 +18,6 @@ export class Desktop extends Component<DesktopProps,{}> {
             appInstance.desktopInstance = this;
     }
 
-    nativeElement: Element;
 
     render() {
         this.addClassName("desktop");

@@ -33,6 +33,11 @@ export class Window extends Component<WindowProps,{}> {
         });
     }
 
+    handleOnClick(e){
+        console.log("win click");
+    }
+
+
     render() {
         this.addClassName("window box");
         this.addStyles({position: "absolute"});
@@ -45,7 +50,7 @@ export class Window extends Component<WindowProps,{}> {
         });
 
         return (
-            <Layout type="column" {...this.getRenderProps()}>
+            <Layout type="column" ref={ (e)=>{ this.nativeElement = e} } {...this.getRenderProps()} onClick={ this.handleOnClick.bind(this)}>
                 <Fixed className="window-header" style={{borderRadius: "5px 5px 0px 0px", position:"relative"}} >
                     Fixed Header
                     <Movable

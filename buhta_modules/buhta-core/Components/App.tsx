@@ -18,6 +18,7 @@ export class App extends Component<AppProps,{}> {
         super.willMount();
         appInstance = this;
     }
+
     // protected didMount() {
     //     super.didMount();
     //     appInstance = this;
@@ -27,6 +28,12 @@ export class App extends Component<AppProps,{}> {
 
     openWindow(win: Element) {
         let modal = document.createElement('div');
+
+        // для поднятия вверх при активации окна
+        modal.onmousedown = (e)=> {
+            this.desktopInstance.nativeElement.appendChild(modal);
+        }
+
         this.desktopInstance.nativeElement.appendChild(modal);
         ReactDOM.render(
             win,

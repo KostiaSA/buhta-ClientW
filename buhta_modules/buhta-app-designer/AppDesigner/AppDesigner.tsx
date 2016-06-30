@@ -34,7 +34,6 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
     moveStart(e: MoveStartEvent) {
         e.bindX(this, "sideWidth", ()=> {
             this.forceUpdate();
-            console.log("moved");
         });
     }
 
