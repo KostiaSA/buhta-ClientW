@@ -44,7 +44,16 @@ export class ObjectDesigner extends Component<ObjectDesignerProps,{}> {
 
         return (
             <div {...this.getRenderProps()}>
-                object designer!
+                <div className="tabs">
+                    <ul>
+                        <li className="is-active"><a>Параметры</a></li>
+                        <li><a>Индекы</a></li>
+                        <li><a>Колонки</a></li>
+                        <li><a>SQL</a></li>
+                    </ul>
+                </div>
+                Copy
+
                 {this.renderProperyDesigners()}
             </div>
         );

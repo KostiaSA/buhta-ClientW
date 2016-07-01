@@ -8,6 +8,7 @@ export interface XOnClickProps {
 export interface ComponentProps {
     style?: React.CSSProperties;
     className?: string;
+    children?: React.ReactNode;
 }
 
 
@@ -34,7 +35,7 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
             this.plugins.push(plugInstance);
         });
     }
-    
+
     nativeElement: Element;
 
     private renderClasses: string[] = [];
@@ -42,11 +43,11 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
     private renderStyles: any = {};
 
     addProps(props: Object) {
-        _.assignWith(this.renderProps, props,( objectValue: any, sourceValue: any, key?: string)=>{
-            if (key==="class" || key==="className")
-                console.error("invalid property '"+key+"', use functions addClassName(), toggleClassName()");
-            if (key==="style")
-                console.error("invalid property '"+key+"', use functions addStyles(), removeStyle()");
+        _.assignWith(this.renderProps, props, (objectValue: any, sourceValue: any, key?: string)=> {
+            if (key === "class" || key === "className")
+                console.error("invalid property '" + key + "', use functions addClassName(), toggleClassName()");
+            if (key === "style")
+                console.error("invalid property '" + key + "', use functions addStyles(), removeStyle()");
             return sourceValue;
         });
     }
@@ -60,7 +61,7 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
     }
 
     removeStyles(styles: string[]) {
-        styles.forEach((style)=>{
+        styles.forEach((style)=> {
             delete this.renderStyles[style];
         });
     }
@@ -162,24 +163,24 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
     }
 
 
-    getReactElementClassName(element): string {
-        return element && element.type ? element.type.toString().split("(")[0].split(" ")[1] : "";
-    }
+    // getReactElementClassName(element): string {
+    //     return element && element.type ? element.type.toString().split("(")[0].split(" ")[1] : "";
+    // }
 
-    getChildren(childTypeName: string): JSX.Element[] {
+    getChildren(childType: Function): JSX.Element[] {
         let ret: JSX.Element[] = [];
         React.Children.toArray(this.props.children).forEach((child: any) => {
-            if (this.getReactElementClassName(child) === childTypeName)
-              ret.push(child);
+            if (childType === child.type)
+                ret.push(child);
         });
         return ret;
     }
 
-    getChildrenOfProps(props: any, childTypeName: string): JSX.Element[] {
+    getChildrenOfProps(props: any, childType: Function): JSX.Element[] {
         let ret: JSX.Element[] = [];
         React.Children.toArray(props.children).forEach((child: any) => {
-            if (this.getReactElementClassName(child) === childTypeName)
-              ret.push(child);
+            if (childType === child.type)
+                ret.push(child);
         });
         return ret;
     }

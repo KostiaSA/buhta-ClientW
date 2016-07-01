@@ -11,6 +11,7 @@ import {Draggable} from "../../buhta-core/Components/Draggable/Draggable";
 import {Movable, MoveEvent, MoveStartEvent} from "../../buhta-core/Components/Movable/Movable";
 import {App, appInstance} from "../../buhta-core/Components/App";
 import {Window} from "../../buhta-core/Components/Window/Window";
+import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 
 
 export interface AppDesignerProps extends ComponentProps {
@@ -22,14 +23,13 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
         super(props, context);
         this.props = props;
 
-        this.initTest();
+        //this.initTest();
     }
 
-    testObject: testBuhtaObject1 = new testBuhtaObject1();
 
-    initTest() {
-        this.testObject.name = "Тестовый объект1";
-    }
+    // initTest() {
+    //     this.testObject.name = "Тестовый объект1";
+    // }
 
     moveStart(e: MoveStartEvent) {
         e.bindX(this, "sideWidth", ()=> {
@@ -42,8 +42,22 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
 
     testOpenWindow() {
 
-       let win= <Window title="Это окно 2-12"> окно1 </Window>;
-       appInstance.desktop.openWindow(win);
+        let win =
+            <Window title="Это окно 2-12">
+                <Tabs>
+                    <Tab title="закладка 1"> 111111 </Tab>
+                    <Tab title="закладка 2"> 22222 </Tab>
+                </Tabs>
+            </Window>;
+        appInstance.desktop.openWindow(win);
+    };
+
+    testOpenObjectDesigner() {
+        let testObject: testBuhtaObject1 = new testBuhtaObject1();
+        testObject.name = "город Воронеж";
+
+        let win = <Window title="Дизайнер"><ObjectDesigner designedObject={testObject}> </ObjectDesigner> </Window>;
+        appInstance.desktop.openWindow(win);
     };
 
     render() {
@@ -57,12 +71,13 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
                     <Flex>
                         <Layout type="row">
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
-                                Fixed Sidebar
+                                Fixed Sidebar<br/>
+                                <button onClick={()=>{ this.testOpenWindow()}}> test open window</button>
+                                <button onClick={()=>{ this.testOpenObjectDesigner()}}>open designer</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>
                                     <Movable onMoveStart={this.moveStart.bind(this)}>MOV</Movable>
-                                    <button onClick={()=>{ this.testOpenWindow()}}> test open window</button>
 
                                 </Desktop>
                             </Flex>

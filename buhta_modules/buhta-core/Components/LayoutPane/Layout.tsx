@@ -10,7 +10,7 @@ export default class Layout extends Component<any,any> {
         if (this.props.className) {
             classes.push(this.props.className);
         }
-        classes.push(this.props.type);
+        //classes.push(this.props.type);
 
         let style:any = {
             display: 'flex',
