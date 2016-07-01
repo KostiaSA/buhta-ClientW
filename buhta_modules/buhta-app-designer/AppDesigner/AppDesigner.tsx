@@ -12,6 +12,9 @@ import {Movable, MoveEvent, MoveStartEvent} from "../../buhta-core/Components/Mo
 import {App, appInstance} from "../../buhta-core/Components/App";
 import {Window} from "../../buhta-core/Components/Window/Window";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
+import {Form} from "../../buhta-core/Components/Form/Form";
+import {Input, InputType} from "../../buhta-core/Components/Input/Input";
+import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
 
 
 export interface AppDesignerProps extends ComponentProps {
@@ -42,10 +45,23 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
 
     testOpenWindow() {
 
+        let obj={
+            Фамилия:"Савченков",
+            Имя:"Константин",
+            Отчество:"Владимирович"
+        };
+
         let win =
             <Window title="Это окно 2-12">
                 <Tabs>
-                    <Tab title="закладка 1"> 111111 </Tab>
+                    <Tab title="закладка 1">
+                        <Form>
+                            <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия" />
+                            <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя" />
+                            <InputDivider title="а теперь отчество"></InputDivider>
+                            <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество" />
+                        </Form>
+                    </Tab>
                     <Tab title="закладка 2"> 22222 </Tab>
                 </Tabs>
             </Window>;

@@ -37,8 +37,8 @@ export class StringPropertyEditor extends BasePropertyEditor {
         //                 type={InputType.Text}
         //                 className="form-control"
         //                 style={{ maxWidth: 500 }}
-        //                 bindObj={this.designedObject}
-        //                 bindProp={this.propertyName}
+        //                 bindObject={this.designedObject}
+        //                 bindPropName={this.propertyName}
         //             >
         //             </Input>
         //             <small className="error-text hidden"></small>

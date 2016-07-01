@@ -61,7 +61,8 @@ export class Window extends Component<WindowProps,{}> {
             left: this.left,
             height: this.height,
             width: this.width,
-            padding: 0
+            padding: 0,
+            overflow:"hidden"
         });
 
 

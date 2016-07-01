@@ -32,13 +32,14 @@ export class Desktop extends Component<DesktopProps,{}> {
     openWindow(win: JSX.Element): WindowInfo {
         let modal = document.createElement('div');
         modal.id = Math.random().toString(36).slice(2, 12);
+
         // для поднятия вверх при активации окна
-        modal.onclick = (e)=> {
+        modal.onclick = ()=> {
             setTimeout(()=> {
-                if (modal.id !== "deleted")
+                if (modal.id !== "deleted" && this.nativeElement.lastChild !== modal)
                     this.nativeElement.appendChild(modal);
             }, 1);
-        }
+        };
 
         this.nativeElement.appendChild(modal);
 
@@ -69,8 +70,8 @@ export class Desktop extends Component<DesktopProps,{}> {
 
     activateWindow(win: Window) {
 
-        this.windows.forEach((info, index)=> {
-            if (info.winInstance === win) {
+        this.windows.forEach((info)=> {
+            if (info.winInstance === win && this.nativeElement.lastChild !== info.divWrapper) {
                 this.nativeElement.appendChild(info.divWrapper);
                 return;
             }
