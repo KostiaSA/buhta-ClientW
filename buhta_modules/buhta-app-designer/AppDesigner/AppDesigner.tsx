@@ -42,8 +42,8 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
 
     testOpenWindow() {
 
-       let win= <Window> окно1 </Window>;
-       appInstance.openWindow(win);
+       let win= <Window title="Это окно 2-12"> окно1 </Window>;
+       appInstance.desktop.openWindow(win);
     };
 
     render() {

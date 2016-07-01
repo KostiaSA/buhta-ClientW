@@ -2,7 +2,6 @@ import * as React from "react";
 import {Component, ComponentProps} from "./Component";
 import {Desktop} from "./Desktop/Desktop";
 import Element = JSX.Element;
-import * as ReactDOM from "react-dom";
 
 export interface AppProps extends ComponentProps {
     title?: string;
@@ -24,23 +23,7 @@ export class App extends Component<AppProps,{}> {
     //     appInstance = this;
     // }
 
-    desktopInstance: Desktop;
-
-    openWindow(win: Element) {
-        let modal = document.createElement('div');
-
-        // для поднятия вверх при активации окна
-        modal.onmousedown = (e)=> {
-            this.desktopInstance.nativeElement.appendChild(modal);
-        }
-
-        this.desktopInstance.nativeElement.appendChild(modal);
-        ReactDOM.render(
-            win,
-            modal
-        );
-
-    };
+    desktop: Desktop;
 
 
     render() {
