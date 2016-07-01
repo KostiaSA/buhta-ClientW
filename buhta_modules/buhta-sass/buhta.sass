@@ -16,29 +16,39 @@ $text: black
   background: #e8e8e8
 
 .window
-  background: cornsilk
+  background: white
   //border: 1px solid gray
 
   .window-header
-    background: coral
+    background: lightslategray
     border: 1px solid gray
 
     .window-title
+      color: white
 
     .buttons-bar
 
-      .minimize-button
+      .minimize-button, .maximize-button, .close-button
         background: transparent
-        color: #6b6b6b
-
-      .maximize-button
-        background: transparent
-        color: #6b6b6b
-
-      .close-button
-        background: transparent
-        color: #6b6b6b
+        color: #c7c7c7
+        &:hover
+          color: white
+        &:active
+          color: #404040
 
   .window-resizer
     background: rgba(146, 146, 146, 0.22)
+
+
+// tabs подправлен дизайн
+.tabs a
+  padding: 3px 8px
+  color: #868686
+
+.tabs a:hover
+  border-bottom-color: silver
+
+li.is-active a
+  border-bottom-width: 2px
+
 

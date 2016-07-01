@@ -129,18 +129,28 @@ export class Tabs extends Component<TabsProps,{}> {
     }
 
     renderPanels(): JSX.Element {
+
+        let list: JSX.Element[] = [];
+
+        this.tabs.forEach((tabInfo: TabInfo, index: number)=> {
+
+            let className = !tabInfo.isActive ? "is-hidden" : null;
+            let element =
+                <div className={className} key={index}>
+                    {tabInfo.content}
+                </div>
+            list.push(element);
+        });
+
         return (
             <div>
-                <div> 11</div>
-                <div> 22</div>
-                <div> 33</div>
-                <div> 44</div>
+                {list}
             </div>
         )
     }
 
     render() {
-        this.addClassName("Tabs");
+        //this.addClassName("Tabs");
         this.addStyles({height: "100%"});
         this.addStyles({position: "relative", overflow: "auto"});
 

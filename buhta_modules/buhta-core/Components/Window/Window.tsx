@@ -75,7 +75,10 @@ export class Window extends Component<WindowProps,{}> {
         return (
             <Layout type="column" ref={ (e)=>{ this.nativeElement = e} } {...this.getRenderProps()}
                     onClick={ this.handleOnClick.bind(this)}>
-                <Fixed className="window-header" style={{borderRadius: "5px 5px 0px 0px", position:"relative"}}>
+                <Fixed
+                    className="window-header"
+                    style={{borderRadius: "5px 5px 0px 0px", position:"relative", paddingLeft: 10}}
+                >
                     <span className="window-title">{this.props.title}</span>
                     <Layout type="row">
                         <Flex>
@@ -109,7 +112,7 @@ export class Window extends Component<WindowProps,{}> {
                         </Fixed>
                     </Layout>
                 </Fixed>
-                <Flex>
+                <Flex style={{ padding:3}}>
                     {this.props.children}
                 </Flex>
                 <Movable
