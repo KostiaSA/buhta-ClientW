@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as Immutable from "immutable";
 import {ComponentProps, Component} from "../../buhta-core/Components/Component";
 import Layout from "../../buhta-core/Components/LayoutPane/Layout";
 import Fixed from "../../buhta-core/Components/LayoutPane/Fixed";
@@ -15,6 +16,7 @@ import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
+import {Table} from "./Store";
 
 
 export interface AppDesignerProps extends ComponentProps {
@@ -45,10 +47,10 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
 
     testOpenWindow() {
 
-        let obj={
-            Фамилия:"Савченков",
-            Имя:"Константин",
-            Отчество:"Владимирович"
+        let obj = {
+            Фамилия: "Савченков",
+            Имя: "Константин",
+            Отчество: "Владимирович"
         };
 
         let win =
@@ -56,10 +58,10 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
                 <Tabs>
                     <Tab title="закладка 1">
                         <Form>
-                            <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия" />
-                            <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя" />
+                            <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия"/>
+                            <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя"/>
                             <InputDivider title="а теперь отчество"></InputDivider>
-                            <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество" />
+                            <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество"/>
                         </Form>
                     </Tab>
                     <Tab title="закладка 2"> 22222 </Tab>
@@ -76,6 +78,30 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
         appInstance.desktop.openWindow(win);
     };
 
+
+    testImmutable() {
+        let fake=new Table([]);
+
+        const xxx = Immutable.Map<string,number>();
+
+        let obj = {
+            name: "Оганизация",
+            columns: {"Номер": {colName: "Номер", type: "string"}, "Название": {colName: "Название", type: "string"}}
+        };
+
+        let objI=Immutable.fromJS(obj);
+
+        //let m = Immutable.Map<string,number| Immutable.Map<number,string>>();
+        //let x = m.set("13yyt333332", 12);
+        //let y = m.set("xxx", Immutable.Map<number,string>());
+
+        //let y=m.update("xxx",Immutable.Map<number,string>());
+
+        console.log(objI.toString());
+        let x=objI.getIn(['columns', 'Номер', 'colName']);
+        console.log(x);
+    };
+
     render() {
         this.addClassName("app-designer");
 
@@ -89,7 +115,10 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
                                 Fixed Sidebar<br/>
                                 <button onClick={()=>{ this.testOpenWindow()}}> test open window</button>
+                                <br/>
                                 <button onClick={()=>{ this.testOpenObjectDesigner()}}>open designer</button>
+                                <br/>
+                                <button onClick={()=>{ this.testImmutable()}}>testImmutable</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>
