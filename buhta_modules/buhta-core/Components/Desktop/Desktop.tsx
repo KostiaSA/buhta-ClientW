@@ -10,7 +10,7 @@ export interface DesktopProps extends ComponentProps {
 }
 
 export class DesktopWindow {
-    constructor() {
+    constructor(public desktopState: DesktopState) {
         this.id = Math.random().toString(36).slice(2, 12);
     }
 
@@ -21,6 +21,35 @@ export class DesktopWindow {
     left: number = 10;
     width: number = 500;
     height: number = 300;
+
+    handleMoveStart = (e: MoveStartEvent): void=> {
+        e.bindX(this, "left", ()=> {
+            this.desktopState.component.forceUpdate();
+        });
+        e.bindY(this, "top", ()=> {
+            this.desktopState.component.forceUpdate();
+        });
+        this.desktopState.activateWindow(this.id);
+    }
+
+    handleActivate = (): void=> {
+        this.desktopState.activateWindow(this.id);
+    }
+
+    handleClose = (): void=> {
+        this.desktopState.closeWindow(this.id);
+    }
+
+    handleResizeRightBottomCornerStart = (e: MoveStartEvent): void=> {
+        //let win = this.state.getWindowById(winId);
+        e.bindX(this, "width", ()=> {
+            this.desktopState.component.forceUpdate();
+        });
+        e.bindY(this, "height", ()=> {
+            this.desktopState.component.forceUpdate();
+        });
+        this.desktopState.activateWindow(this.id);
+    }
 
 }
 
@@ -54,6 +83,7 @@ class DesktopState extends ComponentState {
         _.pull(this.windows, win);
         this.component.forceUpdate();
     }
+
 
 }
 
@@ -108,7 +138,7 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
     // };
 
     openWindow(win: JSX.Element, title: string = ".") {
-        let newWin = new DesktopWindow();
+        let newWin = new DesktopWindow(this.state);
         newWin.content = win;
         newWin.title = title;
         this.state.windows.push(newWin);
@@ -175,35 +205,35 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
     //     );
     // }
 
-    private handleMoveStart(e: MoveStartEvent, winId: string) {
-        let win = this.state.getWindowById(winId);
-        e.bindX(win, "left", ()=> {
-            this.forceUpdate();
-        });
-        e.bindY(win, "top", ()=> {
-            this.forceUpdate();
-        });
-        this.state.activateWindow(winId);
-    }
-
-    private handleActivate(winId: string) {
-        this.state.activateWindow(winId);
-    }
-
-    private handleClose(winId: string) {
-        this.state.closeWindow(winId);
-    }
-
-    private handleResizeRightBottomCornerStart(e: MoveStartEvent, winId: string) {
-        let win = this.state.getWindowById(winId);
-        e.bindX(win, "width", ()=> {
-            this.forceUpdate();
-        });
-        e.bindY(win, "height", ()=> {
-            this.forceUpdate();
-        });
-        this.state.activateWindow(winId);
-    }
+    // private handleMoveStart(e: MoveStartEvent, winId: string) {
+    //     let win = this.state.getWindowById(winId);
+    //     e.bindX(win, "left", ()=> {
+    //         this.forceUpdate();
+    //     });
+    //     e.bindY(win, "top", ()=> {
+    //         this.forceUpdate();
+    //     });
+    //     this.state.activateWindow(winId);
+    // }
+    //
+    // private handleActivate(winId: string) {
+    //     this.state.activateWindow(winId);
+    // }
+    //
+    // private handleClose(winId: string) {
+    //     this.state.closeWindow(winId);
+    // }
+    //
+    // private handleResizeRightBottomCornerStart(e: MoveStartEvent, winId: string) {
+    //     let win = this.state.getWindowById(winId);
+    //     e.bindX(win, "width", ()=> {
+    //         this.forceUpdate();
+    //     });
+    //     e.bindY(win, "height", ()=> {
+    //         this.forceUpdate();
+    //     });
+    //     this.state.activateWindow(winId);
+    // }
 
 
     render() {
@@ -222,11 +252,12 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
                             left={w.left}
                             width={w.width}
                             height={w.height}
-                            onMoveStart={ (e)=>{ this.handleMoveStart(e, w.id) } } ?правим здесь
-                            onResizeRightBottomCornerStart={ (e)=>{ this.handleResizeRightBottomCornerStart(e, w.id) } }
-                            onActivate={ ()=>{ this.handleActivate(w.id) } }
-                            onClose={ ()=>{ this.handleClose(w.id) } }
-                        > {w.content}
+                            onMoveStart={ w.handleMoveStart }
+                            onResizeRightBottomCornerStart={ w.handleResizeRightBottomCornerStart }
+                            onActivate={  w.handleActivate }
+                            onClose={ w.handleClose }
+                        >
+                            {w.content}
                         </Window>
                     )
                 })}

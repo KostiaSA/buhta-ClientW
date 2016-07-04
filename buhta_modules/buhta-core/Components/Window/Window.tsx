@@ -29,15 +29,16 @@ export class Window extends Component<WindowProps,any> {
 
     protected shouldComponentUpdate(nextProps: WindowProps, nextState: any) {
 
-        console.log("shallow");
+        //console.log("shallow");
         //console.log(this.props);
         //console.log(nextProps);
-        console.log(this.props);
-        console.log(nextProps);
+        //console.log(this.props);
+        //console.log(nextProps);
 
-        console.log(!shallowCompare(this, nextProps, this.state));
+        //console.log(!shallowCompare(this, nextProps, this.state));
 
-        return JSON.stringify(this.props) !== JSON.stringify(nextProps);
+        //return JSON.stringify(this.props) !== JSON.stringify(nextProps);
+        return shallowCompare(this, nextProps, this.state);
     }
 
 
@@ -91,7 +92,7 @@ export class Window extends Component<WindowProps,any> {
             paddingRight: 2,
         }
 
-        //console.log("render win ");
+      //  console.log("render win ");
 
         return (
             <div {...this.getRenderProps()} onClick={ this.handleOnClick }>
