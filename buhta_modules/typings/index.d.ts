@@ -1,4 +1,5 @@
 /// <reference path="globals/bluebird/index.d.ts" />
+/// <reference path="globals/deep-equal/index.d.ts" />
 /// <reference path="globals/eventemitter3/index.d.ts" />
 /// <reference path="globals/jquery/index.d.ts" />
 /// <reference path="globals/react-addons-shallow-compare/index.d.ts" />

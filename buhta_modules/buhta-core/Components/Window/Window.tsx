@@ -5,6 +5,8 @@ import Fixed from "../LayoutPane/Fixed";
 import Flex from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
 import {appInstance} from "../App";
+import shallowCompare = require("react-addons-shallow-compare");
+import deepEqual = require("deep-equal");
 
 
 export interface WindowProps extends ComponentProps {
@@ -24,6 +26,17 @@ export class Window extends Component<WindowProps,any> {
         super(props, context);
         this.props = props;
     }
+
+    protected shouldComponentUpdate(nextProps: WindowProps, nextState: any) {
+
+        //console.log("shallowDEEP-JSON");
+        //console.log(this.props);
+        //console.log(nextProps);
+        //console.log(JSON.stringify(this.props));
+
+        return JSON.stringify(this.props)!==JSON.stringify(nextProps);
+    }
+
 
     moveStart = (e: MoveStartEvent): void=> {
         if (this.props.onMoveStart)
@@ -74,6 +87,8 @@ export class Window extends Component<WindowProps,any> {
             paddingLeft: 2,
             paddingRight: 2,
         }
+
+        //console.log("render win ");
 
         return (
             <div {...this.getRenderProps()} onClick={ this.handleOnClick }>
