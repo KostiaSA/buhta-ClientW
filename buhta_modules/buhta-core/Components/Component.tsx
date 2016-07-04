@@ -17,7 +17,9 @@ export class ComponentState {
     constructor(public component: Component<any,any>) {
 
     }
-
+    forceUpdate(){
+        this.component.forceUpdate();
+    }
     // //clickCount: number;
     // style: React.CSSProperties;
 }
@@ -110,9 +112,10 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
         });
     }
 
-    protected shouldComponentUpdate(nextProps: P, nextState: S) {
-        return shallowCompare(this, nextProps, nextState);
+    private shouldComponentUpdate(nextProps: P, nextState: S) {
+        return shallowCompare(this, nextProps, this.state);
     }
+
 
     private componentDidUpdate = (prevProps: P, prevState: S, prevContext: any) => {
         this.didUpdate(prevProps, prevState, prevContext);

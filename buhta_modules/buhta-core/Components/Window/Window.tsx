@@ -27,19 +27,6 @@ export class Window extends Component<WindowProps,any> {
         this.props = props;
     }
 
-    protected shouldComponentUpdate(nextProps: WindowProps, nextState: any) {
-
-        //console.log("shallow");
-        //console.log(this.props);
-        //console.log(nextProps);
-        //console.log(this.props);
-        //console.log(nextProps);
-
-        //console.log(!shallowCompare(this, nextProps, this.state));
-
-        //return JSON.stringify(this.props) !== JSON.stringify(nextProps);
-        return shallowCompare(this, nextProps, this.state);
-    }
 
 
     moveStart = (e: MoveStartEvent): void=> {
@@ -50,12 +37,6 @@ export class Window extends Component<WindowProps,any> {
     resizeRightBottomCornerStart = (e: MoveStartEvent): void=> {
         if (this.props.onResizeRightBottomCornerStart)
             this.props.onResizeRightBottomCornerStart(e);
-        // e.bindX(this, "width", ()=> {
-        //     this.forceUpdate();
-        // });
-        // e.bindY(this, "height", ()=> {
-        //     this.forceUpdate();
-        // });
     }
 
     handleOnClick = (e): void=> {
@@ -91,8 +72,6 @@ export class Window extends Component<WindowProps,any> {
             paddingLeft: 2,
             paddingRight: 2,
         }
-
-      //  console.log("render win ");
 
         return (
             <div {...this.getRenderProps()} onClick={ this.handleOnClick }>
