@@ -29,12 +29,15 @@ export class Window extends Component<WindowProps,any> {
 
     protected shouldComponentUpdate(nextProps: WindowProps, nextState: any) {
 
-        //console.log("shallowDEEP-JSON");
+        console.log("shallow");
         //console.log(this.props);
         //console.log(nextProps);
-        //console.log(JSON.stringify(this.props));
+        console.log(this.props);
+        console.log(nextProps);
 
-        return JSON.stringify(this.props)!==JSON.stringify(nextProps);
+        console.log(!shallowCompare(this, nextProps, this.state));
+
+        return JSON.stringify(this.props) !== JSON.stringify(nextProps);
     }
 
 
@@ -138,7 +141,7 @@ export class Window extends Component<WindowProps,any> {
                     <Movable
                         className="window-resizer"
                         style={{position:"absolute", height:10, width:10, right:0,bottom:0, borderRadius: "0 0 5px 0",cursor: "se-resize"}}
-                        onMoveStart={this.resizeRightBottomCornerStart.bind(this)}
+                        onMoveStart={this.resizeRightBottomCornerStart}
                     >
                     </Movable>
                 </Layout>

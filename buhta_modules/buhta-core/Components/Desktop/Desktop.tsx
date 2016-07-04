@@ -222,7 +222,7 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
                             left={w.left}
                             width={w.width}
                             height={w.height}
-                            onMoveStart={ (e)=>{ this.handleMoveStart(e, w.id) } }
+                            onMoveStart={ (e)=>{ this.handleMoveStart(e, w.id) } } ?правим здесь
                             onResizeRightBottomCornerStart={ (e)=>{ this.handleResizeRightBottomCornerStart(e, w.id) } }
                             onActivate={ ()=>{ this.handleActivate(w.id) } }
                             onClose={ ()=>{ this.handleClose(w.id) } }

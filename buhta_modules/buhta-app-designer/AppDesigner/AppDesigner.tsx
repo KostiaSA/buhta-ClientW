@@ -70,12 +70,16 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
         appInstance.desktop.openWindow(win);
     };
 
+
+    testObject: testBuhtaObject1=new testBuhtaObject1();
+
     testOpenObjectDesigner() {
-        let testObject: testBuhtaObject1 = new testBuhtaObject1();
-        testObject.name = "город Воронеж";
+        //testObject: testBuhtaObject1 = new testBuhtaObject1();
+        this.testObject.name = "город Воронеж";
 
 //        let win = <Window title="Дизайнер"><ObjectDesigner designedObject={testObject}> </ObjectDesigner> </Window>;
-        let win = <ObjectDesigner designedObject={testObject}> </ObjectDesigner>;
+//        let win = <ObjectDesigner designedObject={this.testObject}> </ObjectDesigner>;
+        let win = <div>пиздец </div>;
         appInstance.desktop.openWindow(win, "Дизайнер");
     };
 
