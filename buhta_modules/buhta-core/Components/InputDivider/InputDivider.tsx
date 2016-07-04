@@ -8,7 +8,7 @@ export interface InputDividerProps extends ComponentProps, FormControlProps {
 }
 
 
-export class InputDivider extends Component<InputDividerProps,{}> {
+export class InputDivider extends Component<InputDividerProps,any> {
     constructor(props: InputDividerProps, context) {
         super(props, context);
         this.props = props;

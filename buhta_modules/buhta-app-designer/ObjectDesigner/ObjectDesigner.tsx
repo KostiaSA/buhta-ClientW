@@ -8,7 +8,7 @@ export interface ObjectDesignerProps extends ComponentProps {
     designedObject: DesignedObject;
 }
 
-export class ObjectDesigner extends Component<ObjectDesignerProps,{}> {
+export class ObjectDesigner extends Component<ObjectDesignerProps,any> {
     constructor(props: ObjectDesignerProps, context) {
         super(props, context);
         this.props = props;

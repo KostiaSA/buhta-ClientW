@@ -22,7 +22,7 @@ export interface FormProps extends ComponentProps {
 //
 // }
 
-export class Form extends Component<FormProps,{}> {
+export class Form extends Component<FormProps,any> {
     constructor(props: FormProps, context) {
         super(props, context);
         this.props = props;

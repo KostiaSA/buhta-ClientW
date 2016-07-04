@@ -14,7 +14,7 @@ export interface InputProps extends ComponentProps, FormControlProps {
 }
 
 
-export class Input extends Component<InputProps,{}> {
+export class Input extends Component<InputProps,any> {
     constructor(props: InputProps, context) {
         super(props, context);
         this.props = props;

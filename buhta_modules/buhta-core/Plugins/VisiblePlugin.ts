@@ -1,12 +1,13 @@
 
 import {ComponentPlugin} from "./Plugin";
+import {ComponentState} from "../Components/Component";
 
 export interface VisiblePluginProps {
     visible?: boolean;
     defaultVisible?: boolean;
 }
 
-export interface VisiblePluginState {
+export interface VisiblePluginState extends ComponentState{
     visible?: boolean;
 }
 

@@ -1,18 +1,23 @@
 ﻿import * as React from "react";
 import * as _ from "lodash";
+import shallowCompare = require("react-addons-shallow-compare");
 
 export interface XOnClickProps {
     onClick?: React.ReactEventHandler;
 }
 
-export interface ComponentProps {
+export interface ComponentProps extends React.ClassAttributes<Element> {
     style?: React.CSSProperties;
     className?: string;
     children?: React.ReactNode;
 }
 
 
-export interface ComponentState {
+export class ComponentState {
+    constructor(public component: Component<any,any>) {
+
+    }
+
     // //clickCount: number;
     // style: React.CSSProperties;
 }
@@ -24,11 +29,15 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
 
     private plugins: any[] = [];
 
-    constructor(props: P, context) {
+    constructor(props: P, context /*stateClass?: Function*/) {
         super(props, context);
         this.props = props;
 
-        (this as any)["state"] = {};
+        // //(this as any)["state"] = {};
+        // if (stateClass)
+        //     this.state = stateClass();
+        // else
+        //     this.state = {} as S;
 
         Component.plugins.forEach((plug) => {
             let plugInstance: any = new plug(this);
@@ -54,6 +63,10 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
 
     addStyles(styles: Object) {
         _.assign(this.renderStyles, styles);
+    }
+
+    clearStyles() {
+        this.renderStyles = {};
     }
 
     removeStyle(style: string) {
@@ -97,6 +110,9 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
         });
     }
 
+    protected shouldComponentUpdate(nextProps: P, nextState: S) {
+        return shallowCompare(this, nextProps, nextState);
+    }
 
     private componentDidUpdate = (prevProps: P, prevState: S, prevContext: any) => {
         this.didUpdate(prevProps, prevState, prevContext);

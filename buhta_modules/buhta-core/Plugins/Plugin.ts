@@ -1,8 +1,8 @@
-import {Component} from "../Components/Component";
+import {Component, ComponentProps, ComponentState} from "../Components/Component";
 
-export class ComponentPlugin<P,S> {
+export class ComponentPlugin<P,S extends ComponentState> {
 
-    constructor(public owner: Component<P,S>) {
+    constructor(public owner: Component<P, S>) {
 
     }
 

@@ -6,7 +6,7 @@ export interface OnClickPluginProps {
     onClick?: MouseEventHandler;
 }
 
-class OnClickPluginClass extends ComponentPlugin<OnClickPluginProps,{}> {
+class OnClickPluginClass extends ComponentPlugin<OnClickPluginProps,any> {
 
     protected willMount() {
         super.willMount();

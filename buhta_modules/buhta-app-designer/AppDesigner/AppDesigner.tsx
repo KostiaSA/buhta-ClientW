@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as Immutable from "immutable";
-import {ComponentProps, Component} from "../../buhta-core/Components/Component";
-import Layout from "../../buhta-core/Components/LayoutPane/Layout";
+import {ComponentProps, Component, ComponentState} from "../../buhta-core/Components/Component";
+import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import Fixed from "../../buhta-core/Components/LayoutPane/Fixed";
 import Flex from "../../buhta-core/Components/LayoutPane/Flex";
 
@@ -16,19 +16,21 @@ import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
-import {Table} from "./Store";
 
 
 export interface AppDesignerProps extends ComponentProps {
     //text?: string;
 }
 
-export class AppDesigner extends Component<AppDesignerProps,{}> {
+class AppDesignerState extends ComponentState {
+    //text?: string;
+}
+
+export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
     constructor(props: AppDesignerProps, context) {
         super(props, context);
         this.props = props;
-
-        //this.initTest();
+        this.state = new AppDesignerState(this);
     }
 
 
@@ -54,19 +56,17 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
         };
 
         let win =
-            <Window title="Это окно 2-12">
-                <Tabs>
-                    <Tab title="закладка 1">
-                        <Form>
-                            <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия"/>
-                            <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя"/>
-                            <InputDivider title="а теперь отчество"></InputDivider>
-                            <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество"/>
-                        </Form>
-                    </Tab>
-                    <Tab title="закладка 2"> 22222 </Tab>
-                </Tabs>
-            </Window>;
+            <Tabs>
+                <Tab title="закладка 1">
+                    <Form>
+                        <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия"/>
+                        <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя"/>
+                        <InputDivider title="а теперь отчество"></InputDivider>
+                        <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество"/>
+                    </Form>
+                </Tab>
+                <Tab title="закладка 2"> 22222 </Tab>
+            </Tabs>
         appInstance.desktop.openWindow(win);
     };
 
@@ -74,13 +74,14 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
         let testObject: testBuhtaObject1 = new testBuhtaObject1();
         testObject.name = "город Воронеж";
 
-        let win = <Window title="Дизайнер"><ObjectDesigner designedObject={testObject}> </ObjectDesigner> </Window>;
-        appInstance.desktop.openWindow(win);
+//        let win = <Window title="Дизайнер"><ObjectDesigner designedObject={testObject}> </ObjectDesigner> </Window>;
+        let win = <ObjectDesigner designedObject={testObject}> </ObjectDesigner>;
+        appInstance.desktop.openWindow(win, "Дизайнер");
     };
 
 
     testImmutable() {
-        let fake=new Table([]);
+        //let fake=new Table([]);
 
         const xxx = Immutable.Map<string,number>();
 
@@ -89,7 +90,7 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
             columns: {"Номер": {colName: "Номер", type: "string"}, "Название": {colName: "Название", type: "string"}}
         };
 
-        let objI=Immutable.fromJS(obj);
+        let objI = Immutable.fromJS(obj);
 
         //let m = Immutable.Map<string,number| Immutable.Map<number,string>>();
         //let x = m.set("13yyt333332", 12);
@@ -98,7 +99,7 @@ export class AppDesigner extends Component<AppDesignerProps,{}> {
         //let y=m.update("xxx",Immutable.Map<number,string>());
 
         console.log(objI.toString());
-        let x=objI.getIn(['columns', 'Номер', 'colName']);
+        let x = objI.getIn(['columns', 'Номер', 'colName']);
         console.log(x);
     };
 

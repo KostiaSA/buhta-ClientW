@@ -33,7 +33,7 @@ interface BindedObject {
     lastValue: number;
 }
 
-export class Movable extends Component<MovableProps,{}> {
+export class Movable extends Component<MovableProps,any> {
     constructor(props: any, context) {
         super(props, context);
         this.props = props;

@@ -8,7 +8,7 @@ const boxSource = {
     }
 };
 
-export class Draggable extends Component<any,{}> {
+export class Draggable extends Component<any,any> {
     constructor(props: any, context) {
         super(props, context);
         this.props = props;
