@@ -2,8 +2,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {ComponentProps, Component} from "../Component";
 import {Layout} from "../LayoutPane/Layout";
-import Fixed from "../LayoutPane/Fixed";
-import Flex from "../LayoutPane/Flex";
+import {Fixed} from "../LayoutPane/Fixed";
+import {Flex} from "../LayoutPane/Flex";
 
 export interface TabsProps extends ComponentProps {
     text?: string;

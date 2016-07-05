@@ -1,31 +1,28 @@
-import {Component } from 'react';
+import {Component, ComponentProps} from "../Component";
 import * as React from "react";
-import * as _ from "lodash";
 
-export default class Flex extends Component<any,any> {
+
+export interface FlexProps extends ComponentProps {
+    onClick?: React.MouseEventHandler;
+}
+
+export class Flex extends Component<FlexProps,any> {
 
     render() {
-        let classes = ['Flex'];
-        if (this.props.className) {
-            classes.push(this.props.className);
-        }
+        this.addClassName("Flex");
 
+        this.clearStyles();
         let style = {
             flex: 1,
             position: 'relative'
         };
+        this.addStyles(style);
 
-        if (this.props.style) {
-            _.assign(style, this.props.style);
-        }
+        return (
+            <div {...this.getRenderProps()} >
+                {this.props.children}
+            </div>
+        );
 
-        //style = VendorPrefix.prefix({style}).style;
-
-        return <div className={classes.join(' ')} style={style}>{this.props.children}</div>;
     }
 }
-
-(Flex as any).propTypes = {
-    className: React.PropTypes.string,
-    style: React.PropTypes.object
-};

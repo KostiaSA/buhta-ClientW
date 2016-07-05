@@ -1,18 +1,17 @@
 import * as React from "react";
-import * as _ from "lodash";
 import {Component, ComponentProps} from "../Component";
-
-
 
 
 export interface LayoutProps extends ComponentProps {
     onClick?: React.MouseEventHandler;
-    type:"column" | "row";
+    type: "column" | "row";
 }
 
 export class Layout extends Component<LayoutProps,any> {
 
     render() {
+        this.clearStyles();
+
         this.addClassName("Layout");
 
         let style: any = {
@@ -30,24 +29,11 @@ export class Layout extends Component<LayoutProps,any> {
 
         this.addProps({onClick: this.props.onClick});
 
-        //console.log(this.getRenderProps());
-
         return (
-            <div onDoubleClick="" {...this.getRenderProps()} >
+            <div {...this.getRenderProps()} >
                 {this.props.children}
             </div>
         );
     }
 }
 
-//
-// (Layout as any).propTypes = {
-//     type: React.PropTypes.string.isRequired,
-//     className: React.PropTypes.string,
-//     style: React.PropTypes.object
-// };
-//
-// (Layout as any).defaultProps = {
-//     type: 'row'
-// };
-//

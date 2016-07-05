@@ -2,8 +2,8 @@ import * as React from "react";
 import * as Immutable from "immutable";
 import {ComponentProps, Component, ComponentState} from "../../buhta-core/Components/Component";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
-import Fixed from "../../buhta-core/Components/LayoutPane/Fixed";
-import Flex from "../../buhta-core/Components/LayoutPane/Flex";
+import {Fixed} from "../../buhta-core/Components/LayoutPane/Fixed";
+import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 
 import {testBuhtaObject1} from "../../Test1/testBuhtaObject1";
 import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";

@@ -1,30 +1,28 @@
-import {Component } from 'react';
-import * as React from "react";
-import * as _ from "lodash";
 
-export default class Fixed extends Component<any,any> {
+import * as React from "react";
+import {Component, ComponentProps} from "../Component";
+
+export interface FixedProps extends ComponentProps {
+    onClick?: React.MouseEventHandler;
+}
+
+
+export class Fixed extends Component<FixedProps, any> {
 
     render() {
-        let classes = ['Fixed'];
-        if (this.props.className) {
-            classes.push(this.props.className);
-        }
+        this.addClassName("Fixed");
 
+        this.clearStyles();
         let style = {
-            position: 'relative'
+            position: "relative"
         };
+        this.addStyles(style);
 
-        if (this.props.style) {
-            _.assign(style, this.props.style);
-        }
-
-        //style = VendorPrefix.prefix({style}).style;
-
-        return <div className={classes.join(' ')} style={style}>{this.props.children}</div>;
+        return (
+            <div {...this.getRenderProps()} >
+                {this.props.children}
+            </div>
+        );
     }
 }
 
-(Fixed as any).propTypes = {
-    className: React.PropTypes.string,
-    style: React.PropTypes.object
-};

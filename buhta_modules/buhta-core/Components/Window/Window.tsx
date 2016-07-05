@@ -1,8 +1,8 @@
 import * as React from "react";
 import {ComponentProps, Component} from "../Component";
 import {Layout} from "../LayoutPane/Layout";
-import Fixed from "../LayoutPane/Fixed";
-import Flex from "../LayoutPane/Flex";
+import {Fixed} from "../LayoutPane/Fixed";
+import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
 import {appInstance} from "../App";
 import shallowCompare = require("react-addons-shallow-compare");
