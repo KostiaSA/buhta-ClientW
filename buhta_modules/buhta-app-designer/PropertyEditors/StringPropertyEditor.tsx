@@ -1,6 +1,8 @@
 ﻿import * as React from "react";
 import {BasePropertyEditor} from "./BasePropertyEditor";
 import {DesignedObject} from "../DesignedObject";
+import {registerPropertyEditor} from "./registerPropertyEditor";
+import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 
 
 export class StringPropertyEditor extends BasePropertyEditor {
@@ -11,8 +13,8 @@ export class StringPropertyEditor extends BasePropertyEditor {
     // }
 
     handleChange(event: React.SyntheticEvent) {
-        this.props.designedObject[this.props.propertyName] = (event.target as any).value;
-        console.log("change === " + this.props.propertyName + " " + this.props.designedObject[this.props.propertyName]);
+        this.props.designedObject[this.props.propertyEditorInfo.propertyName] = (event.target as any).value;
+        console.log("change === " + this.props.propertyEditorInfo.propertyName + " " + this.props.designedObject[this.props.propertyEditorInfo.propertyName]);
     }
 
     render(): JSX.Element {
@@ -23,11 +25,15 @@ export class StringPropertyEditor extends BasePropertyEditor {
          console.log('change 1 ' + name +" "+oldVal+" -> "+newVal);
          });
          */
+        //string editor for {this.props.propertyEditorInfo.propertyName} => { this.props.designedObject[this.props.propertyEditorInfo.propertyName]}
 
         return (
-            <div>
-                string editor for {this.props.propertyName} => { this.props.designedObject[this.props.propertyName]}
-            </div >
+            <Input
+                caption={this.props.propertyEditorInfo.propertyCaption}
+                type={InputType.Text}
+                bindObject={this.props.designedObject}
+                bindPropName={this.props.propertyEditorInfo.propertyName}
+            />
         );
         // return (
         //     <div className="form-group" key={this.index.toString() }>
@@ -51,18 +57,22 @@ export class StringPropertyEditor extends BasePropertyEditor {
 
 }
 
-export function StringEditor(propertyPage?: string,
-                             propertyGroup?: string,
-                             propertyDescription?: string): Function {
+export function StringEditor(caption?: string,
+                             page?: string,
+                             group?: string,
+                             description?: string): Function {
     return function (target: any, propertyName: string) {
-        (target.constructor as typeof DesignedObject).registerPropertyEditor(
-            propertyName,
-            propertyPage,
-            propertyGroup,
-            propertyDescription,
-            StringPropertyEditor,
-            String
-        );
+        //  console.log({target, propertyName, constr:target.constructor});
+        registerPropertyEditor({
+            propertyCaption: caption,
+            propertyName: propertyName,
+            propertyPage: page,
+            propertyGroup: group,
+            propertyDescription: description,
+            objectType: target.constructor,
+            editorType: StringPropertyEditor,
+            propertyType: String
+        });
     }
 }
 

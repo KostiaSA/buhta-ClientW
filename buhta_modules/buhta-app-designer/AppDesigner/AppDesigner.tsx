@@ -16,6 +16,8 @@ import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
+import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
+import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
 
 
 export interface AppDesignerProps extends ComponentProps {
@@ -71,16 +73,29 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
     };
 
 
-    testObject: testBuhtaObject1=new testBuhtaObject1();
+
 
     testOpenObjectDesigner() {
-        //testObject: testBuhtaObject1 = new testBuhtaObject1();
-        this.testObject.name = "город Воронеж";
+        let testObject: testBuhtaObject1 = new testBuhtaObject1();
+        testObject.firstName = "Игорь0";
+        testObject.lastName = "Сидоренко0";
+        testObject.surName = "Олегович0";
 
-//        let win = <Window title="Дизайнер"><ObjectDesigner designedObject={testObject}> </ObjectDesigner> </Window>;
-//        let win = <ObjectDesigner designedObject={this.testObject}> </ObjectDesigner>;
-        let win = <div>пиздец </div>;
-        appInstance.desktop.openWindow(win, "Дизайнер");
+        let win = <ObjectDesigner designedObject={testObject} key="1"> </ObjectDesigner>;
+
+        let testObject2: testBuhtaObject2 = new testBuhtaObject2();
+        testObject2.firstName = "Игорь1";
+        testObject2.lastName = "Сидоренко1";
+        testObject2.surName = "Олегович1";
+        testObject2.sex="мужской"
+
+        let win2 = <ObjectDesigner designedObject={testObject2} key="2"> </ObjectDesigner>;
+
+        getPropertyEditors(testObject);
+        getPropertyEditors(testObject2);
+
+        appInstance.desktop.openWindow(<div>{win}{win2}</div>, "Дизайнер");
+
     };
 
 

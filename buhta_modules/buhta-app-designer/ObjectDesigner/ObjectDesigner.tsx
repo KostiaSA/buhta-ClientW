@@ -1,7 +1,9 @@
 import * as React from "react";
 import {ComponentProps, Component} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
-import {BasePropertyEditorProps} from "../PropertyEditors/BasePropertyEditor";
+import {BasePropertyEditorProps, PropertyEditorInfo} from "../PropertyEditors/BasePropertyEditor";
+import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
+import {Form} from "../../buhta-core/Components/Form/Form";
 
 
 export interface ObjectDesignerProps extends ComponentProps {
@@ -14,54 +16,31 @@ export class ObjectDesigner extends Component<ObjectDesignerProps,any> {
         this.props = props;
     }
 
-    renderProperyDesigners(): JSX.Element[] {
+    renderPropertyDesigners(): JSX.Element[] {
         let ret: JSX.Element[] = [];
 
-        // this.props.designedObject.propertyEditors.fo
-
-        for (let editedPropertyName in this.props.designedObject.propertyEditors) {
-            let propInfo = this.props.designedObject.propertyEditors[editedPropertyName];
-
+        getPropertyEditors(this.props.designedObject).forEach((propInfo: PropertyEditorInfo, index)=> {
             let editorProps: BasePropertyEditorProps = {
                 designedObject: this.props.designedObject,
-                propertyName: editedPropertyName,
-                index: 0
-            }
-
+                propertyEditorInfo: propInfo,
+                index: index,
+                key: index
+            };
 
             ret.push(React.createElement(propInfo.editorType, editorProps, null));
+        });
 
-            //propInfo.
-            // propertyName is what you want
-            // you can get the value like this: myObject[propertyName]
-        }
-//        return ret;
-        return [];
-
+        return ret;
     }
 
     render() {
         this.addClassName("object-designer");
 
-        // return (
-        //     <div {...this.getRenderProps()}>
-        //         <div className="tabs">
-        //             <ul>
-        //                 <li className="is-active"><a>Параметры</a></li>
-        //                 <li><a>Индекы</a></li>
-        //                 <li><a>Колонки</a></li>
-        //                 <li><a>SQL</a></li>
-        //             </ul>
-        //         </div>
-        //         Copy
-        //
-        //         {this.renderProperyDesigners()}
-        //     </div>
-        // );
         return (
-            <div >
-                Copy бля
-            </div>
+            <Form {...this.getRenderProps()}>
+                Object designer
+                {this.renderPropertyDesigners()}
+            </Form>
         );
     }
 

@@ -1,6 +1,7 @@
 import * as React from "react";
 import {ComponentProps, Component} from "../Component";
 import {InputDivider} from "../InputDivider/InputDivider";
+import {PropertyEditorInfo} from "../../../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 
 
 export interface FormControlProps extends ComponentProps {
@@ -40,29 +41,73 @@ export class Form extends Component<FormProps,any> {
 
         React.Children.toArray(this.props.children).forEach((control: any, index) => {
 
-            let controlProps = control.props as FormControlProps;
 
-            if (control.type===InputDivider)
-            {
-                console.log("InputDivider");
-            }
+                if (control.props && control.props.propertyEditorInfo) {
 
-            let node =
-                <tr className="control" key={index}>
-                    <td style={{textAlign: "right", verticalAlign: "middle"}}>
+                    let info = control.props.propertyEditorInfo as PropertyEditorInfo;
+
+                    // let controlProps = control.props as FormControlProps;
+
+
+                    let node =
+                        <tr className="control" key={index}>
+                            <td style={{textAlign: "right", verticalAlign: "middle"}}>
                         <span
-                            className="caption">{controlProps.caption ? controlProps.caption : control.props.bindPropName}</span>
-                    </td>
-                    <td style={{textAlign: "left", verticalAlign: "middle"}}>
-                        <p className="control">
-                            {control}
-                        </p>
-                    </td>
-                </tr>
+                            className="caption">{info.propertyCaption ? info.propertyCaption : info.propertyName}
+                        </span>
+                            </td>
+                            <td style={{textAlign: "left", verticalAlign: "middle"}}>
+                                <div className="control">
+                                    {control}
+                                </div>
+                            </td>
+                        </tr>
 
-            list.push(node);
+                    list.push(node);
+                }
+                else {
+                    if (control.props && (control.props.caption || control.props.bindPropName)) {
 
-        });
+                        let controlProps = control.props as FormControlProps;
+
+                        if (control.type === InputDivider) {
+                            console.log("InputDivider");
+                        }
+
+                        let node =
+                            <tr className="control" key={index}>
+                                <td style={{textAlign: "right", verticalAlign: "middle"}}>
+                        <span
+                            className="caption">{controlProps.caption ? controlProps.caption : control.props.bindPropName}
+                        </span>
+                                </td>
+                                <td style={{textAlign: "left", verticalAlign: "middle"}}>
+                                    <div className="control">
+                                        {control}
+                                    </div>
+                                </td>
+                            </tr>
+
+                        list.push(node);
+                    }
+                    else {
+
+                        let node =
+                            <tr className="control" key={index}>
+                                <td colspan="0" style={{textAlign: "left", verticalAlign: "middle"}}>
+                                    <div className="control">
+                                        {control}
+                                    </div>
+                                </td>
+                            </tr>
+
+                        list.push(node);
+
+                    }
+
+                }
+            }
+        );
 
         return list;
     }

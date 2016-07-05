@@ -3,7 +3,13 @@ import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringProperty
 
 export class testBuhtaObject1 extends DesignedObject{
 
-    @StringEditor("Главная","Основная","имя объекта")
-    name:string;
+    @StringEditor("Фамилия","Главная","Основная","Имя")
+    firstName:string;
+
+    @StringEditor("Имя","Главная","Основная","Фамилия")
+    lastName:string;
+
+    @StringEditor("Отчество","Главная","Основная","Отчество")
+    surName:string;
 }
 

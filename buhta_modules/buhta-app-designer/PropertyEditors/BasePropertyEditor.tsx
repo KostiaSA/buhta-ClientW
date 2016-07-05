@@ -3,17 +3,19 @@ import {Component, ComponentProps} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
 
 export interface PropertyEditorInfo {
+    propertyCaption: string;
     propertyName: string;
     propertyPage: string;
     propertyGroup: string;
     propertyDescription: string;
+    objectType: typeof DesignedObject;
     editorType: typeof BasePropertyEditor;
     propertyType: typeof Object | typeof String;
 }
 
 export interface BasePropertyEditorProps extends ComponentProps {
     designedObject: DesignedObject;
-    propertyName: string;
+    propertyEditorInfo: PropertyEditorInfo;
     index: number;
 }
 
