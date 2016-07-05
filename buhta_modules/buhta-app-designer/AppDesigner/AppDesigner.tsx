@@ -81,7 +81,7 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
         testObject.lastName = "Сидоренко0";
         testObject.surName = "Олегович0";
 
-        let win = <ObjectDesigner designedObject={testObject} key="1"> </ObjectDesigner>;
+        let win = <ObjectDesigner onChange={()=>{ win2Instance.designedObject=null; win2Instance.forceUpdate(); console.log("test323-change")}} designedObject={testObject} key="1"> </ObjectDesigner>;
 
         let testObject2: testBuhtaObject2 = new testBuhtaObject2();
         testObject2.firstName = "Игорь1";
@@ -89,7 +89,9 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
         testObject2.surName = "Олегович1";
         testObject2.sex="мужской"
 
-        let win2 = <ObjectDesigner designedObject={testObject2} key="2"> </ObjectDesigner>;
+        let win2Instance;
+
+        let win2 = <ObjectDesigner ref={ (e)=>{ win2Instance=e; console.log(e)} } designedObject={testObject} key="2"> </ObjectDesigner>;
 
         getPropertyEditors(testObject);
         getPropertyEditors(testObject2);

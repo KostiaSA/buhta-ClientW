@@ -11,6 +11,7 @@ export interface InputProps extends ComponentProps, FormControlProps {
     maxWidth?: number;
     onClick?: React.ReactEventHandler;
     placeHolder?: string;
+    onChange?: ()=>void;
 }
 
 
@@ -33,39 +34,40 @@ export class Input extends Component<InputProps,any> {
         }
     }
 
+    getText = (): string => {
+        if (this.props.bindObject && this.props.bindPropName) {
+            if (this.props.bindObject[this.props.bindPropName])
+                return this.props.bindObject[this.props.bindPropName].toString();
+            else
+                return "";
+        }
+        else
+            return "<unbinded>";
+    };
+
+    handleOnChange = (event: React.SyntheticEvent) => {
+        if (this.props.bindObject && this.props.bindPropName)
+            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
+        this.forceUpdate();
+        if (this.props.onChange)
+            this.props.onChange();
+
+    };
 
     renderText(): JSX.Element {
 
-        let getText = (): string => {
-            if (this.props.bindObject && this.props.bindPropName) {
-                if (this.props.bindObject[this.props.bindPropName])
-                    return this.props.bindObject[this.props.bindPropName].toString();
-                else
-                    return "";
-            }
-            else
-                return "<unbinded>";
-        };
-
-        let onChange = (event: React.SyntheticEvent) => {
-            if (this.props.bindObject && this.props.bindPropName)
-                this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
-            this.setState(this.state);
-
-        };
-
+        this.clearStyles();
         this.addClassName("input");
+        this.addStyles(this.props.style);
 
         return (
             <input
                 type="text"
-                className={this.renderClassName()}
-                style={this.props.style}
-                value={getText.bind(this)()}
-                onChange={onChange.bind(this)}>
-            </input>
+                value={this.getText()}
+                onChange={this.handleOnChange}
+                {...this.getRenderProps()}
+            />
         );
-        //Button from {this.props.compiler} and {this.props.framework}!clickCount={this.state.clickCount}
     }
 
 }

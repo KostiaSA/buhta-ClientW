@@ -27,12 +27,14 @@ export class StringPropertyEditor extends BasePropertyEditor {
          */
         //string editor for {this.props.propertyEditorInfo.propertyName} => { this.props.designedObject[this.props.propertyEditorInfo.propertyName]}
 
+
         return (
             <Input
                 caption={this.props.propertyEditorInfo.propertyCaption}
                 type={InputType.Text}
                 bindObject={this.props.designedObject}
                 bindPropName={this.props.propertyEditorInfo.propertyName}
+                onChange={this.props.onChange}
             />
         );
         // return (

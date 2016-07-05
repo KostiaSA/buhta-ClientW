@@ -8,6 +8,7 @@ import {Form} from "../../buhta-core/Components/Form/Form";
 
 export interface ObjectDesignerProps extends ComponentProps {
     designedObject: DesignedObject;
+    onChange?: ()=>void;
 }
 
 export class ObjectDesigner extends Component<ObjectDesignerProps,any> {
@@ -24,7 +25,8 @@ export class ObjectDesigner extends Component<ObjectDesignerProps,any> {
                 designedObject: this.props.designedObject,
                 propertyEditorInfo: propInfo,
                 index: index,
-                key: index
+                key: index,
+                onChange:this.props.onChange
             };
 
             ret.push(React.createElement(propInfo.editorType, editorProps, null));
@@ -35,6 +37,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps,any> {
 
     render() {
         this.addClassName("object-designer");
+        this.addProps({onChange: this.props.onChange});
 
         return (
             <Form {...this.getRenderProps()}>

@@ -17,6 +17,7 @@ export interface BasePropertyEditorProps extends ComponentProps {
     designedObject: DesignedObject;
     propertyEditorInfo: PropertyEditorInfo;
     index: number;
+    onChange?:()=>void;
 }
 
 
