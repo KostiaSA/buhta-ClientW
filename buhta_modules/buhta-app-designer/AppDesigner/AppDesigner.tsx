@@ -18,6 +18,7 @@ import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
 import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
 import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
+import * as _ from "lodash";
 
 
 export interface AppDesignerProps extends ComponentProps {
@@ -81,7 +82,8 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
         testObject.lastName = "Сидоренко0";
         testObject.surName = "Олегович0";
 
-        let win = <ObjectDesigner onChange={()=>{ win2Instance.designedObject=null; win2Instance.forceUpdate(); console.log("test323-change")}} designedObject={testObject} key="1"> </ObjectDesigner>;
+//        let win = <ObjectDesigner onChange={()=>{ win2Instance.designedObject=null; win2Instance.forceUpdate(); console.log("test323-change")}} designedObject={testObject} key="1"> </ObjectDesigner>;
+        let win = <ObjectDesigner onChange={()=>{ testObject=_.cloneDeep(testObject);  win2Instance.forceUpdate(); console.log("test999-change")}} designedObject={testObject} key="1"> </ObjectDesigner>;
 
         let testObject2: testBuhtaObject2 = new testBuhtaObject2();
         testObject2.firstName = "Игорь1";
