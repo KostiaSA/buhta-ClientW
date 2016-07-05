@@ -4,7 +4,6 @@ import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
-import {appInstance} from "../App";
 import shallowCompare = require("react-addons-shallow-compare");
 import deepEqual = require("deep-equal");
 
@@ -32,24 +31,24 @@ export class Window extends Component<WindowProps,any> {
     moveStart = (e: MoveStartEvent): void=> {
         if (this.props.onMoveStart)
             this.props.onMoveStart(e);
-    }
+    };
 
     resizeRightBottomCornerStart = (e: MoveStartEvent): void=> {
         if (this.props.onResizeRightBottomCornerStart)
             this.props.onResizeRightBottomCornerStart(e);
-    }
+    };
 
     handleOnClick = (e): void=> {
         if (this.props.onActivate)
             this.props.onActivate();
-    }
+    };
 
 
     handleCloseButtonClick = (e): void=> {
         if (this.props.onClose)
             this.props.onClose();
         e.stopPropagation();
-    }
+    };
 
     render() {
         this.clearStyles();
