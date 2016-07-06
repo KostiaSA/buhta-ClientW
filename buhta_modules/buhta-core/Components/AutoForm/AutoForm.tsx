@@ -8,7 +8,7 @@ import {Form} from "../Form/Form";
 
 export interface AutoFormControlProps {
     inputCaption?: string;
-    inputPage?: string;
+    inputTab?: string;
     inputGroup?: string;
     inputDescription?: string;
 }
@@ -16,6 +16,8 @@ export interface AutoFormControlProps {
 export interface AutoFormProps extends ComponentProps {
     inputs?: AutoFormControlProps[];
 }
+
+const emptyTabName = "закладка";
 
 export class AutoForm extends Component<AutoFormProps, any> {
 
@@ -29,13 +31,16 @@ export class AutoForm extends Component<AutoFormProps, any> {
     private getTabsList(): string[] {
         return _.uniq(
             this.getInputs().map<string>((input: AutoFormControlProps) => {
-                return input.inputPage || "";
+                return input.inputTab || "";
             }));
     }
 
     private getTabInputs(tab: string): JSX.Element[] {
         return React.Children.toArray(this.props.children)
-            .filter((c: any) => c.props && (c.props as AutoFormControlProps).inputPage === tab) as JSX.Element[];
+            .filter((c: any) => {
+                return c.props &&
+                    (((c.props as AutoFormControlProps).inputTab || "") === tab);
+            }) as JSX.Element[];
     }
 
     private renderTab(tab: string): JSX.Element {
@@ -44,6 +49,8 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
     private  renderTabs(): JSX.Element {
         let tabs = this.getTabsList();
+        console.log(tabs);
+        console.log(this.getInputs());
 
         if (tabs.length === 0) {
             return null;
@@ -56,7 +63,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
                 <Tabs>
                     { tabs.map<JSX.Element>((tab, index) => {
                         return (
-                            <Tab key={index} title={tab}>
+                            <Tab key={index} title={tab === "" ? emptyTabName : tab}>
                                 {this.renderTab(tab)}
                             </Tab>
                         );

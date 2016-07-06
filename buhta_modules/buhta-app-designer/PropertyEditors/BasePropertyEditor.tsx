@@ -1,27 +1,24 @@
 ﻿import * as React from "react";
 import {Component, ComponentProps} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
+import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
 
-export interface PropertyEditorInfo {
-    propertyCaption: string;
+export interface PropertyEditorInfo extends AutoFormControlProps {
     propertyName: string;
-    propertyPage: string;
-    propertyGroup: string;
-    propertyDescription: string;
     objectType: typeof DesignedObject;
     editorType: typeof BasePropertyEditor;
     propertyType: typeof Object | typeof String;
 }
 
-export interface BasePropertyEditorProps extends ComponentProps {
+export interface BasePropertyEditorProps extends ComponentProps, PropertyEditorInfo {
     designedObject: DesignedObject;
-    propertyEditorInfo: PropertyEditorInfo;
+    //propertyEditorInfo: PropertyEditorInfo;
     index: number;
-    onChange?:()=>void;
+    onChange?: () => void;
 }
 
 
-export class BasePropertyEditor extends Component<BasePropertyEditorProps, any> {
+export class BasePropertyEditor extends Component<BasePropertyEditorProps, any> implements AutoFormControlProps {
     constructor(props: BasePropertyEditorProps, context) {
         super(props, context);
         this.props = props;

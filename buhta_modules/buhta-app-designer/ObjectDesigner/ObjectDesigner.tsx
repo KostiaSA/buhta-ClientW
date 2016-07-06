@@ -4,6 +4,7 @@ import {DesignedObject} from "../DesignedObject";
 import {BasePropertyEditorProps, PropertyEditorInfo} from "../PropertyEditors/BasePropertyEditor";
 import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
 import {Form} from "../../buhta-core/Components/Form/Form";
+import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 
 
 export interface ObjectDesignerProps extends ComponentProps {
@@ -40,10 +41,10 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         this.addProps({onChange: this.props.onChange});
 
         return (
-            <Form {...this.getRenderProps()}>
+            <AutoForm {...this.getRenderProps()}>
                 Object designer
                 {this.renderPropertyDesigners()}
-            </Form>
+            </AutoForm>
         );
     }
 

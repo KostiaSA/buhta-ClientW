@@ -3,6 +3,7 @@ import {BasePropertyEditor} from "./BasePropertyEditor";
 import {DesignedObject} from "../DesignedObject";
 import {registerPropertyEditor} from "./registerPropertyEditor";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
+import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
 
 
 export class StringPropertyEditor extends BasePropertyEditor {
@@ -27,10 +28,12 @@ export class StringPropertyEditor extends BasePropertyEditor {
          */
         //string editor for {this.props.propertyEditorInfo.propertyName} => { this.props.designedObject[this.props.propertyEditorInfo.propertyName]}
 
-
         return (
             <Input
-                inputCaption={this.props.propertyEditorInfo.propertyCaption}
+                inputCaption={this.props.propertyEditorInfo.inputCaption}
+                inputTab={this.props.propertyEditorInfo.inputTab}
+                inputGroup={this.props.propertyEditorInfo.inputGroup}
+                inputDescription={this.props.propertyEditorInfo.inputDescription}
                 type={InputType.Text}
                 bindObject={this.props.designedObject}
                 bindPropName={this.props.propertyEditorInfo.propertyName}
@@ -59,18 +62,19 @@ export class StringPropertyEditor extends BasePropertyEditor {
 
 }
 
-export function StringEditor(caption?: string,
-                             page?: string,
-                             group?: string,
-                             description?: string): Function {
+export interface StringEditorParams extends AutoFormControlProps {
+
+}
+
+export function StringEditor(params: AutoFormControlProps): Function {
     return function (target: any, propertyName: string) {
         //  console.log({target, propertyName, constr:target.constructor});
         registerPropertyEditor({
-            propertyCaption: caption,
+            inputCaption: params.inputCaption,
+            inputTab: params.inputTab,
+            inputGroup: params.inputGroup,
+            inputDescription: params.inputDescription,
             propertyName: propertyName,
-            propertyPage: page,
-            propertyGroup: group,
-            propertyDescription: description,
             objectType: target.constructor,
             editorType: StringPropertyEditor,
             propertyType: String

@@ -142,10 +142,13 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     testAutoForm() {
         let win2 =
             <AutoForm>
-                <Input inputPage="параметры" inputCaption="eee" type={InputType.Text} bindObject={this} bindPropName="str"/>
-                <Input inputPage="параметры2" inputCaption="eee2" type={InputType.Text} bindObject={this} bindPropName="str"/>
-                <Input inputPage="параметры2" inputCaption="eee3" type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input  type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee1" type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee2" type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee3" type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputTab="параметры2" inputCaption="eee4" type={InputType.Text} bindObject={this} bindPropName="str"/>
             </AutoForm>;
+//        <Input inputTab="параметры" inputCaption="eee" type={InputType.Text} bindObject={this} bindPropName="str"/>
 
         let openParam: OpenWindowParams = {
             title: "auto form",

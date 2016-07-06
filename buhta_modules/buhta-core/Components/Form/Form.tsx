@@ -49,7 +49,7 @@ export class Form extends Component<FormProps, any> {
                         <tr className="control" key={index}>
                             <td style={{textAlign: "right", verticalAlign: "middle"}}>
                         <span
-                            className="caption">{info.propertyCaption ? info.propertyCaption : info.propertyName}
+                            className="caption">{info.inputCaption ? info.inputCaption : info.propertyName}
                         </span>
                             </td>
                             <td style={{textAlign: "left", verticalAlign: "middle"}}>
