@@ -5,7 +5,7 @@ import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import {Fixed} from "../../buhta-core/Components/LayoutPane/Fixed";
 import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 
-import {testBuhtaObject1} from "../../Test1/testBuhtaObject1";
+import {TestBuhtaObject1} from "../../Test1/testBuhtaObject1";
 import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
 import {Desktop, OpenWindowParams} from "../../buhta-core/Components/Desktop/Desktop";
 import {Draggable} from "../../buhta-core/Components/Draggable/Draggable";
@@ -20,6 +20,10 @@ import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
 import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
 import * as _ from "lodash";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
+import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
+import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
+import {executeSQL} from "../../buhta-core/SQL";
 
 
 export interface AppDesignerProps extends ComponentProps {
@@ -76,7 +80,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
 
     testOpenObjectDesigner() {
-        let testObject: testBuhtaObject1 = new testBuhtaObject1();
+        let testObject: TestBuhtaObject1 = new TestBuhtaObject1();
         testObject.firstName = "Игорь0";
         testObject.lastName = "Сидоренко0";
         testObject.surName = "Олегович0";
@@ -92,7 +96,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         testObject2.surName = "Олегович1";
         testObject2.sex = "мужской";
 
-        let win2Instance:any;
+        let win2Instance: any;
 
         let win2 = <ObjectDesigner ref={ (e:any) => { win2Instance = e; } } designedObject={testObject2}
                                    key="2">
@@ -165,6 +169,51 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     }
 
+    testGrid() {
+        executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+            .done((table) => {
+                let dataSource = table.rows.map((r) => {
+                    return {Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"]};
+                });
+
+                console.log("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер =>" + table.rows[0].getValue(1));
+
+                let win2 =
+                            <TreeGrid
+                                dataSource={ dataSource }
+                                treeMode={true}
+                                hierarchyFieldName="Номер"
+                                hierarchyDelimiters="."
+                                autoExpandNodesToLevel={0}
+                            >
+                                <TreeGridColumns>
+                                    <TreeGridColumn caption="Колонка2" fieldName="Номер" showHierarchyTree={false} width={100}>
+                                    </TreeGridColumn>
+                                    <TreeGridColumn caption="Колонка3" fieldName="Название" showHierarchyTree={true} width={200}>
+                                    </TreeGridColumn>
+                                    <TreeGridColumn caption="Колонка1" fieldName="Ключ" width={80}>
+                                    </TreeGridColumn>
+                                </TreeGridColumns>
+                            </TreeGrid>;
+
+                let openParam: OpenWindowParams = {
+                    title: "auto form",
+                    top: 10,
+                    left: 10
+                };
+
+                appInstance.desktop.openWindow(win2, openParam);
+
+
+            })
+            .fail((err) => {
+                alert(err.message);
+            });
+
+
+
+    }
+
     render() {
         this.addClassName("app-designer");
 
@@ -183,7 +232,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { this.testImmutable(); }}>testImmutable</button>
                                 <br/>
-                                <button onClick={() => { this.testAutoForm(); }}>test AUTOFORM</button>
+                                <button onClick={() => { this.testAutoForm(); }}>test autoform</button>
+                                <br/>
+                                <button onClick={() => { this.testGrid(); }}>test GRID</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

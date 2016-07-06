@@ -1,7 +1,7 @@
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
-import {testBuhtaObject1} from "./testBuhtaObject1";
+import {TestBuhtaObject1} from "./testBuhtaObject1";
 
-export class testBuhtaObject2 extends testBuhtaObject1 {
+export class testBuhtaObject2 extends TestBuhtaObject1 {
     constructor() {
         super();
     }

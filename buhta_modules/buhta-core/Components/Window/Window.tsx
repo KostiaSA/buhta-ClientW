@@ -117,7 +117,7 @@ export class Window extends Component<WindowProps, any> {
                             </Fixed>
                         </Layout>
                     </Fixed>
-                    <Flex style={{ padding:3}}>
+                    <Flex style={{ padding:3, overflow: "auto", border:"solid 2px blue"}}>
                         {this.props.children}
                     </Flex>
                     <Movable

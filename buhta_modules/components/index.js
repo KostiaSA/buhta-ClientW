@@ -12,6 +12,6 @@ var testBuhtaObject1_1 = require("../Test1/testBuhtaObject1");
 //     document.body
 // );
 ReactDOM.render(React.createElement(AppDesigner_1.AppDesigner, null), document.body);
-var xxx = new testBuhtaObject1_1.testBuhtaObject1();
-var xxx1 = new testBuhtaObject1_1.testBuhtaObject1();
+var xxx = new testBuhtaObject1_1.TestBuhtaObject1();
+var xxx1 = new testBuhtaObject1_1.TestBuhtaObject1();
 //# sourceMappingURL=index.js.map

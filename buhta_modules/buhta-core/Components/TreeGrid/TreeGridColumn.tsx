@@ -1,10 +1,9 @@
 ﻿import * as React from "react";
-import * as ReactDOM from "react-dom";
+import {ComponentProps, Component} from "../Component";
+//import * as ReactDOM from "react-dom";
 
-//import {XComponent, XComponentProps, XComponentState} from "./XComponent";
-import * as X from "./X";
 
-export interface XTreeGridColumnProps extends X.XComponentProps {
+export interface TreeGridColumnProps extends ComponentProps {
     caption?: string;
     width?: number;
     fieldName?: string;
@@ -12,14 +11,9 @@ export interface XTreeGridColumnProps extends X.XComponentProps {
     showHierarchyPadding?: boolean;
 }
 
-export interface XTreeGridColumnState extends X.XComponentState {
-    //disabled?: boolean | booleanFunction;
-}
+export class TreeGridColumn extends Component<TreeGridColumnProps, any> {
 
-
-export class XTreeGridColumn extends X.XComponent<XTreeGridColumnProps, XTreeGridColumnState> {
-
-    constructor(props: XTreeGridColumnProps, context: any) {
+    constructor(props: TreeGridColumnProps, context: any) {
         super(props, context);
 
         //this.state.disabled = false;

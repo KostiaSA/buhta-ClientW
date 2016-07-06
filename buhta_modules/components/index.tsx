@@ -4,7 +4,7 @@ import * as ReactDOM from "react-dom";
 import { Hello } from "./HelloProps";
 import {App} from "../buhta-core/Components/App";
 import {AppDesigner} from "../buhta-app-designer/AppDesigner/AppDesigner";
-import {testBuhtaObject1} from "../Test1/testBuhtaObject1";
+import {TestBuhtaObject1} from "../Test1/testBuhtaObject1";
 
 // ReactDOM.render(
 //     <Hello compiler="TypeScript" framework="React" />,
@@ -22,5 +22,5 @@ ReactDOM.render(
 );
 
 
-let xxx=new testBuhtaObject1();
-let xxx1=new testBuhtaObject1();
+let xxx=new TestBuhtaObject1();
+let xxx1=new TestBuhtaObject1();
