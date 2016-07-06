@@ -92,7 +92,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         let testObject2: testBuhtaObject2 = new testBuhtaObject2();
         testObject2.firstName = "Игорь1";
-        testObject2.lastName = "Сидоренко1";
+        testObject2.lastName = "Сидоренко2";
         testObject2.surName = "Олегович1";
         testObject2.sex = "мужской";
 
@@ -119,26 +119,26 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
 
     testImmutable() {
-        //let fake=new Table([]);
-
-        const xxx = Immutable.Map<string, number>();
-
-        let obj = {
-            name: "Оганизация",
-            columns: {"Номер": {colName: "Номер", type: "string"}, "Название": {colName: "Название", type: "string"}}
-        };
-
-        let objI = Immutable.fromJS(obj);
-
-        //let m = Immutable.Map<string,number| Immutable.Map<number,string>>();
-        //let x = m.set("13yyt333332", 12);
-        //let y = m.set("xxx", Immutable.Map<number,string>());
-
-        //let y=m.update("xxx",Immutable.Map<number,string>());
-
-        console.log(objI.toString());
-        let x = objI.getIn(['columns', 'Номер', 'colName']);
-        console.log(x);
+        // //let fake=new Table([]);
+        //
+        // const xxx = Immutable.Map<string, number>();
+        //
+        // let obj = {
+        //     name: "Оганизация",
+        //     columns: {"Номер": {colName: "Номер", type: "string"}, "Название": {colName: "Название", type: "string"}}
+        // };
+        //
+        // let objI = Immutable.fromJS(obj);
+        //
+        // //let m = Immutable.Map<string,number| Immutable.Map<number,string>>();
+        // //let x = m.set("13yyt333332", 12);
+        // //let y = m.set("xxx", Immutable.Map<number,string>());
+        //
+        // //let y=m.update("xxx",Immutable.Map<number,string>());
+        //
+        // console.log(objI.toString());
+        // let x = objI.getIn(['columns', 'Номер', 'colName']);
+        // console.log(x);
     };
 
 
