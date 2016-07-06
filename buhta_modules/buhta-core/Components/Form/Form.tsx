@@ -3,6 +3,7 @@ import {ComponentProps, Component} from "../Component";
 import {InputDivider} from "../InputDivider/InputDivider";
 import {PropertyEditorInfo} from "../../../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
+import {InputProps} from "../Input/Input";
 
 
 export interface FormProps extends ComponentProps {
@@ -37,20 +38,21 @@ export class Form extends Component<FormProps, any> {
 
         React.Children.toArray(this.props.children).forEach((control: any, index) => {
 
+                let controlProps = control.props as InputProps;
 
-                if (control.props && control.props.propertyEditorInfo) {
+                if (controlProps && (controlProps.inputCaption || controlProps.bindPropName)) {
 
-                    let info = control.props.propertyEditorInfo as PropertyEditorInfo;
 
-                    // let controlProps = control.props as FormControlProps;
-
+                    if (control.type === InputDivider) {
+                        console.log("InputDivider");
+                    }
 
                     let node =
                         <tr className="control" key={index}>
                             <td style={{textAlign: "right", verticalAlign: "middle"}}>
-                        <span
-                            className="caption">{info.inputCaption ? info.inputCaption : info.propertyName}
-                        </span>
+                    <span
+                        className="caption">{controlProps.inputCaption ? controlProps.inputCaption : control.props.bindPropName}
+                    </span>
                             </td>
                             <td style={{textAlign: "left", verticalAlign: "middle"}}>
                                 <div className="control">
@@ -62,44 +64,17 @@ export class Form extends Component<FormProps, any> {
                     list.push(node);
                 }
                 else {
-                    if (control.props && (control.props.caption || control.props.bindPropName)) {
 
-                        let controlProps = control.props as AutoFormControlProps;
+                    let node =
+                        <tr className="control" key={index}>
+                            <td colSpan="10" style={{textAlign: "left", verticalAlign: "middle"}}>
+                                <div className="control">
+                                    {control}
+                                </div>
+                            </td>
+                        </tr>;
 
-                        if (control.type === InputDivider) {
-                            console.log("InputDivider");
-                        }
-
-                        let node =
-                            <tr className="control" key={index}>
-                                <td style={{textAlign: "right", verticalAlign: "middle"}}>
-                        <span
-                            className="caption">{controlProps.inputCaption ? controlProps.inputCaption : control.props.bindPropName}
-                        </span>
-                                </td>
-                                <td style={{textAlign: "left", verticalAlign: "middle"}}>
-                                    <div className="control">
-                                        {control}
-                                    </div>
-                                </td>
-                            </tr>;
-
-                        list.push(node);
-                    }
-                    else {
-
-                        let node =
-                            <tr className="control" key={index}>
-                                <td colSpan="10" style={{textAlign: "left", verticalAlign: "middle"}}>
-                                    <div className="control">
-                                        {control}
-                                    </div>
-                                </td>
-                            </tr>;
-
-                        list.push(node);
-
-                    }
+                    list.push(node);
 
                 }
             }

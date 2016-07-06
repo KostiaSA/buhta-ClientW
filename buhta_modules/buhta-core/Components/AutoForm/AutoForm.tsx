@@ -49,8 +49,8 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
     private  renderTabs(): JSX.Element {
         let tabs = this.getTabsList();
-        console.log(tabs);
-        console.log(this.getInputs());
+        //console.log(tabs);
+        //console.log(this.getInputs());
 
         if (tabs.length === 0) {
             return null;

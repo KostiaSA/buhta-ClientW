@@ -54,7 +54,7 @@ export function StringEditor(params: AutoFormControlProps): Function {
             editorType: StringPropertyEditor,
             propertyType: String
         });
-    }
+    };
 }
 
 

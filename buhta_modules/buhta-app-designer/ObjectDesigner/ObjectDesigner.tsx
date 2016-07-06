@@ -23,6 +23,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         let ret: JSX.Element[] = [];
 
         getPropertyEditors(this.props.designedObject).forEach((propInfo: PropertyEditorInfo, index) => {
+            //console.log(propInfo);
             let editorProps: BasePropertyEditorProps = {
                 designedObject: this.props.designedObject,
                 //propertyEditorInfo: propInfo,
@@ -38,6 +39,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
             };
 
             _.assign(editorProps, propInfo);
+            //console.log(editorProps);
 
             ret.push(React.createElement(propInfo.editorType, editorProps, null));
         });

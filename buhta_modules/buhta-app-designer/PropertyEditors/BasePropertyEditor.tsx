@@ -12,13 +12,12 @@ export interface PropertyEditorInfo extends AutoFormControlProps {
 
 export interface BasePropertyEditorProps extends ComponentProps, PropertyEditorInfo {
     designedObject: DesignedObject;
-    //propertyEditorInfo: PropertyEditorInfo;
     index: number;
     onChange?: () => void;
 }
 
 
-export class BasePropertyEditor extends Component<BasePropertyEditorProps, any> implements AutoFormControlProps {
+export class BasePropertyEditor extends Component<BasePropertyEditorProps, any> {
     constructor(props: BasePropertyEditorProps, context) {
         super(props, context);
         this.props = props;
