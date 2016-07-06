@@ -17,40 +17,48 @@ export class DesktopWindow {
     id: string;
     content: JSX.Element;
     title: string = ".";
-    top: number = 10;
-    left: number = 10;
-    width: number = 500;
-    height: number = 300;
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+    right: number;
+    bottom: number;
+    minHeight: number;
+    minWidth: number;
 
-    forceUpdate(){
+    forceUpdate() {
         this.desktopState.forceUpdate();
     }
 
 
-    handleMoveStart = (e: MoveStartEvent): void=> {
-        e.bindX(this, "left", ()=> {
+    handleMoveStart = (e: MoveStartEvent): void => {
+        e.bindX(this, "left", () => {
             this.forceUpdate();
         });
-        e.bindY(this, "top", ()=> {
+        e.bindY(this, "top", () => {
             this.forceUpdate();
         });
         this.desktopState.activateWindow(this.id);
     }
 
-    handleActivate = (): void=> {
+    handleActivate = (): void => {
         this.desktopState.activateWindow(this.id);
     }
 
-    handleClose = (): void=> {
+    handleClose = (): void => {
         this.desktopState.closeWindow(this.id);
     }
 
-    handleResizeRightBottomCornerStart = (e: MoveStartEvent): void=> {
+    handleResizeRightBottomCornerStart = (e: MoveStartEvent): void => {
         //let win = this.state.getWindowById(winId);
-        e.bindX(this, "width", ()=> {
+        e.bindX(this, "width", () => {
+            if (this.width < this.minWidth)
+                this.width = this.minWidth;
             this.forceUpdate();
         });
-        e.bindY(this, "height", ()=> {
+        e.bindY(this, "height", () => {
+            if (this.height < this.minHeight)
+                this.height = this.minHeight;
             this.forceUpdate();
         });
         this.desktopState.activateWindow(this.id);
@@ -99,7 +107,19 @@ export interface WindowInfo {
 
 }
 
-export class Desktop extends Component<DesktopProps,DesktopState> {
+export interface OpenWindowParams {
+    title?: string;
+    top?: number;
+    left?: number;
+    right?: number;
+    bottom?: number;
+    width?: number;
+    height?: number;
+    minHeight?: number;
+    minWidth?: number;
+}
+
+export class Desktop extends Component<DesktopProps, DesktopState> {
     constructor(props: DesktopProps, context) {
         super(props, context);
         this.props = props;
@@ -114,10 +134,61 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
 
 //    private windows: WindowInfo[] = [];
 
-    openWindow(win: JSX.Element, title: string = ".") {
+    openWindow(win: JSX.Element, openParams?: OpenWindowParams) {
+        if (!openParams)
+            openParams = {};
         let newWin = new DesktopWindow(this.state);
         newWin.content = win;
-        newWin.title = title;
+        newWin.title = openParams.title || ".";
+
+        newWin.left = openParams.left;
+        newWin.top = openParams.top;
+        newWin.height = openParams.height;
+        newWin.width = openParams.width;
+        newWin.right = openParams.right;
+        newWin.bottom = openParams.bottom;
+
+        if (!newWin.left) {
+            if (!newWin.right && !newWin.width) {
+                newWin.left = 50;
+                newWin.width = 500;
+            }
+            else if (newWin.right) {
+                newWin.width = 500;
+            }
+            else {
+                newWin.left = 50;
+            }
+        }
+        else {
+            if (!newWin.right && !newWin.width) {
+                newWin.width = 500;
+            }
+        }
+
+        if (!newWin.top) {
+            if (!newWin.bottom && !newWin.height) {
+                newWin.top = 50;
+                newWin.height = 400;
+            }
+            else if (newWin.bottom) {
+                newWin.height = 400;
+            }
+            else {
+                newWin.top = 50;
+            }
+        }
+        else {
+            if (!newWin.bottom && !newWin.height) {
+                newWin.height = 400;
+            }
+        }
+
+
+        newWin.minHeight = openParams.minHeight || 100;
+        newWin.minWidth = openParams.minWidth || 100;
+
+
         this.state.windows.push(newWin);
         this.forceUpdate();
     };
@@ -128,8 +199,8 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
         this.addStyles({position: "relative", overflow: "auto"});
 
         return (
-            <div ref={ (e)=>{ this.nativeElement = e} } {...this.getRenderProps()}>
-                {this.state.windows.map((w, index)=> {
+            <div ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
+                {this.state.windows.map((w, index) => {
                     return (
                         <Window
                             key={w.id}
@@ -138,6 +209,8 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
                             left={w.left}
                             width={w.width}
                             height={w.height}
+                            right={w.right}
+                            bottom={w.bottom}
                             onMoveStart={ w.handleMoveStart }
                             onResizeRightBottomCornerStart={ w.handleResizeRightBottomCornerStart }
                             onActivate={  w.handleActivate }
@@ -145,7 +218,7 @@ export class Desktop extends Component<DesktopProps,DesktopState> {
                         >
                             {w.content}
                         </Window>
-                    )
+                    );
                 })}
             </div>
         );

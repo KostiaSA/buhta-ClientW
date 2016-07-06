@@ -7,7 +7,7 @@ import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 
 import {testBuhtaObject1} from "../../Test1/testBuhtaObject1";
 import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
-import {Desktop} from "../../buhta-core/Components/Desktop/Desktop";
+import {Desktop, OpenWindowParams} from "../../buhta-core/Components/Desktop/Desktop";
 import {Draggable} from "../../buhta-core/Components/Draggable/Draggable";
 import {Movable, MoveEvent, MoveStartEvent} from "../../buhta-core/Components/Movable/Movable";
 import {App, appInstance} from "../../buhta-core/Components/App";
@@ -29,7 +29,7 @@ class AppDesignerState extends ComponentState {
     //text?: string;
 }
 
-export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
+export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     constructor(props: AppDesignerProps, context) {
         super(props, context);
         this.props = props;
@@ -42,7 +42,7 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
     // }
 
     moveStart(e: MoveStartEvent) {
-        e.bindX(this, "sideWidth", ()=> {
+        e.bindX(this, "sideWidth", () => {
             this.forceUpdate();
         });
     }
@@ -74,8 +74,6 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
     };
 
 
-
-
     testOpenObjectDesigner() {
         let testObject: testBuhtaObject1 = new testBuhtaObject1();
         testObject.firstName = "Игорь0";
@@ -83,22 +81,35 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
         testObject.surName = "Олегович0";
 
 //        let win = <ObjectDesigner onChange={()=>{ win2Instance.designedObject=null; win2Instance.forceUpdate(); console.log("test323-change")}} designedObject={testObject} key="1"> </ObjectDesigner>;
-        let win = <ObjectDesigner onChange={()=>{ testObject=_.cloneDeep(testObject);  win2Instance.forceUpdate(); console.log("test999-change")}} designedObject={testObject} key="1"> </ObjectDesigner>;
+        let win = <ObjectDesigner
+            onChange={()=>{ testObject=_.cloneDeep(testObject);  win2Instance.forceUpdate(); console.log("test999-change")}}
+            designedObject={testObject} key="1"> </ObjectDesigner>;
 
         let testObject2: testBuhtaObject2 = new testBuhtaObject2();
         testObject2.firstName = "Игорь1";
         testObject2.lastName = "Сидоренко1";
         testObject2.surName = "Олегович1";
-        testObject2.sex="мужской"
+        testObject2.sex = "мужской";
 
         let win2Instance;
 
-        let win2 = <ObjectDesigner ref={ (e)=>{ win2Instance=e; console.log(e)} } designedObject={testObject} key="2"> </ObjectDesigner>;
+        let win2 = <ObjectDesigner ref={ (e)=>{ win2Instance=e; console.log(e)} } designedObject={testObject2}
+                                   key="2"> </ObjectDesigner>;
 
         getPropertyEditors(testObject);
         getPropertyEditors(testObject2);
 
-        appInstance.desktop.openWindow(<div>{win}{win2}</div>, "Дизайнер");
+        let winwin = <div>{win}{win2}</div>;
+
+        let openParam: OpenWindowParams = {
+            title: "окно 1",
+            top: 100,
+            left: 200,
+            right: 100,
+            bottom: 200
+        };
+
+        appInstance.desktop.openWindow(winwin, openParam);
 
     };
 
@@ -138,11 +149,11 @@ export class AppDesigner extends Component<AppDesignerProps,AppDesignerState> {
                         <Layout type="row">
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
                                 Fixed Sidebar<br/>
-                                <button onClick={()=>{ this.testOpenWindow()}}> test open window</button>
+                                <button onClick={() => { this.testOpenWindow(); }}> test open window</button>
                                 <br/>
-                                <button onClick={()=>{ this.testOpenObjectDesigner()}}>open designer</button>
+                                <button onClick={() => { this.testOpenObjectDesigner(); }}>open designer</button>
                                 <br/>
-                                <button onClick={()=>{ this.testImmutable()}}>testImmutable</button>
+                                <button onClick={() => { this.testImmutable(); }}>testImmutable</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

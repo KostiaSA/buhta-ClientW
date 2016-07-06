@@ -94,7 +94,7 @@ export class Form extends Component<FormProps,any> {
 
                         let node =
                             <tr className="control" key={index}>
-                                <td colspan="0" style={{textAlign: "left", verticalAlign: "middle"}}>
+                                <td colSpan="10" style={{textAlign: "left", verticalAlign: "middle"}}>
                                     <div className="control">
                                         {control}
                                     </div>

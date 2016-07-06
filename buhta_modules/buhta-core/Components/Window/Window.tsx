@@ -14,37 +14,38 @@ export interface WindowProps extends ComponentProps {
     left?: number;
     width?: number;
     height?: number;
+    right?: number;
+    bottom?: number;
     onMoveStart?(e: MoveStartEvent): void;
     onResizeRightBottomCornerStart?(e: MoveStartEvent): void;
     onActivate?(): void;
     onClose?(): void;
 }
 
-export class Window extends Component<WindowProps,any> {
+export class Window extends Component<WindowProps, any> {
     constructor(props: WindowProps, context) {
         super(props, context);
         this.props = props;
     }
 
 
-
-    moveStart = (e: MoveStartEvent): void=> {
+    moveStart = (e: MoveStartEvent): void => {
         if (this.props.onMoveStart)
             this.props.onMoveStart(e);
     };
 
-    resizeRightBottomCornerStart = (e: MoveStartEvent): void=> {
+    resizeRightBottomCornerStart = (e: MoveStartEvent): void => {
         if (this.props.onResizeRightBottomCornerStart)
             this.props.onResizeRightBottomCornerStart(e);
     };
 
-    handleOnClick = (e): void=> {
+    handleOnClick = (e): void => {
         if (this.props.onActivate)
             this.props.onActivate();
     };
 
 
-    handleCloseButtonClick = (e): void=> {
+    handleCloseButtonClick = (e): void => {
         if (this.props.onClose)
             this.props.onClose();
         e.stopPropagation();
@@ -60,6 +61,8 @@ export class Window extends Component<WindowProps,any> {
             left: this.props.left,
             height: this.props.height,
             width: this.props.width,
+            right: this.props.right,
+            bottom: this.props.bottom,
             padding: 0,
             overflow: "hidden"
         });
@@ -70,11 +73,11 @@ export class Window extends Component<WindowProps,any> {
             height: "100%",
             paddingLeft: 2,
             paddingRight: 2,
-        }
+        };
 
         return (
             <div {...this.getRenderProps()} onClick={ this.handleOnClick }>
-                <Layout type="column" ref={ (e)=>{ this.nativeElement = e} }
+                <Layout type="column" ref={ (e) => { this.nativeElement = e; } }
 
                 >
                     <Fixed
