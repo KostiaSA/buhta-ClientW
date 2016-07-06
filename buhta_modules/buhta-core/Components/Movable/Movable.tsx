@@ -26,15 +26,15 @@ export interface MoveEndEvent {
 
 
 interface BindedObject {
-    obj: Object;
+    obj: any;
     propName: string
     startValue: number;
-    movedCallback?: ()=>void;
+    movedCallback?: () => void;
     lastValue: number;
 }
 
 export class Movable extends Component<MovableProps,any> {
-    constructor(props: any, context) {
+    constructor(props: any, context: any) {
         super(props, context);
         this.props = props;
     }
@@ -46,7 +46,7 @@ export class Movable extends Component<MovableProps,any> {
     private bindedX: BindedObject[] = [];
     private bindedY: BindedObject[] = [];
 
-    private bindX(obj: Object, propName: string, movedCallback?: ()=>void) {
+    private bindX(obj: any, propName: string, movedCallback?: () => void) {
         this.bindedX.push({
             obj: obj,
             propName: propName,
@@ -56,7 +56,7 @@ export class Movable extends Component<MovableProps,any> {
         });
     };
 
-    private bindY(obj: Object, propName: string, movedCallback?: ()=>void) {
+    private bindY(obj: any, propName: string, movedCallback?: () => void) {
         this.bindedY.push({
             obj: obj,
             propName: propName,
@@ -95,9 +95,9 @@ export class Movable extends Component<MovableProps,any> {
     }
 
     handleDragOver(e: DragEvent) {
-        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.effectAllowed = "move";
 
-        this.bindedX.forEach((bind)=> {
+        this.bindedX.forEach((bind) => {
             let newValue = bind.startValue + e.clientX - this.startClientX;
             if (newValue !== bind.lastValue) {
                 bind.obj[bind.propName] = newValue;
@@ -136,7 +136,7 @@ export class Movable extends Component<MovableProps,any> {
             <div {...this.getRenderProps()}
                 onDragStart={this.handleDragStart.bind(this)}
                 onDragEnd={this.handleDragEnd.bind(this)}
-                >
+            >
                 {this.props.children}
             </div>
         );

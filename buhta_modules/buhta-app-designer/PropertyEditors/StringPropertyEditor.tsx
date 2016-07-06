@@ -9,8 +9,8 @@ import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoFor
 export class StringPropertyEditor extends BasePropertyEditor {
 
     handleChange(event: React.SyntheticEvent) {
-        this.props.designedObject[this.props.propertyName] = (event.target as any).value;
-        console.log("change === " + this.props.propertyName + " " + this.props.designedObject[this.props.propertyName]);
+       // this.props.designedObject[this.props.propertyName] = (event.target as any).value;
+       // console.log("change === " + this.props.propertyName + " " + this.props.designedObject[this.props.propertyName]);
     }
 
     render(): JSX.Element {

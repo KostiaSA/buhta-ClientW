@@ -1,4 +1,3 @@
-
 import {ComponentPlugin} from "./Plugin";
 import {ComponentState} from "../Components/Component";
 
@@ -7,12 +6,12 @@ export interface VisiblePluginProps {
     defaultVisible?: boolean;
 }
 
-export interface VisiblePluginState extends ComponentState{
+export interface VisiblePluginState extends ComponentState {
     visible?: boolean;
 }
 
 
-class VisiblePluginClass extends ComponentPlugin<VisiblePluginProps,VisiblePluginState> {
+class VisiblePluginClass extends ComponentPlugin<VisiblePluginProps, VisiblePluginState> {
     // constructor(owner: any) {
     //     super(owner);
     // }
@@ -49,7 +48,7 @@ class VisiblePluginClass extends ComponentPlugin<VisiblePluginProps,VisiblePlugi
 
 }
 
-export function VisiblePlugin(target) {
+export function VisiblePlugin(target: any) {
     target.plugins.push(VisiblePluginClass);
     return target;
 }

@@ -10,49 +10,34 @@ export interface FormProps extends ComponentProps {
     title?: string;
 }
 
-// export interface TabInfo {
-//     //id: string;
-//     //winInstance: Window;
-//     //divWrapper: Element;
-//     title?: string;
-//     isActive: boolean;
-//     content: React.ReactNode;
-//
-// }
 
 export class Form extends Component<FormProps, any> {
-    constructor(props: FormProps, context) {
+    constructor(props: FormProps, context: any) {
         super(props, context);
         this.props = props;
     }
-
-    // protected willMount() {
-    //     super.willMount();
-    // }
-
-//    private Form: TabInfo[] = [];
 
 
     renderControls(): JSX.Element[] {
         let list: JSX.Element[] = [];
 
-        React.Children.toArray(this.props.children).forEach((control: any, index) => {
+        React.Children.toArray(this.props.children).forEach((control: any, index: number) => {
 
                 let controlProps = control.props as InputProps;
 
                 if (controlProps && (controlProps.inputCaption || controlProps.bindPropName)) {
 
 
-                    if (control.type === InputDivider) {
-                        console.log("InputDivider");
-                    }
+                    // if (control.type === InputDivider) {
+                    //     console.log("InputDivider");
+                    // }
 
                     let node =
                         <tr className="control" key={index}>
                             <td style={{textAlign: "right", verticalAlign: "middle"}}>
-                    <span
-                        className="caption">{controlProps.inputCaption ? controlProps.inputCaption : control.props.bindPropName}
-                    </span>
+                                <span
+                                    className="caption">{controlProps.inputCaption ? controlProps.inputCaption : controlProps.bindPropName}
+                                </span>
                             </td>
                             <td style={{textAlign: "left", verticalAlign: "middle"}}>
                                 <div className="control">

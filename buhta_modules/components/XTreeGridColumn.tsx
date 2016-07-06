@@ -19,7 +19,7 @@ export interface XTreeGridColumnProps extends X.XComponentProps {
 
     export class XTreeGridColumn extends X.XComponent<XTreeGridColumnProps, XTreeGridColumnState> {
 
-        constructor(props: XTreeGridColumnProps, context) {
+        constructor(props: XTreeGridColumnProps, context: any) {
             super(props, context);
 
             //this.state.disabled = false;

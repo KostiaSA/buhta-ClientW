@@ -22,7 +22,7 @@ class AppState extends ComponentState {
 }
 
 export class App extends Component<AppProps, ComponentState> {
-    constructor(props: AppProps, context) {
+    constructor(props: AppProps, context:any) {
         super(props, context);
         this.props = props;
         this.state = new AppState(this);

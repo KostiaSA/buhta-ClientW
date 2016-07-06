@@ -9,8 +9,8 @@ export interface InputDividerProps extends ComponentProps, AutoFormControlProps 
 }
 
 
-export class InputDivider extends Component<InputDividerProps,any> {
-    constructor(props: InputDividerProps, context) {
+export class InputDivider extends Component<InputDividerProps, any> {
+    constructor(props: InputDividerProps, context: any) {
         super(props, context);
         this.props = props;
     }

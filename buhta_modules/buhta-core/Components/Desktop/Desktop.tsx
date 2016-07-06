@@ -120,7 +120,7 @@ export interface OpenWindowParams {
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
-    constructor(props: DesktopProps, context) {
+    constructor(props: DesktopProps, context:any) {
         super(props, context);
         this.props = props;
         this.state = new DesktopState(this);

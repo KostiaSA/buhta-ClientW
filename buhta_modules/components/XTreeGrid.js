@@ -159,7 +159,7 @@ var XTreeGrid = (function (_super) {
         //            if (this.props.dataSource) {
         //                this.state.data = this.props.dataSource.map((row) => row);
         //            }
-        this.rows = window["xxx"].filter(function (row) { return row["Название"].indexOf("Phil") > -1; });
+        //this.rows = window["xxx"].filter((row) => row["Название"].indexOf("Phil") > -1);
     };
     XTreeGrid.prototype.didMount = function () {
         this.handleChangeFocused();

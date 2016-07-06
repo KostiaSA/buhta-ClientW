@@ -79,7 +79,7 @@ class InternalTreeNode {
 //export class XTreeGrid<P extends XTreeGridProps, S extends XTreeGridState> extends XComponent<P, S> {
 export class XTreeGrid extends X.XComponent<XTreeGridProps, XTreeGridState> {
 
-    constructor(props: XTreeGridProps, context) {
+    constructor(props: XTreeGridProps, context: any) {
         super(props, context);
         //this.state.columns=[];
     }
@@ -169,8 +169,8 @@ export class XTreeGrid extends X.XComponent<XTreeGridProps, XTreeGridState> {
         sorted.forEach((s, index) => {
 
             let splitted = s.hierarchyStr.split(this.props.hierarchyDelimiters);
-            let parentId;
-            let nodeId;
+            let parentId: any;
+            let nodeId: any;
             if (splitted.length === 1)
                 nodeId = s.hierarchyStr;
             else {
@@ -244,7 +244,7 @@ export class XTreeGrid extends X.XComponent<XTreeGridProps, XTreeGridState> {
 //            if (this.props.dataSource) {
 //                this.state.data = this.props.dataSource.map((row) => row);
 //            }
-        this.rows = window["xxx"].filter((row) => row["Название"].indexOf("Phil") > -1);
+        //this.rows = window["xxx"].filter((row) => row["Название"].indexOf("Phil") > -1);
 
     }
 
@@ -369,7 +369,7 @@ export class XTreeGrid extends X.XComponent<XTreeGridProps, XTreeGridState> {
         let strSpan = <span style={ strSpanStyle}>{str}</span>;
 
 
-        let collapseIconDiv;
+        let collapseIconDiv: JSX.Element;
 
         if (this.props.treeMode && col.props.showHierarchyTree) {
             if (node.children.length > 0) {

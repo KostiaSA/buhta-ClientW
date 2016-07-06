@@ -20,7 +20,7 @@ export interface TabInfo {
 }
 
 export class Tabs extends Component<TabsProps,any> {
-    constructor(props: TabsProps, context) {
+    constructor(props: TabsProps, context: any) {
         super(props, context);
         this.props = props;
     }
@@ -143,7 +143,7 @@ export class Tabs extends Component<TabsProps,any> {
         });
 
         return (
-            <div>
+            <div ref>
                 {list}
             </div>
         )
@@ -155,7 +155,7 @@ export class Tabs extends Component<TabsProps,any> {
         this.addStyles({position: "relative", overflow: "auto"});
 
         return (
-            <Layout type="column" ref={ (e)=>{ this.nativeElement = e} } {...this.getRenderProps()}>
+            <Layout type="column" ref={ (e: any) => { this.nativeElement = e; } } {...this.getRenderProps()}>
                 <Fixed>
                     {this.renderTabs()}
                 </Fixed>
@@ -174,7 +174,7 @@ export interface TabProps extends ComponentProps {
 
 
 export class Tab extends Component<TabProps,any> {
-    constructor(props: TabProps, context) {
+    constructor(props: TabProps, context: any) {
         super(props, context);
         this.props = props;
     }

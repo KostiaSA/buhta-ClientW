@@ -7,7 +7,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 var React = require("react");
 var Button_1 = require("../buhta-core/Components/Button");
 var SQL_1 = require("../buhta-core/SQL");
-var SplitPane_1 = require("../buhta-core/Components/SplitPane/SplitPane");
 var Hello = (function (_super) {
     __extends(Hello, _super);
     function Hello() {
@@ -33,7 +32,7 @@ var Hello = (function (_super) {
         this.forceUpdate();
     };
     Hello.prototype.render = function () {
-        return React.createElement("div", null, React.createElement("button", {onClick: this.clickHanler.bind(this)}, "Кнопка 1"), React.createElement(Button_1.Button, {visible: this.but2visible, onClick: function (e) { return alert("Ok1"); }}, "Кнопка 2"), React.createElement(SplitPane_1.default, {split: "vertical", minSize: 50, defaultSize: 100}, React.createElement("div", null, "3костяee333===w==444==33====333"), React.createElement("div", null)));
+        return React.createElement("div", null, React.createElement("button", {onClick: this.clickHanler.bind(this)}, "Кнопка 1"), React.createElement(Button_1.Button, {visible: this.but2visible, onClick: function (e) { return alert("Ok1"); }}, "Кнопка 2"), React.createElement("div", {split: "vertical", minSize: 50, defaultSize: 100}, React.createElement("div", null, "3костяee333===w==444==33====333"), React.createElement("div", null)));
         // return <div>
         //     <button onClick={ this.handleClick }>get sql</button>
         //     Hello 3++44=66332===22o3m {this.props.compiler} and {this.props.framework}!

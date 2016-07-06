@@ -2,14 +2,14 @@ import * as React from "react";
 import {ComponentProps, Component} from "../Component";
 
 const boxSource = {
-    beginDrag(props) {
+    beginDrag(props:any) {
         const { id, left, top } = props;
         return { id, left, top };
     }
 };
 
 export class Draggable extends Component<any,any> {
-    constructor(props: any, context) {
+    constructor(props: any, context:any) {
         super(props, context);
         this.props = props;
     }

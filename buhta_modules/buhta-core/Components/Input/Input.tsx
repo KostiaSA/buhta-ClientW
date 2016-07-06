@@ -6,7 +6,7 @@ export enum InputType {Text, Number, Date }
 
 export interface InputProps extends ComponentProps, AutoFormControlProps {
     type: InputType;
-    bindObject: Object;
+    bindObject: any;
     bindPropName: string;
     maxWidth?: number;
     onClick?: React.ReactEventHandler;
@@ -16,7 +16,7 @@ export interface InputProps extends ComponentProps, AutoFormControlProps {
 
 
 export class Input extends Component<InputProps, any> {
-    constructor(props: InputProps, context) {
+    constructor(props: InputProps, context: any) {
         super(props, context);
         this.props = props;
     }

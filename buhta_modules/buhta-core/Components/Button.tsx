@@ -10,7 +10,7 @@ export interface ButtonProps extends VisiblePluginProps, OnClickPluginProps {
 @VisiblePlugin
 @OnClickPlugin
 export class Button extends Component<ButtonProps,any> {
-    constructor(props: ButtonProps, context) {
+    constructor(props: ButtonProps, context:any) {
         super(props, context);
         this.props = props;
     }

@@ -23,7 +23,7 @@ export interface XComponentState {
 
 export class XComponent<P extends XComponentProps, S extends XComponentState> extends React.Component<P, S> {
 
-    constructor(props: P, context) {
+    constructor(props: P, context:any) {
         super(props, context);
         this.props = props;
 

@@ -14,7 +14,7 @@ export interface ObjectDesignerProps extends ComponentProps {
 }
 
 export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
-    constructor(props: ObjectDesignerProps, context) {
+    constructor(props: ObjectDesignerProps, context: any) {
         super(props, context);
         this.props = props;
     }
@@ -22,7 +22,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     renderPropertyDesigners(): JSX.Element[] {
         let ret: JSX.Element[] = [];
 
-        getPropertyEditors(this.props.designedObject).forEach((propInfo: PropertyEditorInfo, index) => {
+        getPropertyEditors(this.props.designedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
             //console.log(propInfo);
             let editorProps: BasePropertyEditorProps = {
                 designedObject: this.props.designedObject,

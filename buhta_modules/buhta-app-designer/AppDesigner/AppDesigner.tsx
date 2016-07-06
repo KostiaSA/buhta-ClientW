@@ -31,7 +31,7 @@ class AppDesignerState extends ComponentState {
 }
 
 export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
-    constructor(props: AppDesignerProps, context) {
+    constructor(props: AppDesignerProps, context: any) {
         super(props, context);
         this.props = props;
         this.state = new AppDesignerState(this);
@@ -92,20 +92,21 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         testObject2.surName = "Олегович1";
         testObject2.sex = "мужской";
 
-        let win2Instance;
+        let win2Instance:any;
 
-        let win2 = <ObjectDesigner ref={ (e) => { win2Instance = e; console.log(e)} } designedObject={testObject2}
-                                   key="2"> </ObjectDesigner>;
+        let win2 = <ObjectDesigner ref={ (e:any) => { win2Instance = e; } } designedObject={testObject2}
+                                   key="2">
+        </ObjectDesigner>;
 
-        getPropertyEditors(testObject);
-        getPropertyEditors(testObject2);
+        //getPropertyEditors(testObject);
+        //getPropertyEditors(testObject2);
 
         let winwin = <div>{win}{win2}</div>;
 
         let openParam: OpenWindowParams = {
             title: "окно 1",
-            top: 100,
-            left: 200
+            top: 50,
+            left: 50
         };
 
         appInstance.desktop.openWindow(winwin, openParam);
@@ -116,7 +117,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     testImmutable() {
         //let fake=new Table([]);
 
-        const xxx = Immutable.Map<string,number>();
+        const xxx = Immutable.Map<string, number>();
 
         let obj = {
             name: "Оганизация",
@@ -142,11 +143,15 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     testAutoForm() {
         let win2 =
             <AutoForm>
-                <Input  type={InputType.Text} bindObject={this} bindPropName="str"/>
-                <Input inputTab="параметры1" inputCaption="eee1" type={InputType.Text} bindObject={this} bindPropName="str"/>
-                <Input inputTab="параметры1" inputCaption="eee2" type={InputType.Text} bindObject={this} bindPropName="str"/>
-                <Input inputTab="параметры1" inputCaption="eee3" type={InputType.Text} bindObject={this} bindPropName="str"/>
-                <Input inputTab="параметры2" inputCaption="eee4" type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee1" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee2" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee3" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
+                <Input inputTab="параметры2" inputCaption="eee4" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
             </AutoForm>;
 //        <Input inputTab="параметры" inputCaption="eee" type={InputType.Text} bindObject={this} bindPropName="str"/>
 

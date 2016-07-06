@@ -29,9 +29,9 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
 
     static plugins: any[] = [];
 
-    private plugins: any[] = [];
+    plugins: any[] = [];
 
-    constructor(props: P, context /*stateClass?: Function*/) {
+    constructor(props: P, context:any /*stateClass?: Function*/) {
         super(props, context);
         this.props = props;
 

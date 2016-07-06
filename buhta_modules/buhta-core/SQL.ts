@@ -14,7 +14,7 @@ export function executeSQL(sql: string): JQueryPromise<DataTable> {
     //  socket.once('connect',() => {
     let queryId = "query-" + Math.random().toString(36).slice(2);
     socket.emit("executeSQL", {queryId, sql});
-    socket.once(queryId, (response) => {
+    socket.once(queryId, (response: any) => {
         if (response.error) {
             promise.reject(response.error);
         }
@@ -26,7 +26,7 @@ export function executeSQL(sql: string): JQueryPromise<DataTable> {
                 dataTable.columns.push(dataColumn);
             }
 
-            response.rows.forEach((row) => {
+            response.rows.forEach((row: any) => {
 
                 let dataRow = new DataRow(dataTable);
 

@@ -23,7 +23,7 @@ export interface WindowProps extends ComponentProps {
 }
 
 export class Window extends Component<WindowProps, any> {
-    constructor(props: WindowProps, context) {
+    constructor(props: WindowProps, context: any) {
         super(props, context);
         this.props = props;
     }
@@ -39,13 +39,13 @@ export class Window extends Component<WindowProps, any> {
             this.props.onResizeRightBottomCornerStart(e);
     };
 
-    handleOnClick = (e): void => {
+    handleOnClick = (e: React.SyntheticEvent): void => {
         if (this.props.onActivate)
             this.props.onActivate();
     };
 
 
-    handleCloseButtonClick = (e): void => {
+    handleCloseButtonClick = (e: React.SyntheticEvent): void => {
         if (this.props.onClose)
             this.props.onClose();
         e.stopPropagation();
@@ -77,7 +77,7 @@ export class Window extends Component<WindowProps, any> {
 
         return (
             <div {...this.getRenderProps()} onClick={ this.handleOnClick }>
-                <Layout type="column" ref={ (e) => { this.nativeElement = e; } }
+                <Layout type="column" ref={ (e: any) => { this.nativeElement = e; } }
 
                 >
                     <Fixed

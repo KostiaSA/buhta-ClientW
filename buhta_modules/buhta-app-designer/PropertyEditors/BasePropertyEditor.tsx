@@ -18,7 +18,7 @@ export interface BasePropertyEditorProps extends ComponentProps, PropertyEditorI
 
 
 export class BasePropertyEditor extends Component<BasePropertyEditorProps, any> {
-    constructor(props: BasePropertyEditorProps, context) {
+    constructor(props: BasePropertyEditorProps, context:any) {
         super(props, context);
         this.props = props;
     }
