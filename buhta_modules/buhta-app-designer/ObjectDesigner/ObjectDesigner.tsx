@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as _ from "lodash";
 import {ComponentProps, Component} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
 import {BasePropertyEditorProps, PropertyEditorInfo} from "../PropertyEditors/BasePropertyEditor";
@@ -24,11 +25,19 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         getPropertyEditors(this.props.designedObject).forEach((propInfo: PropertyEditorInfo, index) => {
             let editorProps: BasePropertyEditorProps = {
                 designedObject: this.props.designedObject,
-                propertyEditorInfo: propInfo,
+                //propertyEditorInfo: propInfo,
                 index: index,
                 key: index,
-                onChange: this.props.onChange
+                onChange: this.props.onChange,
+
+                // это из propInfo: PropertyEditorInfo, заполяется далее через _.assign
+                propertyName: null,
+                objectType: null,
+                editorType: null,
+                propertyType: null
             };
+
+            _.assign(editorProps, propInfo);
 
             ret.push(React.createElement(propInfo.editorType, editorProps, null));
         });
