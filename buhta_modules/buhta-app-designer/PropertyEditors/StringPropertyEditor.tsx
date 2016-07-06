@@ -30,7 +30,7 @@ export class StringPropertyEditor extends BasePropertyEditor {
 
         return (
             <Input
-                caption={this.props.propertyEditorInfo.propertyCaption}
+                inputCaption={this.props.propertyEditorInfo.propertyCaption}
                 type={InputType.Text}
                 bindObject={this.props.designedObject}
                 bindPropName={this.props.propertyEditorInfo.propertyName}

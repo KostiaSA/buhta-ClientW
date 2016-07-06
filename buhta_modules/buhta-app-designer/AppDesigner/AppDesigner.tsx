@@ -19,6 +19,7 @@ import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivide
 import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
 import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
 import * as _ from "lodash";
+import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 
 
 export interface AppDesignerProps extends ComponentProps {
@@ -52,25 +53,25 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testOpenWindow() {
 
-        let obj = {
-            Фамилия: "Савченков",
-            Имя: "Константин",
-            Отчество: "Владимирович"
-        };
-
-        let win =
-            <Tabs>
-                <Tab title="закладка 1">
-                    <Form>
-                        <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия"/>
-                        <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя"/>
-                        <InputDivider title="а теперь отчество"></InputDivider>
-                        <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество"/>
-                    </Form>
-                </Tab>
-                <Tab title="закладка 2"> 22222 </Tab>
-            </Tabs>
-        appInstance.desktop.openWindow(win);
+        // let obj = {
+        //     Фамилия: "Савченков",
+        //     Имя: "Константин",
+        //     Отчество: "Владимирович"
+        // };
+        //
+        // let win =
+        //     <Tabs>
+        //         <Tab title="закладка 1">
+        //             <Form>
+        //                 <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия"/>
+        //                 <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя"/>
+        //                 <InputDivider title="а теперь отчество"></InputDivider>
+        //                 <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество"/>
+        //             </Form>
+        //         </Tab>
+        //         <Tab title="закладка 2"> 22222 </Tab>
+        //     </Tabs>;
+        // appInstance.desktop.openWindow(win);
     };
 
 
@@ -93,7 +94,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         let win2Instance;
 
-        let win2 = <ObjectDesigner ref={ (e)=>{ win2Instance=e; console.log(e)} } designedObject={testObject2}
+        let win2 = <ObjectDesigner ref={ (e) => { win2Instance = e; console.log(e)} } designedObject={testObject2}
                                    key="2"> </ObjectDesigner>;
 
         getPropertyEditors(testObject);
@@ -104,9 +105,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         let openParam: OpenWindowParams = {
             title: "окно 1",
             top: 100,
-            left: 200,
-            right: 100,
-            bottom: 200
+            left: 200
         };
 
         appInstance.desktop.openWindow(winwin, openParam);
@@ -137,6 +136,27 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         console.log(x);
     };
 
+
+    str: string = "привет";
+
+    testAutoForm() {
+        let win2 =
+            <AutoForm>
+                <Input inputPage="параметры" inputCaption="eee" type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputPage="параметры2" inputCaption="eee2" type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputPage="параметры2" inputCaption="eee3" type={InputType.Text} bindObject={this} bindPropName="str"/>
+            </AutoForm>;
+
+        let openParam: OpenWindowParams = {
+            title: "auto form",
+            top: 10,
+            left: 10
+        };
+
+        appInstance.desktop.openWindow(win2, openParam);
+
+    }
+
     render() {
         this.addClassName("app-designer");
 
@@ -148,12 +168,14 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                     <Flex>
                         <Layout type="row">
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
-                                Fixed Sidebar<br/>
+                                Fixed Sidebar 123<br/>
                                 <button onClick={() => { this.testOpenWindow(); }}> test open window</button>
                                 <br/>
                                 <button onClick={() => { this.testOpenObjectDesigner(); }}>open designer</button>
                                 <br/>
                                 <button onClick={() => { this.testImmutable(); }}>testImmutable</button>
+                                <br/>
+                                <button onClick={() => { this.testAutoForm(); }}>test AUTOFORM</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

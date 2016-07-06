@@ -1,8 +1,9 @@
 import * as React from "react";
 import {ComponentProps, Component} from "../Component";
-import {FormControlProps} from "../Form/Form";
+import {AutoFormControlProps} from "../AutoForm/AutoForm";
 
-export interface InputDividerProps extends ComponentProps, FormControlProps {
+
+export interface InputDividerProps extends ComponentProps, AutoFormControlProps {
     title?: string;
     key?: number
 }

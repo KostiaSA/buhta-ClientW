@@ -1,21 +1,21 @@
 import * as React from "react";
 import {ComponentProps, Component} from "../Component";
-import {FormControlProps} from "../Form/Form";
+import {AutoFormControlProps} from "../AutoForm/AutoForm";
 
 export enum InputType {Text, Number, Date }
 
-export interface InputProps extends ComponentProps, FormControlProps {
+export interface InputProps extends ComponentProps, AutoFormControlProps {
     type: InputType;
     bindObject: Object;
     bindPropName: string;
     maxWidth?: number;
     onClick?: React.ReactEventHandler;
     placeHolder?: string;
-    onChange?: ()=>void;
+    onChange?: () => void;
 }
 
 
-export class Input extends Component<InputProps,any> {
+export class Input extends Component<InputProps, any> {
     constructor(props: InputProps, context) {
         super(props, context);
         this.props = props;

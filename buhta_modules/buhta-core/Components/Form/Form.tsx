@@ -2,11 +2,7 @@ import * as React from "react";
 import {ComponentProps, Component} from "../Component";
 import {InputDivider} from "../InputDivider/InputDivider";
 import {PropertyEditorInfo} from "../../../buhta-app-designer/PropertyEditors/BasePropertyEditor";
-
-
-export interface FormControlProps extends ComponentProps {
-    caption?: string;
-}
+import {AutoFormControlProps} from "../AutoForm/AutoForm";
 
 
 export interface FormProps extends ComponentProps {
@@ -23,7 +19,7 @@ export interface FormProps extends ComponentProps {
 //
 // }
 
-export class Form extends Component<FormProps,any> {
+export class Form extends Component<FormProps, any> {
     constructor(props: FormProps, context) {
         super(props, context);
         this.props = props;
@@ -61,14 +57,14 @@ export class Form extends Component<FormProps,any> {
                                     {control}
                                 </div>
                             </td>
-                        </tr>
+                        </tr>;
 
                     list.push(node);
                 }
                 else {
                     if (control.props && (control.props.caption || control.props.bindPropName)) {
 
-                        let controlProps = control.props as FormControlProps;
+                        let controlProps = control.props as AutoFormControlProps;
 
                         if (control.type === InputDivider) {
                             console.log("InputDivider");
@@ -78,7 +74,7 @@ export class Form extends Component<FormProps,any> {
                             <tr className="control" key={index}>
                                 <td style={{textAlign: "right", verticalAlign: "middle"}}>
                         <span
-                            className="caption">{controlProps.caption ? controlProps.caption : control.props.bindPropName}
+                            className="caption">{controlProps.inputCaption ? controlProps.inputCaption : control.props.bindPropName}
                         </span>
                                 </td>
                                 <td style={{textAlign: "left", verticalAlign: "middle"}}>
@@ -86,7 +82,7 @@ export class Form extends Component<FormProps,any> {
                                         {control}
                                     </div>
                                 </td>
-                            </tr>
+                            </tr>;
 
                         list.push(node);
                     }
@@ -99,7 +95,7 @@ export class Form extends Component<FormProps,any> {
                                         {control}
                                     </div>
                                 </td>
-                            </tr>
+                            </tr>;
 
                         list.push(node);
 
@@ -117,7 +113,7 @@ export class Form extends Component<FormProps,any> {
         this.addStyles({height: "100%", width: "inherit"});
 
         return (
-            <table ref={ (e)=>{ this.nativeElement = e} } {...this.getRenderProps()}>
+            <table ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
                 <tbody>
                 {this.renderControls()}
                 </tbody>
