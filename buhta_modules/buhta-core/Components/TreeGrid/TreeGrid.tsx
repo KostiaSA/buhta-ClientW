@@ -8,6 +8,7 @@ import {executeSQL} from "../../SQL";
 import {TreeGridColumns} from "./TreeGridColumns";
 import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
 import {Keycode} from "../../Keycode";
+import {Movable, MoveStartEvent} from "../Movable/Movable";
 
 
 export interface TreeGridProps extends ComponentProps<any> {
@@ -28,6 +29,9 @@ class InternalColumn {
     fieldName: string;
     footer: string;
     hidden: boolean;
+    headerWidthNativeElement: Element;
+    bodyWidthNativeElement: Element;
+    footerWidthNativeElement: Element;
 }
 
 class InternalRow {
@@ -71,6 +75,7 @@ class InternalTreeNode {
     }
 }
 
+const vertScrollBarWidth=20;
 
 export class TreeGrid extends Component<TreeGridProps, any> {
 
@@ -79,6 +84,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         //this.state.columns=[];
     }
 
+
     private columns: InternalColumn[];
     private pageLength: number;
     private rows: InternalRow[];
@@ -86,6 +92,16 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     private focusedRowIndex: number;
     private focusedCellIndex: number;
     private dataSource: any[];
+
+    headerFakeRow: any;
+    footerFakeRow: any;
+    headerWrapperElement: any;
+    bodyWrapperElement: any;
+    footerWrapperElement: any;
+
+    headerTableElement: Element;
+    bodyTableElement: Element;
+    footerTableElement: Element;
 
 
     private createColumns() {
@@ -480,13 +496,13 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     }
 
     private handleScroll(e: UIEvent) {
-        $(this.headerElement).css({top: this.bodyWrapperElement.scrollTop});
+        $(this.headerWrapperElement).css({top: this.bodyWrapperElement.scrollTop});
 
-        let pos = this.bodyWrapperElement.scrollTop + this.bodyWrapperElement.clientHeight - $(this.footerElement).outerHeight() - 0;
-        $(this.footerElement).css({top: pos});
+        let pos = this.bodyWrapperElement.scrollTop + this.bodyWrapperElement.clientHeight - $(this.footerWrapperElement).outerHeight() - 0;
+        $(this.footerWrapperElement).css({top: pos});
 
-        $(this.headerFakeRow).css({height: $(this.headerElement).outerHeight()});
-        $(this.footerFakeRow).css({height: $(this.footerElement).outerHeight()});
+        $(this.headerFakeRow).css({height: $(this.headerWrapperElement).outerHeight()});
+        $(this.footerFakeRow).css({height: $(this.footerWrapperElement).outerHeight()});
     }
 
 
@@ -538,9 +554,9 @@ export class TreeGrid extends Component<TreeGridProps, any> {
 
             // ушло за пределы видимости
             if (rowEl.position().top + rowEl.height() >
-                this.bodyWrapperElement.scrollTop + this.bodyWrapperElement.clientHeight - $(this.footerElement).outerHeight()) {
+                this.bodyWrapperElement.scrollTop + this.bodyWrapperElement.clientHeight - $(this.footerWrapperElement).outerHeight()) {
                 this.bodyWrapperElement.scrollTop = rowEl.position().top + rowEl.height() -
-                    this.bodyWrapperElement.clientHeight + $(this.footerElement).outerHeight();
+                    this.bodyWrapperElement.clientHeight + $(this.footerWrapperElement).outerHeight();
             }
 
         }
@@ -580,8 +596,8 @@ export class TreeGrid extends Component<TreeGridProps, any> {
             let rowEl = $(this.getFocusedRowElement());
 
             // ушло за пределы видимости
-            if (rowEl.position().top < this.bodyWrapperElement.scrollTop + $(this.headerElement).outerHeight()) {
-                this.bodyWrapperElement.scrollTop = rowEl.position().top - $(this.headerElement).outerHeight();
+            if (rowEl.position().top < this.bodyWrapperElement.scrollTop + $(this.headerWrapperElement).outerHeight()) {
+                this.bodyWrapperElement.scrollTop = rowEl.position().top - $(this.headerWrapperElement).outerHeight();
             }
         }
     }
@@ -606,6 +622,20 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         }
     }
 
+    columnResizeStart = (event: MoveStartEvent, col: InternalColumn): void => {
+        event.bindX(col, "width", () => {
+            $(col.headerWidthNativeElement).attr('width', col.width);
+            $(col.bodyWidthNativeElement).attr('width', col.width);
+            $(col.footerWidthNativeElement).attr('width', col.width);
+            let tableWidth=this.calcTotalColumnsWidth();
+            $(this.headerTableElement).css('width', tableWidth);
+            $(this.bodyTableElement).css('width', tableWidth);
+            $(this.footerTableElement).css('width', tableWidth);
+            $(this.bodyWrapperElement).css('max-width', tableWidth+25);
+
+        });
+        // this.handleOnClick(null);
+    };
 
     renderColumnHeaders(): JSX.Element {
 
@@ -613,20 +643,44 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         let colHeaders: JSX.Element[] = [];
 
         this.columns.forEach((col: InternalColumn, index: number) => {
-            colWidths.push(<col key={index} width={ col.width.toString() + "px" }/>);
+            colWidths.push(
+                <col
+                    key={index}
+                    width={ col.width.toString() + "px" }
+                    ref={ (e)=> {col.headerWidthNativeElement=e;} }
+                />);
 
             let tdStyle: any = {overflow: "hidden"};
 
-            colHeaders.push(<td key={index} style={tdStyle}>{col.caption}</td>);
+            colHeaders.push(
+                <td
+                    key={index}
+                    style={tdStyle}
+                >
+                    {col.caption}
+                    <Movable
+                        style={{position:"absolute", top:0, width:4, right:0, bottom:0, border:"solid 0px red", cursor:"col-resize"}}
+                        onMoveStart={ (event: MoveStartEvent)=>{ this.columnResizeStart(event, col); console.log("MoveStart")}}
+                    >
+                    </Movable>
+                    <Movable
+                        style={{position:"absolute", top:0, width:4, left:0, bottom:0, border:"solid 0px blue", cursor:"col-resize"}}
+                        onMoveStart={ ()=>{ console.log("MoveStart")}}
+                    >
+                    </Movable>
+
+                </td>);
         });
 
         return (
             <div
-                ref={ (e) => this.headerElement = e}
+                ref={ (e) => this.headerWrapperElement = e}
                 style={{ position:"absolute", border:"0px solid red" }}>
                 <table
                     className="tree-grid-header"
-                    style={{tableLayout: "fixed",borderCollapse: "collapse", width:this.calcTotalColumnsWidth()+25}}
+                    style={{tableLayout: "fixed",borderCollapse: "collapse", width:this.calcTotalColumnsWidth()}}
+                    ref={ (e) => this.headerTableElement = e}
+
                 >
                     <colgroup>
                         {colWidths}
@@ -648,7 +702,12 @@ export class TreeGrid extends Component<TreeGridProps, any> {
 
         let isFooterEmpty = true;
         this.columns.forEach((col: InternalColumn, index: number) => {
-            colWidths.push(<col key={index} width={ col.width.toString() + "px" }/>);
+            colWidths.push(
+                <col
+                    key={index}
+                    width={ col.width.toString() + "px" }
+                    ref={ (e)=> {col.footerWidthNativeElement=e;} }
+                />);
             if (col.footer)
                 isFooterEmpty = false;
             let tdStyle: any = {overflow: "hidden"};
@@ -659,12 +718,14 @@ export class TreeGrid extends Component<TreeGridProps, any> {
 
             return (
                 <div
-                    ref={ (e) => this.footerElement = e}
+                    ref={ (e) => this.footerWrapperElement = e}
                     style={{ position:"absolute", border:"0px solid blue"}}
                 >
                     <table
                         className="tree-grid-footer"
-                        style={{tableLayout: "fixed",borderCollapse: "collapse", width:this.calcTotalColumnsWidth()+25}}
+                        style={{tableLayout: "fixed",borderCollapse: "collapse", width:this.calcTotalColumnsWidth()}}
+                        ref={ (e) => this.footerTableElement = e}
+
                     >
                         <colgroup>
                             {colWidths}
@@ -686,7 +747,12 @@ export class TreeGrid extends Component<TreeGridProps, any> {
 
         let colWidths: JSX.Element[] = [];
         this.columns.forEach((col: InternalColumn, index: number) => {
-            colWidths.push(<col key={index} width={ col.width.toString() + "px" }/>);
+            colWidths.push(
+                <col
+                    key={index}
+                    width={ col.width.toString() + "px" }
+                    ref={ (e)=> {col.bodyWidthNativeElement=e;} }
+                />);
         });
 
         return (
@@ -694,8 +760,8 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                 className="tree-grid-body"
                 tabIndex={0}
                 onKeyDown={ (e) => {  this.handleBodyKeyDown(e); } }
-                style={{ tableLayout: "fixed", borderCollapse: "collapse", position: "relative", width:this.calcTotalColumnsWidth()+25}}
-
+                style={{ tableLayout: "fixed", borderCollapse: "collapse", position: "relative", width:this.calcTotalColumnsWidth()}}
+                ref={ (e) => this.bodyTableElement = e}
             >
                 <colgroup>
                     {colWidths}
@@ -713,12 +779,6 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         );
     }
 
-//bodyTopFakeHeigth: number = 1;
-    bodyWrapperElement: any;
-    headerFakeRow: any;
-    footerFakeRow: any;
-    headerElement: any;
-    footerElement: any;
 
     calcTotalColumnsWidth(): number {
         let ret = 0;
@@ -732,7 +792,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     protected shallowCompare(nextProps: TreeGridProps): boolean {
         console.log("shallow-tree-grid");
         //console.log("shallow-win -> isEqial = " + this.isPropsEqual(this.props, nextProps, ["children"]));
-        return !this.isPropsEqual(this.props, nextProps, ["children","dataSource"]);
+        return !this.isPropsEqual(this.props, nextProps, ["children", "dataSource"]);
     }
 
 
@@ -753,7 +813,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                     заголовок и т.д.
                 </div>
                 <div className="tree-grid-body-wrapper"
-                     style={{ position:"relative", overflow:"auto", flex: "0 1 auto", maxWidth:this.calcTotalColumnsWidth()+50}}
+                     style={{ position:"relative", overflow:"auto", flex: "0 1 auto", maxWidth:this.calcTotalColumnsWidth()+vertScrollBarWidth}}
                      onScroll={ this.handleScroll.bind(this)}
                      ref={ (e) => this.bodyWrapperElement = e}
                 >
