@@ -2,7 +2,7 @@
 import * as React from "react";
 import {Component, ComponentProps} from "../Component";
 
-export interface FixedProps extends ComponentProps {
+export interface FixedProps extends ComponentProps<any> {
     onClick?: React.MouseEventHandler;
 }
 

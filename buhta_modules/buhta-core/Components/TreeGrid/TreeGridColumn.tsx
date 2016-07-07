@@ -3,7 +3,7 @@ import {ComponentProps, Component} from "../Component";
 //import * as ReactDOM from "react-dom";
 
 
-export interface TreeGridColumnProps extends ComponentProps {
+export interface TreeGridColumnProps extends ComponentProps<any> {
     caption?: string;
     width?: number;
     fieldName?: string;

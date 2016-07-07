@@ -10,7 +10,7 @@ import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
 import {Keycode} from "../../Keycode";
 
 
-export interface TreeGridProps extends ComponentProps {
+export interface TreeGridProps extends ComponentProps<any> {
     dataSource?: any;
     rowHeight?: number;
     keyFieldName?: string;

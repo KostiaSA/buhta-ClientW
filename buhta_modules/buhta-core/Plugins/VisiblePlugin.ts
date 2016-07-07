@@ -6,7 +6,7 @@ export interface VisiblePluginProps {
     defaultVisible?: boolean;
 }
 
-export interface VisiblePluginState extends ComponentState {
+export interface VisiblePluginState extends ComponentState<VisiblePluginProps> {
     visible?: boolean;
 }
 

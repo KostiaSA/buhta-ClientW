@@ -3,7 +3,7 @@ import {Component, ComponentProps, ComponentState} from "./Component";
 import {Desktop} from "./Desktop/Desktop";
 import Element = JSX.Element;
 
-export interface AppProps extends ComponentProps {
+export interface AppProps extends ComponentProps<AppState> {
     title?: string;
 }
 
@@ -17,11 +17,11 @@ export class AppWindow {
     content: JSX.Element;
 }
 
-class AppState extends ComponentState {
+class AppState extends ComponentState<AppProps> {
     windows: AppWindow[] = [];  // последнее активно
 }
 
-export class App extends Component<AppProps, ComponentState> {
+export class App extends Component<AppProps, AppState> {
     constructor(props: AppProps, context:any) {
         super(props, context);
         this.props = props;

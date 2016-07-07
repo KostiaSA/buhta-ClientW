@@ -10,7 +10,7 @@ export interface PropertyEditorInfo extends AutoFormControlProps {
     propertyType: typeof Object | typeof String;
 }
 
-export interface BasePropertyEditorProps extends ComponentProps, PropertyEditorInfo {
+export interface BasePropertyEditorProps extends ComponentProps<any>, PropertyEditorInfo {
     designedObject: DesignedObject;
     index: number;
     onChange?: () => void;

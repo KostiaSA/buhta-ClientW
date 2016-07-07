@@ -1,32 +1,44 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import {ComponentProps, Component} from "../Component";
+import {ComponentProps, Component, ComponentState} from "../Component";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 
-export interface TabsProps extends ComponentProps {
-    text?: string;
+export interface TabsProps extends ComponentProps<TabsState> {
+    onChangeActiveTab?: (state: TabsState, activeTab: TabInfo) => void;
+
 }
 
-export interface TabInfo {
-    //id: string;
-    //winInstance: Window;
-    //divWrapper: Element;
-    title?: string;
+export class TabsState extends ComponentState<TabsProps> {
+    tabs: TabInfo[] = [];
+
+    setActiveTab(tabInfo: TabInfo) {
+        if (!tabInfo.isActive) {
+            this.tabs.forEach((tab)=>tab.isActive = false);
+            tabInfo.isActive = true;
+
+            if (this.component.props.onChangeActiveTab)
+                this.component.props.onChangeActiveTab(this, tabInfo);
+
+            this.forceUpdate();
+        }
+    }
+}
+
+export class TabInfo {
+    title: string;
     isActive: boolean;
     content: React.ReactNode;
-
 }
 
-export class Tabs extends Component<TabsProps,any> {
+export class Tabs extends Component<TabsProps, TabsState> {
     constructor(props: TabsProps, context: any) {
         super(props, context);
         this.props = props;
+        this.state = new TabsState(this);
     }
 
-    protected willMount() {
-        super.willMount();
+    private createInitTabsState() {
 
         let tabTags = this.getChildren(Tab);
 
@@ -40,12 +52,32 @@ export class Tabs extends Component<TabsProps,any> {
                 isActive: index === 0
             }
 
-            this.tabs.push(tabInfo);
+            this.state.tabs.push(tabInfo);
         });
 
     }
 
-    private tabs: TabInfo[] = [];
+    protected willMount() {
+        this.createInitTabsState();
+        super.willMount();
+
+        // let tabTags = this.getChildren(Tab);
+        //
+        // tabTags.forEach((tabTag, index) => {
+        //
+        //     let tabProps = tabTag.props as TabProps;
+        //
+        //     let tabInfo: TabInfo = {
+        //         title: tabProps.title,
+        //         content: tabProps.children,
+        //         isActive: index === 0
+        //     }
+        //
+        //     this.tabs.push(tabInfo);
+        // });
+
+    }
+
 
     // openWindow(win: JSX.Element): WindowInfo {
     //     let modal = document.createElement('div');
@@ -95,24 +127,16 @@ export class Tabs extends Component<TabsProps,any> {
     //     });
     // }
 
-    setActiveTab(tabInfo: TabInfo) {
-        if (!tabInfo.isActive) {
-            this.tabs.forEach((tab)=>tab.isActive = false);
-            tabInfo.isActive = true;
-            this.forceUpdate();
-        }
-    }
-
 
     renderTabs(): JSX.Element {
 
         let list: JSX.Element[] = [];
 
-        this.tabs.forEach((tabInfo: TabInfo, index: number)=> {
+        this.state.tabs.forEach((tabInfo: TabInfo, index: number)=> {
 
             let className = tabInfo.isActive ? "is-active" : null;
             let element =
-                <li className={className} key={index} onClick={ (e)=>{ this.setActiveTab(tabInfo)}}>
+                <li className={className} key={index} onClick={ (e)=>{ this.state.setActiveTab(tabInfo)}}>
                     <a>{tabInfo.title}</a>
                 </li>
             list.push(element);
@@ -132,7 +156,7 @@ export class Tabs extends Component<TabsProps,any> {
 
         let list: JSX.Element[] = [];
 
-        this.tabs.forEach((tabInfo: TabInfo, index: number)=> {
+        this.state.tabs.forEach((tabInfo: TabInfo, index: number)=> {
 
             let className = !tabInfo.isActive ? "is-hidden" : null;
             let element =
@@ -150,7 +174,6 @@ export class Tabs extends Component<TabsProps,any> {
     }
 
     render() {
-        //this.addClassName("Tabs");
         this.addStyles({height: "100%"});
         this.addStyles({position: "relative", overflow: "auto"});
 
@@ -168,7 +191,7 @@ export class Tabs extends Component<TabsProps,any> {
 
 }
 
-export interface TabProps extends ComponentProps {
+export interface TabProps extends ComponentProps<any> {
     title?: string;
 }
 

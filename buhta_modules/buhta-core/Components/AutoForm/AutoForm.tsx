@@ -13,7 +13,7 @@ export interface AutoFormControlProps {
     inputDescription?: string;
 }
 
-export interface AutoFormProps extends ComponentProps {
+export interface AutoFormProps extends ComponentProps<any> {
     inputs?: AutoFormControlProps[];
 }
 
@@ -60,7 +60,10 @@ export class AutoForm extends Component<AutoFormProps, any> {
         }
         else {
             return (
-                <Tabs>
+                <Tabs
+                    onWillMount={ (state)=> { console.log("onWillMount-auto-form-tabs")}}
+                    onChangeActiveTab={ (state, tab)=> { console.log("setActiveTab");console.log(tab);}}
+                >
                     { tabs.map<JSX.Element>((tab, index) => {
                         return (
                             <Tab key={index} title={tab === "" ? emptyTabName : tab}>

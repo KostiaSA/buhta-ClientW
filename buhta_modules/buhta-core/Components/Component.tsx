@@ -6,15 +6,18 @@ export interface XOnClickProps {
     onClick?: React.ReactEventHandler;
 }
 
-export interface ComponentProps extends React.ClassAttributes<Element> {
+
+export interface ComponentProps<S> extends React.ClassAttributes<Element> {
     style?: React.CSSProperties;
     className?: string;
     children?: React.ReactNode;
+
+    onWillMount?: (state: S) => void;
 }
 
 
-export class ComponentState {
-    constructor(public component: Component<any,any>) {
+export class ComponentState<P> {
+    constructor(public component: Component<P,any>) {
 
     }
 
@@ -27,7 +30,7 @@ export class ComponentState {
 }
 
 
-export class Component<P extends ComponentProps, S extends ComponentState> extends React.Component<P, S> {
+export class Component<P extends ComponentProps<S>, S extends ComponentState<P>> extends React.Component<P, S> {
 
     static plugins: any[] = [];
 
@@ -101,6 +104,8 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
 
     private componentWillMount = () => {
         this.willMount();
+        if (this.props.onWillMount)
+            this.props.onWillMount(this.state);
     };
 
 

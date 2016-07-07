@@ -2,7 +2,7 @@ import * as React from "react";
 import {ComponentProps, Component} from "../Component";
 import DragEventHandler = __React.DragEventHandler;
 
-export interface MovableProps extends ComponentProps {
+export interface MovableProps extends ComponentProps<any> {
     onMoveStart?: (event: MoveStartEvent)=>void;
     onMove?: (event: MoveEvent)=>void;
     onMoveEnd?: (event: MoveEndEvent)=>void;

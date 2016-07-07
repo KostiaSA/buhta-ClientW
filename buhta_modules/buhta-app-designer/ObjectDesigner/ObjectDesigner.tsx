@@ -8,7 +8,7 @@ import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 
 
-export interface ObjectDesignerProps extends ComponentProps {
+export interface ObjectDesignerProps extends ComponentProps<any> {
     designedObject: DesignedObject;
     onChange?: () => void;
 }

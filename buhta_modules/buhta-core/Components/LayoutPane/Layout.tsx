@@ -2,7 +2,7 @@ import * as React from "react";
 import {Component, ComponentProps} from "../Component";
 
 
-export interface LayoutProps extends ComponentProps {
+export interface LayoutProps extends ComponentProps<any> {
     onClick?: React.MouseEventHandler;
     type: "column" | "row";
 }

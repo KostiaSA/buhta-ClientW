@@ -1,7 +1,7 @@
 ﻿
 import {ComponentProps, Component} from "../Component";
 
-export interface TreeGridColumnGroupProps extends ComponentProps {
+export interface TreeGridColumnGroupProps extends ComponentProps<any> {
     caption?: string;
 }
 

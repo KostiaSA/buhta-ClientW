@@ -26,11 +26,11 @@ import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColu
 import {executeSQL} from "../../buhta-core/SQL";
 
 
-export interface AppDesignerProps extends ComponentProps {
+export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
     //text?: string;
 }
 
-class AppDesignerState extends ComponentState {
+class AppDesignerState extends ComponentState<AppDesignerProps> {
     //text?: string;
 }
 
@@ -170,7 +170,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testGrid() {
-        executeSQL("select TOP 500 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+        executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
             .done((table) => {
                 let dataSource = table.rows.map((r) => {
                     return {Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"]};

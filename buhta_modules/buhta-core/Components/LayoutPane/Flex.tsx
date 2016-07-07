@@ -2,7 +2,7 @@ import {Component, ComponentProps} from "../Component";
 import * as React from "react";
 
 
-export interface FlexProps extends ComponentProps {
+export interface FlexProps extends ComponentProps<any> {
     onClick?: React.MouseEventHandler;
 }
 

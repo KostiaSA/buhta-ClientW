@@ -3,7 +3,7 @@ import {ComponentProps, Component} from "../Component";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
 
 
-export interface InputDividerProps extends ComponentProps, AutoFormControlProps {
+export interface InputDividerProps extends ComponentProps<any>, AutoFormControlProps {
     title?: string;
     key?: number
 }

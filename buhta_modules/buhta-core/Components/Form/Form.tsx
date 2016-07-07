@@ -6,7 +6,7 @@ import {AutoFormControlProps} from "../AutoForm/AutoForm";
 import {InputProps} from "../Input/Input";
 
 
-export interface FormProps extends ComponentProps {
+export interface FormProps extends ComponentProps<any> {
     title?: string;
 }
 

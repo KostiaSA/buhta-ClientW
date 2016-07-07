@@ -4,7 +4,7 @@ import {AutoFormControlProps} from "../AutoForm/AutoForm";
 
 export enum InputType {Text, Number, Date }
 
-export interface InputProps extends ComponentProps, AutoFormControlProps {
+export interface InputProps extends ComponentProps<any>, AutoFormControlProps {
     type: InputType;
     bindObject: any;
     bindPropName: string;

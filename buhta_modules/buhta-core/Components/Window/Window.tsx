@@ -8,7 +8,7 @@ import shallowCompare = require("react-addons-shallow-compare");
 import deepEqual = require("deep-equal");
 
 
-export interface WindowProps extends ComponentProps {
+export interface WindowProps extends ComponentProps<any> {
     title?: string;
     top?: number;
     left?: number;
@@ -125,7 +125,7 @@ export class Window extends Component<WindowProps, any> {
                             </Fixed>
                         </Layout>
                     </Fixed>
-                    <Flex style={{ padding:3, overflow: "auto", border:"solid 2px blue"}}>
+                    <Flex style={{ padding:3, overflow: "auto"}}>
                         {this.props.children}
                     </Flex>
                     <Movable

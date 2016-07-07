@@ -1,6 +1,6 @@
 ﻿import {Component, ComponentProps} from "../Component";
 
-export interface TreeGridColumnsProps extends ComponentProps {
+export interface TreeGridColumnsProps extends ComponentProps<any> {
     //caption?: string;
 }
 

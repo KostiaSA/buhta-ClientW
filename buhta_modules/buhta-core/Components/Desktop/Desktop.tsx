@@ -5,7 +5,7 @@ import {appInstance} from "../App";
 import {Window} from "../Window/Window";
 import {MoveStartEvent} from "../Movable/Movable";
 
-export interface DesktopProps extends ComponentProps {
+export interface DesktopProps extends ComponentProps<any> {
 
 }
 
@@ -66,7 +66,7 @@ export class DesktopWindow {
 
 }
 
-class DesktopState extends ComponentState {
+class DesktopState extends ComponentState<DesktopProps> {
     windows: DesktopWindow[] = [];  // последнее активно
 
     getWindowById(id: string): DesktopWindow {
