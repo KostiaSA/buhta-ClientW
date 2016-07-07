@@ -77,6 +77,8 @@ export class AutoForm extends Component<AutoFormProps, any> {
     render() {
         this.addClassName("auto-form");
 
+        console.log("render-auto-form");
+
         return (
             <div {...this.getRenderProps()}>
                 {this.renderTabs()}

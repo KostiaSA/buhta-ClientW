@@ -201,6 +201,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         return (
             <div ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
                 {this.state.windows.map((w, index) => {
+                  //  console.log("render-desktop-win");
                     return (
                         <Window
                             key={w.id}

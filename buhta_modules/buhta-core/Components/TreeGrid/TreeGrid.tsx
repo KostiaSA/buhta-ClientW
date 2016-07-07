@@ -264,7 +264,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     protected didMount() {
         this.handleChangeFocused();
         this.handleScroll(null);
-        // this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
+        this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
     }
 
     protected willUnmount() {
@@ -328,6 +328,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         if (!this.rows)
             return ret;
 
+        console.log("render-rows: " + this.rows.length);
         this.rows.forEach((row, index) => {
             ret.push(this.renderRow(row, index));
         });
@@ -337,7 +338,6 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     }
 
     private renderRow(row: InternalRow, rowIndex: number): JSX.Element {
-        console.log("render-row:" + rowIndex);
         return (
             <tr
                 key={rowIndex}
@@ -729,9 +729,10 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         return ret;
     }
 
-    protected shallowCompare(nextProps: any): boolean {
-        console.log("shallow-1");
-        return super.shallowCompare(nextProps);
+    protected shallowCompare(nextProps: TreeGridProps): boolean {
+        console.log("shallow-tree-grid");
+        //console.log("shallow-win -> isEqial = " + this.isPropsEqual(this.props, nextProps, ["children"]));
+        return !this.isPropsEqual(this.props, nextProps, ["children","dataSource"]);
     }
 
 
@@ -767,8 +768,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                     футер и тд
                 </div >
             </div >
-        )
-            ;
+        );
     }
 }
 

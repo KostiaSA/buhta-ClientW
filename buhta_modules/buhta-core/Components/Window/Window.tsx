@@ -81,6 +81,8 @@ export class Window extends Component<WindowProps, any> {
             paddingRight: 2,
         };
 
+   //     console.log("render-win");
+
         return (
             <div {...this.getRenderProps()} onClick={ this.handleOnClick }>
                 <Layout type="column" ref={ (e: any) => { this.nativeElement = e; } }
