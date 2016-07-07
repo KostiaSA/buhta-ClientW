@@ -17,9 +17,11 @@ export class ComponentState {
     constructor(public component: Component<any,any>) {
 
     }
-    forceUpdate(){
+
+    forceUpdate() {
         this.component.forceUpdate();
     }
+
     // //clickCount: number;
     // style: React.CSSProperties;
 }
@@ -31,7 +33,7 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
 
     plugins: any[] = [];
 
-    constructor(props: P, context:any /*stateClass?: Function*/) {
+    constructor(props: P, context: any /*stateClass?: Function*/) {
         super(props, context);
         this.props = props;
 
@@ -112,8 +114,62 @@ export class Component<P extends ComponentProps, S extends ComponentState> exten
         });
     }
 
-    private shouldComponentUpdate(nextProps: P, nextState: S) {
-        return shallowCompare(this, nextProps, this.state);
+
+    isPropsEqual(obj1: any, obj2: any, excludeProps?: string[]): boolean {
+
+        //Loop through properties in object 1
+        for (let p in obj1) {
+
+            if (excludeProps && excludeProps.indexOf(p) >= 0) continue;
+
+            //Check property exists on both objects
+            if (obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)) return false;
+
+            if (obj1[p] !== obj2[p]) {
+                //console.log("1 not equal " + p);
+                return false;
+            }
+
+
+            // switch (typeof (obj1[p])) {
+            //     //Deep compare objects
+            //     case 'object':
+            //         if (!Object.compare(obj1[p], obj2[p])) return false;
+            //         break;
+            //     //Compare function code
+            //     case 'function':
+            //         if (typeof (obj2[p]) == 'undefined' || (p != 'compare' && obj1[p].toString() != obj2[p].toString())) return false;
+            //         break;
+            //     //Compare values
+            //     default:
+            //         if (obj1[p] !== obj2[p]) return false;
+            // }
+        }
+
+        //Check object 2 for any extra properties
+        for (let p in obj2) {
+            if (typeof (obj1[p]) === "undefined" && typeof (obj2[p]) !== "undefined") {
+                //console.log("2 not equal " + p);
+                //console.log(obj1);
+                //console.log(obj2);
+
+                return false;
+            }
+
+        }
+        return true;
+    };
+
+    protected shallowCompare(nextProps: P): boolean {
+        //console.log("shallow-0 " + this.constructor.toString().substring(0, 30));
+        //console.time("22");
+        let ret = shallowCompare(this, nextProps, this.state);
+        //console.timeEnd("22");
+        return ret;
+    }
+
+    private shouldComponentUpdate = (nextProps: P, nextState: S) => {
+        return this.shallowCompare(nextProps);
     }
 
 

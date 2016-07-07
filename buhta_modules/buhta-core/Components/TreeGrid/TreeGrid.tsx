@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
+import shallowCompare = require("react-addons-shallow-compare");
 
 //import {executeSQL} from "../buhta-core/SQL";
 import {ComponentProps, Component} from "../Component";
@@ -7,6 +8,7 @@ import {executeSQL} from "../../SQL";
 import {TreeGridColumns} from "./TreeGridColumns";
 import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
 import {Keycode} from "../../Keycode";
+
 
 export interface TreeGridProps extends ComponentProps {
     dataSource?: any;
@@ -246,7 +248,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     lastBodyWrapperHeight = 0;
     lastBodyWrapperWidth = 0;
 
-    handleBodyWrapperElementResize= () => {
+    handleBodyWrapperElementResize = () => {
         let newHeight = this.bodyWrapperElement.offsetHeight;
         if (newHeight !== this.lastBodyWrapperHeight) {
             this.lastBodyWrapperHeight = newHeight;
@@ -262,7 +264,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     protected didMount() {
         this.handleChangeFocused();
         this.handleScroll(null);
-        this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
+        // this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
     }
 
     protected willUnmount() {
@@ -335,6 +337,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     }
 
     private renderRow(row: InternalRow, rowIndex: number): JSX.Element {
+        console.log("render-row:" + rowIndex);
         return (
             <tr
                 key={rowIndex}
@@ -609,12 +612,12 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         let colWidths: JSX.Element[] = [];
         let colHeaders: JSX.Element[] = [];
 
-        this.columns.forEach((col) => {
-            colWidths.push(<col width={ col.width.toString() + "px" }/>);
+        this.columns.forEach((col: InternalColumn, index: number) => {
+            colWidths.push(<col key={index} width={ col.width.toString() + "px" }/>);
 
             let tdStyle: any = {overflow: "hidden"};
 
-            colHeaders.push(<td style={tdStyle}>{col.caption}</td>);
+            colHeaders.push(<td key={index} style={tdStyle}>{col.caption}</td>);
         });
 
         return (
@@ -644,12 +647,12 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         let colFooters: JSX.Element[] = [];
 
         let isFooterEmpty = true;
-        this.columns.forEach((col) => {
-            colWidths.push(<col width={ col.width.toString() + "px" }/>);
+        this.columns.forEach((col: InternalColumn, index: number) => {
+            colWidths.push(<col key={index} width={ col.width.toString() + "px" }/>);
             if (col.footer)
                 isFooterEmpty = false;
             let tdStyle: any = {overflow: "hidden"};
-            colFooters.push(<td style={tdStyle}>{col.footer}</td>);
+            colFooters.push(<td key={index} style={tdStyle}>{col.footer}</td>);
         });
 
         if (!isFooterEmpty)
@@ -682,8 +685,8 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     renderGridBody(): JSX.Element {
 
         let colWidths: JSX.Element[] = [];
-        this.columns.forEach((col) => {
-            colWidths.push(<col width={ col.width.toString() + "px" }/>);
+        this.columns.forEach((col: InternalColumn, index: number) => {
+            colWidths.push(<col key={index} width={ col.width.toString() + "px" }/>);
         });
 
         return (
@@ -726,9 +729,15 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         return ret;
     }
 
+    protected shallowCompare(nextProps: any): boolean {
+        console.log("shallow-1");
+        return super.shallowCompare(nextProps);
+    }
+
+
     render() {
         //this.addClassName("button");
-        console.log("2");
+        console.log("render-tree-grid");
 
         return (
             <div className="tree-grid"

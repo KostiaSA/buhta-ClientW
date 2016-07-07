@@ -51,6 +51,12 @@ export class Window extends Component<WindowProps, any> {
         e.stopPropagation();
     };
 
+
+    protected shallowCompare(nextProps: WindowProps): boolean {
+        //console.log("shallow-win -> isEqial = " + this.isPropsEqual(this.props, nextProps, ["children"]));
+        return !this.isPropsEqual(this.props, nextProps, ["children"]);
+    }
+
     render() {
         this.clearStyles();
 
