@@ -6,6 +6,7 @@ import {ComponentProps, Component} from "../Component";
 import {executeSQL} from "../../SQL";
 import {TreeGridColumns} from "./TreeGridColumns";
 import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
+import {Keycode} from "../../Keycode";
 
 export interface TreeGridProps extends ComponentProps {
     dataSource?: any;
@@ -241,24 +242,32 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     }
 
 
-    iframeResize(ev: Event) {
-        console.log("fr-resize");
+    bodyWrapperElementInterval: number;
+    lastBodyWrapperHeight = 0;
+    lastBodyWrapperWidth = 0;
+
+    handleBodyWrapperElementResize= () => {
+        let newHeight = this.bodyWrapperElement.offsetHeight;
+        if (newHeight !== this.lastBodyWrapperHeight) {
+            this.lastBodyWrapperHeight = newHeight;
+            this.handleScroll(null);
+        }
+        let newWidth = this.bodyWrapperElement.offsetWidth;
+        if (newWidth !== this.lastBodyWrapperWidth) {
+            this.lastBodyWrapperWidth = newWidth;
+            this.handleScroll(null);
+        }
     }
 
     protected didMount() {
         this.handleChangeFocused();
         this.handleScroll(null);
-
-        (this.iframeElement as Element).addEventListener("resize", this.iframeResize);
-
-        this.iframeElement.onresize = function(){
-            console.log('Размеры div #Test изменены.');
-        };
-
-        console.log(this.iframeElement.onresize);
-        console.log("fr-resize-init");
+        this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
     }
 
+    protected willUnmount() {
+        clearInterval(this.bodyWrapperElementInterval);
+    }
 
     protected willMount() {
         super.willMount();
@@ -299,9 +308,6 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     //         });
     //
     // }
-
-    protected willUnmount() {
-    }
 
 
     protected willReceiveProps(nextProps: TreeGridProps) {
@@ -579,22 +585,22 @@ export class TreeGrid extends Component<TreeGridProps, any> {
 
 
     handleBodyKeyDown(e: React.KeyboardEvent) {
-        // if (e.key === Keycode.Down) {
-        //     this.moveFocusedCellDown();
-        //     e.preventDefault();
-        // }
-        // else if (e.key === Keycode.Up) {
-        //     this.moveFocusedCellUp();
-        //     e.preventDefault();
-        // }
-        // else if (e.key === Keycode.Left) {
-        //     this.moveFocusedCellLeft();
-        //     e.preventDefault();
-        // }
-        // else if (e.key === Keycode.Right) {
-        //     this.moveFocusedCellRight();
-        //     e.preventDefault();
-        // }
+        if (e.key === Keycode.Down) {
+            this.moveFocusedCellDown();
+            e.preventDefault();
+        }
+        else if (e.key === Keycode.Up) {
+            this.moveFocusedCellUp();
+            e.preventDefault();
+        }
+        else if (e.key === Keycode.Left) {
+            this.moveFocusedCellLeft();
+            e.preventDefault();
+        }
+        else if (e.key === Keycode.Right) {
+            this.moveFocusedCellRight();
+            e.preventDefault();
+        }
     }
 
 
@@ -710,7 +716,6 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     footerFakeRow: any;
     headerElement: any;
     footerElement: any;
-    iframeElement: any;
 
     calcTotalColumnsWidth(): number {
         let ret = 0;
@@ -739,7 +744,6 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                 </div>
                 <div className="tree-grid-body-wrapper"
                      style={{ position:"relative", overflow:"auto", flex: "0 1 auto", maxWidth:this.calcTotalColumnsWidth()+50}}
-                     onWheel={ this.handleTableWheel.bind(this)}
                      onScroll={ this.handleScroll.bind(this)}
                      ref={ (e) => this.bodyWrapperElement = e}
                 >
@@ -749,15 +753,6 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                         {this.renderColumnFooters()}
                     </div>
 
-                    <iframe
-                        name="frame"
-                        width="100%"
-                        height="100%"
-                        style={{position:"absolute", top:0, left:0, zIndex:-1}}
-                        ref={ (e:any) => { this.iframeElement = e; } }
-                    >
-
-                    </iframe>
                 </div>
                 <div className="tree-grid-footer-wrapper" style={{ flex: "0 1 auto" }}>
                     футер и тд
