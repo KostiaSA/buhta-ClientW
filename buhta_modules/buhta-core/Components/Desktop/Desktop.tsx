@@ -2,100 +2,45 @@ import * as React from "react";
 import * as _ from "lodash";
 import {ComponentProps, Component, ComponentState} from "../Component";
 import {appInstance} from "../App";
-import {Window} from "../Window/Window";
+import {Window, WindowState} from "../Window/Window";
 import {MoveStartEvent} from "../Movable/Movable";
+
 
 export interface DesktopProps extends ComponentProps<any> {
 
 }
 
-export class DesktopWindow {
-    constructor(public desktopState: DesktopState) {
-        this.id = Math.random().toString(36).slice(2, 12);
-    }
 
-    id: string;
-    content: JSX.Element;
-    title: string = ".";
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-    right: number;
-    bottom: number;
-    minHeight: number;
-    minWidth: number;
-
-    forceUpdate() {
-        this.desktopState.forceUpdate();
-    }
-
-
-    handleMoveStart = (e: MoveStartEvent): void => {
-        e.bindX(this, "left", () => {
-            this.forceUpdate();
-        });
-        e.bindY(this, "top", () => {
-            this.forceUpdate();
-        });
-        this.desktopState.activateWindow(this.id);
-    }
-
-    handleActivate = (): void => {
-        this.desktopState.activateWindow(this.id);
-    }
-
-    handleClose = (): void => {
-        this.desktopState.closeWindow(this.id);
-    }
-
-    handleResizeRightBottomCornerStart = (e: MoveStartEvent): void => {
-        //let win = this.state.getWindowById(winId);
-        e.bindX(this, "width", () => {
-            if (this.width < this.minWidth)
-                this.width = this.minWidth;
-            this.forceUpdate();
-        });
-        e.bindY(this, "height", () => {
-            if (this.height < this.minHeight)
-                this.height = this.minHeight;
-            this.forceUpdate();
-        });
-        this.desktopState.activateWindow(this.id);
-    }
-
-}
-
-class DesktopState extends ComponentState<DesktopProps> {
+export class DesktopState extends ComponentState<DesktopProps> {
     windows: DesktopWindow[] = [];  // последнее активно
 
-    getWindowById(id: string): DesktopWindow {
-        for (let w of this.windows) {
-            if (w.id === id)
-                return w;
-        }
-        console.warn("DesktopWindow id='" + id + "' not found");
-        return null;
-    }
-
-    getWindowIndexById(id: string): number {
-        return this.windows.indexOf(this.getWindowById(id));
-    }
-
-    activateWindow(id: string) {
-        let win = this.getWindowById(id);
-        if (win) {
-            _.pull(this.windows, win);
-            this.windows.push(win);
-            this.forceUpdate();
-        }
-    }
-
-    closeWindow(id: string) {
-        let win = this.getWindowById(id);
-        _.pull(this.windows, win);
-        this.forceUpdate();
-    }
+    // getWindowById(id: string): WindowState {
+    //     for (let w of this.windows) {
+    //         if (w.id === id)
+    //             return w;
+    //     }
+    //     console.warn("DesktopWindow id='" + id + "' not found");
+    //     return null;
+    // }
+    //
+    // getWindowIndexById(id: string): number {
+    //     return this.windows.indexOf(this.getWindowById(id));
+    // }
+    //
+    // activateWindow(id: string) {
+    //     let win = this.getWindowById(id);
+    //     if (win) {
+    //         _.pull(this.windows, win);
+    //         this.windows.push(win);
+    //         this.forceUpdate();
+    //     }
+    // }
+    //
+    // closeWindow(id: string) {
+    //     let win = this.getWindowById(id);
+    //     _.pull(this.windows, win);
+    //     this.forceUpdate();
+    // }
 
 
 }
@@ -119,6 +64,20 @@ export interface OpenWindowParams {
     minWidth?: number;
 }
 
+export class DesktopWindow implements OpenWindowParams {
+    title: string;
+    id: string;
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+    width: number;
+    height: number;
+    minHeight: number;
+    minWidth: number;
+    content: JSX.Element;
+}
+
 export class Desktop extends Component<DesktopProps, DesktopState> {
     constructor(props: DesktopProps, context:any) {
         super(props, context);
@@ -137,9 +96,10 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     openWindow(win: JSX.Element, openParams?: OpenWindowParams) {
         if (!openParams)
             openParams = {};
-        let newWin = new DesktopWindow(this.state);
+        let newWin = new DesktopWindow();
         newWin.content = win;
         newWin.title = openParams.title || ".";
+        newWin.id=Math.random().toString(36).slice(2, 12);
 
         newWin.left = openParams.left;
         newWin.top = openParams.top;
@@ -193,6 +153,39 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.forceUpdate();
     };
 
+    activateWindow(id: string) {
+        let win = this.getWindowById(id);
+        if (win) {
+            _.pull(this.state.windows, win);
+            this.state.windows.push(win);
+            this.forceUpdate();
+        }
+    }
+
+    getWindowById(id: string): DesktopWindow {
+        for (let w of this.state.windows) {
+            if (w.id === id)
+                return w;
+        }
+        console.warn("DesktopWindow id='" + id + "' not found");
+        return null;
+    }
+
+
+    handleActivate = (state:WindowState): void => {
+        this.activateWindow(state.id);
+    }
+
+    closeWindow(id: string) {
+        let win = this.getWindowById(id);
+        _.pull(this.state.windows, win);
+        this.forceUpdate();
+    }
+
+    handleClose = (state:WindowState): void => {
+        this.closeWindow(state.id);
+    }
+
     render() {
         this.addClassName("desktop");
         this.addStyles({height: "100%"});
@@ -201,10 +194,11 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         return (
             <div ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
                 {this.state.windows.map((w, index) => {
-                  //  console.log("render-desktop-win");
+                    console.log("render-desktop-win");
                     return (
                         <Window
                             key={w.id}
+                            id={w.id}
                             title={w.title}
                             top={w.top}
                             left={w.left}
@@ -212,10 +206,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             height={w.height}
                             right={w.right}
                             bottom={w.bottom}
-                            onMoveStart={ w.handleMoveStart }
-                            onResizeRightBottomCornerStart={ w.handleResizeRightBottomCornerStart }
-                            onActivate={  w.handleActivate }
-                            onClose={ w.handleClose }
+                            onActivate={  this.handleActivate }
+                            onClose={ this.handleClose }
                         >
                             {w.content}
                         </Window>
@@ -226,3 +218,6 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     }
 
 }
+
+//onMoveStart={ w.handleMoveStart }
+//onResizeRightBottomCornerStart={ w.handleResizeRightBottomCornerStart }

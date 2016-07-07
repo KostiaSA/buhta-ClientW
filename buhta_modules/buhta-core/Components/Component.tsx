@@ -165,17 +165,17 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         return true;
     };
 
-    protected shallowCompare(nextProps: P): boolean {
-        //console.log("shallow-0 " + this.constructor.toString().substring(0, 30));
-        //console.time("22");
-        let ret = shallowCompare(this, nextProps, this.state);
-        //console.timeEnd("22");
-        return ret;
-    }
-
-    private shouldComponentUpdate = (nextProps: P, nextState: S) => {
-        return this.shallowCompare(nextProps);
-    }
+    // protected shallowCompare(nextProps: P): boolean {
+    //     //console.log("shallow-0 " + this.constructor.toString().substring(0, 30));
+    //     //console.time("22");
+    //     let ret = shallowCompare(this, nextProps, this.state);
+    //     //console.timeEnd("22");
+    //     return ret;
+    // }
+    //
+    // private shouldComponentUpdate = (nextProps: P, nextState: S) => {
+    //     return this.shallowCompare(nextProps);
+    // }
 
 
     private componentDidUpdate = (prevProps: P, prevState: S, prevContext: any) => {

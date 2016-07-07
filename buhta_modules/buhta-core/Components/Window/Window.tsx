@@ -1,60 +1,116 @@
 import * as React from "react";
-import {ComponentProps, Component} from "../Component";
+import {ComponentProps, Component, ComponentState} from "../Component";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
 import shallowCompare = require("react-addons-shallow-compare");
 import deepEqual = require("deep-equal");
+import {OpenWindowParams} from "../Desktop/Desktop";
 
 
-export interface WindowProps extends ComponentProps<any> {
-    title?: string;
-    top?: number;
-    left?: number;
-    width?: number;
-    height?: number;
-    right?: number;
-    bottom?: number;
-    onMoveStart?(e: MoveStartEvent): void;
-    onResizeRightBottomCornerStart?(e: MoveStartEvent): void;
-    onActivate?(): void;
-    onClose?(): void;
+export interface WindowProps extends OpenWindowParams,ComponentProps<WindowState> {
+    id?: string;
+    onActivate?(state: WindowState): void;
+    onClose?(state: WindowState): void;
 }
 
-export class Window extends Component<WindowProps, any> {
+export class WindowState extends ComponentState<WindowProps> implements OpenWindowParams {
+    content: JSX.Element;
+    id: string;
+    title: string;
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+    right: number;
+    bottom: number;
+    minHeight: number;
+    minWidth: number;
+}
+
+export class Window extends Component<WindowProps, WindowState> {
     constructor(props: WindowProps, context: any) {
         super(props, context);
         this.props = props;
+        this.state = new WindowState(this);
+    }
+
+    private createInitState() {
+
+        this.state.id = this.props.id;
+        this.state.title = this.props.title;
+        this.state.top = this.props.top;
+        this.state.left = this.props.left;
+        this.state.right = this.props.right;
+        this.state.bottom = this.props.bottom;
+        this.state.width = this.props.width;
+        this.state.height = this.props.height;
+
+    }
+
+    protected willMount() {
+        this.createInitState();
+        super.willMount();
+
+        // let tabTags = this.getChildren(Tab);
+        //
+        // tabTags.forEach((tabTag, index) => {
+        //
+        //     let tabProps = tabTag.props as TabProps;
+        //
+        //     let tabInfo: TabInfo = {
+        //         title: tabProps.title,
+        //         content: tabProps.children,
+        //         isActive: index === 0
+        //     }
+        //
+        //     this.tabs.push(tabInfo);
+        // });
+
     }
 
 
     moveStart = (e: MoveStartEvent): void => {
-        if (this.props.onMoveStart)
-            this.props.onMoveStart(e);
+        e.bindX(this.state, "left", () => {
+            $(this.nativeElement).css('left', this.state.left);
+        });
+        e.bindY(this.state, "top", () => {
+            $(this.nativeElement).css('top', this.state.top);
+        });
+        this.handleOnClick(null);
     };
 
     resizeRightBottomCornerStart = (e: MoveStartEvent): void => {
-        if (this.props.onResizeRightBottomCornerStart)
-            this.props.onResizeRightBottomCornerStart(e);
+        e.bindX(this.state, "width", () => {
+            if (this.state.width < this.state.minWidth)
+                this.state.width = this.state.minWidth;
+            $(this.nativeElement).css('width', this.state.width);
+        });
+        e.bindY(this.state, "height", () => {
+            if (this.state.height < this.state.minHeight)
+                this.state.height = this.state.minHeight;
+            $(this.nativeElement).css('height', this.state.height);
+        });
+        this.handleOnClick(null);
     };
 
     handleOnClick = (e: React.SyntheticEvent): void => {
         if (this.props.onActivate)
-            this.props.onActivate();
+            this.props.onActivate(this.state);
     };
 
 
     handleCloseButtonClick = (e: React.SyntheticEvent): void => {
         if (this.props.onClose)
-            this.props.onClose();
+            this.props.onClose(this.state);
         e.stopPropagation();
     };
 
-
-    protected shallowCompare(nextProps: WindowProps): boolean {
-        //console.log("shallow-win -> isEqial = " + this.isPropsEqual(this.props, nextProps, ["children"]));
-        return !this.isPropsEqual(this.props, nextProps, ["children"]);
+    private shouldComponentUpdate = (nextProps: WindowProps, nextState: WindowState) => {
+        // всегда false, потому что менять props окна может только desktop,
+        // а таких случаях содержимое окна менять не надо
+        return false;
     }
 
     render() {
@@ -63,12 +119,12 @@ export class Window extends Component<WindowProps, any> {
         this.addClassName("window box");
         this.addStyles({position: "absolute"});
         this.addStyles({
-            top: this.props.top,
-            left: this.props.left,
-            height: this.props.height,
-            width: this.props.width,
-            right: this.props.right,
-            bottom: this.props.bottom,
+            top: this.state.top,
+            left: this.state.left,
+            height: this.state.height,
+            width: this.state.width,
+            right: this.state.right,
+            bottom: this.state.bottom,
             padding: 0,
             overflow: "hidden"
         });
@@ -81,11 +137,15 @@ export class Window extends Component<WindowProps, any> {
             paddingRight: 2,
         };
 
-   //     console.log("render-win");
+        console.log("render-win");
 
         return (
-            <div {...this.getRenderProps()} onClick={ this.handleOnClick }>
-                <Layout type="column" ref={ (e: any) => { this.nativeElement = e; } }
+            <div
+                {...this.getRenderProps()}
+                ref={ (e: any) => { this.nativeElement = e; }}
+                onClick={ this.handleOnClick }
+            >
+                <Layout type="column"
 
                 >
                     <Fixed
