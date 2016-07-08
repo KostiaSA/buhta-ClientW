@@ -24,6 +24,7 @@ import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {executeSQL} from "../../buhta-core/SQL";
+import {Button} from "../../buhta-core/Components/Button";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -179,22 +180,24 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                 console.log("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер =>" + table.rows[0].getValue(1));
 
                 let win2 =
-                            <TreeGrid
-                                dataSource={ dataSource }
-                                treeMode={true}
-                                hierarchyFieldName="Номер"
-                                hierarchyDelimiters="."
-                                autoExpandNodesToLevel={0}
-                            >
-                                <TreeGridColumns>
-                                    <TreeGridColumn caption="Колонка2" fieldName="Номер" showHierarchyTree={false} width={100}>
-                                    </TreeGridColumn>
-                                    <TreeGridColumn caption="Колонка3" fieldName="Название" showHierarchyTree={true} width={200}>
-                                    </TreeGridColumn>
-                                    <TreeGridColumn caption="Колонка1" fieldName="Ключ" width={80}>
-                                    </TreeGridColumn>
-                                </TreeGridColumns>
-                            </TreeGrid>;
+                    <TreeGrid
+                        dataSource={ dataSource }
+                        treeMode={true}
+                        hierarchyFieldName="Номер"
+                        hierarchyDelimiters="."
+                        autoExpandNodesToLevel={0}
+                        style={{margin:5}}
+                    >
+                        <TreeGridColumns>
+                            <TreeGridColumn caption="Колонка2" fieldName="Номер" showHierarchyTree={false} width={100}>
+                            </TreeGridColumn>
+                            <TreeGridColumn caption="Колонка3" fieldName="Название" showHierarchyTree={true}
+                                            width={200}>
+                            </TreeGridColumn>
+                            <TreeGridColumn caption="Колонка1" fieldName="Ключ" width={80}>
+                            </TreeGridColumn>
+                        </TreeGridColumns>
+                    </TreeGrid>;
 
                 let openParam: OpenWindowParams = {
                     title: "auto form",
@@ -211,6 +214,55 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             });
 
 
+    }
+
+    testFlex() {
+        let win2 =
+            <div
+                style={{ display:"flex", flexDirection:"column",  border:"2px dotted red", position:"absolute", top:0, left:0,right:0, bottom:0 }}>
+                <div style={{ border:"2px dotted blue" }}>
+                    <Button>Один</Button>
+                </div>
+                <div style={{ border:"2px dotted green",flex:"1 1 auto" }}>
+
+                    <div
+                        style={{ display:"flex", flexDirection:"column",  border:"1px solid red", position:"absolute", top:0, left:0,right:0, bottom:0 }}>
+                        <div style={{ border:"1px solid blue" }}>
+                            <Button>------Один</Button>
+                        </div>
+                        <div style={{ border:"1px solid green",flex:"1 1 auto" , overflow:"auto" } }>
+                            <div style={{ }}>
+                                <Button>-------Два</Button>
+                                <br/>
+                                <Button>--------Два1</Button>
+
+                            </div>
+
+                        </div>
+                        <div style={{ border:"1px solid maroon" }}>
+                            <Button>--------Три</Button>
+
+                        </div>
+
+                    </div>;
+
+
+
+                </div>
+                <div style={{ border:"2px dotted maroon" }}>
+                    <Button>Три</Button>
+
+                </div>
+
+            </div>;
+
+        let openParam: OpenWindowParams = {
+            title: "test FLEX",
+            top: 10,
+            left: 10
+        };
+
+        appInstance.desktop.openWindow(win2, openParam);
 
     }
 
@@ -220,10 +272,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         return (
             <App {...this.getRenderProps()}>
-                <Layout type="column">
+                <Layout sizeTo="parent" type="column">
                     <Fixed className="header1">Fixed Header</Fixed>
                     <Flex>
-                        <Layout type="row">
+                        <Layout type="row" sizeTo="parent">
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
                                 Fixed Sidebar 123<br/>
                                 <button onClick={() => { this.testOpenWindow(); }}> test open window</button>
@@ -235,6 +287,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <button onClick={() => { this.testAutoForm(); }}>test autoform</button>
                                 <br/>
                                 <button onClick={() => { this.testGrid(); }}>test GRID</button>
+                                <br/>
+                                <button onClick={() => { this.testFlex(); }}>test FLEX</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

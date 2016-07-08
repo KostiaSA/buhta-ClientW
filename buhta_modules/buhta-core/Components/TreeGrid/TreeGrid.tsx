@@ -842,9 +842,9 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         console.log("render-tree-grid");
 
         return (
-            <div className="tree-grid"
-                 style={{ display: "flex", flexDirection: "column", height: "100%"}}>
-                <div className="tree-grid-header-wrapper" style={{ /*flex: "0 0 content",*/ border:"1px solid blue" }}>
+            <Layout className="tree-grid" type="column" sizeTo="parent" {...this.getRenderProps()}
+            >
+                <Fixed className="tree-grid-header-wrapper">
                     <button onClick={ () => {  }}>
                         refresh 5001
                     </button>
@@ -858,11 +858,12 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                         collapse all
                     </button>
                     заголовок и т.д.
-                </div>
-                <div className="tree-grid-body-wrapper"
-                     style={{ position:"relative", overflow:"auto", flex: "0 1 auto", border:"1px solid green", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
+                </Fixed>
+                <div
+                    className="tree-grid-body-wrapper"
+                     style={{ position:"relative", overflow:"auto", flex:"1 1 100%", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
                      onScroll={ this.handleScroll.bind(this)}
-                     ref={ (e) => this.state.bodyWrapperElement = e}
+                     ref={ (e:any) => {this.state.bodyWrapperElement = e;}}
                 >
                     <div>
                         {this.renderGridBody()}
@@ -871,35 +872,35 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                     </div>
 
                 </div>
-                <div className="tree-grid-footer-wrapper" style={{ flex: "0 1 content", border:"1px solid blue" }}>
-                    <div>
-                        <Layout type="row" style={{border:"1px solid red"}}>
+                <Fixed className="tree-grid-footer-wrapper" >
+
+                        <Layout type="row" sizeTo="content">
                             <Fixed>
-                                <Button className="is-small">
+                                <Button className="is-smalln">
                                     Добавить
                                 </Button>
-                                <Button className="is-small">
+                                <Button className="is-smalln">
                                     Изменить
                                 </Button>
-                                <Button className="is-small">
+                                <Button className="is-smalln">
                                     Удалить
                                 </Button>
                             </Fixed>
                             <Flex>
                             </Flex>
                             <Fixed>
-                                <Button className="is-small">
+                                <Button className="is-smalln">
                                     Выбрать
                                 </Button>
-                                <Button className="is-small">
+                                <Button className="is-smalln">
                                     Отмена
                                 </Button>
 
                             </Fixed>
                         </Layout>
-                    </div>
-                </div >
-            </div >
+
+                </Fixed >
+            </Layout >
         );
     }
 }
