@@ -30,25 +30,25 @@ class InternalColumn {
     fieldName: string;
     footer: string;
     hidden: boolean;
-    headerWidthNativeElement: Element;
-    bodyWidthNativeElement: Element;
-    footerWidthNativeElement: Element;
+    headerWidthNativeElement: HTMLElement;
+    bodyWidthNativeElement: HTMLElement;
+    footerWidthNativeElement: HTMLElement;
 }
 
 class InternalRow {
-    element: Element;
+    element: HTMLElement;
     ///   sourceObject: any;
     sourceIndex: number;
-    cellElements: Element[] = [];
+    cellElements: HTMLElement[] = [];
     node: InternalTreeNode;
 
 }
 
 class InternalTreeNode {
-    element: Element;
+    element: HTMLElement;
     sourceObject: any;
     sourceIndex: number;
-    cellElements: Element[] = [];
+    cellElements: HTMLElement[] = [];
 
     // для treeMode;
     parent: InternalTreeNode;
@@ -74,6 +74,14 @@ class InternalTreeNode {
 
 
     }
+
+    iterateRecursive(callback: (node: InternalTreeNode)=>void) {
+        callback(this);
+        this.children.forEach((child: InternalTreeNode) => {
+            child.iterateRecursive(callback);
+        });
+
+    }
 }
 
 //const vertScrollBarWidth = 30;
@@ -94,21 +102,46 @@ export class TreeGrid extends Component<TreeGridProps, any> {
     private focusedCellIndex: number;
     private dataSource: any[];
 
-    headerFakeRow: any;
-    footerFakeRow: any;
-    headerWrapperElement: any;
-    bodyWrapperElement: any;
-    footerWrapperElement: any;
+    headerFakeRow: HTMLElement;
+    footerFakeRow: HTMLElement;
+    headerWrapperElement: HTMLElement;
+    bodyWrapperElement: HTMLElement;
+    footerWrapperElement: HTMLElement;
 
-    headerTableElement: Element;
-    bodyTableElement: Element;
-    footerTableElement: Element;
+    headerTableElement: HTMLElement;
+    bodyTableElement: HTMLElement;
+    footerTableElement: HTMLElement;
 
+
+    private iterateAllNodes(callback: (node: InternalTreeNode)=>void) {
+        this.nodes.forEach((node: InternalTreeNode)=> {
+            node.iterateRecursive(callback);
+        });
+    }
+
+    private expandAll() {
+        this.nodes.forEach((node: InternalTreeNode)=> {
+            node.iterateRecursive((nod: InternalTreeNode)=> {
+                nod.expanded = true;
+            });
+        });
+        this.createRows();
+        this.forceUpdate();
+    }
+
+    private collapseAll() {
+
+        this.iterateAllNodes((nod: InternalTreeNode)=> {
+            nod.expanded = false;
+        });
+
+        this.createRows();
+        this.forceUpdate();
+    }
 
     private createColumns() {
         this.columns = [];
 
-        console.log("1");
         let columnsTag = this.getChildren(TreeGridColumns);
 
         columnsTag.forEach((tag: JSX.Element) => {
@@ -445,10 +478,10 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                     </div>);
 
             }
-            ;
+
 
         }
-        ;
+
 
         return (
             <td
@@ -535,11 +568,11 @@ export class TreeGrid extends Component<TreeGridProps, any> {
 
     }
 
-    private getFocusedCellElement(): Element {
+    private getFocusedCellElement(): HTMLElement {
         return this.rows[this.focusedRowIndex].cellElements[this.focusedCellIndex];
     }
 
-    private getFocusedRowElement(): Element {
+    private getFocusedRowElement(): HTMLElement {
         return this.rows[this.focusedRowIndex].element;
     }
 
@@ -813,6 +846,12 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                     </button>
                     <button onClick={ () => { this.filterData(); this.forceUpdate(); console.log("forceUpdate"); }}>
                         filter
+                    </button>
+                    <button onClick={ () => { this.expandAll(); }}>
+                        expand all
+                    </button>
+                    <button onClick={ () => { this.collapseAll(); }}>
+                        collapse all
                     </button>
                     заголовок и т.д.
                 </div>
