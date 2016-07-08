@@ -6,19 +6,19 @@ export class ComponentPlugin<P,S extends ComponentState<P>> {
 
     }
 
-    protected didMount() {
+    didMount() {
     }
 
-    protected willMount() {
+    willMount() {
     }
 
-    protected willUnmount() {
+    willUnmount() {
     }
 
-    protected willReceiveProps(nextProps: P) {
+    willReceiveProps(nextProps: P) {
     }
 
-    protected didUpdate(prevProps: P, prevState: S, prevContext: any) {
+    didUpdate(prevProps: P, prevState: S, prevContext: any) {
     }
 
     get state(): S {

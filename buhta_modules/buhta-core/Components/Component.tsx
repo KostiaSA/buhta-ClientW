@@ -1,6 +1,7 @@
 ﻿import * as React from "react";
 import * as _ from "lodash";
 import shallowCompare = require("react-addons-shallow-compare");
+import {ComponentPlugin} from "../Plugins/Plugin";
 
 export interface XOnClickProps {
     onClick?: React.ReactEventHandler;
@@ -32,27 +33,18 @@ export class ComponentState<P> {
 
 export class Component<P extends ComponentProps<S>, S extends ComponentState<P>> extends React.Component<P, S> {
 
-    static plugins: any[] = [];
-
-    plugins: any[] = [];
+    plugins: ComponentPlugin<any,any>[] = [];
 
     constructor(props: P, context: any /*stateClass?: Function*/) {
         super(props, context);
         this.props = props;
-
-        // //(this as any)["state"] = {};
-        // if (stateClass)
-        //     this.state = stateClass();
-        // else
-        //     this.state = {} as S;
-
-        Component.plugins.forEach((plug) => {
-            let plugInstance: any = new plug(this);
-            this.plugins.push(plugInstance);
-        });
+        // this.plugins.forEach((plug) => {
+        //     let plugInstance: any = new plug(this);
+        //     this.plugins.push(plugInstance);
+        // });
     }
 
-    nativeElement: Element;
+    nativeElement: HTMLElement;
 
     private renderClasses: string[] = [];
     private renderProps: any = {};
@@ -184,7 +176,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
 
     protected didUpdate(prevProps: P, prevState: S, prevContext: any) {
         this.plugins.forEach((plug) => {
-            plug.willReceiveProps(prevProps, prevState, prevContext);
+            plug.willReceiveProps(prevProps);
         });
     }
 

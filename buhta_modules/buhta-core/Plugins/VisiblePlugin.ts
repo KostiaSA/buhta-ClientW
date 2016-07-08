@@ -11,12 +11,12 @@ export interface VisiblePluginState extends ComponentState<VisiblePluginProps> {
 }
 
 
-class VisiblePluginClass extends ComponentPlugin<VisiblePluginProps, VisiblePluginState> {
+export class VisiblePlugin extends ComponentPlugin<VisiblePluginProps, VisiblePluginState> {
     // constructor(owner: any) {
     //     super(owner);
     // }
 
-    protected willMount() {
+    willMount() {
         super.willMount();
         //console.log("visible willMount()")
 
@@ -36,7 +36,7 @@ class VisiblePluginClass extends ComponentPlugin<VisiblePluginProps, VisiblePlug
         this.owner.toggleClassName(!this.state.visible, "is-hidden");
     }
 
-    protected willReceiveProps(nextProps: VisiblePluginProps) {
+    willReceiveProps(nextProps: VisiblePluginProps) {
         //let state = this.owner.state as VisiblePluginState;
         if (nextProps.visible !== undefined) {
             this.state.visible = nextProps.visible;
@@ -48,8 +48,8 @@ class VisiblePluginClass extends ComponentPlugin<VisiblePluginProps, VisiblePlug
 
 }
 
-export function VisiblePlugin(target: any) {
-    target.plugins.push(VisiblePluginClass);
-    return target;
-}
+// export function VisiblePlugin(target: any) {
+//     target.plugins.push(VisiblePluginClass);
+//     return target;
+// }
 

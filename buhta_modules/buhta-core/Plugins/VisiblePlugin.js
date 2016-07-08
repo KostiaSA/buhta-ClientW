@@ -5,15 +5,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Plugin_1 = require("./Plugin");
-var VisiblePluginClass = (function (_super) {
-    __extends(VisiblePluginClass, _super);
-    function VisiblePluginClass() {
+var VisiblePlugin = (function (_super) {
+    __extends(VisiblePlugin, _super);
+    function VisiblePlugin() {
         _super.apply(this, arguments);
     }
     // constructor(owner: any) {
     //     super(owner);
     // }
-    VisiblePluginClass.prototype.willMount = function () {
+    VisiblePlugin.prototype.willMount = function () {
         _super.prototype.willMount.call(this);
         //console.log("visible willMount()")
         if (this.props.visible !== undefined && this.props.defaultVisible !== undefined) {
@@ -29,7 +29,7 @@ var VisiblePluginClass = (function (_super) {
             this.state.visible = true;
         this.owner.toggleClassName(!this.state.visible, "is-hidden");
     };
-    VisiblePluginClass.prototype.willReceiveProps = function (nextProps) {
+    VisiblePlugin.prototype.willReceiveProps = function (nextProps) {
         //let state = this.owner.state as VisiblePluginState;
         if (nextProps.visible !== undefined) {
             this.state.visible = nextProps.visible;
@@ -38,11 +38,11 @@ var VisiblePluginClass = (function (_super) {
             this.state.visible = true;
         this.owner.toggleClassName(!this.state.visible, "is-hidden");
     };
-    return VisiblePluginClass;
+    return VisiblePlugin;
 }(Plugin_1.ComponentPlugin));
-function VisiblePlugin(target) {
-    target.plugins.push(VisiblePluginClass);
-    return target;
-}
 exports.VisiblePlugin = VisiblePlugin;
+// export function VisiblePlugin(target: any) {
+//     target.plugins.push(VisiblePluginClass);
+//     return target;
+// }
 //# sourceMappingURL=VisiblePlugin.js.map

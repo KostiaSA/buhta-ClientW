@@ -6,21 +6,22 @@ export interface OnClickPluginProps {
     onClick?: React.MouseEventHandler;
 }
 
-class OnClickPluginClass extends ComponentPlugin<OnClickPluginProps, any> {
+export class OnClickPlugin extends ComponentPlugin<OnClickPluginProps, any> {
 
-    protected willMount() {
+    willMount() {
         super.willMount();
         this.owner.addProps({onClick: this.props.onClick});
     }
 
-    protected willReceiveProps(nextProps: OnClickPluginProps) {
+    willReceiveProps(nextProps: OnClickPluginProps) {
+        super.willReceiveProps(nextProps);
         this.owner.addProps({onClick: this.props.onClick});
     }
 
 }
 
-export function OnClickPlugin(target: any) {
-    target.plugins.push(OnClickPluginClass);
-    return target;
-}
+// export function OnClickPlugin(target: any) {
+//     target.plugins.push(OnClickPluginClass);
+//     return target;
+// }
 

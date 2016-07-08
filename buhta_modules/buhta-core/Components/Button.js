@@ -4,30 +4,33 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var React = require("react");
 var VisiblePlugin_1 = require("../Plugins/VisiblePlugin");
 var OnClickPlugin_1 = require("../Plugins/OnClickPlugin");
 var Component_1 = require("./Component");
+var ButtonState = (function (_super) {
+    __extends(ButtonState, _super);
+    function ButtonState() {
+        _super.apply(this, arguments);
+    }
+    return ButtonState;
+}(Component_1.ComponentState));
+exports.ButtonState = ButtonState;
+//@VisiblePlugin
+//@OnClickPlugin
 var Button = (function (_super) {
     __extends(Button, _super);
     function Button(props, context) {
         _super.call(this, props, context);
         this.props = props;
+        this.state = new ButtonState(this);
+        this.plugins.push(new VisiblePlugin_1.VisiblePlugin(this));
+        this.plugins.push(new OnClickPlugin_1.OnClickPlugin(this));
     }
     Button.prototype.render = function () {
         this.addClassName("button");
-        return (React.createElement("button", React.__spread({}, this.getRenderProps()), this.props.children));
+        return (React.createElement("a", React.__spread({}, this.getRenderProps()), this.props.children));
     };
-    Button = __decorate([
-        VisiblePlugin_1.VisiblePlugin,
-        OnClickPlugin_1.OnClickPlugin
-    ], Button);
     return Button;
 }(Component_1.Component));
 exports.Button = Button;

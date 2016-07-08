@@ -1,10 +1,13 @@
+let cacheWidth = 0;
 
+window.addEventListener("resize", (ev: UIEvent) => {
+    cacheWidth = 0;
+    console.log("resize");
+})
 
-
-let cacheWidth=0;
 
 export function getScrollbarWidth() {
-    if (cacheWidth>0)
+    if (cacheWidth > 0)
         return cacheWidth;
 
     var outer = document.createElement("div");
@@ -15,17 +18,13 @@ export function getScrollbarWidth() {
     document.body.appendChild(outer);
 
     var widthNoScroll = outer.offsetWidth;
-    // force scrollbars
     outer.style.overflow = "scroll";
 
-    // add innerdiv
     var inner = document.createElement("div");
     inner.style.width = "100%";
     outer.appendChild(inner);
 
     var widthWithScroll = inner.offsetWidth;
-
-    // remove divs
     outer.parentNode.removeChild(outer);
 
     cacheWidth = widthNoScroll - widthWithScroll;
