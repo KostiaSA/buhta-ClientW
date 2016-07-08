@@ -9,6 +9,7 @@ import {TreeGridColumns} from "./TreeGridColumns";
 import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
 import {Keycode} from "../../Keycode";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
+import {getScrollbarWidth} from "../../getScrollBarWidth";
 
 
 export interface TreeGridProps extends ComponentProps<any> {
@@ -75,7 +76,7 @@ class InternalTreeNode {
     }
 }
 
-const vertScrollBarWidth=20;
+//const vertScrollBarWidth = 30;
 
 export class TreeGrid extends Component<TreeGridProps, any> {
 
@@ -627,11 +628,11 @@ export class TreeGrid extends Component<TreeGridProps, any> {
             $(col.headerWidthNativeElement).attr('width', col.width);
             $(col.bodyWidthNativeElement).attr('width', col.width);
             $(col.footerWidthNativeElement).attr('width', col.width);
-            let tableWidth=this.calcTotalColumnsWidth();
+            let tableWidth = this.calcTotalColumnsWidth();
             $(this.headerTableElement).css('width', tableWidth);
             $(this.bodyTableElement).css('width', tableWidth);
             $(this.footerTableElement).css('width', tableWidth);
-            $(this.bodyWrapperElement).css('max-width', tableWidth+25);
+            $(this.bodyWrapperElement).css('max-width', tableWidth + getScrollbarWidth() + 1);
 
         });
         // this.handleOnClick(null);
@@ -659,13 +660,16 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                 >
                     {col.caption}
                     <Movable
-                        style={{position:"absolute", top:0, width:4, right:0, bottom:0, border:"solid 0px red", cursor:"col-resize"}}
+                        style={{position:"absolute", top:0, width:5, right:0, bottom:0, cursor:"col-resize"}}
                         onMoveStart={ (event: MoveStartEvent)=>{ this.columnResizeStart(event, col); console.log("MoveStart")}}
                     >
                     </Movable>
                     <Movable
-                        style={{position:"absolute", top:0, width:4, left:0, bottom:0, border:"solid 0px blue", cursor:"col-resize"}}
-                        onMoveStart={ ()=>{ console.log("MoveStart")}}
+                        style={{position:"absolute", top:0, width:index===0?0:5, left:0, bottom:0, cursor:"col-resize"}}
+                        onMoveStart={ (event: MoveStartEvent)=>{
+                           // ресайзим предыдущую колонку
+                           this.columnResizeStart(event, this.columns[index-1]);
+                        }}
                     >
                     </Movable>
 
@@ -675,7 +679,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
         return (
             <div
                 ref={ (e) => this.headerWrapperElement = e}
-                style={{ position:"absolute", border:"0px solid red" }}>
+                style={{ position:"absolute" }}>
                 <table
                     className="tree-grid-header"
                     style={{tableLayout: "fixed",borderCollapse: "collapse", width:this.calcTotalColumnsWidth()}}
@@ -719,7 +723,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
             return (
                 <div
                     ref={ (e) => this.footerWrapperElement = e}
-                    style={{ position:"absolute", border:"0px solid blue"}}
+                    style={{ position:"absolute"}}
                 >
                     <table
                         className="tree-grid-footer"
@@ -813,7 +817,7 @@ export class TreeGrid extends Component<TreeGridProps, any> {
                     заголовок и т.д.
                 </div>
                 <div className="tree-grid-body-wrapper"
-                     style={{ position:"relative", overflow:"auto", flex: "0 1 auto", maxWidth:this.calcTotalColumnsWidth()+vertScrollBarWidth}}
+                     style={{ position:"relative", overflow:"auto", flex: "0 1 auto", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
                      onScroll={ this.handleScroll.bind(this)}
                      ref={ (e) => this.bodyWrapperElement = e}
                 >
