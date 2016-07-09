@@ -185,7 +185,7 @@ export class Window extends Component<WindowProps, WindowState> {
                         </Layout>
                     </Fixed>
 
-                    <Flex className="window-body" style={{ overflow:"hidden", border:"1px solid red"  }}>
+                    <Flex className="window-body" style={{ padding:10, overflow:"hidden" }}>
                         {this.props.children}
 
                         <Movable
