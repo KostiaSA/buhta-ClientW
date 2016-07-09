@@ -814,7 +814,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 </tr>
                 {this.renderRows()}
                 <tr>
-                    <td ref={ (e) => this.state.footerFakeRow = e}></td>
+                    <td style={{ border:"none" }} ref={ (e) => this.state.footerFakeRow = e}></td>
                 </tr>
                 </tbody>
             </table>
@@ -861,16 +861,13 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 </Fixed>
                 <div
                     className="tree-grid-body-wrapper"
-                     style={{ position:"relative", overflow:"auto", flex:"1 1 100%", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
+                     style={{ position:"relative", overflow:"auto", flex:"1", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
                      onScroll={ this.handleScroll.bind(this)}
                      ref={ (e:any) => {this.state.bodyWrapperElement = e;}}
                 >
-                    <div>
                         {this.renderGridBody()}
                         {this.renderColumnHeaders()}
                         {this.renderColumnFooters()}
-                    </div>
-
                 </div>
                 <Fixed className="tree-grid-footer-wrapper" >
 

@@ -15,6 +15,8 @@ export interface AutoFormControlProps {
 
 export interface AutoFormProps extends ComponentProps<any> {
     inputs?: AutoFormControlProps[];
+    sizeTo: "parent" | "content";
+
 }
 
 const emptyTabName = "закладка";
@@ -44,7 +46,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
     }
 
     private renderTab(tab: string): JSX.Element {
-        return <Form>{this.getTabInputs(tab)}</Form>;
+        return <Form sizeTo={this.props.sizeTo} >{this.getTabInputs(tab)}</Form>;
     }
 
     private  renderTabs(): JSX.Element {
@@ -61,6 +63,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
         else {
             return (
                 <Tabs
+                    sizeTo="parent"
                     onWillMount={ (state)=> { console.log("onWillMount-auto-form-tabs")}}
                     onChangeActiveTab={ (state, tab)=> { console.log("setActiveTab");console.log(tab);}}
                 >
@@ -81,6 +84,25 @@ export class AutoForm extends Component<AutoFormProps, any> {
         this.addClassName("auto-form");
 
         console.log("render-auto-form");
+
+        if (this.props.sizeTo === "parent") {
+            let style: any = {
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+            };
+            this.addStyles(style);
+        }
+        else {
+            let style: any = {
+                position: "relative",
+            };
+            this.addStyles(style);
+        }
+
+
 
         return (
             <div {...this.getRenderProps()}>

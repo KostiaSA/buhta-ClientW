@@ -14,7 +14,8 @@ export class Fixed extends Component<FixedProps, any> {
 
         this.clearStyles();
         let style = {
-            position: "relative"
+            position: "relative",
+            flex: "0 0 auto"
         };
         this.addStyles(style);
 

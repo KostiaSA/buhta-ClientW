@@ -142,54 +142,51 @@ export class Window extends Component<WindowProps, WindowState> {
         return (
             <div className="window"
                 {...this.getRenderProps()}
-                ref={ (e: any) => { this.nativeElement = e; }}
-                onClick={ this.handleOnClick }
+                 ref={ (e: any) => { this.nativeElement = e; }}
+                 onClick={ this.handleOnClick }
             >
                 <Layout type="column" sizeTo="parent">
-                    <Fixed>
-                        <Fixed
-                            className="window-header"
-                            style={{borderRadius: "5px 5px 0px 0px", position:"relative", paddingLeft: 10}}
-                        >
-                            <span className="window-title">{this.props.title}</span>
-                            <Layout type="row" sizeTo="parent">
-                                <Flex>
-                                    <Movable
-                                        style={{position:"absolute", top:0, left:0, right:0,bottom:0}}
-                                        onMoveStart={this.moveStart}
-                                    >
-                                    </Movable>
-                                </Flex>
-                                <Fixed>
-                                    <p className="control has-addons buttons-bar"
-                                       style={{paddingTop: 2, paddingRight: 4}}>
-                                        <a className="button is-small minimize-button" style={headerButtonStyle}>
+                    <Fixed
+                        className="window-header"
+                        style={{borderRadius: "5px 5px 0px 0px", position:"relative", paddingLeft: 10}}
+                    >
+                        <Layout type="row" sizeTo="parent">
+                            <Flex>
+                                <span className="window-title">{this.props.title}</span>
+                                <Movable
+                                    style={{position:"absolute", top:0, left:0, right:0,bottom:0}}
+                                    onMoveStart={this.moveStart}
+                                >
+                                </Movable>
+                            </Flex>
+                            <Fixed>
+                                <p className="control has-addons buttons-bar"
+                                   style={{paddingTop: 2, paddingRight: 4}}>
+                                    <a className="button is-small minimize-button" style={headerButtonStyle}>
                                     <span className="icon is-small " style={{marginLeft: 0}}>
                                       <i className="fa fa-minus" style={{top: 3}}></i>
                                     </span>
-                                        </a>
-                                        <a className="button is-small maximize-button" style={headerButtonStyle}>
+                                    </a>
+                                    <a className="button is-small maximize-button" style={headerButtonStyle}>
                                     <span className="icon is-small" style={{marginLeft: 0}}>
                                       <i className="fa fa-square-o" style={{fontWeight: "bold"}}></i>
                                     </span>
-                                        </a>
-                                        <a className="button is-small close-button"
-                                           style={headerButtonStyle}
-                                           onClick={this.handleCloseButtonClick}
-                                        >
+                                    </a>
+                                    <a className="button is-small close-button"
+                                       style={headerButtonStyle}
+                                       onClick={this.handleCloseButtonClick}
+                                    >
                                     <span className="icon is-small" style={{marginLeft: 0}}>
                                       <i className="fa fa-close" style={{top: -1}}></i>
                                     </span>
-                                        </a>
-                                    </p>
-                                </Fixed>
-                            </Layout>
-                        </Fixed>
+                                    </a>
+                                </p>
+                            </Fixed>
+                        </Layout>
                     </Fixed>
-                    <Flex style={{ overflow:"initial" }}>
-                        <div className="window-body" style={{ height:"100%" }}>
-                            {this.props.children}
-                        </div>
+
+                    <Flex className="window-body" style={{ overflow:"hidden", border:"1px solid red"  }}>
+                        {this.props.children}
 
                         <Movable
                             className="window-resizer"
@@ -204,3 +201,7 @@ export class Window extends Component<WindowProps, WindowState> {
     }
 
 }
+
+// <div className="window-body" style={{ height:"100%" }}>
+//     {this.props.children}
+// </div>

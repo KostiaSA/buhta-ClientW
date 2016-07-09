@@ -25,6 +25,7 @@ import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColum
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {executeSQL} from "../../buhta-core/SQL";
 import {Button} from "../../buhta-core/Components/Button";
+import {SqlTable} from "../../buhta-sql/SqlTable";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -147,7 +148,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testAutoForm() {
         let win2 =
-            <AutoForm>
+            <AutoForm sizeTo="content">
                 <Input type={InputType.Text} bindObject={this} bindPropName="str"/>
                 <Input inputTab="параметры1" inputCaption="eee1" type={InputType.Text} bindObject={this}
                        bindPropName="str"/>
@@ -186,7 +187,6 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                         hierarchyFieldName="Номер"
                         hierarchyDelimiters="."
                         autoExpandNodesToLevel={0}
-                        style={{margin:5}}
                     >
                         <TreeGridColumns>
                             <TreeGridColumn caption="Колонка2" fieldName="Номер" showHierarchyTree={false} width={100}>
@@ -202,7 +202,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                 let openParam: OpenWindowParams = {
                     title: "auto form",
                     top: 10,
-                    left: 10
+                    left: 10,
+                    height:800
                 };
 
                 appInstance.desktop.openWindow(win2, openParam);
@@ -218,43 +219,57 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testFlex() {
         let win2 =
-            <div
-                style={{ display:"flex", flexDirection:"column",  border:"2px dotted red", position:"absolute", top:0, left:0,right:0, bottom:0 }}>
-                <div style={{ border:"2px dotted blue" }}>
+            <Layout type="column" sizeTo="parent" style={{ border:"2px dotted red", position:"absolute", top:0, left:0,right:0, bottom:0 }}>
+                <Fixed style={{ border:"2px dotted blue" }}>
                     <Button>Один</Button>
-                </div>
-                <div style={{ border:"2px dotted green",flex:"1 1 auto" }}>
+                </Fixed>
+                <Flex style={{ border:"2px dotted green" }}>
 
-                    <div
-                        style={{ display:"flex", flexDirection:"column",  border:"1px solid red", position:"absolute", top:0, left:0,right:0, bottom:0 }}>
-                        <div style={{ border:"1px solid blue" }}>
+                    <Layout  type="column" sizeTo="parent" style={{ border:"1px solid red"}}>
+                        <Fixed style={{ border:"1px solid blue" }}>
                             <Button>------Один</Button>
-                        </div>
-                        <div style={{ border:"1px solid green",flex:"1 1 auto" , overflow:"auto" } }>
+                        </Fixed>
+                        <Flex style={{ border:"1px solid green" } }>
                             <div style={{ }}>
                                 <Button>-------Два</Button>
                                 <br/>
                                 <Button>--------Два1</Button>
 
                             </div>
+                            <table>
+                                <tr>
+                                    <td>1111</td>
+                                    <td>2222</td>
+                                </tr>
+                                <tr>
+                                    <td>1111</td>
+                                    <td>2222</td>
+                                </tr>
+                                <tr>
+                                    <td>1111</td>
+                                    <td>2222</td>
+                                </tr>
+                                <tr>
+                                    <td>1111</td>
+                                    <td>2222</td>
+                                </tr>
+                            </table>
 
-                        </div>
-                        <div style={{ border:"1px solid maroon" }}>
+                        </Flex>
+                        <Fixed style={{ border:"1px solid maroon" }}>
                             <Button>--------Три</Button>
 
-                        </div>
+                        </Fixed>
 
-                    </div>;
+                    </Layout>
 
-
-
-                </div>
-                <div style={{ border:"2px dotted maroon" }}>
+                </Flex>
+                <Fixed style={{ border:"2px dotted maroon" }}>
                     <Button>Три</Button>
 
-                </div>
+                </Fixed>
 
-            </div>;
+            </Layout>;
 
         let openParam: OpenWindowParams = {
             title: "test FLEX",
@@ -266,9 +281,39 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     }
 
+    testTableDesigner() {
+        let table = new SqlTable();
+
+        table.name = "Организация";
+        table.sqlname = "dbo.Организация";
+        table.addColumn((col)=> {
+            col.name = "Номер";
+            col.dataType = "varchar(10)";
+        });
+        table.addColumn((col)=> {
+            col.name = "Название";
+            col.dataType = "varchar(50)";
+        });
+
+        let win = <ObjectDesigner
+            onChange={()=>{ console.log("table-change")}}
+            designedObject={table}>
+        </ObjectDesigner>;
+
+        let openParam: OpenWindowParams = {
+            title: "Организация",
+            top: 50,
+            left: 50
+        };
+
+        appInstance.desktop.openWindow(win, openParam);
+
+    };
+
     render() {
         this.addClassName("app-designer");
 
+        this.addProps({sizeTo: "parent"});
 
         return (
             <App {...this.getRenderProps()}>
@@ -289,6 +334,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <button onClick={() => { this.testGrid(); }}>test GRID</button>
                                 <br/>
                                 <button onClick={() => { this.testFlex(); }}>test FLEX</button>
+                                <br/>
+                                <button onClick={() => { this.testTableDesigner(); }}>test TABLE DESIGNER</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

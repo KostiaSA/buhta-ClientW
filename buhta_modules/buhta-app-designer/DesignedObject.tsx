@@ -4,6 +4,8 @@ export class DesignedObject {
     constructor() {
     }
 
+    [name:string]: any;
+
     $$unwatchedProps: string[] = ["propertyEditors", "$$unwatchedProps"];
 
     // id: string;

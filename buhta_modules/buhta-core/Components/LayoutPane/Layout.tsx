@@ -14,29 +14,36 @@ export class Layout extends Component<LayoutProps,any> {
         this.clearStyles();
 
         this.addClassName("Layout");
+        this.addStyles({display: "flex", position: "relative", flexDirection: this.props.type});
 
-        if (this.props.sizeTo === "parent") {
-            let style: any = {
-                display: "flex",
-                position: "absolute",
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-               // overflow: "auto"
-            };
-            style.flexDirection = this.props.type;
-            this.addStyles(style);
+        if (this.props.sizeTo === "parent") {// && this.props.type==="column") {
+            this.addStyles({height: "100%"});
         }
-        else {
-            let style: any = {
-                display: "flex",
-                position: "relative",
-                //overflow: "auto"
-            };
-            style.flexDirection = this.props.type;
-            this.addStyles(style);
-        }
+        // if (this.props.sizeTo === "parent") {
+        //     let style: any = {
+        //         display: "flex",
+        //         height:"100%",
+        //         position: "relative",
+        //         //position: "absolute",
+        //         // left: 0,
+        //         // right: 0,
+        //         // top: 0,
+        //         // bottom: 0,
+        //
+        //        // overflow: "auto"
+        //     };
+        //     style.flexDirection = this.props.type;
+        //     this.addStyles(style);
+        // }
+        // else {
+        //     let style: any = {
+        //         display: "flex",
+        //         position: "relative",
+        //         //overflow: "auto"
+        //     };
+        //     style.flexDirection = this.props.type;
+        //     this.addStyles(style);
+        // }
 
         this.addProps({onClick: this.props.onClick});
 

@@ -1,5 +1,6 @@
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
+import {ListEditor} from "../buhta-app-designer/PropertyEditors/ListPropertyEditor";
 
 export class SqlTable extends DesignedObject {
 
@@ -17,9 +18,13 @@ export class SqlTable extends DesignedObject {
         inputGroup: "Основная",
         inputDescription: "sql имя таблицы"
     })
+
     sqlname: string;
 
-    columns: SqlTableColumn[];
+    @ListEditor({
+        inputTab: "Колонки"
+    })
+    columns: SqlTableColumn[]=[];
 
     addColumn(initCallback: (newColumn: SqlTableColumn) => void) {
         let col = new SqlTableColumn();

@@ -52,7 +52,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         this.addProps({onChange: this.props.onChange});
 
         return (
-            <AutoForm {...this.getRenderProps()}>
+            <AutoForm sizeTo="parent" {...this.getRenderProps()}>
                 Object designer
                 {this.renderPropertyDesigners()}
             </AutoForm>

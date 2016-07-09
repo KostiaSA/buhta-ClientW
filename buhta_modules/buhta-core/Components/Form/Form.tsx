@@ -8,6 +8,7 @@ import {InputProps} from "../Input/Input";
 
 export interface FormProps extends ComponentProps<any> {
     title?: string;
+    sizeTo: "parent" | "content";
 }
 
 
@@ -70,15 +71,27 @@ export class Form extends Component<FormProps, any> {
 
     render() {
         this.addClassName("form");
-        this.addStyles({height: "100%", width: "inherit"});
+        //this.addStyles({margin:10});
 
-        return (
-            <table ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
-                <tbody>
-                {this.renderControls()}
-                </tbody>
-            </table>
-        );
+        if (React.Children.toArray(this.props.children).length === 1) { // один контрол в форме, обычно treelist
+
+            if (this.props.sizeTo==="parent")
+                this.addStyles({height: "100%"});
+
+            return <div {...this.getRenderProps()}>{this.props.children}</div>;
+        }
+        else {
+
+            this.addStyles({ width: "inherit"});
+
+            return (
+                <table ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
+                    <tbody>
+                    {this.renderControls()}
+                    </tbody>
+                </table>
+            );
+        }
     }
 
 }

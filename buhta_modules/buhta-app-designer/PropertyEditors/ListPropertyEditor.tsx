@@ -4,9 +4,12 @@ import {DesignedObject} from "../DesignedObject";
 import {registerPropertyEditor} from "./registerPropertyEditor";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
+import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
+import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
+import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 
 
-export class StringPropertyEditor extends BasePropertyEditor {
+export class ListPropertyEditor extends BasePropertyEditor {
 
     handleChange(event: React.SyntheticEvent) {
        // this.props.designedObject[this.props.propertyName] = (event.target as any).value;
@@ -24,26 +27,39 @@ export class StringPropertyEditor extends BasePropertyEditor {
 
         this.addProps(autoFormControlProps);
 
+        // return (
+        //     <Input
+        //         type={InputType.Text}
+        //         bindObject={this.props.designedObject}
+        //         bindPropName={this.props.propertyName}
+        //         onChange={this.props.onChange}
+        //         {...this.getRenderProps()}
+        //     />
+        // );
+
         return (
-            <Input
-                type={InputType.Text}
-                bindObject={this.props.designedObject}
-                bindPropName={this.props.propertyName}
-                onChange={this.props.onChange}
-                {...this.getRenderProps()}
-            />
+            <TreeGrid
+                dataSource={ this.props.designedObject[this.props.propertyName] }
+                treeMode={false}
+            >
+                <TreeGridColumns>
+                    <TreeGridColumn caption="Имя колонки" fieldName="name" width={100}>
+                    </TreeGridColumn>
+                    <TreeGridColumn caption="Тип данных" fieldName="dataType" width={150}>
+                    </TreeGridColumn>
+                </TreeGridColumns>
+            </TreeGrid>
         );
     }
 
 }
 
-export interface StringEditorParams extends AutoFormControlProps {
+export interface ListEditorParams extends AutoFormControlProps {
 
 }
 
-export function StringEditor(params: StringEditorParams): Function {
+export function ListEditor(params: ListEditorParams): Function {
     return function (target: any, propertyName: string) {
-        //  console.log({target, propertyName, constr:target.constructor});
         registerPropertyEditor({
             inputCaption: params.inputCaption,
             inputTab: params.inputTab,
@@ -51,7 +67,7 @@ export function StringEditor(params: StringEditorParams): Function {
             inputDescription: params.inputDescription,
             propertyName: propertyName,
             objectType: target.constructor,
-            editorType: StringPropertyEditor,
+            editorType: ListPropertyEditor,
             propertyType: String
         });
     };

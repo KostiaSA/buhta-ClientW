@@ -5,6 +5,7 @@ import Element = JSX.Element;
 
 export interface AppProps extends ComponentProps<AppState> {
     title?: string;
+    sizeTo: "parent" | "content";
 }
 
 
@@ -22,7 +23,7 @@ class AppState extends ComponentState<AppProps> {
 }
 
 export class App extends Component<AppProps, AppState> {
-    constructor(props: AppProps, context:any) {
+    constructor(props: AppProps, context: any) {
         super(props, context);
         this.props = props;
         this.state = new AppState(this);
@@ -44,9 +45,11 @@ export class App extends Component<AppProps, AppState> {
     render() {
         this.addClassName("app");
 
+        if (this.props.sizeTo === "parent")
+            this.addStyles({height: "100%"});
+
         return (
             <div {...this.getRenderProps()}>
-                Buhta App!
                 {this.props.children}
             </div>
         );

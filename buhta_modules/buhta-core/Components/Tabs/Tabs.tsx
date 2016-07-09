@@ -6,7 +6,7 @@ import {Flex} from "../LayoutPane/Flex";
 
 export interface TabsProps extends ComponentProps<TabsState> {
     onChangeActiveTab?: (state: TabsState, activeTab: TabInfo) => void;
-
+    sizeTo: "parent" | "content";
 }
 
 export class TabsState extends ComponentState<TabsProps> {
@@ -152,25 +152,31 @@ export class Tabs extends Component<TabsProps, TabsState> {
         )
     }
 
-    renderPanels(): JSX.Element {
+    renderPanels(): JSX.Element[] {
 
         let list: JSX.Element[] = [];
 
         this.state.tabs.forEach((tabInfo: TabInfo, index: number)=> {
 
+            let style: any = {};
+            if (this.props.sizeTo === "parent")
+                style.height = "100%";
+
             let className = !tabInfo.isActive ? "is-hidden" : null;
             let element =
-                <div className={className} key={index}>
+                <div className={className} key={index} style={style}>
                     {tabInfo.content}
                 </div>
             list.push(element);
         });
 
-        return (
-            <div ref>
-                {list}
-            </div>
-        )
+        return list;
+
+        // return (
+        //     <div ref>
+        //         {list}
+        //     </div>
+        // )
     }
 
     render() {
@@ -178,7 +184,8 @@ export class Tabs extends Component<TabsProps, TabsState> {
         this.addStyles({position: "relative", overflow: "auto"});
 
         return (
-            <Layout type="column" ref={ (e: any) => { this.nativeElement = e; } } {...this.getRenderProps()}>
+            <Layout sizeTo={this.props.sizeTo} type="column"
+                    ref={ (e: any) => { this.nativeElement = e; } } {...this.getRenderProps()}>
                 <Fixed>
                     {this.renderTabs()}
                 </Fixed>
