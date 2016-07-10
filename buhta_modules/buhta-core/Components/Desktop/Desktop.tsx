@@ -216,7 +216,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
         if (win.parentWindowId) {
             this.activateWindow(win.parentWindowId);
-            this.getWindowById(win.parentWindowId).disabled=false;
+            this.getWindowById(win.parentWindowId).disabled = false;
         }
 
         this.forceUpdate();

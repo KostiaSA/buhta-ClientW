@@ -4,6 +4,10 @@ import * as _ from "lodash";
 import {Component, ComponentProps} from "../Component";
 import {Tabs, Tab} from "../Tabs/Tabs";
 import {Form} from "../Form/Form";
+import {Layout} from "../LayoutPane/Layout";
+import {Flex} from "../LayoutPane/Flex";
+import {Fixed} from "../LayoutPane/Fixed";
+import {Button} from "../Button";
 
 
 export interface AutoFormControlProps {
@@ -99,11 +103,28 @@ export class AutoForm extends Component<AutoFormProps, any> {
             this.addStyles(style);
         }
 
-
-
         return (
             <div {...this.getRenderProps()}>
-                {this.renderTabs()}
+                <Layout type="column" sizeTo="parent">
+                    <Flex>
+                        {this.renderTabs()}
+                    </Flex>
+                    <Fixed>
+                        <Layout className="auto-form-footer" type="row" sizeTo="content">
+                            <Flex>
+
+                            </Flex>
+                            <Fixed>
+                                <Button className="is-success is-outlined">
+                                    Сохранить
+                                </Button>
+                                <Button>
+                                    Отмена
+                                </Button>
+                            </Fixed>
+                        </Layout>
+                    </Fixed>
+                </Layout>
             </div>
 
         );

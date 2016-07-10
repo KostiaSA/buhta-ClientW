@@ -158,7 +158,7 @@ export class Tabs extends Component<TabsProps, TabsState> {
 
         this.state.tabs.forEach((tabInfo: TabInfo, index: number)=> {
 
-            let style: any = {paddingTop: 10};
+            let style: any = {paddingTop: 10, paddingBottom: 10};
             if (this.props.sizeTo === "parent")
                 style.height = "100%";
 
