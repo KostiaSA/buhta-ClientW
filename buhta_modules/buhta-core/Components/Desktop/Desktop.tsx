@@ -62,6 +62,7 @@ export interface OpenWindowParams {
     height?: number;
     minHeight?: number;
     minWidth?: number;
+    parentWindowId?: string;
 }
 
 export class DesktopWindow implements OpenWindowParams {
@@ -76,10 +77,12 @@ export class DesktopWindow implements OpenWindowParams {
     minHeight: number;
     minWidth: number;
     content: JSX.Element;
+    disabled: boolean;
+    parentWindowId: string;
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
-    constructor(props: DesktopProps, context:any) {
+    constructor(props: DesktopProps, context: any) {
         super(props, context);
         this.props = props;
         this.state = new DesktopState(this);
@@ -99,7 +102,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         let newWin = new DesktopWindow();
         newWin.content = win;
         newWin.title = openParams.title || ".";
-        newWin.id=Math.random().toString(36).slice(2, 12);
+        newWin.id = Math.random().toString(36).slice(2, 12);
 
         newWin.left = openParams.left;
         newWin.top = openParams.top;
@@ -148,18 +151,49 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         newWin.minHeight = openParams.minHeight || 100;
         newWin.minWidth = openParams.minWidth || 100;
 
+        newWin.parentWindowId = openParams.parentWindowId;
+        if (newWin.parentWindowId) {
+            this.getWindowById(newWin.parentWindowId).disabled = true;
+        }
 
         this.state.windows.push(newWin);
         this.forceUpdate();
     };
 
     activateWindow(id: string) {
-        let win = this.getWindowById(id);
-        if (win) {
+        let win = this.getTopParentWindow(id);
+        if (win && this.state.windows.indexOf(win) !== this.state.windows.length - 1) {
             _.pull(this.state.windows, win);
             this.state.windows.push(win);
             this.forceUpdate();
+
+            // поднимаем дочерние окна
+            let childWin = this.state.windows.filter((w: DesktopWindow) => w.parentWindowId === win.id)[0];
+            if (childWin)
+                this.activateChildWindow(childWin.id);
         }
+    }
+    
+    activateChildWindow(id: string) {
+        let win = this.getWindowById(id);
+        if (win && this.state.windows.indexOf(win) !== this.state.windows.length - 1) {
+            _.pull(this.state.windows, win);
+            this.state.windows.push(win);
+            this.forceUpdate();
+
+            // поднимаем дочерние окна
+            let childWin = this.state.windows.filter((w: DesktopWindow) => w.parentWindowId === win.id)[0];
+            if (childWin)
+                this.activateWindow(childWin.id);
+        }
+    }
+
+    getTopParentWindow(id: string) {
+        let topParent = this.getWindowById(id);
+        while (topParent.parentWindowId) {
+            topParent = this.getWindowById(topParent.parentWindowId)
+        }
+        return topParent;
     }
 
     getWindowById(id: string): DesktopWindow {
@@ -172,7 +206,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     }
 
 
-    handleActivate = (state:WindowState): void => {
+    handleActivate = (state: WindowState): void => {
         this.activateWindow(state.id);
     }
 
@@ -182,7 +216,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.forceUpdate();
     }
 
-    handleClose = (state:WindowState): void => {
+    handleClose = (state: WindowState): void => {
         this.closeWindow(state.id);
     }
 
@@ -195,6 +229,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             <div ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
                 {this.state.windows.map((w, index) => {
                     console.log("render-desktop-win");
+                    console.log(w.disabled);
                     return (
                         <Window
                             key={w.id}
@@ -206,6 +241,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             height={w.height}
                             right={w.right}
                             bottom={w.bottom}
+                            disabled={w.disabled}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
                         >

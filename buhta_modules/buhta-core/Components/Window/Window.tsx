@@ -11,6 +11,7 @@ import {OpenWindowParams} from "../Desktop/Desktop";
 
 export interface WindowProps extends OpenWindowParams,ComponentProps<WindowState> {
     id?: string;
+    disabled?: boolean;
     onActivate?(state: WindowState): void;
     onClose?(state: WindowState): void;
 }
@@ -27,6 +28,8 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     bottom: number;
     minHeight: number;
     minWidth: number;
+    disabled: boolean;
+//    childWindow: Window;
 }
 
 export class Window extends Component<WindowProps, WindowState> {
@@ -46,6 +49,9 @@ export class Window extends Component<WindowProps, WindowState> {
         this.state.bottom = this.props.bottom;
         this.state.width = this.props.width;
         this.state.height = this.props.height;
+        this.state.minWidth = this.props.minWidth;
+        this.state.minHeight = this.props.minHeight;
+        this.state.disabled = this.props.disabled;
 
     }
 
@@ -53,23 +59,17 @@ export class Window extends Component<WindowProps, WindowState> {
         this.createInitState();
         super.willMount();
 
-        // let tabTags = this.getChildren(Tab);
-        //
-        // tabTags.forEach((tabTag, index) => {
-        //
-        //     let tabProps = tabTag.props as TabProps;
-        //
-        //     let tabInfo: TabInfo = {
-        //         title: tabProps.title,
-        //         content: tabProps.children,
-        //         isActive: index === 0
-        //     }
-        //
-        //     this.tabs.push(tabInfo);
-        // });
-
     }
 
+    protected willReceiveProps(nextProps: WindowProps) {
+        super.willReceiveProps(nextProps);
+        //this.state.disabled = nextProps.disabled;
+    }
+
+    protected didMount() {
+        super.didMount();
+        (this.nativeElement as any)["$$window"] = this;
+    }
 
     moveStart = (e: MoveStartEvent): void => {
         e.bindX(this.state, "left", () => {
@@ -108,9 +108,13 @@ export class Window extends Component<WindowProps, WindowState> {
     };
 
     private shouldComponentUpdate = (nextProps: WindowProps, nextState: WindowState) => {
-        // всегда false, потому что менять props окна может только desktop,
-        // а таких случаях содержимое окна менять не надо
-        return false;
+
+        let oldDisabled = this.state.disabled === true;
+        let newDisabled = nextProps.disabled === true;
+
+        this.state.disabled=newDisabled;
+
+        return oldDisabled !== newDisabled;
     }
 
     render() {
@@ -138,6 +142,12 @@ export class Window extends Component<WindowProps, WindowState> {
         };
 
         console.log("render-win");
+        console.log(this.props.disabled);
+        console.log(this.state.disabled);
+
+        let disabledWrapperClass = "window-disabled-wrapper";
+        if (!this.state.disabled || this.state.disabled === false)
+            disabledWrapperClass += " is-hidden";
 
         return (
             <div className="window"
@@ -196,6 +206,11 @@ export class Window extends Component<WindowProps, WindowState> {
                         </Movable>
                     </Flex>
                 </Layout>
+                <div className={disabledWrapperClass}
+                     style={{ position:"absolute", left:0, top:0, right:0, bottom:0}}
+                >
+
+                </div>
             </div>
         );
     }

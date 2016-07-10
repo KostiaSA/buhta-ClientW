@@ -14,6 +14,9 @@ import {Button} from "../Button";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
+import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
+import {OpenWindowParams} from "../Desktop/Desktop";
+import {appInstance} from "../App";
 
 
 export interface TreeGridProps extends ComponentProps<TreeGridState> {
@@ -142,6 +145,29 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         this.createRows();
         this.forceUpdate();
+    }
+
+    handleUpdateButtonClick = ()=> {
+        this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+
+    }
+
+    openEditForm(row: InternalRow) {
+
+        let designedObject = this.state.dataSource[row.sourceIndex];
+
+        let win = <ObjectDesigner designedObject={designedObject}>
+        </ObjectDesigner>;
+
+        let openParam: OpenWindowParams = {
+            title: "окно 1",
+            top: 50,
+            left: 50,
+            parentWindowId:this.getParentWindowId()
+        };
+
+        appInstance.desktop.openWindow(win, openParam);
+
     }
 
     private createColumns() {
@@ -861,40 +887,40 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 </Fixed>
                 <div
                     className="tree-grid-body-wrapper"
-                     style={{ position:"relative", overflow:"auto", flex:"1", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
-                     onScroll={ this.handleScroll.bind(this)}
-                     ref={ (e:any) => {this.state.bodyWrapperElement = e;}}
+                    style={{ position:"relative", overflow:"auto", flex:"1", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
+                    onScroll={ this.handleScroll.bind(this)}
+                    ref={ (e:any) => {this.state.bodyWrapperElement = e;}}
                 >
-                        {this.renderGridBody()}
-                        {this.renderColumnHeaders()}
-                        {this.renderColumnFooters()}
+                    {this.renderGridBody()}
+                    {this.renderColumnHeaders()}
+                    {this.renderColumnFooters()}
                 </div>
-                <Fixed className="tree-grid-footer-wrapper" >
+                <Fixed className="tree-grid-footer-wrapper">
 
-                        <Layout type="row" sizeTo="content">
-                            <Fixed>
-                                <Button className="is-smalln">
-                                    Добавить
-                                </Button>
-                                <Button className="is-smalln">
-                                    Изменить
-                                </Button>
-                                <Button className="is-smalln">
-                                    Удалить
-                                </Button>
-                            </Fixed>
-                            <Flex>
-                            </Flex>
-                            <Fixed>
-                                <Button className="is-smalln">
-                                    Выбрать
-                                </Button>
-                                <Button className="is-smalln">
-                                    Отмена
-                                </Button>
+                    <Layout type="row" sizeTo="content">
+                        <Fixed>
+                            <Button className="is-smalln">
+                                Добавить
+                            </Button>
+                            <Button className="is-smalln" onClick={this.handleUpdateButtonClick}>
+                                Изменить
+                            </Button>
+                            <Button className="is-smalln">
+                                Удалить
+                            </Button>
+                        </Fixed>
+                        <Flex>
+                        </Flex>
+                        <Fixed>
+                            <Button className="is-smalln">
+                                Выбрать
+                            </Button>
+                            <Button className="is-smalln">
+                                Отмена
+                            </Button>
 
-                            </Fixed>
-                        </Layout>
+                        </Fixed>
+                    </Layout>
 
                 </Fixed >
             </Layout >

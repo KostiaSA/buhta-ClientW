@@ -1,7 +1,10 @@
 ﻿import * as React from "react";
+import * as ReactDOM from "react-dom";
 import * as _ from "lodash";
 import shallowCompare = require("react-addons-shallow-compare");
 import {ComponentPlugin} from "../Plugins/Plugin";
+import {Window} from "./Window/Window";
+
 
 export interface XOnClickProps {
     onClick?: React.ReactEventHandler;
@@ -49,6 +52,25 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     private renderClasses: string[] = [];
     private renderProps: any = {};
     private renderStyles: any = {};
+
+    getParentWindow(): Window {
+        let parent = ReactDOM.findDOMNode(this);
+        while (parent) {
+            if ((parent as any).$$window)
+                return (parent as any).$$window as Window;
+            parent = parent.parentElement;
+        }
+        return null;
+    }
+
+    getParentWindowId(): string {
+        let parentWin = this.getParentWindow();
+        if (parentWin) {
+            return parentWin.state.id;
+        }
+        else
+            return "";
+    }
 
     addProps(props: Object) {
         _.assignWith(this.renderProps, props, (objectValue: any, sourceValue: any, key?: string)=> {
@@ -168,7 +190,6 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     // private shouldComponentUpdate = (nextProps: P, nextState: S) => {
     //     return this.shallowCompare(nextProps);
     // }
-
 
     private componentDidUpdate = (prevProps: P, prevState: S, prevContext: any) => {
         this.didUpdate(prevProps, prevState, prevContext);
