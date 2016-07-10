@@ -173,7 +173,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                 this.activateChildWindow(childWin.id);
         }
     }
-    
+
     activateChildWindow(id: string) {
         let win = this.getWindowById(id);
         if (win && this.state.windows.indexOf(win) !== this.state.windows.length - 1) {
@@ -213,6 +213,12 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     closeWindow(id: string) {
         let win = this.getWindowById(id);
         _.pull(this.state.windows, win);
+
+        if (win.parentWindowId) {
+            this.activateWindow(win.parentWindowId);
+            this.getWindowById(win.parentWindowId).disabled=false;
+        }
+
         this.forceUpdate();
     }
 
