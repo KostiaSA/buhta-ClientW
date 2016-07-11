@@ -18,12 +18,15 @@ var SqlTable = (function (_super) {
     function SqlTable() {
         _super.apply(this, arguments);
         this.columns = [];
+        this.testProc2 = function () {
+        };
     }
     SqlTable.prototype.addColumn = function (initCallback) {
         var col = new SqlTableColumn();
         col.table = this;
         this.columns.push(col);
         initCallback(col);
+        this.testProc2();
     };
     __decorate([
         StringPropertyEditor_1.StringEditor({

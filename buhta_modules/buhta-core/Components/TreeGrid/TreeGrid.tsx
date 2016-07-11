@@ -102,7 +102,7 @@ export class InternalTreeNode {
 
     }
 
-    iterateRecursive(callback: (node: InternalTreeNode)=>void) {
+    iterateRecursive(callback: (node: InternalTreeNode) => void) {
         callback(this);
         this.children.forEach((child: InternalTreeNode) => {
             child.iterateRecursive(callback);
@@ -121,15 +121,15 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     }
 
 
-    private iterateAllNodes(callback: (node: InternalTreeNode)=>void) {
-        this.state.nodes.forEach((node: InternalTreeNode)=> {
+    private iterateAllNodes(callback: (node: InternalTreeNode) => void) {
+        this.state.nodes.forEach((node: InternalTreeNode) => {
             node.iterateRecursive(callback);
         });
     }
 
     private expandAll() {
-        this.state.nodes.forEach((node: InternalTreeNode)=> {
-            node.iterateRecursive((nod: InternalTreeNode)=> {
+        this.state.nodes.forEach((node: InternalTreeNode) => {
+            node.iterateRecursive((nod: InternalTreeNode) => {
                 nod.expanded = true;
             });
         });
@@ -139,7 +139,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     private collapseAll() {
 
-        this.iterateAllNodes((nod: InternalTreeNode)=> {
+        this.iterateAllNodes((nod: InternalTreeNode) => {
             nod.expanded = false;
         });
 
@@ -147,7 +147,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         this.forceUpdate();
     }
 
-    handleUpdateButtonClick = ()=> {
+    handleUpdateButtonClick = () => {
         this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
 
     }
@@ -163,7 +163,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             title: "окно 1",
             top: 50,
             left: 50,
-            parentWindowId:this.getParentWindowId()
+            parentWindowId: this.getParentWindowId()
         };
 
         appInstance.desktop.openWindow(win, openParam);
@@ -689,14 +689,14 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     columnResizeStart = (event: MoveStartEvent, col: InternalColumn): void => {
         event.bindX(col, "width", () => {
-            $(col.headerWidthNativeElement).attr('width', col.width);
-            $(col.bodyWidthNativeElement).attr('width', col.width);
-            $(col.footerWidthNativeElement).attr('width', col.width);
+            $(col.headerWidthNativeElement).attr("width", col.width);
+            $(col.bodyWidthNativeElement).attr("width", col.width);
+            $(col.footerWidthNativeElement).attr("width", col.width);
             let tableWidth = this.calcTotalColumnsWidth();
-            $(this.state.headerTableElement).css('width', tableWidth);
-            $(this.state.bodyTableElement).css('width', tableWidth);
-            $(this.state.footerTableElement).css('width', tableWidth);
-            $(this.state.bodyWrapperElement).css('max-width', tableWidth + getScrollbarWidth() + 1);
+            $(this.state.headerTableElement).css("width", tableWidth);
+            $(this.state.bodyTableElement).css("width", tableWidth);
+            $(this.state.footerTableElement).css("width", tableWidth);
+            $(this.state.bodyWrapperElement).css("max-width", tableWidth + getScrollbarWidth() + 1);
 
         });
         // this.handleOnClick(null);
@@ -712,7 +712,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 <col
                     key={index}
                     width={ col.width.toString() + "px" }
-                    ref={ (e)=> {col.headerWidthNativeElement=e;} }
+                    ref={ (e) => {col.headerWidthNativeElement = e;} }
                 />);
 
             let tdStyle: any = {overflow: "hidden"};
@@ -725,14 +725,14 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                     {col.caption}
                     <Movable
                         style={{position:"absolute", top:0, width:5, right:0, bottom:0, cursor:"col-resize"}}
-                        onMoveStart={ (event: MoveStartEvent)=>{ this.columnResizeStart(event, col); console.log("MoveStart")}}
+                        onMoveStart={ (event: MoveStartEvent) => { this.columnResizeStart(event, col); console.log("MoveStart"); }}
                     >
                     </Movable>
                     <Movable
-                        style={{position:"absolute", top:0, width:index===0?0:5, left:0, bottom:0, cursor:"col-resize"}}
-                        onMoveStart={ (event: MoveStartEvent)=>{
+                        style={{position:"absolute", top:0, width: index === 0 ? 0 : 5, left:0, bottom:0, cursor:"col-resize"}}
+                        onMoveStart={ (event: MoveStartEvent) => {
                            // ресайзим предыдущую колонку
-                           this.columnResizeStart(event, this.state.columns[index-1]);
+                           this.columnResizeStart(event, this.state.columns[index - 1]);
                         }}
                     >
                     </Movable>
@@ -774,7 +774,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 <col
                     key={index}
                     width={ col.width.toString() + "px" }
-                    ref={ (e)=> {col.footerWidthNativeElement=e;} }
+                    ref={ (e) => {col.footerWidthNativeElement = e;} }
                 />);
             if (col.footer)
                 isFooterEmpty = false;
@@ -819,7 +819,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 <col
                     key={index}
                     width={ col.width.toString() + "px" }
-                    ref={ (e)=> {col.bodyWidthNativeElement=e;} }
+                    ref={ (e) => {col.bodyWidthNativeElement = e;} }
                 />);
         });
 
@@ -887,7 +887,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 </Fixed>
                 <div
                     className="tree-grid-body-wrapper"
-                    style={{ position:"relative", overflow:"auto", flex:"1", maxWidth:this.calcTotalColumnsWidth()+getScrollbarWidth()+1}}
+                    style={{ position:"relative", overflow:"auto", flex:"1", maxWidth:this.calcTotalColumnsWidth() + getScrollbarWidth() + 1}}
                     onScroll={ this.handleScroll.bind(this)}
                     ref={ (e:any) => {this.state.bodyWrapperElement = e;}}
                 >

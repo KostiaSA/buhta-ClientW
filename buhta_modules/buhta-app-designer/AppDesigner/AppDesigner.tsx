@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as Immutable from "immutable";
+import * as _ from "lodash";
 import {ComponentProps, Component, ComponentState} from "../../buhta-core/Components/Component";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import {Fixed} from "../../buhta-core/Components/LayoutPane/Fixed";
@@ -18,7 +19,6 @@ import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
 import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
 import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
-import * as _ from "lodash";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
@@ -26,6 +26,7 @@ import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColu
 import {executeSQL} from "../../buhta-core/SQL";
 import {Button} from "../../buhta-core/Components/Button";
 import {SqlTable} from "../../buhta-sql/SqlTable";
+import {Snapshot} from "../../buhta-core/Snapshot";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -89,7 +90,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
 //        let win = <ObjectDesigner onChange={()=>{ win2Instance.designedObject=null; win2Instance.forceUpdate(); console.log("test323-change")}} designedObject={testObject} key="1"> </ObjectDesigner>;
         let win = <ObjectDesigner
-            onChange={()=>{ testObject=_.cloneDeep(testObject);  win2Instance.forceUpdate(); console.log("test999-change")}}
+            onChange={() => { testObject = _.cloneDeep(testObject);  win2Instance.forceUpdate(); console.log("test999-change"); }}
             designedObject={testObject} key="1"> </ObjectDesigner>;
 
         let testObject2: testBuhtaObject2 = new testBuhtaObject2();
@@ -203,7 +204,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                     title: "auto form",
                     top: 10,
                     left: 10,
-                    height:800
+                    height: 800
                 };
 
                 appInstance.desktop.openWindow(win2, openParam);
@@ -219,13 +220,14 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testFlex() {
         let win2 =
-            <Layout type="column" sizeTo="parent" style={{ border:"2px dotted red", position:"absolute", top:0, left:0,right:0, bottom:0 }}>
+            <Layout type="column" sizeTo="parent"
+                    style={{ border:"2px dotted red", position:"absolute", top:0, left:0,right:0, bottom:0 }}>
                 <Fixed style={{ border:"2px dotted blue" }}>
                     <Button>Один</Button>
                 </Fixed>
                 <Flex style={{ border:"2px dotted green" }}>
 
-                    <Layout  type="column" sizeTo="parent" style={{ border:"1px solid red"}}>
+                    <Layout type="column" sizeTo="parent" style={{ border:"1px solid red"}}>
                         <Fixed style={{ border:"1px solid blue" }}>
                             <Button>------Один</Button>
                         </Fixed>
@@ -286,17 +288,17 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         table.name = "Организация";
         table.sqlname = "dbo.Организация";
-        table.addColumn((col)=> {
+        table.addColumn((col) => {
             col.name = "Номер";
             col.dataType = "varchar(10)";
         });
-        table.addColumn((col)=> {
+        table.addColumn((col) => {
             col.name = "Название";
             col.dataType = "varchar(50)";
         });
 
         let win = <ObjectDesigner
-            onChange={()=>{ console.log("table-change")}}
+            onChange={() => { console.log("table-change"); }}
             designedObject={table}>
         </ObjectDesigner>;
 
@@ -309,6 +311,64 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         appInstance.desktop.openWindow(win, openParam);
 
     };
+
+    testSnapshot() {
+        let table = new SqlTable();
+
+        table.name = "Организация";
+        table.sqlname = "dbo.Организация";
+        table.addColumn((col) => {
+            col.name = "Номер";
+            col.dataType = "varchar(10)";
+        });
+        table.addColumn((col) => {
+            col.name = "Название";
+            col.dataType = "varchar(50)";
+        });
+
+        let s = new Snapshot();
+        s.saveObject(table, "table1");
+
+        console.log(table);
+        table.name = "жопа";
+        table.columns = null;
+        console.log(table);
+
+        s.restoreObject(table, "table1");
+        console.log(table);
+
+        this.testSnapshotPreformance();
+
+
+    };
+
+    testSnapshotPreformance() {
+        let x: any = {a: []};
+
+        for (let i = 0; i < 20000; i++) {
+            let table = new SqlTable();
+
+            table.name = "Организация";
+            table.sqlname = "dbo.Организация";
+            table.addColumn((col) => {
+                col.name = "Номер";
+                col.dataType = "varchar(10)";
+            });
+            table.addColumn((col) => {
+                col.name = "Название";
+                col.dataType = "varchar(50)";
+            });
+            x.a.push(table);
+        }
+
+
+        let s = new Snapshot();
+        console.time("x");
+        s.saveObject(x, "x");
+        console.timeEnd("x");
+
+    };
+
 
     render() {
         this.addClassName("app-designer");
@@ -336,6 +396,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <button onClick={() => { this.testFlex(); }}>test FLEX</button>
                                 <br/>
                                 <button onClick={() => { this.testTableDesigner(); }}>test TABLE DESIGNER</button>
+                                <br/>
+                                <br/>
+                                <button onClick={() => { this.testSnapshot(); }}>test SNAPSHOT</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

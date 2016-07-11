@@ -24,15 +24,20 @@ export class SqlTable extends DesignedObject {
     @ListEditor({
         inputTab: "Колонки"
     })
-    columns: SqlTableColumn[]=[];
+    columns: SqlTableColumn[] = [];
 
     addColumn(initCallback: (newColumn: SqlTableColumn) => void) {
         let col = new SqlTableColumn();
         col.table = this;
         this.columns.push(col);
         initCallback(col);
+
+        this.testProc2();
     }
 
+    testProc2 = () => {
+
+    };
 
 }
 
@@ -55,6 +60,8 @@ export class SqlTableColumn extends DesignedObject {
     dataType: string;
 
     table: SqlTable;
+
+    $$testObject: any;
 
 }
 

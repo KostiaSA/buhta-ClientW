@@ -2,9 +2,10 @@
 
 export class DesignedObject {
     constructor() {
+        // DesignedObject constructor
     }
 
-    [name:string]: any;
+    [name: string]: any;
 
     $$unwatchedProps: string[] = ["propertyEditors", "$$unwatchedProps"];
 
@@ -70,6 +71,10 @@ export class DesignedObject {
     //
     //     return tsCode.getCode();
     // }
+
+    testProc1 = () => {
+
+    };
 
 }
 
