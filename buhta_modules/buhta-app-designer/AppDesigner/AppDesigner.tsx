@@ -188,6 +188,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                         hierarchyFieldName="Номер"
                         hierarchyDelimiters="."
                         autoExpandNodesToLevel={0}
+                        editable={true}
+                        denyDelete={true}
                     >
                         <TreeGridColumns>
                             <TreeGridColumn caption="Колонка2" fieldName="Номер" showHierarchyTree={false} width={100}>

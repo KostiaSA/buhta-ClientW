@@ -28,6 +28,12 @@ export interface TreeGridProps extends ComponentProps<TreeGridState> {
     hierarchyDelimiters?: string;
     treeMode?: boolean;
     autoExpandNodesToLevel?: number;
+
+    editable?: boolean;
+    denyInsert?: boolean;
+    denyUpdate?: boolean;
+    denyDelete?: boolean;
+
 }
 
 export class TreeGridState extends ComponentState<TreeGridProps> {
@@ -167,6 +173,14 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     handleUpdateButtonClick = () => {
         this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+
+    }
+
+    handleInsertButtonClick = () => {
+        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+    }
+    handleDeleteButtonClick = () => {
+        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
 
     }
 
@@ -886,6 +900,35 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         return !this.isPropsEqual(this.props, nextProps, ["children", "dataSource"]);
     }
 
+    renderEditableButtons(): JSX.Element[] {
+        let buttons: JSX.Element[] = [];
+
+        if (this.props.editable) {
+            if (this.props.denyInsert !== true)
+                buttons.push(
+                    <Button className="is-smalln" onClick={this.handleInsertButtonClick}>
+                        Добавить
+                    </Button>
+                );
+
+            if (this.props.denyUpdate !== true)
+                buttons.push(
+                    <Button className="is-smalln" onClick={this.handleUpdateButtonClick}>
+                        Изменить
+                    </Button>
+                );
+
+            if (this.props.denyDelete !== true)
+                buttons.push(
+                    <Button className="is-smalln" onClick={this.handleDeleteButtonClick}>
+                        Удалить
+                    </Button>
+                );
+        }
+        return buttons;
+    }
+
+
     render() {
         //this.addClassName("button");
         console.log("render-tree-grid");
@@ -922,15 +965,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
                     <Layout type="row" sizeTo="content">
                         <Fixed>
-                            <Button className="is-smalln">
-                                Добавить
-                            </Button>
-                            <Button className="is-smalln" onClick={this.handleUpdateButtonClick}>
-                                Изменить
-                            </Button>
-                            <Button className="is-smalln">
-                                Удалить
-                            </Button>
+                            {this.renderEditableButtons()}
                         </Fixed>
                         <Flex>
                         </Flex>
