@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import {ComponentProps, Component, ComponentState} from "../Component";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
@@ -6,10 +7,10 @@ import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
 import shallowCompare = require("react-addons-shallow-compare");
 import deepEqual = require("deep-equal");
-import {OpenWindowParams} from "../Desktop/Desktop";
+import {OpenWindowParams, Desktop} from "../Desktop/Desktop";
 
 
-export interface WindowProps extends OpenWindowParams,ComponentProps<WindowState> {
+export interface WindowProps extends OpenWindowParams, ComponentProps<WindowState> {
     id?: string;
     disabled?: boolean;
     onActivate?(state: WindowState): void;
@@ -71,12 +72,19 @@ export class Window extends Component<WindowProps, WindowState> {
         (this.nativeElement as any)["$$window"] = this;
     }
 
+    close() {
+        this.getParentDesktop().closeWindow(this.state.id);
+        if (this.props.onClose)
+            this.props.onClose(this.state);
+    }
+
+
     moveStart = (e: MoveStartEvent): void => {
         e.bindX(this.state, "left", () => {
-            $(this.nativeElement).css('left', this.state.left);
+            $(this.nativeElement).css("left", this.state.left);
         });
         e.bindY(this.state, "top", () => {
-            $(this.nativeElement).css('top', this.state.top);
+            $(this.nativeElement).css("top", this.state.top);
         });
         this.handleOnClick(null);
     };
@@ -85,12 +93,12 @@ export class Window extends Component<WindowProps, WindowState> {
         e.bindX(this.state, "width", () => {
             if (this.state.width < this.state.minWidth)
                 this.state.width = this.state.minWidth;
-            $(this.nativeElement).css('width', this.state.width);
+            $(this.nativeElement).css("width", this.state.width);
         });
         e.bindY(this.state, "height", () => {
             if (this.state.height < this.state.minHeight)
                 this.state.height = this.state.minHeight;
-            $(this.nativeElement).css('height', this.state.height);
+            $(this.nativeElement).css("height", this.state.height);
         });
         this.handleOnClick(null);
     };
@@ -102,8 +110,7 @@ export class Window extends Component<WindowProps, WindowState> {
 
 
     handleCloseButtonClick = (e: React.SyntheticEvent): void => {
-        if (this.props.onClose)
-            this.props.onClose(this.state);
+        this.close();
         e.stopPropagation();
     };
 
@@ -112,7 +119,7 @@ export class Window extends Component<WindowProps, WindowState> {
         let oldDisabled = this.state.disabled === true;
         let newDisabled = nextProps.disabled === true;
 
-        this.state.disabled=newDisabled;
+        this.state.disabled = newDisabled;
 
         return oldDisabled !== newDisabled;
     }

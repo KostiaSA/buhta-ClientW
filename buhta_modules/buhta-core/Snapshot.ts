@@ -3,6 +3,7 @@ import * as _ from "lodash";
 // объект может иметь массивы:
 // $$unsavedProps - имена свойств, которые не сохраняются
 // $$savedByRefProps - имена свойств, которые сохраняются как ссылки
+// не сохраняются свойства, которые начинаются с $$
 export class Snapshot {
     constructor() {
 
@@ -47,7 +48,6 @@ class InternalSnapshot {
     snapshotName: string;
     objProps: SnapshotProperty[] = [];
     arrayElements: any[];
-//    refs: any[] = [];
     refsClones: any = {};
 
     saveProps() {
@@ -64,15 +64,12 @@ class InternalSnapshot {
                     p.snapshot = this;
                     p.saveValue();
                     this.objProps.push(p);
-                    //cloneObject[prop] = clone(item[prop]);
                 }
             }
         }
     }
 
     cloneValue(value: any): any {
-        //console.log("saveValue");
-        //console.log(this.propName);
         if (value === this.obj) {
             return value;
         }
@@ -117,40 +114,6 @@ class SnapshotProperty {
     restoreValue() {
         this.snapshot.obj[this.propName] = this.propValue;
     }
-
-    // cloneValue(value: any): any {
-    //     //console.log("saveValue");
-    //     //console.log(this.propName);
-    //     if (value === this.snapshot.obj) {
-    //         return value;
-    //     }
-    //     else if (_.isArray(value)) {
-    //         return value.map((v: any) => this.cloneValue(v));
-    //     }
-    //     else if (_.isFunction(value)) {
-    //         return value;
-    //     }
-    //     else if (_.isObject(value)) {
-    //         //let refsIndex = this.snapshot.refs.indexOf(value);
-    //         if (value.$$uniqueObjectId)
-    //             return this.snapshot.refsClones[value.$$uniqueObjectId];
-    //
-    //         let valueCopy = new value.constructor();
-    //         valueCopy.$$isClone = true;
-    //         value.$$uniqueObjectId = Math.random().toString(36).slice(2, 16);
-    //         this.snapshot.refsClones[value.$$uniqueObjectId] = valueCopy;
-    //
-    //         for (let propName in value) {
-    //             if (value.hasOwnProperty(propName) && propName.substring(0, 2) !== "$$") {
-    //                 valueCopy[propName] = this.cloneValue(value[propName]);
-    //             }
-    //         }
-    //         return valueCopy;
-    //     }
-    //     else {
-    //         return value;
-    //     }
-    // }
 
 }
 

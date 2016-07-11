@@ -147,6 +147,24 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         this.forceUpdate();
     }
 
+
+    getRowIndex(sourceIndex: number): number {
+        // TODO: сделать вариант для treeMode
+        for (let i = 0; i < this.state.rows.length; i++) {
+            if (this.state.rows[i].sourceIndex === sourceIndex)
+                return i;
+        }
+        return -1;
+    }
+
+    refreshRow(sourceIndex: number) {
+        this.createRows();
+        let index = this.getRowIndex(sourceIndex);
+        this.state.focusedRowIndex = index;
+        this.forceUpdate();
+        // TODO: сделать прокрутку, если focused не видна на экране
+    }
+
     handleUpdateButtonClick = () => {
         this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
 
@@ -156,8 +174,13 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         let designedObject = this.state.dataSource[row.sourceIndex];
 
-        let win = <ObjectDesigner designedObject={designedObject}>
-        </ObjectDesigner>;
+        let win =
+            <ObjectDesigner
+                designedObject={designedObject}
+                onSaveChanges={ () => { this.refreshRow(row.sourceIndex); }}
+            >
+
+            </ObjectDesigner>;
 
         let openParam: OpenWindowParams = {
             title: "окно 1",
@@ -166,7 +189,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             parentWindowId: this.getParentWindowId()
         };
 
-        appInstance.desktop.openWindow(win, openParam);
+        this.getParentDesktop().openWindow(win, openParam);
 
     }
 

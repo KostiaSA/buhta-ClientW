@@ -223,7 +223,12 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     }
 
     handleClose = (state: WindowState): void => {
-        this.closeWindow(state.id);
+       // this.closeWindow(state.id);
+    }
+
+    protected didMount() {
+        super.didMount();
+        (this.nativeElement as any)["$$desktop"] = this;
     }
 
     render() {

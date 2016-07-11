@@ -20,7 +20,8 @@ export interface AutoFormControlProps {
 export interface AutoFormProps extends ComponentProps<any> {
     inputs?: AutoFormControlProps[];
     sizeTo: "parent" | "content";
-
+    onSaveChanges?: () => void;
+    onCancelChanges?: () => void;
 }
 
 const emptyTabName = "закладка";
@@ -50,7 +51,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
     }
 
     private renderTab(tab: string): JSX.Element {
-        return <Form sizeTo={this.props.sizeTo} >{this.getTabInputs(tab)}</Form>;
+        return <Form sizeTo={this.props.sizeTo}>{this.getTabInputs(tab)}</Form>;
     }
 
     private  renderTabs(): JSX.Element {
@@ -68,8 +69,8 @@ export class AutoForm extends Component<AutoFormProps, any> {
             return (
                 <Tabs
                     sizeTo="parent"
-                    onWillMount={ (state)=> { console.log("onWillMount-auto-form-tabs")}}
-                    onChangeActiveTab={ (state, tab)=> { console.log("setActiveTab");console.log(tab);}}
+                    onWillMount={ (state) => { console.log("onWillMount-auto-form-tabs"); }}
+                    onChangeActiveTab={ (state, tab) => { console.log("setActiveTab");console.log(tab);}}
                 >
                     { tabs.map<JSX.Element>((tab, index) => {
                         return (
@@ -82,6 +83,21 @@ export class AutoForm extends Component<AutoFormProps, any> {
             );
 
         }
+    }
+
+    handleSaveButtonClick  = (e: React.SyntheticEvent): void => {
+        if (this.props.onSaveChanges)
+            this.props.onSaveChanges();
+        this.getParentWindow().close();
+        e.stopPropagation();
+
+    }
+
+    handleCancelButtonClick  = (e: React.SyntheticEvent): void => {
+        if (this.props.onCancelChanges)
+            this.props.onCancelChanges();
+        this.getParentWindow().close();
+        e.stopPropagation();
     }
 
     render() {
@@ -115,10 +131,10 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
                             </Flex>
                             <Fixed>
-                                <Button className="is-success is-outlined">
+                                <Button className="is-success is-outlined" onClick={ this.handleSaveButtonClick }>
                                     Сохранить
                                 </Button>
-                                <Button>
+                                <Button onClick={ this.handleCancelButtonClick } >
                                     Отмена
                                 </Button>
                             </Fixed>

@@ -348,7 +348,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     testSnapshotPreformance() {
         let x: any = [];
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
             let table = new SqlTable();
 
             table.name = "Организация";
@@ -366,9 +366,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
 
         let s = new Snapshot();
-        console.time("x");
+        console.time("x1");
         s.saveObject(x, "x");
-        console.timeEnd("x");
+        console.timeEnd("x1");
         x.length = 0;
         s.restoreObject(x, "x");
         console.log(x);

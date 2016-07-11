@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import shallowCompare = require("react-addons-shallow-compare");
 import {ComponentPlugin} from "../Plugins/Plugin";
 import {Window} from "./Window/Window";
+import {Desktop} from "./Desktop/Desktop";
 
 
 export interface XOnClickProps {
@@ -21,7 +22,7 @@ export interface ComponentProps<S> extends React.ClassAttributes<Element> {
 
 
 export class ComponentState<P> {
-    constructor(public component: Component<P,any>) {
+    constructor(public component: Component<P, any>) {
 
     }
 
@@ -36,7 +37,7 @@ export class ComponentState<P> {
 
 export class Component<P extends ComponentProps<S>, S extends ComponentState<P>> extends React.Component<P, S> {
 
-    plugins: ComponentPlugin<any,any>[] = [];
+    plugins: ComponentPlugin<any, any>[] = [];
 
     constructor(props: P, context: any /*stateClass?: Function*/) {
         super(props, context);
@@ -62,6 +63,18 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         }
         return null;
     }
+    
+    getParentDesktop(): Desktop {
+        let parent = ReactDOM.findDOMNode(this);
+        while (parent) {
+            if ((parent as any).$$desktop)
+                return (parent as any).$$desktop as Desktop;
+            parent = parent.parentElement;
+        }
+        return null;
+    }
+
+
 
     getParentWindowId(): string {
         let parentWin = this.getParentWindow();
@@ -73,7 +86,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     }
 
     addProps(props: Object) {
-        _.assignWith(this.renderProps, props, (objectValue: any, sourceValue: any, key?: string)=> {
+        _.assignWith(this.renderProps, props, (objectValue: any, sourceValue: any, key?: string) => {
             if (key === "class" || key === "className")
                 console.error("invalid property '" + key + "', use functions addClassName(), toggleClassName()");
             if (key === "style")
