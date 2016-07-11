@@ -326,10 +326,13 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             col.dataType = "varchar(50)";
         });
 
+        console.log(table);
+
         let s = new Snapshot();
         s.saveObject(table, "table1");
 
         console.log(table);
+
         table.name = "жопа";
         table.columns = null;
         console.log(table);
@@ -343,9 +346,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     };
 
     testSnapshotPreformance() {
-        let x: any = {a: []};
+        let x: any = [];
 
-        for (let i = 0; i < 20000; i++) {
+        for (let i = 0; i < 10; i++) {
             let table = new SqlTable();
 
             table.name = "Организация";
@@ -358,7 +361,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                 col.name = "Название";
                 col.dataType = "varchar(50)";
             });
-            x.a.push(table);
+            x.push(table);
         }
 
 
@@ -366,7 +369,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         console.time("x");
         s.saveObject(x, "x");
         console.timeEnd("x");
-
+        x.length = 0;
+        s.restoreObject(x, "x");
+        console.log(x);
     };
 
 
