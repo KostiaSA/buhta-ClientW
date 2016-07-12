@@ -13,6 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var DesignedObject_1 = require("../buhta-app-designer/DesignedObject");
 var StringPropertyEditor_1 = require("../buhta-app-designer/PropertyEditors/StringPropertyEditor");
 var ListPropertyEditor_1 = require("../buhta-app-designer/PropertyEditors/ListPropertyEditor");
+var TreeGridColumn_1 = require("../buhta-core/Components/TreeGrid/TreeGridColumn");
 var SqlTable = (function (_super) {
     __extends(SqlTable, _super);
     function SqlTable() {
@@ -57,13 +58,22 @@ var SqlTableColumn = (function (_super) {
     function SqlTableColumn() {
         _super.apply(this, arguments);
     }
+    Object.defineProperty(SqlTableColumn.prototype, "testColumn", {
+        get: function () {
+            return this.name + "+" + this.dataType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ;
     __decorate([
         StringPropertyEditor_1.StringEditor({
             inputCaption: "Имя колонки",
             inputTab: "Главная",
             inputGroup: "Основная",
             inputDescription: "Имя колонки"
-        })
+        }),
+        TreeGridColumn_1.GridColumn({ caption: "Имя колонки" })
     ], SqlTableColumn.prototype, "name", void 0);
     __decorate([
         StringPropertyEditor_1.StringEditor({
@@ -71,8 +81,12 @@ var SqlTableColumn = (function (_super) {
             inputTab: "Главная",
             inputGroup: "Основная",
             inputDescription: "sql тип колонки"
-        })
+        }),
+        TreeGridColumn_1.GridColumn({ caption: "Тип" })
     ], SqlTableColumn.prototype, "dataType", void 0);
+    __decorate([
+        TreeGridColumn_1.GridColumn({ caption: "test", order: -1 })
+    ], SqlTableColumn.prototype, "testColumn", null);
     return SqlTableColumn;
 }(DesignedObject_1.DesignedObject));
 exports.SqlTableColumn = SqlTableColumn;

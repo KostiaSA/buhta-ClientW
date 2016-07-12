@@ -52,6 +52,9 @@ export interface WindowInfo {
 
 }
 
+export type WindowAutoSize = "none" | "content" | "full-desktop";
+export type WindowAutoPosition = "none" | "parent-center" | "desktop-center";
+
 export interface OpenWindowParams {
     title?: string;
     top?: number;
@@ -63,6 +66,14 @@ export interface OpenWindowParams {
     minHeight?: number;
     minWidth?: number;
     parentWindowId?: string;
+    autoPosition?: WindowAutoPosition;
+    autoSize?: WindowAutoSize;
+}
+
+export interface OpenMessageWindowParams {
+    title?: string;
+    parentWindowId?: string;
+    style: "error" | "information" | "confirmation";
 }
 
 export class DesktopWindow implements OpenWindowParams {
@@ -79,6 +90,8 @@ export class DesktopWindow implements OpenWindowParams {
     content: JSX.Element;
     disabled: boolean;
     parentWindowId: string;
+    autoPosition: WindowAutoPosition = "none";
+    autoSize: WindowAutoSize = "none";
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
@@ -147,6 +160,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             }
         }
 
+        newWin.autoPosition = openParams.autoPosition;
+        newWin.autoSize = openParams.autoSize;
 
         newWin.minHeight = openParams.minHeight || 100;
         newWin.minWidth = openParams.minWidth || 100;
@@ -156,8 +171,14 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             this.getWindowById(newWin.parentWindowId).disabled = true;
         }
 
+
         this.state.windows.push(newWin);
         this.forceUpdate();
+    };
+
+    openMessageWindow(win: JSX.Element, openParams?: OpenMessageWindowParams) {
+        //if (!openParams)
+        //  openParams = {};
     };
 
     activateWindow(id: string) {
@@ -223,7 +244,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     }
 
     handleClose = (state: WindowState): void => {
-       // this.closeWindow(state.id);
+        // this.closeWindow(state.id);
     }
 
     protected didMount() {
@@ -240,7 +261,6 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             <div ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
                 {this.state.windows.map((w, index) => {
                     console.log("render-desktop-win");
-                    console.log(w.disabled);
                     return (
                         <Window
                             key={w.id}
@@ -253,6 +273,10 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             right={w.right}
                             bottom={w.bottom}
                             disabled={w.disabled}
+                            minWidth={w.minWidth}
+                            minHeight={w.minHeight}
+                            autoSize={w.autoSize}
+                            autoPosition={w.autoPosition}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
                         >

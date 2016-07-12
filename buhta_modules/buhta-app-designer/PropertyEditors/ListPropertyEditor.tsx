@@ -7,13 +7,14 @@ import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoFor
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 
 
 export class ListPropertyEditor extends BasePropertyEditor {
 
     handleChange(event: React.SyntheticEvent) {
-       // this.props.designedObject[this.props.propertyName] = (event.target as any).value;
-       // console.log("change === " + this.props.propertyName + " " + this.props.designedObject[this.props.propertyName]);
+        // this.props.designedObject[this.props.propertyName] = (event.target as any).value;
+        // console.log("change === " + this.props.propertyName + " " + this.props.designedObject[this.props.propertyName]);
     }
 
     render(): JSX.Element {
@@ -37,20 +38,23 @@ export class ListPropertyEditor extends BasePropertyEditor {
         //     />
         // );
 
+        let dataSource = new TreeGridArrayDataSource(this.props.designedObject[this.props.propertyName]);
+
         return (
             <TreeGrid
-                dataSource={ this.props.designedObject[this.props.propertyName] }
+                dataSource={ dataSource }
                 treeMode={false}
             >
-                <TreeGridColumns>
-                    <TreeGridColumn caption="Имя колонки" fieldName="name" width={100}>
-                    </TreeGridColumn>
-                    <TreeGridColumn caption="Тип данных" fieldName="dataType" width={150}>
-                    </TreeGridColumn>
-                </TreeGridColumns>
             </TreeGrid>
         );
     }
+
+// <TreeGridColumns>
+// <TreeGridColumn caption="Имя колонки" propertyName="name" width={100}>
+//     </TreeGridColumn>
+//     <TreeGridColumn caption="Тип данных" propertyName="dataType" width={150}>
+//     </TreeGridColumn>
+//     </TreeGridColumns>
 
 }
 

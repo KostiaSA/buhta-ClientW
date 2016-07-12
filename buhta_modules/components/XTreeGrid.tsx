@@ -108,7 +108,7 @@ export class XTreeGrid extends X.XComponent<XTreeGridProps, XTreeGridState> {
                 col.props = propCol.props;
                 col.width = propCol.props.width || 150;
                 col.caption = propCol.props.caption;
-                col.fieldName = propCol.props.fieldName;
+                col.fieldName = propCol.props.propertyName;
                 col.caption = propCol.props.caption || col.fieldName;
                 this.columns.push(col);
             });
@@ -342,7 +342,7 @@ export class XTreeGrid extends X.XComponent<XTreeGridProps, XTreeGridState> {
 
         let objIndex = row.sourceIndex;
         let str = this.dataSource[objIndex][col.props.fieldName].toString();
-        //let str = this.rows[rowIndex].sourceObject[col.props.fieldName].toString();
+        //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
         // return <td key={colIndex}>
         //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
         // </td>;

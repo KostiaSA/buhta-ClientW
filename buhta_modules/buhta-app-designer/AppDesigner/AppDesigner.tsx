@@ -18,15 +18,18 @@ import {Form} from "../../buhta-core/Components/Form/Form";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
 import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
-import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
+import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
-import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {executeSQL} from "../../buhta-core/SQL";
 import {Button} from "../../buhta-core/Components/Button";
 import {SqlTable} from "../../buhta-sql/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
+import {DesignedObject} from "../DesignedObject";
+import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
+import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -173,50 +176,53 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testGrid() {
-        executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
-            .done((table) => {
-                let dataSource = table.rows.map((r) => {
-                    return {Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"]};
-                });
-
-                console.log("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер =>" + table.rows[0].getValue(1));
-
-                let win2 =
-                    <TreeGrid
-                        dataSource={ dataSource }
-                        treeMode={true}
-                        hierarchyFieldName="Номер"
-                        hierarchyDelimiters="."
-                        autoExpandNodesToLevel={0}
-                        editable={true}
-                        denyDelete={true}
-                    >
-                        <TreeGridColumns>
-                            <TreeGridColumn caption="Колонка2" fieldName="Номер" showHierarchyTree={false} width={100}>
-                            </TreeGridColumn>
-                            <TreeGridColumn caption="Колонка3" fieldName="Название" showHierarchyTree={true}
-                                            width={200}>
-                            </TreeGridColumn>
-                            <TreeGridColumn caption="Колонка1" fieldName="Ключ" width={80}>
-                            </TreeGridColumn>
-                        </TreeGridColumns>
-                    </TreeGrid>;
-
-                let openParam: OpenWindowParams = {
-                    title: "auto form",
-                    top: 10,
-                    left: 10,
-                    height: 800
-                };
-
-                appInstance.desktop.openWindow(win2, openParam);
-
-
-            })
-            .fail((err) => {
-                alert(err.message);
-            });
-
+        // executeSQL("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+        //     .done((table) => {
+        //         let dataSource = table.rows.map<DesignedObject>((r) => {
+        //             return {Ключ: r["Ключ"], Номер: r["Номер"], Название: r["Название"]};
+        //         });
+        //
+        //
+        //         let ds = new TreeGridArrayDataSource(dataSource);
+        //         console.log("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер =>" + table.rows[0].getValue(1));
+        //
+        //         let win2 =
+        //             <TreeGrid
+        //                 dataSource={ dataSource }
+        //                 treeMode={true}
+        //                 hierarchyFieldName="Номер"
+        //                 hierarchyDelimiters="."
+        //                 autoExpandNodesToLevel={0}
+        //                 editable={true}
+        //                 denyDelete={true}
+        //             >
+        //                 <TreeGridColumns>
+        //                     <TreeGridColumn caption="Колонка2" propertyName="Номер" showHierarchyTree={false}
+        //                                     width={100}>
+        //                     </TreeGridColumn>
+        //                     <TreeGridColumn caption="Колонка3" propertyName="Название" showHierarchyTree={true}
+        //                                     width={200}>
+        //                     </TreeGridColumn>
+        //                     <TreeGridColumn caption="Колонка1" propertyName="Ключ" width={80}>
+        //                     </TreeGridColumn>
+        //                 </TreeGridColumns>
+        //             </TreeGrid>;
+        //
+        //         let openParam: OpenWindowParams = {
+        //             title: "auto form",
+        //             top: 10,
+        //             left: 10,
+        //             height: 800
+        //         };
+        //
+        //         appInstance.desktop.openWindow(win2, openParam);
+        //
+        //
+        //     })
+        //     .fail((err) => {
+        //         alert(err.message);
+        //     });
+        //
 
     }
 
@@ -376,6 +382,89 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         console.log(x);
     };
 
+    testGrid2() {
+
+        class Vid extends DesignedObject {
+
+            @StringEditor()
+            @GridColumn({caption: "это номер"})
+            Num: string;
+
+            @StringEditor()
+            @GridColumn({})
+            Name: string;
+        }
+
+        executeSQL("select TOP 0 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+            .done((table) => {
+
+                let vids = table.rows.map<Vid>((r) => {
+
+                    let vid = new Vid();
+                    vid.Num = "*" + r["Номер"];
+                    vid.Name = "*" + r["Название"];
+
+                    return vid;
+                });
+
+                console.log("select TOP 10 ==> ");
+                //console.log(vids);
+
+                let dataSource = new TreeGridArrayDataSource(vids);
+                dataSource.params.getNewRow = () => new Vid();
+                //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
+                dataSource.params.getEmptyDataSourceMessage = () => <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
+
+                let win2 =
+                    <TreeGrid
+                        dataSource={dataSource}
+                        editable={true}
+                    >
+                    </TreeGrid>;
+
+                let openParam: OpenWindowParams = {
+                    title: "test grid 2",
+                    top: 20,
+                    left: 20,
+                    height: 500
+                };
+
+                appInstance.desktop.openWindow(win2, openParam);
+
+
+            })
+            .fail((err) => {
+                alert(err.message);
+            });
+
+
+    }
+
+    testWindowAutoSize() {
+        let win2 =
+                <div>
+                    Привет уроды
+                    <Button>Да и нет </Button>
+                    <Button>Да и нет </Button>
+                    <br/>
+                    <Button>Да и нет </Button>
+                    <br/>
+                    <Button>Да и нет </Button>
+                    <br/>
+                    <Button>Да и нет </Button>
+                    <br/>
+                    <Button>Да и нет </Button>
+                </div>
+            ;
+
+        let openParam: OpenWindowParams = {
+            title: "test AUTOSIZE",
+            autoSize: "content"
+        };
+
+        appInstance.desktop.openWindow(win2, openParam);
+
+    }
 
     render() {
         this.addClassName("app-designer");
@@ -404,8 +493,12 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { this.testTableDesigner(); }}>test TABLE DESIGNER</button>
                                 <br/>
-                                <br/>
                                 <button onClick={() => { this.testSnapshot(); }}>test SNAPSHOT</button>
+                                <br/>
+                                <button onClick={() => { this.testGrid2(); }}>test GRID-2</button>
+                                <br/>
+                                <br/>
+                                <button onClick={() => { this.testWindowAutoSize(); }}>test WIN AUTOSIZE</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

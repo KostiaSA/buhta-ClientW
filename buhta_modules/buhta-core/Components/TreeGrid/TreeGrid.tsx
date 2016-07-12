@@ -17,10 +17,11 @@ import {Flex} from "../LayoutPane/Flex";
 import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {OpenWindowParams} from "../Desktop/Desktop";
 import {appInstance} from "../App";
+import {TreeGridDataSource} from "./TreeGridDataSource";
 
 
 export interface TreeGridProps extends ComponentProps<TreeGridState> {
-    dataSource?: any;
+    dataSource: TreeGridDataSource;
     rowHeight?: number;
     keyFieldName?: string;
     parentKeyFieldName?: string;
@@ -34,6 +35,8 @@ export interface TreeGridProps extends ComponentProps<TreeGridState> {
     denyUpdate?: boolean;
     denyDelete?: boolean;
 
+    onCreateNewRecord?: () => any;
+
 }
 
 export class TreeGridState extends ComponentState<TreeGridProps> {
@@ -43,7 +46,7 @@ export class TreeGridState extends ComponentState<TreeGridProps> {
     nodes: InternalTreeNode[];
     focusedRowIndex: number;
     focusedCellIndex: number;
-    dataSource: any[];
+    dataSource: TreeGridDataSource;
 
     headerFakeRow: HTMLElement;
     footerFakeRow: HTMLElement;
@@ -177,16 +180,47 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     }
 
     handleInsertButtonClick = () => {
-        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+        this.openInsertForm();
     }
+
     handleDeleteButtonClick = () => {
         //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
 
     }
 
+    openInsertForm() {
+
+        let designedObject = this.state.dataSource.getNewRow();
+
+        if (designedObject) {
+            let win =
+                <ObjectDesigner
+                    designedObject={designedObject}
+                    onSaveChanges={ () => {
+                       let index = this.state.dataSource.addRow(designedObject);
+                       if (this.state.dataSource.getDataRows().length === 1)
+                         this.refreshDataSource();
+                       else
+                         this.refreshRow(index);
+                    }}
+                >
+
+                </ObjectDesigner>;
+
+            let openParam: OpenWindowParams = {
+                title: "добавление",
+                top: 50,
+                left: 50,
+                parentWindowId: this.getParentWindowId()
+            };
+
+            this.getParentDesktop().openWindow(win, openParam);
+        }
+    }
+
     openEditForm(row: InternalRow) {
 
-        let designedObject = this.state.dataSource[row.sourceIndex];
+        let designedObject = this.state.dataSource.getDataRows()[row.sourceIndex];
 
         let win =
             <ObjectDesigner
@@ -197,7 +231,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             </ObjectDesigner>;
 
         let openParam: OpenWindowParams = {
-            title: "окно 1",
+            title: "редактирование",
             top: 50,
             left: 50,
             parentWindowId: this.getParentWindowId()
@@ -210,10 +244,16 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     private createColumns() {
         this.state.columns = [];
 
+        // сначала колонки заполняем из тегов <TreeGridColumn>
         let columnsTag = this.getChildren(TreeGridColumns);
-
         columnsTag.forEach((tag: JSX.Element) => {
             let columnTagList = this.getChildrenOfProps(tag.props, TreeGridColumn);
+
+            columnTagList = columnTagList.sort((a: JSX.Element, b: JSX.Element) => {
+                let A = a.props as TreeGridColumnProps;
+                let B = b.props as TreeGridColumnProps;
+                return A.order - B.order;
+            });
 
             columnTagList.forEach((propCol: JSX.Element) => {
 
@@ -221,12 +261,36 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 col.props = propCol.props;
                 col.width = propCol.props.width || 150;
                 col.caption = propCol.props.caption;
-                col.fieldName = propCol.props.fieldName;
+                col.fieldName = propCol.props.propertyName;
                 col.caption = propCol.props.caption || col.fieldName;
                 this.state.columns.push(col);
             });
         });
 
+        // если тегов <TreeGridColumn> нет, то заполняем из DataSource
+        if (this.state.columns.length === 0) {
+            if (this.state.dataSource.isTreeGridDataSource) {
+                let ds = this.state.dataSource as TreeGridDataSource;
+
+                let columns = ds.getTreeGridColumns().sort((a: TreeGridColumnProps, b: TreeGridColumnProps) => {
+                    return a.order - b.order;
+                });
+
+                columns.forEach((propCol: TreeGridColumnProps) => {
+
+                    let col = new InternalColumn();
+                    col.props = propCol;
+                    col.width = propCol.width || 150;
+                    col.caption = propCol.caption;
+                    col.fieldName = propCol.propertyName;
+                    col.caption = propCol.caption || col.fieldName;
+                    this.state.columns.push(col);
+                });
+            }
+        }
+
+        if (this.state.columns.length === 0)
+            console.error("TreeGrid: список колонок не определен.");
 
     }
 
@@ -266,7 +330,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             objIndex: number;
         }
 
-        let sorted: ISorted[] = this.state.dataSource.map((obj: any, index: number) => {
+        let sorted: ISorted[] = this.state.dataSource.getDataRows().map((obj: any, index: number) => {
             return {
                 hierarchyStr: obj[this.props.hierarchyFieldName].toString(),
                 objIndex: index
@@ -338,18 +402,26 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             if (!this.state.dataSource)
                 return;
 
-            this.state.dataSource.forEach((obj: any, index: number) => {
-                let row = new InternalRow();
-                row.sourceIndex = index;
-                //row.sourceObject = obj;
-                this.state.rows.push(row);
-            });
-
+            if (this.state.dataSource.isTreeGridDataSource) {
+                let ds = this.state.dataSource as TreeGridDataSource;
+                ds.getDataRows().forEach((obj: any, index: number) => {
+                    let row = new InternalRow();
+                    row.sourceIndex = index;
+                    this.state.rows.push(row);
+                });
+            }
+            else {
+                this.state.dataSource.getDataRows().forEach((obj: any, index: number) => {
+                    let row = new InternalRow();
+                    row.sourceIndex = index;
+                    this.state.rows.push(row);
+                });
+            }
             this.initFocused();
         }
 
         if (this.state.columns && this.state.columns.length > 0 && this.state.dataSource)
-            this.state.columns[0].footer = this.state.dataSource.length + " поз.";
+            this.state.columns[0].footer = this.state.dataSource.getDataRows().length + " поз.";
     }
 
     private filterData() {
@@ -477,8 +549,8 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     private renderCell(row: InternalRow, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
 
         let objIndex = row.sourceIndex;
-        let str = this.state.dataSource[objIndex][col.props.fieldName].toString();
-        //let str = this.rows[rowIndex].sourceObject[col.props.fieldName].toString();
+        let str = this.state.dataSource.getDataRows()[objIndex][col.props.propertyName].toString();
+        //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
         // return <td key={colIndex}>
         //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
         // </td>;
@@ -740,6 +812,8 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     };
 
     renderColumnHeaders(): JSX.Element {
+        if (this.state.dataSource.getDataRows().length === 0)
+            return null;
 
         let colWidths: JSX.Element[] = [];
         let colHeaders: JSX.Element[] = [];
@@ -802,6 +876,9 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     renderColumnFooters(): JSX.Element {
 
+        if (this.state.dataSource.getDataRows().length === 0)
+            return null;
+
         let colWidths: JSX.Element[] = [];
         let colFooters: JSX.Element[] = [];
 
@@ -848,7 +925,19 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             return undefined;
     }
 
+    renderEmptyDataSourceMessage(): JSX.Element {
+        if (this.state.dataSource.getDataRows().length > 0)
+            return null;
+
+        let message: React.ReactNode = this.state.dataSource.getEmptyDataSourceMessage();
+
+        return (<div className="tree-grid-empty-body">{message}</div>);
+    }
+
     renderGridBody(): JSX.Element {
+
+        if (this.state.dataSource.getDataRows().length === 0)
+            return null;
 
         let colWidths: JSX.Element[] = [];
         this.state.columns.forEach((col: InternalColumn, index: number) => {
@@ -886,6 +975,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
 
     calcTotalColumnsWidth(): number {
+
         let ret = 0;
         this.state.columns.forEach((col: InternalColumn) => {
             if (!col.hidden)
@@ -906,21 +996,21 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         if (this.props.editable) {
             if (this.props.denyInsert !== true)
                 buttons.push(
-                    <Button className="is-smalln" onClick={this.handleInsertButtonClick}>
+                    <Button key="insert" className="is-smalln" onClick={this.handleInsertButtonClick}>
                         Добавить
                     </Button>
                 );
 
             if (this.props.denyUpdate !== true)
                 buttons.push(
-                    <Button className="is-smalln" onClick={this.handleUpdateButtonClick}>
+                    <Button key="update" className="is-smalln" onClick={this.handleUpdateButtonClick}>
                         Изменить
                     </Button>
                 );
 
             if (this.props.denyDelete !== true)
                 buttons.push(
-                    <Button className="is-smalln" onClick={this.handleDeleteButtonClick}>
+                    <Button key="delete" className="is-smalln" onClick={this.handleDeleteButtonClick}>
                         Удалить
                     </Button>
                 );
@@ -932,6 +1022,10 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     render() {
         //this.addClassName("button");
         console.log("render-tree-grid");
+
+        let maxBodyWrapperWidth = this.calcTotalColumnsWidth() + getScrollbarWidth() + 1;
+        if (this.state.columns.length === 0)
+            maxBodyWrapperWidth = null;
 
         return (
             <Layout className="tree-grid" type="column" sizeTo="parent" {...this.getRenderProps()}
@@ -953,10 +1047,11 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 </Fixed>
                 <div
                     className="tree-grid-body-wrapper"
-                    style={{ position:"relative", overflow:"auto", flex:"1", maxWidth:this.calcTotalColumnsWidth() + getScrollbarWidth() + 1}}
+                    style={{ position:"relative", overflow:"auto", flex:"1", maxWidth: maxBodyWrapperWidth }}
                     onScroll={ this.handleScroll.bind(this)}
                     ref={ (e:any) => {this.state.bodyWrapperElement = e;}}
                 >
+                    {this.renderEmptyDataSourceMessage()}
                     {this.renderGridBody()}
                     {this.renderColumnHeaders()}
                     {this.renderColumnFooters()}

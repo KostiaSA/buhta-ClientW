@@ -61,7 +61,7 @@ var XTreeGrid = (function (_super) {
                 col.props = propCol.props;
                 col.width = propCol.props.width || 150;
                 col.caption = propCol.props.caption;
-                col.fieldName = propCol.props.fieldName;
+                col.fieldName = propCol.props.propertyName;
                 col.caption = propCol.props.caption || col.fieldName;
                 _this.columns.push(col);
             });
@@ -229,7 +229,7 @@ var XTreeGrid = (function (_super) {
         var _this = this;
         var objIndex = row.sourceIndex;
         var str = this.dataSource[objIndex][col.props.fieldName].toString();
-        //let str = this.rows[rowIndex].sourceObject[col.props.fieldName].toString();
+        //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
         // return <td key={colIndex}>
         //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
         // </td>;

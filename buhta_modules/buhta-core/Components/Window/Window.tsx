@@ -1,13 +1,15 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import * as _ from "lodash";
+
 import {ComponentProps, Component, ComponentState} from "../Component";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
-import shallowCompare = require("react-addons-shallow-compare");
-import deepEqual = require("deep-equal");
-import {OpenWindowParams, Desktop} from "../Desktop/Desktop";
+//import shallowCompare = require("react-addons-shallow-compare");
+//import deepEqual = require("deep-equal");
+import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize} from "../Desktop/Desktop";
 
 
 export interface WindowProps extends OpenWindowParams, ComponentProps<WindowState> {
@@ -30,6 +32,9 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     minHeight: number;
     minWidth: number;
     disabled: boolean;
+    autoPosition: WindowAutoPosition;
+    autoSize: WindowAutoSize;
+
 //    childWindow: Window;
 }
 
@@ -42,17 +47,19 @@ export class Window extends Component<WindowProps, WindowState> {
 
     private createInitState() {
 
-        this.state.id = this.props.id;
-        this.state.title = this.props.title;
-        this.state.top = this.props.top;
-        this.state.left = this.props.left;
-        this.state.right = this.props.right;
-        this.state.bottom = this.props.bottom;
-        this.state.width = this.props.width;
-        this.state.height = this.props.height;
-        this.state.minWidth = this.props.minWidth;
-        this.state.minHeight = this.props.minHeight;
-        this.state.disabled = this.props.disabled;
+        _.assign(this.state, this.props);
+
+        // this.state.id = this.props.id;
+        // this.state.title = this.props.title;
+        // this.state.top = this.props.top;
+        // this.state.left = this.props.left;
+        // this.state.right = this.props.right;
+        // this.state.bottom = this.props.bottom;
+        // this.state.width = this.props.width;
+        // this.state.height = this.props.height;
+        // this.state.minWidth = this.props.minWidth;
+        // this.state.minHeight = this.props.minHeight;
+        // this.state.disabled = this.props.disabled;
 
     }
 
@@ -70,6 +77,8 @@ export class Window extends Component<WindowProps, WindowState> {
     protected didMount() {
         super.didMount();
         (this.nativeElement as any)["$$window"] = this;
+        this.state.top = 500;
+        this.forceUpdate();
     }
 
     close() {
@@ -124,21 +133,52 @@ export class Window extends Component<WindowProps, WindowState> {
         return oldDisabled !== newDisabled;
     }
 
+
+    renderRightBottomCornerResizer(): React.ReactNode {
+        if (this.state.autoSize === "content") {
+            return null;
+        }
+        else {
+            return (
+                <Movable
+                    className="window-resizer"
+                    style={{position:"absolute", height:10, width:10, right:0,bottom:0, borderRadius: "0 0 5px 0",cursor: "se-resize"}}
+                    onMoveStart={this.resizeRightBottomCornerStart}
+                >
+                </Movable>
+            );
+        }
+    }
+
     render() {
         this.clearStyles();
 
         this.addClassName("window box");
         this.addStyles({position: "absolute"});
+
         this.addStyles({
             top: this.state.top,
             left: this.state.left,
-            height: this.state.height,
-            width: this.state.width,
             right: this.state.right,
             bottom: this.state.bottom,
+            minHeight: this.state.minHeight,
+            minWidth: this.state.minWidth,
             padding: 0,
             overflow: "hidden"
         });
+
+        console.log(this.state.autoSize);
+        if (this.state.autoSize === "content") {
+            console.log("content");
+            // ?
+        }
+        else {
+            this.addStyles({
+                height: this.state.height,
+                width: this.state.width
+            });
+
+        }
 
 
         let headerButtonStyle = {
@@ -149,8 +189,8 @@ export class Window extends Component<WindowProps, WindowState> {
         };
 
         console.log("render-win");
-        console.log(this.props.disabled);
-        console.log(this.state.disabled);
+        //console.log(this.props.disabled);
+        //console.log(this.state.disabled);
 
         let disabledWrapperClass = "window-disabled-wrapper";
         if (!this.state.disabled || this.state.disabled === false)
@@ -204,13 +244,7 @@ export class Window extends Component<WindowProps, WindowState> {
 
                     <Flex className="window-body" style={{ padding:10, overflow:"hidden" }}>
                         {this.props.children}
-
-                        <Movable
-                            className="window-resizer"
-                            style={{position:"absolute", height:10, width:10, right:0,bottom:0, borderRadius: "0 0 5px 0",cursor: "se-resize"}}
-                            onMoveStart={this.resizeRightBottomCornerStart}
-                        >
-                        </Movable>
+                        {this.renderRightBottomCornerResizer}
                     </Flex>
                 </Layout>
                 <div className={disabledWrapperClass}

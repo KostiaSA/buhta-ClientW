@@ -1,6 +1,7 @@
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {ListEditor} from "../buhta-app-designer/PropertyEditors/ListPropertyEditor";
+import {GridColumn} from "../buhta-core/Components/TreeGrid/TreeGridColumn";
 
 export class SqlTable extends DesignedObject {
 
@@ -49,6 +50,7 @@ export class SqlTableColumn extends DesignedObject {
         inputGroup: "Основная",
         inputDescription: "Имя колонки"
     })
+    @GridColumn({caption: "Имя колонки"})
     name: string;
 
     @StringEditor({
@@ -57,9 +59,15 @@ export class SqlTableColumn extends DesignedObject {
         inputGroup: "Основная",
         inputDescription: "sql тип колонки"
     })
+    @GridColumn({caption: "Тип"})
     dataType: string;
 
     table: SqlTable;
+
+    @GridColumn({caption: "test", order: -1})
+    get testColumn(): string {
+        return this.name + "+" + this.dataType;
+    };
 
     $$testObject: any;
 

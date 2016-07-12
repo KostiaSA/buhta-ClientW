@@ -7,7 +7,7 @@ export function getPropertyEditors(obj: DesignedObject): PropertyEditorInfo[] {
 
     editors = editors.filter((edt) => obj instanceof edt.objectType);
 
-    //console.log("getPropertyEditors");
+    //console.log("getPropertyEditors") ;
     //console.log(editors);
     return editors;
 

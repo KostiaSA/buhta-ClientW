@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {ComponentProps, Component} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
 import {BasePropertyEditorProps, PropertyEditorInfo} from "../PropertyEditors/BasePropertyEditor";
-import {getPropertyEditors} from "../PropertyEditors/getPropertyEditor";
+import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
@@ -35,7 +35,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
 
         getPropertyEditors(this.props.designedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
             //console.log(propInfo);
-            let editorProps: BasePropertyEditorProps = {
+            let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
                 designedObject: this.props.designedObject,
                 //propertyEditorInfo: propInfo,
                 index: index,
@@ -50,6 +50,9 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
             };
 
             _.assign(editorProps, propInfo);
+
+            if (!editorProps.inputCaption)
+                editorProps.inputCaption = editorProps.propertyName;
             //console.log(editorProps);
 
             ret.push(React.createElement(propInfo.editorType, editorProps, null));
