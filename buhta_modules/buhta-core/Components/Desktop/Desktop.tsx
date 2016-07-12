@@ -4,6 +4,7 @@ import {ComponentProps, Component, ComponentState} from "../Component";
 import {appInstance} from "../App";
 import {Window, WindowState} from "../Window/Window";
 import {MoveStartEvent} from "../Movable/Movable";
+import {Button} from "../Button";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -73,7 +74,10 @@ export interface OpenWindowParams {
 export interface OpenMessageWindowParams {
     title?: string;
     parentWindowId?: string;
-    style: "error" | "information" | "confirmation";
+    style?: "error" | "information" | "confirmation";
+    okButtonContent?: React.ReactNode;
+    cancelButtonContent?: React.ReactNode;
+    resultCallback?: (resultOK: boolean)=>void;
 }
 
 export class DesktopWindow implements OpenWindowParams {
@@ -189,6 +193,22 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
         if (!winParams.parentWindowId)
             winParams.autoPosition = "desktop-center";
+
+        let okButton: React.ReactNode;
+        if (openParams.okButtonContent) {
+            okButton =<Button>{openParams.okButtonContent}</Button>;
+        }
+
+        let cancelButton: React.ReactNode;
+
+        let win =
+            <div>
+                {winContent}
+                <div>
+                    {okButton}
+                    {cancelButton}
+                </div>
+            </div>;
 
         this.openWindow(winContent, winParams);
     };

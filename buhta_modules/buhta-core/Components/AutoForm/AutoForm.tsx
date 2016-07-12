@@ -85,7 +85,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
         }
     }
 
-    handleSaveButtonClick  = (e: React.SyntheticEvent): void => {
+    handleSaveButtonClick  = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
         this.getParentWindow().close();
@@ -93,7 +93,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
     }
 
-    handleCancelButtonClick  = (e: React.SyntheticEvent): void => {
+    handleCancelButtonClick  = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onCancelChanges)
             this.props.onCancelChanges();
         this.getParentWindow().close();

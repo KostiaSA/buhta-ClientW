@@ -442,6 +442,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testWindowAutoSize() {
+
+        let mag="Get the current coordinates of the first element in the set of matched elements, relative to ";
+
         let win2 =
                 <div>
                     Привет уроды
@@ -455,8 +458,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                     <Button>Да и нет </Button>
                     <br/>
 
-                    <Button onClick={ (e:React.SyntheticEvent) => {
-                          appInstance.desktop.openMessageWindow("привет", { style:"information", parentWindowId: this.getParentWindowId() });
+                    <Button onClick={ (sender:Button, e:React.MouseEvent) => {
+                          console.log("sender");
+                          console.log(sender);
+                          appInstance.desktop.openMessageWindow(mag, { style:"information", parentWindowId: sender.getParentWindowId() });
                           console.log(e.target);
                           e.stopPropagation();
                           }}

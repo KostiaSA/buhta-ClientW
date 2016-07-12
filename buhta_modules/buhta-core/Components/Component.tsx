@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import shallowCompare = require("react-addons-shallow-compare");
 import {ComponentPlugin} from "../Plugins/Plugin";
 import {Window} from "./Window/Window";
-import {Desktop} from "./Desktop/Desktop";
+import {Desktop, OpenMessageWindowParams} from "./Desktop/Desktop";
 
 
 export interface XOnClickProps {
@@ -63,7 +63,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         }
         return null;
     }
-    
+
     getParentDesktop(): Desktop {
         let parent = ReactDOM.findDOMNode(this);
         while (parent) {
@@ -73,7 +73,6 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         }
         return null;
     }
-
 
 
     getParentWindowId(): string {
@@ -289,6 +288,16 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
                 ret.push(child);
         });
         return ret;
+    }
+
+
+    showConfirmationWindow(messageContent: React.ReactNode, resultCallback: (resultOk: boolean)=>void) {
+        let params: OpenMessageWindowParams = {
+            style: "confirmation",
+            parentWindowId: this.getParentWindowId(),
+            resultCallback: resultCallback
+        };
+        this.getParentDesktop().openMessageWindow(messageContent, params);
     }
 
     //render() {

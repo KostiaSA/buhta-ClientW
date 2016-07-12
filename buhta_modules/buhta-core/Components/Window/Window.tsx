@@ -7,8 +7,6 @@ import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
-//import shallowCompare = require("react-addons-shallow-compare");
-//import deepEqual = require("deep-equal");
 import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize} from "../Desktop/Desktop";
 
 
@@ -47,21 +45,7 @@ export class Window extends Component<WindowProps, WindowState> {
     }
 
     private createInitState() {
-
         _.assign(this.state, this.props);
-
-        // this.state.id = this.props.id;
-        // this.state.title = this.props.title;
-        // this.state.top = this.props.top;
-        // this.state.left = this.props.left;
-        // this.state.right = this.props.right;
-        // this.state.bottom = this.props.bottom;
-        // this.state.width = this.props.width;
-        // this.state.height = this.props.height;
-        // this.state.minWidth = this.props.minWidth;
-        // this.state.minHeight = this.props.minHeight;
-        // this.state.disabled = this.props.disabled;
-
     }
 
     protected willMount() {
@@ -86,29 +70,60 @@ export class Window extends Component<WindowProps, WindowState> {
         return null;
     }
 
-    private centerTo(parent: JQuery) {
+    // private centerTo(parent: JQuery) {
+    //     let win = $(this.nativeElement);
+    //
+    //     this.state.top = (parent.outerHeight() - win.outerHeight()) / 2;
+    //     if (this.state.top > parent.outerHeight() - win.outerHeight())
+    //         this.state.top = parent.outerHeight() - win.outerHeight();
+    //     if (this.state.top < 0) this.state.top = 0;
+    //
+    //     this.state.left = (parent.outerWidth() - win.outerWidth()) / 2;
+    //     if (this.state.left > parent.outerWidth() - win.outerWidth())
+    //         this.state.left = parent.outerWidth() - win.outerWidth();
+    //     if (this.state.left < 0) this.state.left = 0;
+    //
+    //     this.forceUpdate();
+    // }
+    //
+    private centerToDesktop() {
         let win = $(this.nativeElement);
+        let desktop = $(this.getParentDesktopElement());
 
-        this.state.top = (parent.outerHeight() - win.outerHeight()) / 2;
-        if (this.state.top > parent.outerHeight() - win.outerHeight())
-            this.state.top = parent.outerHeight() - win.outerHeight();
+        this.state.top = (desktop.outerHeight() - win.outerHeight()) / 2;
+        this.state.left = (desktop.outerWidth() - win.outerWidth()) / 2;
+
+        if (this.state.top > desktop.outerHeight() - win.outerHeight())
+            this.state.top = desktop.outerHeight() - win.outerHeight();
         if (this.state.top < 0) this.state.top = 0;
 
-        this.state.left = (parent.outerWidth() - win.outerWidth()) / 2;
-        if (this.state.left > parent.outerWidth() - win.outerWidth())
-            this.state.left = parent.outerWidth() - win.outerWidth();
+        this.state.left = (desktop.outerWidth() - win.outerWidth()) / 2;
+        if (this.state.left > desktop.outerWidth() - win.outerWidth())
+            this.state.left = desktop.outerWidth() - win.outerWidth();
         if (this.state.left < 0) this.state.left = 0;
 
         this.forceUpdate();
-    }
-
-    private centerToDesktop() {
-        this.centerTo($(this.getParentDesktopElement()));
+        //this.centerTo($(this.getParentDesktopElement()));
     }
 
     private centerToParentWindow() {
-        console.log($("#" + this.state.parentWindowId));
-        this.centerTo($("#" + this.state.parentWindowId));
+        let win = $(this.nativeElement);
+        let parent = $("#" + this.state.parentWindowId);
+        let desktop = $(this.getParentDesktopElement());
+
+        this.state.top = (parent.outerHeight() - win.outerHeight()) / 2 + parent.position().top;
+        this.state.left = (parent.outerWidth() - win.outerWidth()) / 2 + parent.position().left;
+
+        if (this.state.top > desktop.outerHeight() - win.outerHeight())
+            this.state.top = desktop.outerHeight() - win.outerHeight();
+        if (this.state.top < 0) this.state.top = 0;
+
+        if (this.state.left > desktop.outerWidth() - win.outerWidth())
+            this.state.left = desktop.outerWidth() - win.outerWidth();
+        if (this.state.left < 0) this.state.left = 0;
+
+        this.forceUpdate();
+        //this.centerTo($("#" + this.state.parentWindowId));
     }
 
     protected didMount() {
@@ -120,12 +135,6 @@ export class Window extends Component<WindowProps, WindowState> {
         else if (this.state.autoPosition === "parent-center")
             this.centerToParentWindow();
 
-        // //this.state.top = 500;
-        //
-        // console.log("outerHeight");
-        // console.log($(this.nativeElement).outerHeight());
-
-        this.forceUpdate();
     }
 
     close() {
@@ -293,7 +302,7 @@ export class Window extends Component<WindowProps, WindowState> {
 
                     <Flex className="window-body" style={{ padding:10, overflow:"hidden" }}>
                         {this.props.children}
-                        {this.renderRightBottomCornerResizer}
+                        {this.renderRightBottomCornerResizer()}
                     </Flex>
                 </Layout>
                 <div className={disabledWrapperClass}
