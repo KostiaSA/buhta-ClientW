@@ -30,6 +30,7 @@ import {Snapshot} from "../../buhta-core/Snapshot";
 import {DesignedObject} from "../DesignedObject";
 import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
+import ReactDOM = __React.ReactDOM;
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -453,13 +454,23 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                     <br/>
                     <Button>Да и нет </Button>
                     <br/>
-                    <Button>Да и нет </Button>
+
+                    <Button onClick={ (e:React.SyntheticEvent) => {
+                          appInstance.desktop.openMessageWindow("привет", { style:"information", parentWindowId: this.getParentWindowId() });
+                          console.log(e.target);
+                          e.stopPropagation();
+                          }}
+                    >
+                        Новое
+                    </Button>
+
                 </div>
             ;
 
         let openParam: OpenWindowParams = {
             title: "test AUTOSIZE",
-            autoSize: "content"
+            autoSize: "content",
+            autoPosition: "desktop-center"
         };
 
         appInstance.desktop.openWindow(win2, openParam);

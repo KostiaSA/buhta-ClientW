@@ -7,13 +7,13 @@ export interface ButtonProps extends ComponentProps<ButtonState>, VisiblePluginP
     text?: string;
 }
 
-export class ButtonState extends ComponentState<ButtonProps> implements VisiblePluginState{
+export class ButtonState extends ComponentState<ButtonProps> implements VisiblePluginState {
     visible: boolean;
 }
 
 //@VisiblePlugin
 //@OnClickPlugin
-export class Button extends Component<ButtonProps,ButtonState> {
+export class Button extends Component<ButtonProps, ButtonState> {
     constructor(props: ButtonProps, context: any) {
         super(props, context);
         this.props = props;

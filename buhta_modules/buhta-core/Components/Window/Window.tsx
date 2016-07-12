@@ -32,6 +32,7 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     minHeight: number;
     minWidth: number;
     disabled: boolean;
+    parentWindowId: string;
     autoPosition: WindowAutoPosition;
     autoSize: WindowAutoSize;
 
@@ -74,10 +75,56 @@ export class Window extends Component<WindowProps, WindowState> {
         //this.state.disabled = nextProps.disabled;
     }
 
+
+    getParentDesktopElement(): HTMLElement {
+        let parent = ReactDOM.findDOMNode(this);
+        while (parent) {
+            if ((parent as any).$$desktop)
+                return parent as HTMLElement;
+            parent = parent.parentElement;
+        }
+        return null;
+    }
+
+    private centerTo(parent: JQuery) {
+        let win = $(this.nativeElement);
+
+        this.state.top = (parent.outerHeight() - win.outerHeight()) / 2;
+        if (this.state.top > parent.outerHeight() - win.outerHeight())
+            this.state.top = parent.outerHeight() - win.outerHeight();
+        if (this.state.top < 0) this.state.top = 0;
+
+        this.state.left = (parent.outerWidth() - win.outerWidth()) / 2;
+        if (this.state.left > parent.outerWidth() - win.outerWidth())
+            this.state.left = parent.outerWidth() - win.outerWidth();
+        if (this.state.left < 0) this.state.left = 0;
+
+        this.forceUpdate();
+    }
+
+    private centerToDesktop() {
+        this.centerTo($(this.getParentDesktopElement()));
+    }
+
+    private centerToParentWindow() {
+        console.log($("#" + this.state.parentWindowId));
+        this.centerTo($("#" + this.state.parentWindowId));
+    }
+
     protected didMount() {
         super.didMount();
         (this.nativeElement as any)["$$window"] = this;
-        this.state.top = 500;
+
+        if (this.state.autoPosition === "desktop-center")
+            this.centerToDesktop();
+        else if (this.state.autoPosition === "parent-center")
+            this.centerToParentWindow();
+
+        // //this.state.top = 500;
+        //
+        // console.log("outerHeight");
+        // console.log($(this.nativeElement).outerHeight());
+
         this.forceUpdate();
     }
 
@@ -152,6 +199,8 @@ export class Window extends Component<WindowProps, WindowState> {
 
     render() {
         this.clearStyles();
+
+        this.addProps({id: this.state.id});
 
         this.addClassName("window box");
         this.addStyles({position: "absolute"});

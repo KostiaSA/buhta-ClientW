@@ -87,7 +87,7 @@ export class DesktopWindow implements OpenWindowParams {
     height: number;
     minHeight: number;
     minWidth: number;
-    content: JSX.Element;
+    content: React.ReactNode;
     disabled: boolean;
     parentWindowId: string;
     autoPosition: WindowAutoPosition = "none";
@@ -109,11 +109,11 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
 //    private windows: WindowInfo[] = [];
 
-    openWindow(win: JSX.Element, openParams?: OpenWindowParams) {
+    openWindow(winContent: React.ReactNode, openParams?: OpenWindowParams) {
         if (!openParams)
             openParams = {};
         let newWin = new DesktopWindow();
-        newWin.content = win;
+        newWin.content = winContent;
         newWin.title = openParams.title || ".";
         newWin.id = Math.random().toString(36).slice(2, 12);
 
@@ -176,9 +176,21 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.forceUpdate();
     };
 
-    openMessageWindow(win: JSX.Element, openParams?: OpenMessageWindowParams) {
-        //if (!openParams)
-        //  openParams = {};
+    openMessageWindow(winContent: React.ReactNode, openParams?: OpenMessageWindowParams) {
+        if (!openParams)
+            openParams = {style: "information"};
+
+        let winParams: OpenWindowParams = {
+            title: openParams.title,
+            parentWindowId: openParams.parentWindowId,
+            autoPosition: "parent-center",
+            autoSize: "content"
+        };
+
+        if (!winParams.parentWindowId)
+            winParams.autoPosition = "desktop-center";
+
+        this.openWindow(winContent, winParams);
     };
 
     activateWindow(id: string) {
@@ -277,6 +289,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             minHeight={w.minHeight}
                             autoSize={w.autoSize}
                             autoPosition={w.autoPosition}
+                            parentWindowId={w.parentWindowId}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
                         >
