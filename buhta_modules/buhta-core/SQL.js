@@ -1,4 +1,9 @@
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var io = require("socket.io-client");
 var socket = io.connect();
 function executeSQL(sql) {
@@ -67,6 +72,14 @@ function executeSQL(sql) {
     return promise;
 }
 exports.executeSQL = executeSQL;
+var SqlError = (function (_super) {
+    __extends(SqlError, _super);
+    function SqlError() {
+        _super.apply(this, arguments);
+    }
+    return SqlError;
+}(Error));
+exports.SqlError = SqlError;
 //export enum ColumnDataType { String, Number, Data }
 //export type DataType = string | number;
 var DataTable = (function () {

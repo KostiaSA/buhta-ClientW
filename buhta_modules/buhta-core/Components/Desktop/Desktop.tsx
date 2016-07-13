@@ -194,23 +194,54 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         if (!winParams.parentWindowId)
             winParams.autoPosition = "desktop-center";
 
+        let buttonStyle = {minWidth: 65, marginLeft: 8};
+
         let okButton: React.ReactNode;
         if (openParams.okButtonContent) {
-            okButton =<Button>{openParams.okButtonContent}</Button>;
+            okButton =
+                <Button
+                    className="is-primary is-outlined"
+                    style={buttonStyle}
+                    onClick={ (sender:Button, e:React.MouseEvent) => {
+                          sender.closeParentWindow();
+                          if (openParams.resultCallback)
+                             openParams.resultCallback(true);
+                          e.stopPropagation();
+                          }}
+                >
+                    {openParams.okButtonContent}
+                </Button>;
         }
 
         let cancelButton: React.ReactNode;
+        if (openParams.cancelButtonContent) {
+            cancelButton =
+                <Button
+                    className="is-outlined"
+                    style={buttonStyle}
+                    onClick={ (sender:Button, e:React.MouseEvent) => {
+                          sender.closeParentWindow();
+                          if (openParams.resultCallback)
+                             openParams.resultCallback(false);
+                          e.stopPropagation();
+                          }}
+                >
+                    {openParams.cancelButtonContent}
+                </Button>;
+        }
 
         let win =
-            <div>
+            <div style={{minWidth:200, textAlign: "center"}}>
                 {winContent}
-                <div>
+                <div style={{padding:10}}>
                     {okButton}
                     {cancelButton}
                 </div>
             </div>;
 
-        this.openWindow(winContent, winParams);
+        console.log(openParams);
+
+        this.openWindow(win, winParams);
     };
 
     activateWindow(id: string) {

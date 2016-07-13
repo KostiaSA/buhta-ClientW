@@ -18,6 +18,7 @@ import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectD
 import {OpenWindowParams} from "../Desktop/Desktop";
 import {appInstance} from "../App/App";
 import {TreeGridDataSource} from "./TreeGridDataSource";
+import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 
 
 export interface TreeGridProps extends ComponentProps<TreeGridState> {
@@ -72,17 +73,29 @@ export class InternalColumn {
 }
 
 export class InternalRow {
+    constructor(public gridState: TreeGridState) {
+
+    }
+
     element: HTMLElement;
     ///   sourceObject: any;
     sourceIndex: number;
     cellElements: HTMLElement[] = [];
     node: InternalTreeNode;
 
+    get sourceData(): any {
+        return this.gridState.dataSource.getDataRows()[this.sourceIndex];
+    }
+
 }
 
 export class InternalTreeNode {
+    constructor(public gridState: TreeGridState) {
+
+    }
+
     element: HTMLElement;
-    sourceObject: any;
+    //sourceObject: any;
     sourceIndex: number;
     cellElements: HTMLElement[] = [];
 
@@ -97,7 +110,7 @@ export class InternalTreeNode {
         if (rows.length >= maxPageLength)
             return;
 
-        let row = new InternalRow();
+        let row = new InternalRow(this.gridState);
         row.sourceIndex = this.sourceIndex;
         row.node = this;
         rows.push(row);
@@ -184,16 +197,37 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     }
 
     handleDeleteButtonClick = () => {
-        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+        this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
 
     }
 
-    openDeleteForm() {
-        let rowToDelete = this.state.rows[this.state.focusedRowIndex];
-        let message = <div>"Удалить запись?"<br/>{ "xxx" }</div>;
+    openDeleteForm(rowToDelete: InternalRow) {
+        //let rowToDelete = this.state.rows[this.state.focusedRowIndex];
+        let row = rowToDelete.sourceData as DesignedObject;
+        let objectClassName = "запись";
+        if (row.getClassName)
+            objectClassName = row.getClassName();
+
+        let objectName = "";
+        if (row.toString)
+            objectName = row.toString();
+
+        let message = <div className="color-red">Удалить "{objectClassName}"?<br/>{ objectName }</div>;
         this.showConfirmationWindow(message, (okResult) => {
+            console.log(okResult);
             if (okResult) {
 
+                this.state.dataSource.deleteRow(rowToDelete.sourceIndex);
+
+                if (this.state.dataSource.getDataRows().length === 0)
+                    this.refreshDataSource();
+                else {
+                    let newFocusedIndex = this.state.rows.indexOf(rowToDelete);
+                    if (newFocusedIndex > this.state.rows.length - 2)
+                        newFocusedIndex = this.state.rows.length - 2;
+                    this.refreshRow(this.state.rows[newFocusedIndex].sourceIndex);
+                }
+                this.forceUpdate();
             }
         });
     }
@@ -369,7 +403,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 if (cache[nodeId])
                     console.error("XTreeGrid: nodeId '" + nodeId + "' is duplicated");
                 else {
-                    let node = new InternalTreeNode();
+                    let node = new InternalTreeNode(this.state);
                     node.sourceIndex = s.objIndex;
                     node.level = 0;
                     node.expanded = node.level < this.props.autoExpandNodesToLevel;
@@ -380,7 +414,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             else {
                 let parentNode = cache[parentId];
 
-                let node = new InternalTreeNode();
+                let node = new InternalTreeNode(this.state);
                 node.sourceIndex = s.objIndex;
                 node.level = parentNode.level + 1;
                 node.expanded = node.level < this.props.autoExpandNodesToLevel;
@@ -415,14 +449,14 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             if (this.state.dataSource.isTreeGridDataSource) {
                 let ds = this.state.dataSource as TreeGridDataSource;
                 ds.getDataRows().forEach((obj: any, index: number) => {
-                    let row = new InternalRow();
+                    let row = new InternalRow(this.state);
                     row.sourceIndex = index;
                     this.state.rows.push(row);
                 });
             }
             else {
                 this.state.dataSource.getDataRows().forEach((obj: any, index: number) => {
-                    let row = new InternalRow();
+                    let row = new InternalRow(this.state);
                     row.sourceIndex = index;
                     this.state.rows.push(row);
                 });

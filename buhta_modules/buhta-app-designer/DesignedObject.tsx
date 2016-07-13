@@ -7,6 +7,16 @@ export class DesignedObject {
 
     [name: string]: any;
 
+    getClassName() {
+        return "Объект";
+    }
+
+    toString() {
+        let funcNameRegex = /function (.{1,})\(/;
+        let results = (funcNameRegex).exec((this).constructor.toString());
+        return (results && results.length > 1) ? results[1] : "";
+    }
+
     $$unwatchedProps: string[] = ["propertyEditors", "$$unwatchedProps"];
 
     // id: string;

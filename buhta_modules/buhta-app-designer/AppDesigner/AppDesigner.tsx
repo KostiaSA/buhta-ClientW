@@ -395,9 +395,19 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             @StringEditor()
             @GridColumn({})
             Name: string;
+
+            
+            getClassName(){
+                return "Вид товара";
+            } 
+            
+            toString() {
+                return `[${this.Num}]  ` + this.Name;
+            }
+
         }
 
-        executeSQL("select TOP 0 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+        executeSQL("select TOP 10 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
             .done((table) => {
 
                 let vids = table.rows.map<Vid>((r) => {
@@ -436,7 +446,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             })
             .fail((err) => {
-                alert(err.message);
+                throwError(err.message);
             });
 
 
@@ -444,8 +454,14 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testWindowAutoSize() {
 
-        if (1 === 1)
-            throwError("333+");
+        try {
+            if (1 === 1)
+                throwError(new Error("333++"));
+
+        }
+        catch (error) {
+
+        }
 
         let mag = "Get the current coordinates of the first element in the set of matched elements, relative to ";
 

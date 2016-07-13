@@ -2,11 +2,11 @@ import * as React from "react";
 import {Component, ComponentProps, ComponentState} from "../Component";
 import {VisiblePluginProps, VisiblePluginState, VisiblePlugin} from "../../Plugins/VisiblePlugin";
 
-export interface AppErrorBarProps extends ComponentProps<AppErrorBarState>, VisiblePluginProps {
+export interface AppErrorBarProps extends ComponentProps<AppErrorBarState> {
 
 }
 
-class AppErrorBarState extends ComponentState<AppErrorBarProps> implements VisiblePluginState {
+class AppErrorBarState extends ComponentState<AppErrorBarProps> {
     visible: boolean;
 }
 
@@ -15,8 +15,6 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
         super(props, context);
         this.state = new AppErrorBarState(this);
         this.state.visible = false;
-        this.plugins.push(new VisiblePlugin(this));
-
     }
 
     // protected willMount() {
@@ -33,6 +31,9 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
     handleError = (msg: string, url?: string, line?: number, col?: number, error?: any): boolean => {
         this.errorMessage = msg;
 
+        if (!error.$$isThrowError)
+            console.log(error);
+
         this.state.visible = true;
         this.forceUpdate();
 
@@ -42,11 +43,14 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
 
     render() {
         this.addClassName("app-error-bar");
+        this.toggleClassName(!this.state.visible, "is-hidden");
 
-        this.addStyles({color: "white", background: "#ff4e4e"});
+        this.clearStyles();
+        this.addStyles({color: "white", background: "#ff4e4e", cursor: "default"});
 
         return (
-            <div {...this.getRenderProps()}>
+            <div
+                onClick={ (e) => { this.state.visible = false; this.forceUpdate();} } {...this.getRenderProps()}>
                 {this.errorMessage}
             </div>
         );

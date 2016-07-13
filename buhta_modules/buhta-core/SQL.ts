@@ -94,6 +94,9 @@ export function executeSQL(sql: string): JQueryPromise<DataTable> {
 
 }
 
+export class SqlError extends Error {
+}
+
 //export enum ColumnDataType { String, Number, Data }
 
 //export type DataType = string | number;

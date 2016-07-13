@@ -1,9 +1,16 @@
-
 export function throwError(error: string | Error) {
+
+    // todo: отключить в production режиме
     console.error(error);
+
+    let err: any;
+
     if (error instanceof Error)
-        throw error;
+        err = error;
     else
-        throw new Error(error);
+        err = new Error(error);
+    
+    err.$$isThrowError = true;
+    throw err;
 }
 
