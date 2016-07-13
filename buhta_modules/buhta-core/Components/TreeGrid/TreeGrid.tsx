@@ -213,7 +213,8 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             objectName = row.toString();
 
         let message = <div className="color-red">Удалить "{objectClassName}"?<br/>{ objectName }</div>;
-        this.showConfirmationWindow(message, (okResult) => {
+
+        this.showDeleteConfirmationWindow(message, (okResult) => {
             console.log(okResult);
             if (okResult) {
 
@@ -1040,21 +1041,21 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         if (this.props.editable) {
             if (this.props.denyInsert !== true)
                 buttons.push(
-                    <Button key="insert" className="is-smalln" onClick={this.handleInsertButtonClick}>
+                    <Button key="insert" className="is-outlined is-success" onClick={this.handleInsertButtonClick}>
                         Добавить
                     </Button>
                 );
 
             if (this.props.denyUpdate !== true)
                 buttons.push(
-                    <Button key="update" className="is-smalln" onClick={this.handleUpdateButtonClick}>
+                    <Button key="update" className="is-outlined is-info" onClick={this.handleUpdateButtonClick}>
                         Изменить
                     </Button>
                 );
 
             if (this.props.denyDelete !== true)
                 buttons.push(
-                    <Button key="delete" className="is-smalln" onClick={this.handleDeleteButtonClick}>
+                    <Button key="delete" className="is-outlined is-danger" onClick={this.handleDeleteButtonClick}>
                         Удалить
                     </Button>
                 );

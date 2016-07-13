@@ -302,6 +302,17 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         this.getParentDesktop().openMessageWindow(messageContent, params);
     }
 
+    showDeleteConfirmationWindow(messageContent: React.ReactNode, resultCallback: (resultOk: boolean) => void, okButtonText?: string, cancelButtonText?: string) {
+        let params: OpenMessageWindowParams = {
+            style: "danger",
+            parentWindowId: this.getParentWindowId(),
+            okButtonContent: okButtonText || "Да",
+            cancelButtonContent: cancelButtonText || "Нет",
+            resultCallback: resultCallback
+        };
+        this.getParentDesktop().openMessageWindow(messageContent, params);
+    }
+
     closeParentWindow() {
         this.getParentDesktop().closeWindow(this.getParentWindowId());
     }

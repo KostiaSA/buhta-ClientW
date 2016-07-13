@@ -74,10 +74,10 @@ export interface OpenWindowParams {
 export interface OpenMessageWindowParams {
     title?: string;
     parentWindowId?: string;
-    style?: "error" | "information" | "confirmation";
+    style?: "error" | "information" | "confirmation" | "danger";
     okButtonContent?: React.ReactNode;
     cancelButtonContent?: React.ReactNode;
-    resultCallback?: (resultOK: boolean)=>void;
+    resultCallback?: (resultOK: boolean) => void;
 }
 
 export class DesktopWindow implements OpenWindowParams {
@@ -198,9 +198,12 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
         let okButton: React.ReactNode;
         if (openParams.okButtonContent) {
+            let buttonClassName = "is-outlined";
+            if (openParams.style === "danger")
+                buttonClassName += " is-danger";
             okButton =
                 <Button
-                    className="is-primary is-outlined"
+                    className={buttonClassName}
                     style={buttonStyle}
                     onClick={ (sender:Button, e:React.MouseEvent) => {
                           sender.closeParentWindow();
@@ -275,7 +278,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     getTopParentWindow(id: string) {
         let topParent = this.getWindowById(id);
         while (topParent.parentWindowId) {
-            topParent = this.getWindowById(topParent.parentWindowId)
+            topParent = this.getWindowById(topParent.parentWindowId);
         }
         return topParent;
     }
