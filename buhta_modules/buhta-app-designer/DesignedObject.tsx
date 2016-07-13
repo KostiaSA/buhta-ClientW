@@ -12,6 +12,7 @@ export class DesignedObject {
     }
 
     toString() {
+
         let funcNameRegex = /function (.{1,})\(/;
         let results = (funcNameRegex).exec((this).constructor.toString());
         return (results && results.length > 1) ? results[1] : "";

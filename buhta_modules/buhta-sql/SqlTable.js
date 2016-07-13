@@ -29,6 +29,12 @@ var SqlTable = (function (_super) {
         initCallback(col);
         this.testProc2();
     };
+    SqlTable.prototype.getClassName = function () {
+        return "sql-таблица";
+    };
+    SqlTable.prototype.toString = function () {
+        return this.name;
+    };
     __decorate([
         StringPropertyEditor_1.StringEditor({
             inputCaption: "Имя",
@@ -66,6 +72,12 @@ var SqlTableColumn = (function (_super) {
         configurable: true
     });
     ;
+    SqlTableColumn.prototype.getClassName = function () {
+        return "sql-колонка";
+    };
+    SqlTableColumn.prototype.toString = function () {
+        return this.name;
+    };
     __decorate([
         StringPropertyEditor_1.StringEditor({
             inputCaption: "Имя колонки",

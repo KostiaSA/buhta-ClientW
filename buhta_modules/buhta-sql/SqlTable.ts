@@ -40,6 +40,15 @@ export class SqlTable extends DesignedObject {
 
     };
 
+    getClassName() {
+        return "sql-таблица";
+    }
+
+    toString() {
+        return this.name;
+    }
+
+
 }
 
 export class SqlTableColumn extends DesignedObject {
@@ -70,6 +79,14 @@ export class SqlTableColumn extends DesignedObject {
     };
 
     $$testObject: any;
+
+    getClassName() {
+        return "sql-колонка";
+    }
+
+    toString() {
+        return this.name;
+    }
 
 }
 

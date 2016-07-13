@@ -44,6 +44,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
             <TreeGrid
                 dataSource={ dataSource }
                 treeMode={false}
+                editable={true}
             >
             </TreeGrid>
         );
