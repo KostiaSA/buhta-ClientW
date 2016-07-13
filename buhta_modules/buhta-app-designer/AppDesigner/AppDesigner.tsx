@@ -11,7 +11,7 @@ import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
 import {Desktop, OpenWindowParams} from "../../buhta-core/Components/Desktop/Desktop";
 import {Draggable} from "../../buhta-core/Components/Draggable/Draggable";
 import {Movable, MoveEvent, MoveStartEvent} from "../../buhta-core/Components/Movable/Movable";
-import {App, appInstance} from "../../buhta-core/Components/App";
+import {App, appInstance} from "../../buhta-core/Components/App/App";
 import {Window} from "../../buhta-core/Components/Window/Window";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Form} from "../../buhta-core/Components/Form/Form";
@@ -24,13 +24,14 @@ import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {executeSQL} from "../../buhta-core/SQL";
-import {Button} from "../../buhta-core/Components/Button";
+import {Button} from "../../buhta-core/Components/Button/Button";
 import {SqlTable} from "../../buhta-sql/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
 import {DesignedObject} from "../DesignedObject";
 import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import ReactDOM = __React.ReactDOM;
+import {throwError} from "../../buhta-core/Error";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -443,7 +444,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testWindowAutoSize() {
 
-        let mag="Get the current coordinates of the first element in the set of matched elements, relative to ";
+        if (1 === 1)
+            throwError("333+");
+
+        let mag = "Get the current coordinates of the first element in the set of matched elements, relative to ";
 
         let win2 =
                 <div>

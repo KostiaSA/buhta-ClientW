@@ -7,7 +7,7 @@ import {Form} from "../Form/Form";
 import {Layout} from "../LayoutPane/Layout";
 import {Flex} from "../LayoutPane/Flex";
 import {Fixed} from "../LayoutPane/Fixed";
-import {Button} from "../Button";
+import {Button} from "../Button/Button";
 
 
 export interface AutoFormControlProps {

@@ -5,9 +5,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var React = require("react");
-var VisiblePlugin_1 = require("../Plugins/VisiblePlugin");
-var OnClickPlugin_1 = require("../Plugins/OnClickPlugin");
-var Component_1 = require("./Component");
+var VisiblePlugin_1 = require("../../Plugins/VisiblePlugin");
+var OnClickPlugin_1 = require("../../Plugins/OnClickPlugin");
+var Component_1 = require("../Component");
 var ButtonState = (function (_super) {
     __extends(ButtonState, _super);
     function ButtonState() {

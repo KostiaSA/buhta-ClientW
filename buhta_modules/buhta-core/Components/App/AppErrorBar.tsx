@@ -1,0 +1,56 @@
+import * as React from "react";
+import {Component, ComponentProps, ComponentState} from "../Component";
+import {VisiblePluginProps, VisiblePluginState, VisiblePlugin} from "../../Plugins/VisiblePlugin";
+
+export interface AppErrorBarProps extends ComponentProps<AppErrorBarState>, VisiblePluginProps {
+
+}
+
+class AppErrorBarState extends ComponentState<AppErrorBarProps> implements VisiblePluginState {
+    visible: boolean;
+}
+
+export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
+    constructor(props: AppErrorBarProps, context: any) {
+        super(props, context);
+        this.state = new AppErrorBarState(this);
+        this.state.visible = false;
+        this.plugins.push(new VisiblePlugin(this));
+
+    }
+
+    // protected willMount() {
+    //     super.willMount();
+    // }
+
+    protected didMount() {
+        super.didMount();
+        window.onerror = this.handleError;
+    }
+
+    errorMessage: React.ReactNode;
+
+    handleError = (msg: string, url?: string, line?: number, col?: number, error?: any): boolean => {
+        this.errorMessage = msg;
+
+        this.state.visible = true;
+        this.forceUpdate();
+
+        let suppressErrorAlert = true;
+        return suppressErrorAlert;
+    };
+
+    render() {
+        this.addClassName("app-error-bar");
+
+        this.addStyles({color: "white", background: "#ff4e4e"});
+
+        return (
+            <div {...this.getRenderProps()}>
+                {this.errorMessage}
+            </div>
+        );
+    }
+
+}
+

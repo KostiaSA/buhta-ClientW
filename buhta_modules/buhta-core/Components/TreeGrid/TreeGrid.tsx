@@ -10,13 +10,13 @@ import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
 import {Keycode} from "../../Keycode";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
 import {getScrollbarWidth} from "../../getScrollBarWidth";
-import {Button} from "../Button";
+import {Button} from "../Button/Button";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {OpenWindowParams} from "../Desktop/Desktop";
-import {appInstance} from "../App";
+import {appInstance} from "../App/App";
 import {TreeGridDataSource} from "./TreeGridDataSource";
 
 
@@ -186,6 +186,16 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     handleDeleteButtonClick = () => {
         //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
 
+    }
+
+    openDeleteForm() {
+        let rowToDelete = this.state.rows[this.state.focusedRowIndex];
+        let message = <div>"Удалить запись?"<br/>{ "xxx" }</div>;
+        this.showConfirmationWindow(message, (okResult) => {
+            if (okResult) {
+
+            }
+        });
     }
 
     openInsertForm() {

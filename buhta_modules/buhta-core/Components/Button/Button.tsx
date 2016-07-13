@@ -1,7 +1,7 @@
 import * as React from "react";
-import {VisiblePlugin, VisiblePluginProps, VisiblePluginState} from "../Plugins/VisiblePlugin";
-import {OnClickPlugin, OnClickPluginProps} from "../Plugins/OnClickPlugin";
-import {Component, ComponentProps, ComponentState} from "./Component";
+import {VisiblePlugin, VisiblePluginProps, VisiblePluginState} from "../../Plugins/VisiblePlugin";
+import {OnClickPlugin, OnClickPluginProps} from "../../Plugins/OnClickPlugin";
+import {Component, ComponentProps, ComponentState} from "../Component";
 
 export interface ButtonProps extends ComponentProps<ButtonState>, VisiblePluginProps, OnClickPluginProps {
     text?: string;

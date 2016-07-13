@@ -5,6 +5,7 @@ import {TreeGridColumnProps} from "./TreeGridColumn";
 import {TreeGridDataSource} from "./TreeGridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {getGridColumnInfos} from "./getGridColumnInfos";
+import {throwError} from "../../Error";
 
 export interface TreeGridArrayDataSourceParams<T> {
 
@@ -54,12 +55,18 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
         if (this.params.getNewRow)
             return this.params.getNewRow();
         else
-            throw "TreeGridArrayDataSource: method getNewRow() not defined";
+            throwError("TreeGridArrayDataSource: method getNewRow() not defined");
     }
 
     addRow(row: T): number {
         this.arrayObj.push(row);
         return this.arrayObj.length - 1;
+    }
+
+    deleteRow(rowIndex: number) {
+        let deletedItems = _.pullAt(this.arrayObj, rowIndex);
+        if (deletedItems.length === 0)
+            throwError("TreeGridArrayDataSource.deleteRow(): invalid rowIndex (" + rowIndex + ")");
     }
 
     getEmptyDataSourceMessage(): React.ReactNode {

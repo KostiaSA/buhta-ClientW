@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Hello } from "./HelloProps";
-import {App} from "../buhta-core/Components/App";
+import {App} from "../buhta-core/Components/App/App";
 import {AppDesigner} from "../buhta-app-designer/AppDesigner/AppDesigner";
 import {TestBuhtaObject1} from "../Test1/testBuhtaObject1";
 

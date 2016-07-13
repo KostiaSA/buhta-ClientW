@@ -1,7 +1,8 @@
 import * as React from "react";
-import {Component, ComponentProps, ComponentState} from "./Component";
-import {Desktop} from "./Desktop/Desktop";
+import {Component, ComponentProps, ComponentState} from "../Component";
+import {Desktop} from "../Desktop/Desktop";
 import Element = JSX.Element;
+import {AppErrorBar} from "./AppErrorBar";
 
 export interface AppProps extends ComponentProps<AppState> {
     title?: string;
@@ -35,8 +36,8 @@ export class App extends Component<AppProps, AppState> {
     }
 
     // protected didMount() {
-    //     super.didMount();
-    //     appInstance = this;
+    //      super.didMount();
+    //      appInstance = this;
     // }
 
     desktop: Desktop;
@@ -50,6 +51,7 @@ export class App extends Component<AppProps, AppState> {
 
         return (
             <div {...this.getRenderProps()}>
+                <AppErrorBar/>
                 {this.props.children}
             </div>
         );

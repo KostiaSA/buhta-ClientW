@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Button} from "../buhta-core/Components/Button";
+import {Button} from "../buhta-core/Components/Button/Button";
 import {executeSQL} from "../buhta-core/SQL";
 
 

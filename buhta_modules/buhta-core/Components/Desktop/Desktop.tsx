@@ -1,10 +1,10 @@
 import * as React from "react";
 import * as _ from "lodash";
 import {ComponentProps, Component, ComponentState} from "../Component";
-import {appInstance} from "../App";
+import {appInstance} from "../App/App";
 import {Window, WindowState} from "../Window/Window";
 import {MoveStartEvent} from "../Movable/Movable";
-import {Button} from "../Button";
+import {Button} from "../Button/Button";
 
 
 export interface DesktopProps extends ComponentProps<any> {

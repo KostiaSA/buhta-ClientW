@@ -11,5 +11,7 @@ export interface TreeGridDataSource {
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;
 
+    deleteRow(rowIndex: number): void;
+
 
 }
