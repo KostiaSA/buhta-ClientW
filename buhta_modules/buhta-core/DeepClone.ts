@@ -29,10 +29,9 @@ function cloneObject(obj: any, refsClones: any): any {
 
     for (let propName in obj) {
         if (obj.hasOwnProperty(propName)) {
+            let propValue: any = obj[propName];
+
             if (propName.substring(0, 2) !== "$$") {
-
-                let propValue: any = obj[propName];
-
                 if (_.isArray(propValue)) {
                     cloned[propName] = cloneArray(propValue, refsClones);
                 }
@@ -42,11 +41,23 @@ function cloneObject(obj: any, refsClones: any): any {
                 else
                     cloned[propName] = obj[propName];
             }
-            else
-                cloned[propName] = obj[propName];
+            else {
+
+                cloned[propName] = cloneObject$$(propValue, refsClones);
+            }
         }
     }
     return cloned;
+}
+
+function cloneObject$$(obj: any, refsClones: any): any {
+    if (!obj)
+        return undefined;
+
+    if (obj.$$uniqueObjectId && refsClones[obj.$$uniqueObjectId])
+        return refsClones[obj.$$uniqueObjectId];
+    else
+        return obj;
 }
 
 function cloneArray(obj: any, refsClones: any): any {

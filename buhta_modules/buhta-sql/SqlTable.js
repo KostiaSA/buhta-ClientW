@@ -73,7 +73,7 @@ var SqlTableColumn = (function (_super) {
     });
     Object.defineProperty(SqlTableColumn.prototype, "testColumn", {
         get: function () {
-            return this.name + "+" + this.dataType;
+            return this.name + "+" + this.dataType + "->" + this.table.name + this.table.$$uniqueObjectId;
         },
         enumerable: true,
         configurable: true

@@ -79,7 +79,7 @@ export class SqlTableColumn extends DesignedObject {
 
     @GridColumn({caption: "test", order: -1})
     get testColumn(): string {
-        return this.name + "+" + this.dataType;
+        return this.name + "+" + this.dataType+"->"+ this.table.name+(this.table as any).$$uniqueObjectId;
     };
 
     $$testObject: any;
