@@ -28,8 +28,7 @@ export class SqlTable extends DesignedObject {
     columns: SqlTableColumn[] = [];
 
     addColumn(initCallback: (newColumn: SqlTableColumn) => void) {
-        let col = new SqlTableColumn(this.proxyHandler);
-        col.table = this;
+        let col = new SqlTableColumn(this);
         this.columns.push(col);
         initCallback(col);
 
@@ -52,6 +51,13 @@ export class SqlTable extends DesignedObject {
 }
 
 export class SqlTableColumn extends DesignedObject {
+    constructor(private $$table: SqlTable) {
+        super();
+    }
+
+    get table(): SqlTable {
+        return this.$$table;
+    }
 
     @StringEditor({
         inputCaption: "Имя колонки",
@@ -71,8 +77,6 @@ export class SqlTableColumn extends DesignedObject {
     @GridColumn({caption: "Тип"})
     dataType: string;
 
-    table: SqlTable;
-
     @GridColumn({caption: "test", order: -1})
     get testColumn(): string {
         return this.name + "+" + this.dataType;
@@ -85,7 +89,7 @@ export class SqlTableColumn extends DesignedObject {
     }
 
     toString() {
-        return this.name;
+        return this.name + " of (" + this.table.name + ")";
     }
 
 }

@@ -23,8 +23,7 @@ var SqlTable = (function (_super) {
         };
     }
     SqlTable.prototype.addColumn = function (initCallback) {
-        var col = new SqlTableColumn(this.proxyHandler);
-        col.table = this;
+        var col = new SqlTableColumn(this);
         this.columns.push(col);
         initCallback(col);
         this.testProc2();
@@ -61,9 +60,17 @@ var SqlTable = (function (_super) {
 exports.SqlTable = SqlTable;
 var SqlTableColumn = (function (_super) {
     __extends(SqlTableColumn, _super);
-    function SqlTableColumn() {
-        _super.apply(this, arguments);
+    function SqlTableColumn($$table) {
+        _super.call(this);
+        this.$$table = $$table;
     }
+    Object.defineProperty(SqlTableColumn.prototype, "table", {
+        get: function () {
+            return this.$$table;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(SqlTableColumn.prototype, "testColumn", {
         get: function () {
             return this.name + "+" + this.dataType;
@@ -76,7 +83,7 @@ var SqlTableColumn = (function (_super) {
         return "sql-колонка";
     };
     SqlTableColumn.prototype.toString = function () {
-        return this.name;
+        return this.name + " of (" + this.table.name + ")";
     };
     __decorate([
         StringPropertyEditor_1.StringEditor({

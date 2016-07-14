@@ -225,9 +225,8 @@ export class Window extends Component<WindowProps, WindowState> {
             overflow: "hidden"
         });
 
-        console.log(this.state.autoSize);
         if (this.state.autoSize === "content") {
-            console.log("content");
+            // console.log("content");
             // ?
         }
         else {

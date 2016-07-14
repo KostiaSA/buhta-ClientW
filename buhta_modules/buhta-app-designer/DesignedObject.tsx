@@ -3,40 +3,7 @@ import * as _ from "lodash";
 import {ObservableOnChangeHandler} from "../buhta-core/Observable";
 
 export class DesignedObject {
-    constructor(public proxyHandler: ProxyHandler<any>) {
-        //      // DesignedObject constructor
-        //      //return this=null;
-        //      if (!proxyHandler)
-        //          proxyHandler = {
-        //              get: (target: any, p: PropertyKey, receiver: any): any => {
-        //                  if (target[p])
-        //                      console.log("handlerGet->" + p.toString() + target[p].toString());
-        //                  else
-        //                      console.log("handlerGet->" + p.toString() + " ???");
-        //                  return target[p];
-        //              },
-        //              set: (target: any, p: PropertyKey, value: any, receiver: any): any => {
-        //                  console.log("handlerSet -> " + value);
-        //                  target[p] = value;
-        //                  return true;
-        //              }
-        //
-        //          };
-        //
-        //      console.log("---------constructor-----");
-        //      console.log(this.constructor);
-        //
-        //      let proxy: any = new Proxy(this, proxyHandler);
-        // //     _.assign((this, proxy));
-        //      (this as any).constructor = proxy.constructor;
-        //      (this as any).__proto__ = proxy.__proto__;
-        //
-        //      //proxy.x111 = 333;
-        //      console.log("---------constructor---THIS--");
-        //      console.log(proxy);
-        //      console.log(this);
-    }
-
+    
     [name: string]: any;
 
     getClassName() {

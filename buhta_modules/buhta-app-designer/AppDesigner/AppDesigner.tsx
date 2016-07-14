@@ -88,7 +88,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
 
     testOpenObjectDesigner() {
-        let testObject: TestBuhtaObject1 = new TestBuhtaObject1(null);
+        let testObject: TestBuhtaObject1 = new TestBuhtaObject1();
         testObject.firstName = "Игорь0";
         testObject.lastName = "Сидоренко0";
         testObject.surName = "Олегович0";
@@ -98,7 +98,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             onChange={() => { testObject = _.cloneDeep(testObject);  win2Instance.forceUpdate(); console.log("test999-change"); }}
             designedObject={testObject} key="1"> </ObjectDesigner>;
 
-        let testObject2: testBuhtaObject2 = new testBuhtaObject2(null);
+        let testObject2: testBuhtaObject2 = new testBuhtaObject2();
         testObject2.firstName = "Игорь1";
         testObject2.lastName = "Сидоренко2";
         testObject2.surName = "Олегович1";
@@ -294,7 +294,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testTableDesigner() {
-        let table = new SqlTable(null);
+        let table = new SqlTable();
 
         table.name = "Организация";
         table.sqlname = "dbo.Организация";
@@ -323,7 +323,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     };
 
     testSnapshot() {
-        let table = new SqlTable(null);
+        let table = new SqlTable();
 
         table.name = "Организация";
         table.sqlname = "dbo.Организация";
@@ -359,7 +359,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         let x: any = [];
 
         for (let i = 0; i < 100; i++) {
-            let table = new SqlTable(null);
+            let table = new SqlTable();
 
             table.name = "Организация";
             table.sqlname = "dbo.Организация";
@@ -412,7 +412,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
                 let vids = table.rows.map<Vid>((r) => {
 
-                    let vid = new Vid(null);
+                    let vid = new Vid();
                     vid.Num = "*" + r["Номер"];
                     vid.Name = "*" + r["Название"];
 
@@ -423,7 +423,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                 //console.log(vids);
 
                 let dataSource = new TreeGridArrayDataSource(vids);
-                dataSource.params.getNewRow = () => new Vid(null);
+                dataSource.params.getNewRow = () => new Vid();
                 //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
                 dataSource.params.getEmptyDataSourceMessage = () => <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
 

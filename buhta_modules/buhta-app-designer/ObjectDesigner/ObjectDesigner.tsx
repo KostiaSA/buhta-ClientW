@@ -7,6 +7,8 @@ import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
+import {Observable} from "../../buhta-core/Observable";
+import {DeepClone} from "../../buhta-core/DeepClone";
 
 
 export interface ObjectDesignerProps extends ComponentProps<any> {
@@ -25,19 +27,38 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
 
     snapshot: Snapshot = new Snapshot();
 
+    needToSave: boolean = false;
+    clonedDesignedObject: DesignedObject;
+    observableDesignedObject: DesignedObject;
+
+    protected willMount() {
+        super.willMount();
+        this.needToSave = false;
+
+        this.clonedDesignedObject = DeepClone<DesignedObject>(this.props.designedObject);
+
+        console.log("cloned");
+        console.log(this.props.designedObject);
+        console.log(this.clonedDesignedObject);
+
+        this.observableDesignedObject = Observable<DesignedObject>(this.clonedDesignedObject, () => {
+            this.needToSave = true;
+            this.forceUpdate();
+        });
+    }
 
     protected didMount() {
         super.didMount();
-        this.snapshot.saveObject(this.props.designedObject, "root");
+        //this.snapshot.saveObject(this.props.designedObject, "root");
     }
 
     renderPropertyDesigners(): JSX.Element[] {
         let ret: JSX.Element[] = [];
 
-        getPropertyEditors(this.props.designedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
+        getPropertyEditors(this.observableDesignedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
             //console.log(propInfo);
             let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
-                designedObject: this.props.designedObject,
+                designedObject: this.observableDesignedObject,
                 //propertyEditorInfo: propInfo,
                 index: index,
                 key: index,
@@ -65,6 +86,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     handleSaveChanges = () => {
         console.log("save-changes");
         //console.log(this.props.designedObject);
+        _.assign(this.props.designedObject, this.observableDesignedObject);
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
 
@@ -72,15 +94,15 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
 
     handleCancelChanges = () => {
         console.log("cancel-changes");
-        this.snapshot.restoreObject(this.props.designedObject, "root");
+        //this.snapshot.restoreObject(this.props.designedObject, "root");
         if (this.props.onCancelChanges)
             this.props.onCancelChanges();
         //console.log(this.props.designedObject);
     }
 
-    handleGetNeedToSave = (): boolean => {
-        return false;
-    }
+    // handleGetNeedToSave = (): boolean => {
+    //     return this.needToSave;
+    // }
 
     render() {
         this.addClassName("object-designer");
@@ -91,7 +113,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                 sizeTo="parent"
                 onSaveChanges={this.handleSaveChanges}
                 onCancelChanges={this.handleCancelChanges}
-                onGetNeedToSave={this.handleGetNeedToSave}
+                needToSave={this.needToSave}
                 {...this.getRenderProps()}>
                 Object designer
                 {this.renderPropertyDesigners()}

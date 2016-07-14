@@ -20,9 +20,10 @@ export interface AutoFormControlProps {
 export interface AutoFormProps extends ComponentProps<any> {
     inputs?: AutoFormControlProps[];
     sizeTo: "parent" | "content";
+    needToSave?: boolean;
     onSaveChanges?: () => void;
     onCancelChanges?: () => void;
-    onGetNeedToSave?: () => boolean;
+    //onGetNeedToSave?: () => boolean;
 }
 
 const emptyTabName = "закладка";
@@ -132,12 +133,12 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
                             </Flex>
                             <Fixed>
-                                <Button visible={ this.props.onGetNeedToSave() } className="is-success is-outlined"
+                                <Button visible={ this.props.needToSave } className="is-success is-outlined"
                                         onClick={ this.handleSaveButtonClick }>
                                     Сохранить
                                 </Button>
                                 <Button onClick={ this.handleCancelButtonClick }>
-                                    {this.props.onGetNeedToSave() ? "Отмена" : "Закрыть" }
+                                    {this.props.needToSave ? "Отмена" : "Закрыть" }
                                 </Button>
                             </Fixed>
                         </Layout>

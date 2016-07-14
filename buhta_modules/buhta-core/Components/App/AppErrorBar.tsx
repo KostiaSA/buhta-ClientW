@@ -32,7 +32,7 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
         this.errorMessage = msg;
 
         if (!error.$$isThrowError)
-            console.log(error);
+            console.error(error.stack);
 
         this.state.visible = true;
         this.forceUpdate();
