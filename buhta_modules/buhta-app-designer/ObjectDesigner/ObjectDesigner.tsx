@@ -22,6 +22,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         this.props = props;
     }
 
+
     snapshot: Snapshot = new Snapshot();
 
 
@@ -77,6 +78,10 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         //console.log(this.props.designedObject);
     }
 
+    handleGetNeedToSave = (): boolean => {
+        return false;
+    }
+
     render() {
         this.addClassName("object-designer");
         this.addProps({onChange: this.props.onChange});
@@ -86,6 +91,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                 sizeTo="parent"
                 onSaveChanges={this.handleSaveChanges}
                 onCancelChanges={this.handleCancelChanges}
+                onGetNeedToSave={this.handleGetNeedToSave}
                 {...this.getRenderProps()}>
                 Object designer
                 {this.renderPropertyDesigners()}

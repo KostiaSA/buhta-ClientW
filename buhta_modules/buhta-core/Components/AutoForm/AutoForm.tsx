@@ -22,6 +22,7 @@ export interface AutoFormProps extends ComponentProps<any> {
     sizeTo: "parent" | "content";
     onSaveChanges?: () => void;
     onCancelChanges?: () => void;
+    onGetNeedToSave?: () => boolean;
 }
 
 const emptyTabName = "закладка";
@@ -85,7 +86,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
         }
     }
 
-    handleSaveButtonClick  = (sender: Button, e: React.MouseEvent): void => {
+    handleSaveButtonClick = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
         this.getParentWindow().close();
@@ -93,7 +94,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
     }
 
-    handleCancelButtonClick  = (sender: Button, e: React.MouseEvent): void => {
+    handleCancelButtonClick = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onCancelChanges)
             this.props.onCancelChanges();
         this.getParentWindow().close();
@@ -131,11 +132,12 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
                             </Flex>
                             <Fixed>
-                                <Button className="is-success is-outlined" onClick={ this.handleSaveButtonClick }>
+                                <Button visible={ this.props.onGetNeedToSave() } className="is-success is-outlined"
+                                        onClick={ this.handleSaveButtonClick }>
                                     Сохранить
                                 </Button>
-                                <Button onClick={ this.handleCancelButtonClick } >
-                                    Отмена
+                                <Button onClick={ this.handleCancelButtonClick }>
+                                    {this.props.onGetNeedToSave() ? "Отмена" : "Закрыть" }
                                 </Button>
                             </Fixed>
                         </Layout>

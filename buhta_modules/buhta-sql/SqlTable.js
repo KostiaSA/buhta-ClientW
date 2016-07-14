@@ -23,7 +23,7 @@ var SqlTable = (function (_super) {
         };
     }
     SqlTable.prototype.addColumn = function (initCallback) {
-        var col = new SqlTableColumn();
+        var col = new SqlTableColumn(this.proxyHandler);
         col.table = this;
         this.columns.push(col);
         initCallback(col);

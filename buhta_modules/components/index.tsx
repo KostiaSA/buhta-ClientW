@@ -22,5 +22,3 @@ ReactDOM.render(
 );
 
 
-let xxx=new TestBuhtaObject1();
-let xxx1=new TestBuhtaObject1();

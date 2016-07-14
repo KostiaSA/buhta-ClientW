@@ -2,8 +2,9 @@ import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringProperty
 import {TestBuhtaObject1} from "./testBuhtaObject1";
 
 export class testBuhtaObject2 extends TestBuhtaObject1 {
-    constructor() {
-        super();
+
+    constructor(proxyHandler: ProxyHandler<any>) {
+        super(proxyHandler);
     }
 
     @StringEditor({

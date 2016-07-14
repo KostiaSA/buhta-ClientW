@@ -88,7 +88,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
 
     testOpenObjectDesigner() {
-        let testObject: TestBuhtaObject1 = new TestBuhtaObject1();
+        let testObject: TestBuhtaObject1 = new TestBuhtaObject1(null);
         testObject.firstName = "Игорь0";
         testObject.lastName = "Сидоренко0";
         testObject.surName = "Олегович0";
@@ -98,7 +98,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             onChange={() => { testObject = _.cloneDeep(testObject);  win2Instance.forceUpdate(); console.log("test999-change"); }}
             designedObject={testObject} key="1"> </ObjectDesigner>;
 
-        let testObject2: testBuhtaObject2 = new testBuhtaObject2();
+        let testObject2: testBuhtaObject2 = new testBuhtaObject2(null);
         testObject2.firstName = "Игорь1";
         testObject2.lastName = "Сидоренко2";
         testObject2.surName = "Олегович1";
@@ -294,7 +294,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testTableDesigner() {
-        let table = new SqlTable();
+        let table = new SqlTable(null);
 
         table.name = "Организация";
         table.sqlname = "dbo.Организация";
@@ -323,7 +323,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     };
 
     testSnapshot() {
-        let table = new SqlTable();
+        let table = new SqlTable(null);
 
         table.name = "Организация";
         table.sqlname = "dbo.Организация";
@@ -359,7 +359,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         let x: any = [];
 
         for (let i = 0; i < 100; i++) {
-            let table = new SqlTable();
+            let table = new SqlTable(null);
 
             table.name = "Организация";
             table.sqlname = "dbo.Организация";
@@ -396,11 +396,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             @GridColumn({})
             Name: string;
 
-            
-            getClassName(){
+
+            getClassName() {
                 return "Вид товара";
-            } 
-            
+            }
+
             toString() {
                 return `[${this.Num}]  ` + this.Name;
             }
@@ -412,7 +412,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
                 let vids = table.rows.map<Vid>((r) => {
 
-                    let vid = new Vid();
+                    let vid = new Vid(null);
                     vid.Num = "*" + r["Номер"];
                     vid.Name = "*" + r["Название"];
 
@@ -423,7 +423,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                 //console.log(vids);
 
                 let dataSource = new TreeGridArrayDataSource(vids);
-                dataSource.params.getNewRow = () => new Vid();
+                dataSource.params.getNewRow = () => new Vid(null);
                 //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
                 dataSource.params.getEmptyDataSourceMessage = () => <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
 
@@ -502,6 +502,52 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     }
 
+    testObservable() {
+        let xxx: any = {};
+        let proxyHandler = {
+            get: (target: any, p: PropertyKey, receiver: any): any => {
+                //console.log("handlerGet???");
+                //console.log(p);
+                return target[p];
+            },
+            set: (target: any, p: PropertyKey, value: any, receiver: any): any => {
+                console.log("handlerSet");
+                console.log(p);
+                console.log(value);
+                target[p] = value;
+                return true;
+            }
+        };
+        console.log("-----Proxy-----");
+        let proxy = new Proxy(xxx, proxyHandler);
+        proxy.x111 = 333;
+        proxy.o = {};
+        proxy.o.eee = "eee1";
+        //console.log(proxy.x111);
+        //console.log(proxy);
+
+        // let x = new Object();
+        //
+        // class A extends Proxy<Array<any>> {
+        //     constructor() {
+        //
+        //         let handler: ProxyHandler<Array<any>> = {
+        //             get: (target: Array<any>, p: PropertyKey, receiver: any): any => {
+        //                 console.log("handlerGet");
+        //             }
+        //         };
+        //
+        //         super([], handler);
+        //     }
+        //
+        // }
+        //
+        // console.log("9");
+        // let a = new A();
+        // a.push(10);
+        // console.log("10");
+    }
+
     render() {
         this.addClassName("app-designer");
 
@@ -533,8 +579,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { this.testGrid2(); }}>test GRID-2</button>
                                 <br/>
-                                <br/>
                                 <button onClick={() => { this.testWindowAutoSize(); }}>test WIN AUTOSIZE</button>
+                                <br/>
+                                <br/>
+                                <button onClick={() => { this.testObservable(); }}>test OBSERVABLE</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

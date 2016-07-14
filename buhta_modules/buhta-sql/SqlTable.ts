@@ -28,7 +28,7 @@ export class SqlTable extends DesignedObject {
     columns: SqlTableColumn[] = [];
 
     addColumn(initCallback: (newColumn: SqlTableColumn) => void) {
-        let col = new SqlTableColumn();
+        let col = new SqlTableColumn(this.proxyHandler);
         col.table = this;
         this.columns.push(col);
         initCallback(col);
