@@ -24,7 +24,6 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         this.props = props;
     }
 
-
     snapshot: Snapshot = new Snapshot();
 
     needToSave: boolean = false;

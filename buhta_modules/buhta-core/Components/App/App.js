@@ -22,6 +22,7 @@ var AppState = (function (_super) {
     }
     return AppState;
 }(Component_1.ComponentState));
+exports.AppState = AppState;
 var App = (function (_super) {
     __extends(App, _super);
     function App(props, context) {

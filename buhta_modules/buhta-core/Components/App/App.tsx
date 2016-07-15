@@ -19,7 +19,7 @@ export class AppWindow {
     content: JSX.Element;
 }
 
-class AppState extends ComponentState<AppProps> {
+export class AppState extends ComponentState<AppProps> {
     windows: AppWindow[] = [];  // последнее активно
 }
 

@@ -5,15 +5,16 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es5",
-    //"outDir": "../distdist",
-    "declaration": false,
-    "module": "commonjs",
+    //"outDir": "./",
+    "outFile":"xxx.js",
+    "declaration": true,
+    "module": "amd",
     "jsx": "react",
     "experimentalDecorators":true
     //    "reactNamespace": "__React"
   },
-  "exclude": [
-    "node_modules",
-    ".js"
-  ]
+  "files": [
+    "../typings/index.d.ts",
+    "index.ts"
+   ]
 }

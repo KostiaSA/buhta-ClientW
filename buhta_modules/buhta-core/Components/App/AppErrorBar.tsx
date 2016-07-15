@@ -6,7 +6,7 @@ export interface AppErrorBarProps extends ComponentProps<AppErrorBarState> {
 
 }
 
-class AppErrorBarState extends ComponentState<AppErrorBarProps> {
+export class AppErrorBarState extends ComponentState<AppErrorBarProps> {
     visible: boolean;
 }
 

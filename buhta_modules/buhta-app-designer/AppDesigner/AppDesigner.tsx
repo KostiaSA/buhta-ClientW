@@ -38,7 +38,7 @@ export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
     //text?: string;
 }
 
-class AppDesignerState extends ComponentState<AppDesignerProps> {
+export class AppDesignerState extends ComponentState<AppDesignerProps> {
     //text?: string;
 }
 

@@ -9,7 +9,7 @@ export class Snapshot {
 
     }
 
-    snapshots: InternalSnapshot[] = [];
+    private snapshots: InternalSnapshot[] = [];
 
     saveObject(obj: Object | Array<any>, snapshotName: string) {
         let snap = new InternalSnapshot();
@@ -32,7 +32,7 @@ export class Snapshot {
         }
     }
 
-    getInternalSnapshot(obj: Object | Array<any>, snapshotName: string): InternalSnapshot {
+    private getInternalSnapshot(obj: Object | Array<any>, snapshotName: string): InternalSnapshot {
         let ret = this.snapshots.filter((snap) => snap.obj === obj && snap.snapshotName === snapshotName);
         if (ret.length === 0) {
             console.error("Snapshot '" + snapshotName + "' not found");
