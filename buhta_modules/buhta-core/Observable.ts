@@ -10,20 +10,25 @@ export function Observable<T extends DesignedObject>(obj: DesignedObject, onChan
         return undefined;
 
     let proxyHandler = {
-        set: (target: T, p: PropertyKey, value: any, receiver: any): any => {
-            if (p.toString().substr(0, 2) !== "$$") {
-                if (!target.$$changeCount)
-                    target.$$changeCount = 1;
-                else
-                    target.$$changeCount++;
-                if (target.$$onChange)
-                    target.$$onChange(target, p, target[p], value);
-                //console.log("observable set " + p.toString() + ",   value: " + value);
+            set: (target: T, p: PropertyKey, value: any, receiver: any): any => {
+                if (p.toString().substr(0, 2) !== "$$") {
+                    if (!target.$$changeCount)
+                        target.$$changeCount = 1;
+                    else
+                        target.$$changeCount++;
+                    if (target.$$onChange)
+                        target.$$onChange(target, p, target[p], value);
+                    if (_.isArray(value))
+                        processArray(value, proxyHandler, onChangeCallback);
+                    else if (_.isObject(value))
+                        processObject(value, proxyHandler, onChangeCallback);
+                    console.log({observableSetTaget: target, prop: p , value: value});
+                }
+                target[p] = value;
+                return true;
             }
-            target[p] = value;
-            return true;
         }
-    };
+        ;
 
     processObject(obj, proxyHandler, onChangeCallback);
     let observableObject = new Proxy(obj, proxyHandler) as T;
@@ -32,7 +37,7 @@ export function Observable<T extends DesignedObject>(obj: DesignedObject, onChan
 }
 
 
-function processObject(obj: any, proxyHandler: any, onChangeCallback: ObservableOnChangeHandler<any>) {
+function processObject(obj: any, proxyHandler: any, onChangeCallback: ObservableOnChangeHandler < any >) {
     if (!obj)
         return;
 

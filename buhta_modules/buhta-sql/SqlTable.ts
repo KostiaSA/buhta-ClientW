@@ -23,21 +23,21 @@ export class SqlTable extends DesignedObject {
     sqlname: string;
 
     @ListEditor({
-        inputTab: "Колонки"
+        inputTab: "Колонки",
+        getNewListItem: (table: SqlTable) => {
+            return new SqlTableColumn(table);
+        }
     })
     columns: SqlTableColumn[] = [];
 
-    addColumn(initCallback: (newColumn: SqlTableColumn) => void) {
+    addColumn(initCallback?: (newColumn: SqlTableColumn) => void): SqlTableColumn {
         let col = new SqlTableColumn(this);
+        if (initCallback)
+            initCallback(col);
         this.columns.push(col);
-        initCallback(col);
-
-        this.testProc2();
+        return col;
     }
 
-    testProc2 = () => {
-
-    };
 
     getClassName() {
         return "sql-таблица";
@@ -79,7 +79,7 @@ export class SqlTableColumn extends DesignedObject {
 
     @GridColumn({caption: "test", order: -1})
     get testColumn(): string {
-        return this.name + "+" + this.dataType+"->"+ this.table.name+(this.table as any).$$uniqueObjectId;
+        return this.name + "+" + this.dataType + "->" + this.table.name + (this.table as any).$$uniqueObjectId;
     };
 
     $$testObject: any;

@@ -19,14 +19,13 @@ var SqlTable = (function (_super) {
     function SqlTable() {
         _super.apply(this, arguments);
         this.columns = [];
-        this.testProc2 = function () {
-        };
     }
     SqlTable.prototype.addColumn = function (initCallback) {
         var col = new SqlTableColumn(this);
+        if (initCallback)
+            initCallback(col);
         this.columns.push(col);
-        initCallback(col);
-        this.testProc2();
+        return col;
     };
     SqlTable.prototype.getClassName = function () {
         return "sql-таблица";
@@ -52,7 +51,10 @@ var SqlTable = (function (_super) {
     ], SqlTable.prototype, "sqlname", void 0);
     __decorate([
         ListPropertyEditor_1.ListEditor({
-            inputTab: "Колонки"
+            inputTab: "Колонки",
+            getNewListItem: function (table) {
+                return new SqlTableColumn(table);
+            }
         })
     ], SqlTable.prototype, "columns", void 0);
     return SqlTable;

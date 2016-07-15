@@ -38,7 +38,9 @@ export class ListPropertyEditor extends BasePropertyEditor {
         //     />
         // );
 
+
         let dataSource = new TreeGridArrayDataSource(this.props.designedObject[this.props.propertyName]);
+        dataSource.params.getNewRow = () => this.props.customParams.getNewListItem(this.props.designedObject);
 
         return (
             <TreeGrid
@@ -60,7 +62,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
 }
 
 export interface ListEditorParams extends AutoFormControlProps {
-
+    getNewListItem?: (listOwner: DesignedObject) => DesignedObject;
 }
 
 export function ListEditor(params: ListEditorParams): Function {
@@ -73,7 +75,8 @@ export function ListEditor(params: ListEditorParams): Function {
             propertyName: propertyName,
             objectType: target.constructor,
             editorType: ListPropertyEditor,
-            propertyType: String
+            propertyType: String,
+            customParams: params
         });
     };
 }

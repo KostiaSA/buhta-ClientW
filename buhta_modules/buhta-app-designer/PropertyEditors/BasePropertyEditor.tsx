@@ -8,6 +8,7 @@ export interface PropertyEditorInfo extends AutoFormControlProps {
     objectType: typeof DesignedObject;
     editorType: typeof BasePropertyEditor;
     propertyType: typeof Object | typeof String;
+    customParams?: any;
 }
 
 export interface BasePropertyEditorProps extends ComponentProps<any>, PropertyEditorInfo {
@@ -18,7 +19,7 @@ export interface BasePropertyEditorProps extends ComponentProps<any>, PropertyEd
 
 
 export class BasePropertyEditor extends Component<BasePropertyEditorProps, any> {
-    constructor(props: BasePropertyEditorProps, context:any) {
+    constructor(props: BasePropertyEditorProps, context: any) {
         super(props, context);
     }
 
