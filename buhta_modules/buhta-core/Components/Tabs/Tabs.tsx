@@ -26,7 +26,7 @@ export class TabsState extends ComponentState<TabsProps> {
 }
 
 export class TabInfo {
-    title: string;
+    title: string | undefined;
     isActive: boolean;
     content: React.ReactNode;
 }
@@ -48,7 +48,7 @@ export class Tabs extends Component<TabsProps, TabsState> {
 
             let tabInfo: TabInfo = {
                 title: tabProps.title,
-                content: tabProps.children,
+                content: tabProps.children as React.ReactNode,
                 isActive: index === 0
             }
 

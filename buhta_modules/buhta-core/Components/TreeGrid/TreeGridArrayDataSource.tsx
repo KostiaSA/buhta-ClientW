@@ -54,8 +54,10 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
     getNewRow(): T {
         if (this.params.getNewRow)
             return this.params.getNewRow();
-        else
+        else {
             throwError("TreeGridArrayDataSource: method getNewRow() not defined");
+            throw  "";  // fake typescript 2
+        }
     }
 
     addRow(row: T): number {

@@ -326,8 +326,8 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                     let col = new InternalColumn();
                     col.props = propCol;
                     col.width = propCol.width || 150;
-                    col.caption = propCol.caption;
-                    col.fieldName = propCol.propertyName;
+                    col.caption = propCol.caption || "";
+                    col.fieldName = propCol.propertyName || "";
                     col.caption = propCol.caption || col.fieldName;
                     this.state.columns.push(col);
                 });
@@ -377,7 +377,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         let sorted: ISorted[] = this.state.dataSource.getDataRows().map((obj: any, index: number) => {
             return {
-                hierarchyStr: obj[this.props.hierarchyFieldName].toString(),
+                hierarchyStr: obj[this.props.hierarchyFieldName || ""].toString(),  // todo this.props.hierarchyFieldName || ""  ???
                 objIndex: index
             };
         });
@@ -390,14 +390,16 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         sorted.forEach((s, index) => {
 
-            let splitted = s.hierarchyStr.split(this.props.hierarchyDelimiters);
+            let hierarchyDelimiters= this.props.hierarchyDelimiters || ".";
+
+            let splitted = s.hierarchyStr.split(hierarchyDelimiters);
             let parentId: any;
             let nodeId: any;
             if (splitted.length === 1)
                 nodeId = s.hierarchyStr;
             else {
                 nodeId = _.last(splitted);
-                parentId = splitted.slice(0, splitted.length - 1).join(this.props.hierarchyDelimiters.slice(0, 1));
+                parentId = splitted.slice(0, splitted.length - 1).join(hierarchyDelimiters.slice(0, 1));
             }
 
             if (!parentId) {
@@ -487,18 +489,18 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         let newHeight = this.state.bodyWrapperElement.offsetHeight;
         if (newHeight !== this.lastBodyWrapperHeight) {
             this.lastBodyWrapperHeight = newHeight;
-            this.handleScroll(null);
+            this.handleScroll();
         }
         let newWidth = this.state.bodyWrapperElement.offsetWidth;
         if (newWidth !== this.lastBodyWrapperWidth) {
             this.lastBodyWrapperWidth = newWidth;
-            this.handleScroll(null);
+            this.handleScroll();
         }
     }
 
     protected didMount() {
         this.handleChangeFocused();
-        this.handleScroll(null);
+        this.handleScroll();
         this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
     }
 
@@ -553,7 +555,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     protected didUpdate(prevProps: TreeGridProps, prevState: any, prevContext: any) {
         this.handleChangeFocused();
-        this.handleScroll(null);
+        this.handleScroll();
     }
 
 
@@ -594,7 +596,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     private renderCell(row: InternalRow, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
 
         let objIndex = row.sourceIndex;
-        let str = this.state.dataSource.getDataRows()[objIndex][col.props.propertyName].toString();
+        let str = this.state.dataSource.getDataRows()[objIndex][col.props.propertyName || ""].toString();  // todo col.props.propertyName || "" 
         //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
         // return <td key={colIndex}>
         //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
@@ -602,7 +604,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         let node = row.node;
 
-        let hierarchyPaddingDiv: JSX.Element;
+        let hierarchyPaddingDiv: React.ReactNode=[];
         if (this.props.treeMode && (col.props.showHierarchyPadding || col.props.showHierarchyTree)) {
             hierarchyPaddingDiv = <span style={{width:node.level * 20, display: "inline-block"}}></span>;
         }
@@ -622,7 +624,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         let strSpan = <span style={ strSpanStyle}>{str}</span>;
 
 
-        let collapseIconDiv: JSX.Element;
+        let collapseIconDiv: React.ReactNode=[];
 
         if (this.props.treeMode && col.props.showHierarchyTree) {
             if (node.children.length > 0) {
@@ -714,7 +716,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         // this.forceUpdate();
     }
 
-    private handleScroll(e: UIEvent) {
+    private handleScroll() {
         $(this.state.headerWrapperElement).css({top: this.state.bodyWrapperElement.scrollTop});
 
         let pos = this.state.bodyWrapperElement.scrollTop + this.state.bodyWrapperElement.clientHeight - $(this.state.footerWrapperElement).outerHeight() - 0;
@@ -856,9 +858,9 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         // this.handleOnClick(null);
     };
 
-    renderColumnHeaders(): JSX.Element {
+    renderColumnHeaders(): React.ReactNode {
         if (this.state.dataSource.getDataRows().length === 0)
-            return null;
+            return [];
 
         let colWidths: JSX.Element[] = [];
         let colHeaders: JSX.Element[] = [];
@@ -919,10 +921,10 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         );
     }
 
-    renderColumnFooters(): JSX.Element {
+    renderColumnFooters(): React.ReactNode {
 
         if (this.state.dataSource.getDataRows().length === 0)
-            return null;
+            return [];
 
         let colWidths: JSX.Element[] = [];
         let colFooters: JSX.Element[] = [];
@@ -967,24 +969,24 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 </div>
             );
         else
-            return undefined;
+            return [];
     }
 
-    renderEmptyDataSourceMessage(): JSX.Element {
+    renderEmptyDataSourceMessage(): React.ReactNode {
         if (this.state.dataSource.getDataRows().length > 0)
-            return null;
+            return [];
 
         let message: React.ReactNode = this.state.dataSource.getEmptyDataSourceMessage();
 
         return (<div className="tree-grid-empty-body">{message}</div>);
     }
 
-    renderGridBody(): JSX.Element {
+    renderGridBody(): React.ReactNode {
 
         if (this.state.dataSource.getDataRows().length === 0)
-            return null;
+            return [];
 
-        let colWidths: JSX.Element[] = [];
+        let colWidths: React.ReactNode[] = [];
         this.state.columns.forEach((col: InternalColumn, index: number) => {
             colWidths.push(
                 <col
@@ -1070,7 +1072,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         let maxBodyWrapperWidth = this.calcTotalColumnsWidth() + getScrollbarWidth() + 1;
         if (this.state.columns.length === 0)
-            maxBodyWrapperWidth = null;
+            maxBodyWrapperWidth = 0;
 
         return (
             <Layout className="tree-grid" type="column" sizeTo="parent" {...this.getRenderProps()}

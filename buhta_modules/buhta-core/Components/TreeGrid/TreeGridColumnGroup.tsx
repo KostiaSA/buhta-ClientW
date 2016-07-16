@@ -15,8 +15,5 @@ export class XTreeGridGroupColumn extends Component<TreeGridColumnGroupProps, an
 
     }
 
-    render(): JSX.Element {
-        return (null);
-    }
 }
 

@@ -5,6 +5,7 @@ import {appInstance} from "../App/App";
 import {Window, WindowState} from "../Window/Window";
 import {MoveStartEvent} from "../Movable/Movable";
 import {Button} from "../Button/Button";
+import {throwError} from "../../Error";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -83,19 +84,19 @@ export interface OpenMessageWindowParams {
 export class DesktopWindow implements OpenWindowParams {
     title: string;
     id: string;
-    top: number;
-    left: number;
-    right: number;
-    bottom: number;
-    width: number;
-    height: number;
-    minHeight: number;
-    minWidth: number;
+    top: number | undefined;
+    left: number | undefined;
+    right: number | undefined;
+    bottom: number | undefined;
+    width: number | undefined;
+    height: number | undefined;
+    minHeight: number | undefined;
+    minWidth: number | undefined;
     content: React.ReactNode;
     disabled: boolean;
-    parentWindowId: string;
-    autoPosition: WindowAutoPosition = "none";
-    autoSize: WindowAutoSize = "none";
+    parentWindowId: string | undefined;
+    autoPosition: WindowAutoPosition | undefined;
+    autoSize: WindowAutoSize | undefined;
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
@@ -172,7 +173,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
         newWin.parentWindowId = openParams.parentWindowId;
         if (newWin.parentWindowId) {
-            this.getWindowById(newWin.parentWindowId).disabled = true;
+            this.getWindowById(newWin.parentWindowId)!.disabled = true;
         }
 
 
@@ -196,7 +197,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
         let buttonStyle = {minWidth: 65, marginLeft: 8};
 
-        let okButton: React.ReactNode;
+        let okButton: React.ReactNode = [];
         if (openParams.okButtonContent) {
             let buttonClassName = "is-outlined";
             if (openParams.style === "danger")
@@ -207,7 +208,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                     style={buttonStyle}
                     onClick={ (sender:Button, e:React.MouseEvent) => {
                           sender.closeParentWindow();
-                          if (openParams.resultCallback)
+                          if (openParams && openParams.resultCallback)
                              openParams.resultCallback(true);
                           e.stopPropagation();
                           }}
@@ -216,7 +217,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                 </Button>;
         }
 
-        let cancelButton: React.ReactNode;
+        let cancelButton: React.ReactNode = [];
         if (openParams.cancelButtonContent) {
             cancelButton =
                 <Button
@@ -224,7 +225,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                     style={buttonStyle}
                     onClick={ (sender:Button, e:React.MouseEvent) => {
                           sender.closeParentWindow();
-                          if (openParams.resultCallback)
+                          if (openParams && openParams.resultCallback)
                              openParams.resultCallback(false);
                           e.stopPropagation();
                           }}
@@ -249,15 +250,17 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
     activateWindow(id: string) {
         let win = this.getTopParentWindow(id);
+
         if (win && this.state.windows.indexOf(win) !== this.state.windows.length - 1) {
             _.pull(this.state.windows, win);
             this.state.windows.push(win);
             this.forceUpdate();
 
             // поднимаем дочерние окна
-            let childWin = this.state.windows.filter((w: DesktopWindow) => w.parentWindowId === win.id)[0];
+            let childWin = this.state.windows.filter((w: DesktopWindow) => w.parentWindowId === win!.id)[0];
             if (childWin)
                 this.activateChildWindow(childWin.id);
+
         }
     }
 
@@ -269,7 +272,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             this.forceUpdate();
 
             // поднимаем дочерние окна
-            let childWin = this.state.windows.filter((w: DesktopWindow) => w.parentWindowId === win.id)[0];
+            let childWin = this.state.windows.filter((w: DesktopWindow) => w.parentWindowId === win!.id)[0];
             if (childWin)
                 this.activateWindow(childWin.id);
         }
@@ -277,13 +280,13 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
     getTopParentWindow(id: string) {
         let topParent = this.getWindowById(id);
-        while (topParent.parentWindowId) {
+        while (topParent && topParent.parentWindowId) {
             topParent = this.getWindowById(topParent.parentWindowId);
         }
         return topParent;
     }
 
-    getWindowById(id: string): DesktopWindow {
+    getWindowById(id: string): DesktopWindow | null {
         for (let w of this.state.windows) {
             if (w.id === id)
                 return w;
@@ -301,9 +304,9 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         let win = this.getWindowById(id);
         _.pull(this.state.windows, win);
 
-        if (win.parentWindowId) {
+        if (win && win.parentWindowId) {
             this.activateWindow(win.parentWindowId);
-            this.getWindowById(win.parentWindowId).disabled = false;
+            this.getWindowById(win.parentWindowId)!.disabled = false;
         }
 
         this.forceUpdate();

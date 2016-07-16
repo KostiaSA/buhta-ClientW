@@ -94,7 +94,7 @@ var DataColumn = (function () {
     //dataType: ColumnDataType;
     function DataColumn(table, name) {
         this.table = table;
-        this.name = name;
+        this.name = name || "";
     }
     return DataColumn;
 }());

@@ -32,7 +32,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
 
     private getInputs(): AutoFormControlProps[] {
-        return React.Children.toArray(this.props.children)
+        return React.Children.toArray(this.props.children as React.ReactNode)
             .filter((c: any) => c.props)
             .map((c: any) => c.props) as AutoFormControlProps[];
     }
@@ -45,7 +45,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
     }
 
     private getTabInputs(tab: string): JSX.Element[] {
-        return React.Children.toArray(this.props.children)
+        return React.Children.toArray(this.props.children as React.ReactNode)
             .filter((c: any) => {
                 return c.props &&
                     (((c.props as AutoFormControlProps).inputTab || "") === tab);
@@ -56,7 +56,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
         return <Form sizeTo={this.props.sizeTo}>{this.getTabInputs(tab)}</Form>;
     }
 
-    private  renderTabs(): JSX.Element {
+    private  renderTabs(): JSX.Element | null {
         let tabs = this.getTabsList();
         //console.log(tabs);
         //console.log(this.getInputs());
@@ -90,7 +90,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
     handleSaveButtonClick = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
-        this.getParentWindow().close();
+        this.getParentWindow()!.close();
         e.stopPropagation();
 
     }
@@ -98,7 +98,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
     handleCancelButtonClick = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onCancelChanges)
             this.props.onCancelChanges();
-        this.getParentWindow().close();
+        this.getParentWindow()!.close();
         e.stopPropagation();
     }
 

@@ -23,15 +23,6 @@ export class TreeGridColumn extends Component<TreeGridColumnProps, any> {
         //this.state.disabled = false;
 
     }
-
-    render(): JSX.Element {
-
-        //this.addClassName("btn");
-        //this.toggleClassName(this.props.disabled, "disabled");
-
-        return (null);
-        //TreeGrid from {this.props.compiler} and {this.props.framework}!clickCount={this.state.clickCount}
-    }
 }
 
 

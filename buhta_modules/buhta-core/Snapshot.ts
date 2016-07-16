@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+import {throwError} from "./Error";
 
 // объект может иметь массивы:
 // $$unsavedProps - имена свойств, которые не сохраняются
@@ -19,12 +20,12 @@ export class Snapshot {
         this.snapshots.push(snap);
     }
 
-    restoreObject(obj: Object | Array<any>, snapshotName: string) {
+    restoreObject(obj: Object | any[], snapshotName: string) {
         let snap = this.getInternalSnapshot(obj, snapshotName);
         if (snap) {
             if (_.isArray(obj)) {
                 obj.length = 0;
-                snap.arrayElements.forEach((element) => obj.push(element));
+                snap.arrayElements.forEach((element) => (obj as any).push(element));
             }
             else {
                 snap.objProps.forEach((prop) => prop.restoreValue());
@@ -35,8 +36,8 @@ export class Snapshot {
     private getInternalSnapshot(obj: Object | Array<any>, snapshotName: string): InternalSnapshot {
         let ret = this.snapshots.filter((snap) => snap.obj === obj && snap.snapshotName === snapshotName);
         if (ret.length === 0) {
-            console.error("Snapshot '" + snapshotName + "' not found");
-            return null;
+            throwError("Snapshot '" + snapshotName + "' not found");
+            throw "fake";
         }
         else
             return ret[0];

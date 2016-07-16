@@ -1,10 +1,11 @@
 import * as _ from "lodash";
 
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
+import {throwError} from "./Error";
 
-export function DeepClone<T>(obj: any): T {
+export function DeepClone<T>(obj: any): T  {
     if (!obj)
-        return undefined;
+        throwError("DeepClone(): obj === null");
 
     let refsClones: any = {};
 

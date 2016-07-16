@@ -23,7 +23,7 @@ import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
-import {executeSQL} from "../../buhta-core/SQL";
+import {executeSQL, DataTable} from "../../buhta-core/SQL";
 import {Button} from "../../buhta-core/Components/Button/Button";
 import {SqlTable} from "../../buhta-sql/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
@@ -32,6 +32,7 @@ import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/Tree
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import ReactDOM = __React.ReactDOM;
 import {throwError} from "../../buhta-core/Error";
+
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -344,7 +345,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         console.log(table);
 
         table.name = "жопа";
-        table.columns = null;
+        table.columns.length = 0;
         console.log(table);
 
         s.restoreObject(table, "table1");
@@ -408,41 +409,43 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         }
 
         executeSQL("select TOP 10 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
-            .done((table) => {
+            .done((table: DataTable|string) => {
 
-                let vids = table.rows.map<Vid>((r) => {
+                if (table instanceof  DataTable) {
+                    let vids = table.rows.map<Vid>((r) => {
 
-                    let vid = new Vid();
-                    vid.Num = "*" + r["Номер"];
-                    vid.Name = "*" + r["Название"];
+                        let vid = new Vid();
+                        vid.Num = "*" + r["Номер"];
+                        vid.Name = "*" + r["Название"];
 
-                    return vid;
-                });
+                        return vid;
+                    });
 
-                console.log("select TOP 10 ==> ");
-                //console.log(vids);
+                    console.log("select TOP 10 ==> ");
+                    //console.log(vids);
 
-                let dataSource = new TreeGridArrayDataSource(vids);
-                dataSource.params.getNewRow = () => new Vid();
-                //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
-                dataSource.params.getEmptyDataSourceMessage = () => <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
+                    let dataSource = new TreeGridArrayDataSource(vids);
+                    dataSource.params.getNewRow = () => new Vid();
+                    //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
+                    dataSource.params.getEmptyDataSourceMessage = () =>
+                        <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
 
-                let win2 =
-                    <TreeGrid
-                        dataSource={dataSource}
-                        editable={true}
-                    >
-                    </TreeGrid>;
+                    let win2 =
+                        <TreeGrid
+                            dataSource={dataSource}
+                            editable={true}
+                        >
+                        </TreeGrid>;
 
-                let openParam: OpenWindowParams = {
-                    title: "test grid 2",
-                    top: 20,
-                    left: 20,
-                    height: 500
-                };
+                    let openParam: OpenWindowParams = {
+                        title: "test grid 2",
+                        top: 20,
+                        left: 20,
+                        height: 500
+                    };
 
-                appInstance.desktop.openWindow(win2, openParam);
-
+                    appInstance.desktop.openWindow(win2, openParam);
+                }
 
             })
             .fail((err) => {

@@ -22,7 +22,7 @@ export class Form extends Component<FormProps, any> {
     renderControls(): JSX.Element[] {
         let list: JSX.Element[] = [];
 
-        React.Children.toArray(this.props.children).forEach((control: any, index: number) => {
+        React.Children.toArray(this.props.children as React.ReactNode).forEach((control: any, index: number) => {
 
                 let controlProps = control.props as InputProps;
 
@@ -73,7 +73,7 @@ export class Form extends Component<FormProps, any> {
         this.addClassName("form");
         //this.addStyles({margin:10});
 
-        if (React.Children.toArray(this.props.children).length === 1) { // один контрол в форме, обычно treelist
+        if (React.Children.toArray(this.props.children as React.ReactNode).length === 1) { // один контрол в форме, обычно treelist
 
             if (this.props.sizeTo==="parent")
                 this.addStyles({height: "100%"});

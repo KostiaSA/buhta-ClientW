@@ -3,7 +3,7 @@
 
 let socket = io.connect();
 
-export function executeSQL(sql: string): JQueryPromise<DataTable> {
+export function executeSQL(sql: string): JQueryPromise<DataTable|string> {
     //console.log("call SQL.sql.execute");
     //return signalR.executeSQL(sql);
 
@@ -115,7 +115,7 @@ export class DataColumn {
     name: string;
     //dataType: ColumnDataType;
     constructor(public table: DataTable, name?: string) {
-        this.name = name;
+        this.name = name || "";
 
     }
 }

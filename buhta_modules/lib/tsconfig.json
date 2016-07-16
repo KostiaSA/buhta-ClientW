@@ -7,7 +7,7 @@
     "target": "es5",
     //"outDir": "./",
     "outFile":"xxx.js",
-    "declaration": true,
+    "declaration": false,
     "module": "amd",
     "jsx": "react",
     "experimentalDecorators":true

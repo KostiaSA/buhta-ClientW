@@ -2,7 +2,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import {ComponentProps, Component} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
-import {BasePropertyEditorProps, PropertyEditorInfo} from "../PropertyEditors/BasePropertyEditor";
+import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from "../PropertyEditors/BasePropertyEditor";
 import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
@@ -64,9 +64,9 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                 onChange: this.props.onChange,
 
                 // это из propInfo: PropertyEditorInfo, заполяется далее через _.assign
-                propertyName: null,
-                objectType: null,
-                editorType: null,
+                propertyName: "",
+                objectType: DesignedObject,
+                editorType: BasePropertyEditor,
                 propertyType: null
             };
 
@@ -76,7 +76,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                 editorProps.inputCaption = editorProps.propertyName;
             //console.log(editorProps);
 
-            ret.push(React.createElement(propInfo.editorType, editorProps, null));
+            ret.push(React.createElement(propInfo.editorType, editorProps, {}));
         });
 
         return ret;

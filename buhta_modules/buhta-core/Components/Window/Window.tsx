@@ -8,6 +8,7 @@ import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent} from "../Movable/Movable";
 import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize} from "../Desktop/Desktop";
+import {throwError} from "../../Error";
 
 
 export interface WindowProps extends OpenWindowParams, ComponentProps<WindowState> {
@@ -67,7 +68,8 @@ export class Window extends Component<WindowProps, WindowState> {
                 return parent as HTMLElement;
             parent = parent.parentElement;
         }
-        return null;
+        throwError("Window.getParentDesktopElement(): parent desktop not found");
+        throw "fake";
     }
 
     // private centerTo(parent: JQuery) {
@@ -151,7 +153,7 @@ export class Window extends Component<WindowProps, WindowState> {
         e.bindY(this.state, "top", () => {
             $(this.nativeElement).css("top", this.state.top);
         });
-        this.handleOnClick(null);
+        this.handleOnClick();
     };
 
     resizeRightBottomCornerStart = (e: MoveStartEvent): void => {
@@ -165,10 +167,10 @@ export class Window extends Component<WindowProps, WindowState> {
                 this.state.height = this.state.minHeight;
             $(this.nativeElement).css("height", this.state.height);
         });
-        this.handleOnClick(null);
+        this.handleOnClick();
     };
 
-    handleOnClick = (e: React.SyntheticEvent): void => {
+    handleOnClick = (e?: React.SyntheticEvent): void => {
         if (this.props.onActivate)
             this.props.onActivate(this.state);
     };
@@ -192,7 +194,7 @@ export class Window extends Component<WindowProps, WindowState> {
 
     renderRightBottomCornerResizer(): React.ReactNode {
         if (this.state.autoSize === "content") {
-            return null;
+            return [];
         }
         else {
             return (

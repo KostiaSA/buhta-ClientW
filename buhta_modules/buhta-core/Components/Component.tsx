@@ -5,6 +5,7 @@ import shallowCompare = require("react-addons-shallow-compare");
 import {ComponentPlugin} from "../Plugins/Plugin";
 import {Window} from "./Window/Window";
 import {Desktop, OpenMessageWindowParams} from "./Desktop/Desktop";
+import {throwError} from "../Error";
 
 
 export interface XOnClickProps {
@@ -54,7 +55,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     private renderProps: any = {};
     private renderStyles: any = {};
 
-    getParentWindow(): Window {
+    getParentWindow(): Window | null {
         let parent = ReactDOM.findDOMNode(this);
         while (parent) {
             if ((parent as any).$$window)
@@ -71,7 +72,8 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
                 return (parent as any).$$desktop as Desktop;
             parent = parent.parentElement;
         }
-        return null;
+        throwError("getParentDesktop(): desktop not found");  
+        return {} as Desktop;  // fake typescript 2
     }
 
 
@@ -94,7 +96,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         });
     }
 
-    addStyles(styles: Object) {
+    addStyles(styles: Object | undefined) {
         _.assign(this.renderStyles, styles);
     }
 
@@ -223,7 +225,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         this.willUnmount();
     };
 
-    addClassName(classNames: string) {
+    addClassName(classNames: string | undefined) {
         if (classNames)
             classNames.split(" ").forEach((name) => {
                 if (this.renderClasses.indexOf(name) === -1)
@@ -274,7 +276,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
 
     getChildren(childType: Function): JSX.Element[] {
         let ret: JSX.Element[] = [];
-        React.Children.toArray(this.props.children).forEach((child: any) => {
+        React.Children.toArray(this.props.children as React.ReactNode).forEach((child: any) => {
             if (childType === child.type)
                 ret.push(child);
         });
@@ -299,7 +301,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
             cancelButtonContent: cancelButtonText || "Нет",
             resultCallback: resultCallback
         };
-        this.getParentDesktop().openMessageWindow(messageContent, params);
+        this.getParentDesktop()!.openMessageWindow(messageContent, params);
     }
 
     showDeleteConfirmationWindow(messageContent: React.ReactNode, resultCallback: (resultOk: boolean) => void, okButtonText?: string, cancelButtonText?: string) {
@@ -310,11 +312,11 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
             cancelButtonContent: cancelButtonText || "Нет",
             resultCallback: resultCallback
         };
-        this.getParentDesktop().openMessageWindow(messageContent, params);
+        this.getParentDesktop()!.openMessageWindow(messageContent, params);
     }
 
     closeParentWindow() {
-        this.getParentDesktop().closeWindow(this.getParentWindowId());
+        this.getParentDesktop()!.closeWindow(this.getParentWindowId());
     }
 
     //render() {

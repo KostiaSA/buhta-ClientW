@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
+import {throwError} from "./Error";
 
 
 export type ObservableOnChangeHandler<T>= (target: any, p: PropertyKey, oldValue: any, newValue: any) => void;
@@ -7,7 +8,7 @@ export type ObservableOnChangeHandler<T>= (target: any, p: PropertyKey, oldValue
 // не сохраняются свойства, которые начинаются с $$
 export function Observable<T extends DesignedObject>(obj: DesignedObject, onChangeCallback?: ObservableOnChangeHandler<T>): T {
     if (!obj)
-        return undefined;
+        throwError("Observable(): obj === null");
 
     let proxyHandler = {
             set: (target: T, p: PropertyKey, value: any, receiver: any): any => {
@@ -37,7 +38,7 @@ export function Observable<T extends DesignedObject>(obj: DesignedObject, onChan
 }
 
 
-function processObject(obj: any, proxyHandler: any, onChangeCallback: ObservableOnChangeHandler < any >) {
+function processObject(obj: any, proxyHandler: any, onChangeCallback?: ObservableOnChangeHandler < any >) {
     if (!obj)
         return;
 
@@ -62,7 +63,7 @@ function processObject(obj: any, proxyHandler: any, onChangeCallback: Observable
     }
 }
 
-function processArray(obj: any[], proxyHandler: any, onChangeCallback: ObservableOnChangeHandler<any>) {
+function processArray(obj: any[], proxyHandler: any, onChangeCallback?: ObservableOnChangeHandler<any>) {
     if (!obj)
         return;
 

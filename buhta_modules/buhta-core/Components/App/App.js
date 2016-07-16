@@ -4,6 +4,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var React = require("react");
 var Component_1 = require("../Component");
 var AppErrorBar_1 = require("./AppErrorBar");
@@ -38,7 +46,9 @@ var App = (function (_super) {
         this.addClassName("app");
         if (this.props.sizeTo === "parent")
             this.addStyles({ height: "100%" });
-        return (React.createElement("div", React.__spread({}, this.getRenderProps()), React.createElement(AppErrorBar_1.AppErrorBar, null), this.props.children));
+        return (React.createElement("div", __assign({}, this.getRenderProps()), 
+            React.createElement(AppErrorBar_1.AppErrorBar, null), 
+            this.props.children));
     };
     return App;
 }(Component_1.Component));
