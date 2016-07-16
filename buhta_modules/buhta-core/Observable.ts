@@ -8,7 +8,7 @@ export type ObservableOnChangeHandler<T>= (target: any, p: PropertyKey, oldValue
 // не сохраняются свойства, которые начинаются с $$
 export function Observable<T extends DesignedObject>(obj: DesignedObject, onChangeCallback?: ObservableOnChangeHandler<T>): T {
     if (!obj)
-        throwError("Observable(): obj === null");
+        throwError("Observable(): obj === null "); 
 
     let proxyHandler = {
             set: (target: T, p: PropertyKey, value: any, receiver: any): any => {

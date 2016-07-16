@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as Immutable from "immutable";
 import * as _ from "lodash";
 import {ComponentProps, Component, ComponentState} from "../../buhta-core/Components/Component";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
@@ -30,8 +29,8 @@ import {Snapshot} from "../../buhta-core/Snapshot";
 import {DesignedObject} from "../DesignedObject";
 import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
-import ReactDOM = __React.ReactDOM;
 import {throwError} from "../../buhta-core/Error";
+import {Sql} from "../../buhta-sql/Sql";
 
 
 
@@ -506,26 +505,30 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testObservable() {
-        let xxx: any = {};
-        let proxyHandler = {
-            get: (target: any, p: PropertyKey, receiver: any): any => {
-                //console.log("handlerGet???");
-                //console.log(p);
-                return target[p];
-            },
-            set: (target: any, p: PropertyKey, value: any, receiver: any): any => {
-                console.log("handlerSet");
-                console.log(p);
-                console.log(value);
-                target[p] = value;
-                return true;
-            }
-        };
-        console.log("-----Proxy-----");
-        let proxy = new Proxy(xxx, proxyHandler);
-        proxy.x111 = 333;
-        proxy.o = {};
-        proxy.o.eee = "eee1";
+
+        let x=Sql.select(["номер"]).from("Организация");
+        
+        console.log(x.toSql());
+        // let xxx: any = {};
+        // let proxyHandler = {
+        //     get: (target: any, p: PropertyKey, receiver: any): any => {
+        //         //console.log("handlerGet???");
+        //         //console.log(p);
+        //         return target[p];
+        //     },
+        //     set: (target: any, p: PropertyKey, value: any, receiver: any): any => {
+        //         console.log("handlerSet");
+        //         console.log(p);
+        //         console.log(value);
+        //         target[p] = value;
+        //         return true;
+        //     }
+        // };
+        // console.log("-----Proxy-----");
+        // let proxy = new Proxy(xxx, proxyHandler);
+        // proxy.x111 = 333;
+        // proxy.o = {};
+        // proxy.o.eee = "eee1";
         //console.log(proxy.x111);
         //console.log(proxy);
 
