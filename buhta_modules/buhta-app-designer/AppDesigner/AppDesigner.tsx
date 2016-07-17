@@ -30,7 +30,7 @@ import {DesignedObject} from "../DesignedObject";
 import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import {throwError} from "../../buhta-core/Error";
-import {Sql} from "../../buhta-sql/Sql";
+import {SelectStmt, InlineSelectStmt} from "../../buhta-sql/Sql2";
 
 
 
@@ -506,9 +506,18 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testObservable() {
 
-        let x=Sql.select(["номер"]).from("Организация");
-        
-        console.log(x.toSql());
+        // let x=Sql.select("номер","название",":qwert as 12")
+        //     .from(["Организация","org"])
+        //     .where("город",">=","Страна")
+        //     .andWhere("город2","!=","Страна2")
+        //     ;//.eq("");
+
+        let x=new InlineSelectStmt();
+        x.addColumn("номер");
+        x.addColumn("название");
+        x.addFrom("Организация");
+
+        console.log(x.toSql("ms"));
         // let xxx: any = {};
         // let proxyHandler = {
         //     get: (target: any, p: PropertyKey, receiver: any): any => {
