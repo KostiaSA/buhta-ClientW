@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.1",
     "bulma": "0.0.28",
     "jquery": "^2.2.4",
     "knex": "^0.11.7",

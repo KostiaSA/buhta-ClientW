@@ -1,9 +1,9 @@
 ﻿import * as io from "socket.io-client";
-
+import {DataTable, DataColumn, DataRow} from "../buhta-sql/Db";
 
 let socket = io.connect();
 
-export function executeSQL(sql: string): JQueryPromise<DataTable|string> {
+export function executeSQL( sql: string): JQueryPromise<DataTable|string> {
     //console.log("call SQL.sql.execute");
     //return signalR.executeSQL(sql);
 
@@ -94,45 +94,11 @@ export function executeSQL(sql: string): JQueryPromise<DataTable|string> {
 
 }
 
-export class SqlError extends Error {
-}
+//export class SqlError extends Error {
+//}
 
 //export enum ColumnDataType { String, Number, Data }
 
 //export type DataType = string | number;
 
-export class DataTable {
-    columns: Array<DataColumn>;
-    rows: Array<DataRow>;
-
-    constructor() {
-        this.columns = [];
-        this.rows = [];
-    }
-}
-
-export class DataColumn {
-    name: string;
-    //dataType: ColumnDataType;
-    constructor(public table: DataTable, name?: string) {
-        this.name = name || "";
-
-    }
-}
-
-
-export class DataRow {
-    [index: string]: any;
-    constructor(public table: DataTable) {
-    }
-
-    getValue(columnIndex: number): any {
-        if (columnIndex < 0 || columnIndex >= this.table.columns.length)
-            throw "DataRow.getValue(" + columnIndex + "): columnIndex out of range";
-
-        return [this.table.columns[columnIndex].name];
-    }
-
-    //[index: number]: DataType;
-}
 

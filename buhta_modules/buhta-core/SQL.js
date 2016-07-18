@@ -1,10 +1,6 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var io = require("socket.io-client");
+var Db_1 = require("../buhta-sql/Db");
 var socket = io.connect();
 function executeSQL(sql) {
     //console.log("call SQL.sql.execute");
@@ -19,13 +15,13 @@ function executeSQL(sql) {
             promise.reject(response.error);
         }
         else {
-            var dataTable_1 = new DataTable();
+            var dataTable_1 = new Db_1.DataTable();
             for (var i = 0; i < response.columns.length; i++) {
-                var dataColumn = new DataColumn(dataTable_1, response.columns[i].name);
+                var dataColumn = new Db_1.DataColumn(dataTable_1, response.columns[i].name);
                 dataTable_1.columns.push(dataColumn);
             }
             response.rows.forEach(function (row) {
-                var dataRow = new DataRow(dataTable_1);
+                var dataRow = new Db_1.DataRow(dataTable_1);
                 for (var i = 0; i < dataTable_1.columns.length; i++) {
                     if (response.columns[i].parse === "D")
                         dataRow[dataTable_1.columns[i].name] = new Date(row[i]);
@@ -72,43 +68,8 @@ function executeSQL(sql) {
     return promise;
 }
 exports.executeSQL = executeSQL;
-var SqlError = (function (_super) {
-    __extends(SqlError, _super);
-    function SqlError() {
-        _super.apply(this, arguments);
-    }
-    return SqlError;
-}(Error));
-exports.SqlError = SqlError;
+//export class SqlError extends Error {
+//}
 //export enum ColumnDataType { String, Number, Data }
 //export type DataType = string | number;
-var DataTable = (function () {
-    function DataTable() {
-        this.columns = [];
-        this.rows = [];
-    }
-    return DataTable;
-}());
-exports.DataTable = DataTable;
-var DataColumn = (function () {
-    //dataType: ColumnDataType;
-    function DataColumn(table, name) {
-        this.table = table;
-        this.name = name || "";
-    }
-    return DataColumn;
-}());
-exports.DataColumn = DataColumn;
-var DataRow = (function () {
-    function DataRow(table) {
-        this.table = table;
-    }
-    DataRow.prototype.getValue = function (columnIndex) {
-        if (columnIndex < 0 || columnIndex >= this.table.columns.length)
-            throw "DataRow.getValue(" + columnIndex + "): columnIndex out of range";
-        return [this.table.columns[columnIndex].name];
-    };
-    return DataRow;
-}());
-exports.DataRow = DataRow;
 //# sourceMappingURL=SQL.js.map

@@ -1,8 +1,17 @@
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
+import {Schema} from "./Schema";
 
 export type SchemaObjectId = string;
 
+
 export class SchemaObject extends DesignedObject {
+    constructor(private $$schema: Schema) {
+        super();
+    }
+
+    get schema(): Schema {
+        return this.$$schema;
+    }
 
     id: SchemaObjectId;
     parentObjectID: SchemaObjectId;
@@ -29,7 +38,7 @@ export class SchemaObject extends DesignedObject {
             this.name = "НовыйОбъект";
     }
 
-    getTypeDisplay():string{
+    getTypeDisplay(): string {
         return "Объект";
     }
 

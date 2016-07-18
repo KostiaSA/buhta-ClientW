@@ -22,7 +22,7 @@ import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
-import {executeSQL, DataTable} from "../../buhta-core/SQL";
+import {executeSQL} from "../../buhta-core/SQL";
 import {Button} from "../../buhta-core/Components/Button/Button";
 import {SqlTable} from "../../buhta-sql/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
@@ -31,7 +31,7 @@ import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/Tree
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import {throwError} from "../../buhta-core/Error";
 import {SelectStmt, InlineSelectStmt} from "../../buhta-sql/Sql2";
-
+import {DataTable, Db} from "../../buhta-sql/Db";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -410,7 +410,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         executeSQL("select TOP 10 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
             .done((table: DataTable|string) => {
 
-                if (table instanceof  DataTable) {
+                if (table instanceof DataTable) {
                     let vids = table.rows.map<Vid>((r) => {
 
                         let vid = new Vid();
@@ -506,18 +506,32 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testObservable() {
 
+        let db = new Db();
+        db.dbName = "schema";
+        db.dialect = "mssql";
+
+        //throwError("жопа");
+
+        db.executeSQL("select * from SchemaObject")
+            .then((table) => {
+                console.log(table);
+            })
+            .catch((error) => {
+                throwError(error);
+            });
+
         // let x=Sql.select("номер","название",":qwert as 12")
         //     .from(["Организация","org"])
         //     .where("город",">=","Страна")
         //     .andWhere("город2","!=","Страна2")
         //     ;//.eq("");
 
-        let x=new InlineSelectStmt();
-        x.addColumn("номер");
-        x.addColumn("название");
-        x.addFrom("Организация");
-
-        console.log(x.toSql("ms"));
+        // let x = new SelectStmt();
+        // x.addColumn("номер");
+        // x.addColumn("название");
+        // x.addFrom("Организация");
+        //
+        // console.log(x.toSql("mssql"));
         // let xxx: any = {};
         // let proxyHandler = {
         //     get: (target: any, p: PropertyKey, receiver: any): any => {

@@ -24,6 +24,7 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
     protected didMount() {
         super.didMount();
         window.onerror = this.handleError;
+        (window as any).onunhandledrejection = this.handlePromiseError.bind(this);
     }
 
     errorMessage: React.ReactNode;
@@ -32,7 +33,7 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
         this.errorMessage = msg;
 
         if (!error.$$isThrowError)
-            console.error(error.stack);
+          console.error(error.stack);
 
         this.state.visible = true;
         this.forceUpdate();
@@ -40,6 +41,15 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
         let suppressErrorAlert = true;
         return suppressErrorAlert;
     };
+
+    handlePromiseError = (reason: any): void => {
+        if (reason.message)  // bluebird вызываеи обработчик 2 раза, второй с пустым message пропускаем
+            this.errorMessage = reason.message;
+
+        this.state.visible = true;
+        this.forceUpdate();
+    };
+
 
     render() {
         this.addClassName("app-error-bar");

@@ -1,8 +1,8 @@
 import {throwError} from "../buhta-core/Error";
 import * as _ from "lodash";
+import {SqlDialect} from "./Db";
 
-export type BooleanOper=">" | "<" | ">=" | "<=" | "<>" | "!=" | "like";
-export type SqlDialect= "ms" | "pg";
+export type BooleanOper = ">" | "<" | ">=" | "<=" | "<>" | "!=" | "like";
 export type Operand = string | Column;
 
 export interface Column {
@@ -42,22 +42,22 @@ class Emitter {
 
     emitLevel(level: string): Emitter {
         if (!this.noLevels)
-        this.sql.push(level);
+            this.sql.push(level);
         return this;
     }
 
     emitLine(): Emitter {
         if (this.noLevels)
-          this.sql.push(" ");
+            this.sql.push(" ");
         else
             this.sql.push("\n");
         return this;
     }
 
     emitQuotedName(name: string): Emitter {
-        if (this.dialect === "ms")
+        if (this.dialect === "mssql")
             this.sql.push("[" + name + "]");
-        else if (this.dialect == "pg")
+        else if (this.dialect === "pg")
             this.sql.push("'" + name + "'");
         else {
             throwError("Emitter: invalid sql dialect '" + this.dialect + "'");
@@ -65,7 +65,7 @@ class Emitter {
         return this;
     }
 
-    toSql():string {
+    toSql(): string {
         return this.sql.join("");
     }
 }
@@ -153,17 +153,17 @@ export class SelectStmt {
         e.noLevels = this instanceof InlineSelectStmt;
 
         e.emit("select").emitLine();
-        this.columns.forEach((col: SelectColumn, index: number)=> {
+        this.columns.forEach((col: SelectColumn, index: number) => {
             this.emitColumn(col, e, "  ");
-            if (index != this.columns.length - 1)
+            if (index !== this.columns.length - 1)
                 e.emit(",");
             e.emitLine();
         });
 
         e.emit("from").emitLine();
-        this.from.forEach((table: SelectColumn, index: number)=> {
+        this.from.forEach((table: SelectColumn, index: number) => {
             this.emitSelectTable(table, e, "  ");
-            if (index != this.from.length - 1)
+            if (index !== this.from.length - 1)
                 e.emit(",");
             e.emitLine();
         });

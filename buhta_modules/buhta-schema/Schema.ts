@@ -1,8 +1,10 @@
 import {SchemaObject, SchemaObjectId} from "./SchemaObject";
 import {SchemaDatabase} from "./SchemaDatabase";
+import {Db} from "../buhta-sql/Db";
 
 export class Schema {
-    SqlDB: SchemaDatabase;
+    db: Db;
+    
     private objects_cache: { [key: string]: SchemaObject; } = {};
 
     resetObjectCache(id: SchemaObjectId) {
