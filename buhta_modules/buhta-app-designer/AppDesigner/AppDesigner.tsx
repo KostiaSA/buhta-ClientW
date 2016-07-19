@@ -512,6 +512,12 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         //throwError("жопа");
 
+
+        db.selectToObject("select 'жопа12' as Жопа").done((obj)=> {
+            console.log(obj);
+
+        });
+
         db.executeSQL("select * from SchemaObject")
             .then((table) => {
                 console.log(table);

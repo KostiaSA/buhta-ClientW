@@ -73,13 +73,32 @@ export class Db {
     dialect: SqlDialect;
 
 
-    selectToObject(sql: string | SelectStmt, obj: any): Promise<any|string> {
-        return this.executeSQL(sql).then((table: DataTable) => {
-            if (table.rows.length === 0)
-                throwError("table.rows.length===0");
-            else
-                obj.xxx = table.rows[0].getValue(0);
-        });
+    selectToObject(sql: string | SelectStmt): Promise<any|string> {
+
+        let promise: Promise<any|string> = new Promise(
+            (resolve: (obj: any) => void, reject: (error: string) => void) => {
+                this.executeSQL(sql)
+                    .then((table: DataTable)=> {
+                        if (table.rows.length === 0)
+                            reject("rows count === 0");
+                        else
+                            resolve({x: table.rows[0].getValue(0)});
+                    })
+                    .catch((error)=> {
+                        reject(error)
+                    });
+
+            }
+        );
+
+        return promise;
+
+        // return this.executeSQL(sql).then((table: DataTable) => {
+        //     if (table.rows.length === 0)
+        //         throwError("table.rows.length===0");
+        //     else
+        //         obj.xxx = table.rows[0].getValue(0);
+        // });
     }
 
     executeSQL(sql: string | SelectStmt): Promise<DataTable|string> {
