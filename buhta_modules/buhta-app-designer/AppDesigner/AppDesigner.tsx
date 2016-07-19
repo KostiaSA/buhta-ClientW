@@ -32,6 +32,8 @@ import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPrope
 import {throwError} from "../../buhta-core/Error";
 import {SelectStmt, InlineSelectStmt} from "../../buhta-sql/Sql2";
 import {DataTable, Db} from "../../buhta-sql/Db";
+import {SchemaObject} from "../../buhta-schema/SchemaObject";
+import {Schema} from "../../buhta-schema/Schema";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -447,8 +449,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                 }
 
             })
-            .fail((err) => {
-                throwError(err.message);
+            .fail((err: any) => {
+                throwError(err);
             });
 
 
@@ -512,19 +514,38 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         //throwError("жопа");
 
+        interface xxx {
+            Жопа?: string;
+        }
 
-        db.selectToObject("select 'жопа12' as Жопа").done((obj)=> {
-            console.log(obj);
+        let sql = new SelectStmt();
+        sql.addColumn("*");
+        sql.addFrom("SchemaObject");
+        sql.addWhere("name", "like", "'%таблица%'");
+
+        let x: SchemaObject = new SchemaObject(new Schema());
+        db.selectToObject<SchemaObject>(sql, x, "assign").done((obj) => {
+            console.log(x);
 
         });
 
-        db.executeSQL("select * from SchemaObject")
-            .then((table) => {
-                console.log(table);
-            })
-            .catch((error) => {
-                throwError(error);
-            });
+        db.selectToObject<any>(sql, {}, "assign").done((obj) => {
+            console.log(obj);
+
+        });
+        //
+        // db.selectToObject<SchemaObject>("select top 1 * from SchemaObject", x).done((obj) => {
+        //     console.log(x);
+        //
+        // });
+
+        // db.executeSQL("select * from SchemaObject")
+        //     .then((table) => {
+        //         console.log(table);
+        //     })
+        //     .catch((error) => {
+        //         throwError(error);
+        //     });
 
         // let x=Sql.select("номер","название",":qwert as 12")
         //     .from(["Организация","org"])

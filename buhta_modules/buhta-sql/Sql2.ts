@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {SqlDialect} from "./Db";
 
 export type BooleanOper = ">" | "<" | ">=" | "<=" | "<>" | "!=" | "like";
-export type Operand = string | Column;
+export type Operand = string | number | Column;
 
 export interface Column {
     table?: string;
@@ -25,9 +25,10 @@ export interface SelectTable {
 }
 
 export interface WhereClause {
-    operand1: Operand;
-    oper: BooleanOper;
-    operand2: Operand;
+    operand1?: Operand;
+    oper?: BooleanOper;
+    operand2?: Operand;
+    raw?: string;
 }
 
 class Emitter {
@@ -55,13 +56,46 @@ class Emitter {
     }
 
     emitQuotedName(name: string): Emitter {
-        if (this.dialect === "mssql")
-            this.sql.push("[" + name + "]");
-        else if (this.dialect === "pg")
-            this.sql.push("'" + name + "'");
+        if (name.slice(0, 1) === "'" && name.slice(-1) === "'")
+            this.sql.push(name); // строка живьем, когда в одиночных в кавычках
         else {
-            throwError("Emitter: invalid sql dialect '" + this.dialect + "'");
+            if (this.dialect === "mssql")
+                this.sql.push("[" + name + "]");
+            else if (this.dialect === "pg")
+                this.sql.push("\"" + name + "\"");
+            else {
+                throwError("Emitter: invalid sql dialect '" + this.dialect + "'");
+            }
         }
+        return this;
+    }
+
+    emitColumn(col: SelectColumn, level: string): Emitter {
+        this.emitLevel(level);
+        if (col.table)
+            this.emitQuotedName(col.table).emit(".");
+        if (!col.column && !col.raw)
+            throwError("SelectStmt: column.name or column.raw not defined");
+        if (col.column)
+            this.emitQuotedName(col.column);
+        if (col.raw)
+            this.emit(col.raw);
+        if (col.as)
+            this.emit(" ").emitQuotedName(col.as);
+        return this;
+    }
+
+
+    emitOperand(operand: Operand): Emitter {
+        if (_.isNumber(operand))
+            this.emit(operand.toString());
+        else if (_.isString(operand))
+            this.emitQuotedName(operand);
+        else if (operand.raw || operand.column) {
+            this.emitColumn(operand, "");
+        }
+        else
+            throwError("SelectStmt.emitOperand(): invalid operand type");
         return this;
     }
 
@@ -76,11 +110,15 @@ export class SelectStmt {
     from: SelectTable[] = [];
     where: WhereClause[] = [];
 
-    addColumn(column: string | SelectColumn): SelectStmt {
-        if (_.isString(column))
-            this.columns.push({column: column});
-        else
-            this.columns.push(column);
+    addColumn(...column: (string | SelectColumn | "*")[]): SelectStmt {
+        column.forEach((col) => {
+            if (col === "*")
+                this.columns.push({raw: "*"});
+            else if (_.isString(col))
+                this.columns.push({column: col});
+            else
+                this.columns.push(col);
+        });
         return this;
     }
 
@@ -94,11 +132,21 @@ export class SelectStmt {
         return this;
     }
 
+    addColumnRaw(rawSql: string): SelectStmt {
+        this.columns.push({raw: rawSql});
+        return this;
+    }
+
     addFrom(table: string | SelectTable): SelectStmt {
         if (_.isString(table))
             this.from.push({table: table});
         else
             this.from.push(table);
+        return this;
+    }
+
+    addFromRaw(rawSql: string): SelectStmt {
+        this.from.push({raw: rawSql});
         return this;
     }
 
@@ -117,20 +165,6 @@ export class SelectStmt {
         return this;
     }
 
-    private emitColumn(col: SelectColumn, e: Emitter, level: string) {
-        e.emitLevel(level);
-        if (col.table)
-            e.emitQuotedName(col.table).emit(".");
-        if (!col.column && !col.raw)
-            throwError("SelectStmt: column.name or column.raw not defined");
-        if (col.column)
-            e.emitQuotedName(col.column);
-        if (col.raw)
-            e.emit(col.raw);
-        if (col.as)
-            e.emit(" ").emitQuotedName(col.as);
-
-    }
 
     private emitSelectTable(table: SelectTable, e: Emitter, level: string) {
         e.emitLevel(level);
@@ -146,27 +180,51 @@ export class SelectStmt {
             e.emit(" ").emitQuotedName(table.as);
     }
 
+    private emitWhere(where: WhereClause, e: Emitter, level: string) {
+        e.emitLevel(level);
+        e.emit("(");
+        if (where.raw)
+            e.emit(where.raw);
+        else {
+            e.emitOperand(where.operand1!).emit(" ");
+            e.emit(where.oper!).emit(" ");
+            e.emitOperand(where.operand2!);
+        }
+        e.emit(")");
+    }
+
     toSql(dialect: SqlDialect): string {
 
         let e = new Emitter();
         e.dialect = dialect;
         e.noLevels = this instanceof InlineSelectStmt;
 
-        e.emit("select").emitLine();
+        e.emit("SELECT").emitLine();
         this.columns.forEach((col: SelectColumn, index: number) => {
-            this.emitColumn(col, e, "  ");
+            e.emitColumn(col, "  ");
             if (index !== this.columns.length - 1)
                 e.emit(",");
             e.emitLine();
         });
 
-        e.emit("from").emitLine();
+        e.emit("FROM").emitLine();
         this.from.forEach((table: SelectColumn, index: number) => {
             this.emitSelectTable(table, e, "  ");
             if (index !== this.from.length - 1)
                 e.emit(",");
             e.emitLine();
         });
+
+        if (this.from.length > 0) {
+            e.emit("WHERE").emitLine();
+            this.where.forEach((where: WhereClause, index: number) => {
+                this.emitWhere(where, e, "  ");
+                if (index !== this.from.length - 1)
+                    e.emit(" AND ");
+                e.emitLine();
+            });
+
+        }
 
         return e.toSql();
     }

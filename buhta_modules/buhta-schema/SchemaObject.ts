@@ -13,23 +13,23 @@ export class SchemaObject extends DesignedObject {
         return this.$$schema;
     }
 
-    id: SchemaObjectId;
-    parentObjectID: SchemaObjectId;
+    id: SchemaObjectId | null = null;
+    parentObjectID: SchemaObjectId | null = null;
 
-    name: string;
+    name: string | null = null;
 
-    description: string;
+    description: string  | null = null;
 
-    createDate: Date;
-    createUserID: SchemaObjectId;
+    createDate: Date | null = null;
+    createUserID: SchemaObjectId  | null = null;
 
-    changeDate: Date;
-    changeUserID: SchemaObjectId;
+    changeDate: Date | null = null;
+    changeUserID: SchemaObjectId  | null = null;
 
-    lockDateTime: Date;
-    lockedByUserID: SchemaObjectId;
+    lockDateTime: Date | null = null;
+    lockedByUserID: SchemaObjectId  | null = null;
 
-    position: number;
+    position: number = 0;
 
     prepareNew() {
         if (!this.id)

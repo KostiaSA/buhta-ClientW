@@ -45,6 +45,8 @@ export class DataTable {
 export class DataColumn {
     name: string;
     //dataType: ColumnDataType;
+    parse: SqlValueParseMode;
+
     constructor(public table: DataTable, name?: string) {
         this.name = name || "";
 
@@ -54,14 +56,14 @@ export class DataColumn {
 
 export class DataRow {
     [index: string]: any;
-    constructor(public table: DataTable) {
+    constructor(public $$table: DataTable) {
     }
 
-    getValue(columnIndex: number): any {
-        if (columnIndex < 0 || columnIndex >= this.table.columns.length)
-            throw "DataRow.getValue(" + columnIndex + "): columnIndex out of range";
+    $$getValue(columnIndex: number): any {
+        if (columnIndex < 0 || columnIndex >= this.$$table.columns.length)
+            throw "DataRow.$$getValue(" + columnIndex + "): columnIndex out of range";
 
-        return [this.table.columns[columnIndex].name];
+        return this[this.$$table.columns[columnIndex].name];
     }
 
     //[index: number]: DataType;
@@ -72,20 +74,50 @@ export class Db {
     dbName: string;
     dialect: SqlDialect;
 
+    // ищет в объекте свойство с заданным именем в режиме case insensitive,
+    // возвращает имя найденного свойства или null
+    private getObjectPropNameCaseInsensitive(obj: any, propName: string): string | null {
+        let upperPropName = propName.toUpperCase();
+        for (let objProp in obj) {
+            if (objProp.toUpperCase() === upperPropName)
+                return objProp;
+        }
+        return null;
+    }
 
-    selectToObject(sql: string | SelectStmt): Promise<any|string> {
+    selectToObject<T>(sql: string | SelectStmt, obj: T, unknownProps: "error"|"ignore"|"assign" = "error"): Promise<any|string> {
 
         let promise: Promise<any|string> = new Promise(
-            (resolve: (obj: any) => void, reject: (error: string) => void) => {
+            (resolve: (obj: T) => void, reject: (error: string) => void) => {
                 this.executeSQL(sql)
-                    .then((table: DataTable)=> {
-                        if (table.rows.length === 0)
-                            reject("rows count === 0");
-                        else
-                            resolve({x: table.rows[0].getValue(0)});
-                    })
-                    .catch((error)=> {
-                        reject(error)
+                    .then((table: DataTable) => {
+                            if (table.rows.length === 0)
+                                reject("rows count === 0");
+                            else {
+                                let row = table.rows[0];
+                                for (let prop in row) {
+                                    if (prop.slice(0, 2) !== "$$") {
+                                        if (obj.hasOwnProperty(prop))
+                                            (obj as any)[prop] = row[prop];
+                                        else {
+                                            let realPropName = this.getObjectPropNameCaseInsensitive(obj, prop);
+                                            if (!realPropName) {
+                                                if (unknownProps === "assign")
+                                                    (obj as any)[prop] = row[prop];
+                                                else if (unknownProps === "error")
+                                                    throwError("Db.selectToObject(): object property '" + prop + "' not found");
+                                            }
+                                            else
+                                                (obj as any)[realPropName] = row[prop];
+                                        }
+                                    }
+                                }
+                                resolve(obj);
+                            }
+                        }
+                    )
+                    .catch((error) => {
+                        reject(error);
                     });
 
             }
@@ -138,6 +170,7 @@ export class Db {
 
                         for (let i = 0; i < response.columns!.length; i++) {
                             let dataColumn = new DataColumn(dataTable, response.columns![i].name);
+                            dataColumn.parse = response.columns![i].parse;
                             dataTable.columns.push(dataColumn);
                         }
 
@@ -146,7 +179,7 @@ export class Db {
                             let dataRow = new DataRow(dataTable);
 
                             for (let i = 0; i < dataTable.columns.length; i++) {
-                                if (response.columns![i].parse === "D")
+                                if (response.columns![i].parse === "Date")
                                     dataRow[dataTable.columns[i].name] = new Date(row[i]);
                                 else
                                     dataRow[dataTable.columns[i].name] = row[i];

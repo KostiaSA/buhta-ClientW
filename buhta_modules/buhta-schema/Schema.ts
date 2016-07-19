@@ -4,7 +4,7 @@ import {Db} from "../buhta-sql/Db";
 
 export class Schema {
     db: Db;
-    
+
     private objects_cache: { [key: string]: SchemaObject; } = {};
 
     resetObjectCache(id: SchemaObjectId) {
@@ -103,7 +103,7 @@ export class Schema {
         //     db.SetCommand(sql.ToString()).ExecuteNonQuery();
         // }
 
-        this.resetObjectCache(objectToSave.id);
+        this.resetObjectCache(objectToSave.id!);
 
 // if (AfterSaveSchemaObject!=null)
 // {
