@@ -1,5 +1,5 @@
 ﻿import * as io from "socket.io-client";
-import {DataTable, DataColumn, DataRow} from "../buhta-sql/Db";
+import {DataTable, DataColumn, DataRow} from "../buhta-sql/SqlDb";
 
 let socket = io.connect();
 

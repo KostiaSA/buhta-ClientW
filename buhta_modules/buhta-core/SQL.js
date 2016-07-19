@@ -1,6 +1,6 @@
 "use strict";
 var io = require("socket.io-client");
-var Db_1 = require("../buhta-sql/Db");
+var SqlDb_1 = require("../buhta-sql/SqlDb");
 var socket = io.connect();
 function executeSQL(sql) {
     //console.log("call SQL.sql.execute");
@@ -15,13 +15,13 @@ function executeSQL(sql) {
             promise.reject(response.error);
         }
         else {
-            var dataTable_1 = new Db_1.DataTable();
+            var dataTable_1 = new SqlDb_1.DataTable();
             for (var i = 0; i < response.columns.length; i++) {
-                var dataColumn = new Db_1.DataColumn(dataTable_1, response.columns[i].name);
+                var dataColumn = new SqlDb_1.DataColumn(dataTable_1, response.columns[i].name);
                 dataTable_1.columns.push(dataColumn);
             }
             response.rows.forEach(function (row) {
-                var dataRow = new Db_1.DataRow(dataTable_1);
+                var dataRow = new SqlDb_1.DataRow(dataTable_1);
                 for (var i = 0; i < dataTable_1.columns.length; i++) {
                     if (response.columns[i].parse === "D")
                         dataRow[dataTable_1.columns[i].name] = new Date(row[i]);

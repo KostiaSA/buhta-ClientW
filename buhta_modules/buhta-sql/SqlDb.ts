@@ -1,11 +1,11 @@
 import * as _ from "lodash";
 import * as io from "socket.io-client";
-import {SelectStmt, UpdateStmt} from "./Sql2";
 import {throwError} from "../buhta-core/Error";
+import {SelectStmt} from "./SelectStmt";
+import {SqlDialect} from "./SqlCore";
 
 
 // общее с client и server ------------------
-export type SqlDialect = "mssql" | "pg";
 
 export interface ExecuteSqlSocketRequest {
     queryId: string;
@@ -70,7 +70,7 @@ export class DataRow {
 }
 
 
-export class Db {
+export class SqlDb {
     dbName: string;
     dialect: SqlDialect;
 
@@ -110,7 +110,7 @@ export class Db {
                                                 if (unknownProps === "assign")
                                                     (obj as any)[prop] = row[prop];
                                                 else if (unknownProps === "error")
-                                                    throwError("Db.selectToObject(): object property '" + prop + "' not found");
+                                                    throwError("SqlDb.selectToObject(): object property '" + prop + "' not found");
                                             }
                                             else
                                                 (obj as any)[realPropName] = row[prop];
@@ -146,7 +146,7 @@ export class Db {
             else if (_.isString(sql))
                 return sql;
             else {
-                throwError("Db.executeSql(): invalid sql type");
+                throwError("SqlDb.executeSql(): invalid sql type");
                 throw  "fake";
             }
         };

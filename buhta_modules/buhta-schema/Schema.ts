@@ -1,9 +1,9 @@
 import {SchemaObject, SchemaObjectId} from "./SchemaObject";
 import {SchemaDatabase} from "./SchemaDatabase";
-import {Db} from "../buhta-sql/Db";
+import {SqlDb} from "../buhta-sql/SqlDb";
 
 export class Schema {
-    db: Db;
+    db: SqlDb;
 
     private objects_cache: { [key: string]: SchemaObject; } = {};
 

@@ -24,16 +24,18 @@ import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/T
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {executeSQL} from "../../buhta-core/SQL";
 import {Button} from "../../buhta-core/Components/Button/Button";
-import {SqlTable} from "../../buhta-sql/SqlTable";
+import {SqlTable} from "../../components/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
 import {DesignedObject} from "../DesignedObject";
 import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import {throwError} from "../../buhta-core/Error";
-import {SelectStmt, InlineSelectStmt, UpdateStmt} from "../../buhta-sql/Sql2";
-import {DataTable, Db} from "../../buhta-sql/Db";
+import {DataTable, SqlDb} from "../../buhta-sql/SqlDb";
 import {SchemaObject} from "../../buhta-schema/SchemaObject";
 import {Schema} from "../../buhta-schema/Schema";
+import {SelectStmt} from "../../buhta-sql/SelectStmt";
+import {UpdateStmt} from "../../buhta-sql/UpdateStmt";
+import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -508,40 +510,59 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testObservable() {
 
-        let db = new Db();
+        let db = new SqlDb();
         db.dbName = "schema";
         db.dialect = "mssql";
+        //db.dialect = "pg";
+
+        let sql = new CreateTableStmt();
+        sql.addTable("SchemaObject");
+        sql.addColumn({column: "id", dataType: "guid", notNull: true, primaryKey: true});
+        sql.addColumn("parentObjectID", "guid");
+        sql.addColumn("name", "string", 128);
+        sql.addColumn("description", "text");
+
+        sql.addColumn("createDateTime", "datetime");
+        sql.addColumn("updateDateTime", "datetime");
+        sql.addColumn("createUserId", "guid");
+        sql.addColumn("updateUserId", "guid");
+
+        sql.addColumn("lockByUserId", "guid");
+        sql.addColumn("lockDateTime", "datetime");
+
+        console.log(sql.toSql("pg"));
+        console.log(sql.toSql("mysql"));
 
         //throwError("жопа");
 
-        interface xxx {
-            Жопа?: string;
-        }
-
-        let sql = new SelectStmt();
-        sql.addColumn("*");
-        sql.addFrom("SchemaObject");
-        sql.addWhere("name", "LIKE", "'%таблица%'");
-
-        let x: SchemaObject = new SchemaObject(new Schema());
-        db.selectToObject<SchemaObject>(sql, x, "assign").done((obj) => {
-            console.log(x);
-
-        });
-
-        db.selectToObject<any>(sql, {}, "assign").done((obj) => {
-            console.log(obj);
-
-        });
-
-        let sql2 = new UpdateStmt();
-        sql2.addTable("SchemaObject");
-        sql2.addColumnAndValue("JSON", "'это json 33'");
-        sql2.addColumnAndValue("JSON2", "'это json 332'");
-        sql2.addWhere("name", "LIKE", "'%НоваяТаблица12%'");
-        sql2.addWhere("id", "=", 12);
-
-        console.log(sql2.toSql("mssql"));
+        // interface xxx {
+        //     Жопа?: string;
+        // }
+        //
+        // let sql = new SelectStmt();
+        // sql.addColumn("*");
+        // sql.addFrom("SchemaObject");
+        // sql.addWhere("name", "LIKE", "'%таблица%'");
+        //
+        // let x: SchemaObject = new SchemaObject(new Schema());
+        // db.selectToObject<SchemaObject>(sql, x, "assign").done((obj) => {
+        //     console.log(x);
+        //
+        // });
+        //
+        // db.selectToObject<any>(sql, {}, "assign").done((obj) => {
+        //     console.log(obj);
+        //
+        // });
+        //
+        // let sql2 = new UpdateStmt();
+        // sql2.addTable("SchemaObject");
+        // sql2.addColumnAndValue("JSON", "'это json 33'");
+        // sql2.addColumnAndValue("JSON2", "'это json 332'");
+        // sql2.addWhere("name", "LIKE", "'%НоваяТаблица12%'");
+        // sql2.addWhere("id", "=", 12);
+        //
+        // console.log(sql2.toSql("mssql"));
 
         //
         // db.selectToObject<SchemaObject>("select top 1 * from SchemaObject", x).done((obj) => {
