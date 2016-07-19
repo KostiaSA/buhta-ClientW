@@ -27,14 +27,25 @@ export class SqlEmitter {
         return this;
     }
 
+    checkForInvalidChars(name: string, ...char: string[]) {
+        char.forEach((char) => {
+            if (name.indexOf(char) >= 0) throwError("invalid character '" + char + "' in the sql-identifier '" + name + "'");
+        });
+    }
+
     emitQuotedName(name: string): SqlEmitter {
+
         if (name.slice(0, 1) === "'" && name.slice(-1) === "'")
             this.sql.push(name); // строка живьем, когда в одиночных в кавычках
         else {
+            this.checkForInvalidChars(name, "[", "]", "`", "\"");
+
             if (this.dialect === "mssql")
                 this.sql.push("[" + name + "]");
             else if (this.dialect === "pg")
                 this.sql.push("\"" + name + "\"");
+            else if (this.dialect === "mysql")
+                this.sql.push("`" + name + "`");
             else {
                 throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
             }
