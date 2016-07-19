@@ -2,7 +2,7 @@ import {throwError} from "../buhta-core/Error";
 import * as _ from "lodash";
 import {SqlDialect} from "./Db";
 
-export type BooleanOper = ">" | "<" | ">=" | "<=" | "<>" | "!=" | "like";
+export type BooleanOper = "=" | ">" | "<" | ">=" | "<=" | "<>" | "!=" | "LIKE";
 export type Operand = string | number | Column;
 
 export interface Column {
@@ -99,6 +99,19 @@ class Emitter {
         return this;
     }
 
+    emitWhere(where: WhereClause, level: string) {
+        this.emitLevel(level);
+        this.emit("(");
+        if (where.raw)
+            this.emit(where.raw);
+        else {
+            this.emitOperand(where.operand1!).emit(" ");
+            this.emit(where.oper!).emit(" ");
+            this.emitOperand(where.operand2!);
+        }
+        this.emit(")");
+    }
+
     toSql(): string {
         return this.sql.join("");
     }
@@ -166,7 +179,7 @@ export class SelectStmt {
     }
 
 
-    private emitSelectTable(table: SelectTable, e: Emitter, level: string) {
+    private emitSelectTable(table: SelectTable, e: Emitter, level: string): SelectStmt {
         e.emitLevel(level);
         if (table.db)
             e.emitQuotedName(table.db).emit("..");
@@ -178,19 +191,7 @@ export class SelectStmt {
             e.emit(table.raw);
         if (table.as)
             e.emit(" ").emitQuotedName(table.as);
-    }
-
-    private emitWhere(where: WhereClause, e: Emitter, level: string) {
-        e.emitLevel(level);
-        e.emit("(");
-        if (where.raw)
-            e.emit(where.raw);
-        else {
-            e.emitOperand(where.operand1!).emit(" ");
-            e.emit(where.oper!).emit(" ");
-            e.emitOperand(where.operand2!);
-        }
-        e.emit(")");
+        return this;
     }
 
     toSql(dialect: SqlDialect): string {
@@ -215,11 +216,11 @@ export class SelectStmt {
             e.emitLine();
         });
 
-        if (this.from.length > 0) {
+        if (this.where.length > 0) {
             e.emit("WHERE").emitLine();
             this.where.forEach((where: WhereClause, index: number) => {
-                this.emitWhere(where, e, "  ");
-                if (index !== this.from.length - 1)
+                e.emitWhere(where, "  ");
+                if (index !== this.where.length - 1)
                     e.emit(" AND ");
                 e.emitLine();
             });
@@ -232,4 +233,95 @@ export class SelectStmt {
 
 export class InlineSelectStmt extends SelectStmt {
 
+}
+
+export class UpdateStmt {
+
+    columns: Column[] = [];
+    values: Operand[] = [];
+    table: SelectTable;
+    where: WhereClause[] = [];
+
+    addColumnAndValue(column: string | SelectColumn, value: Operand): UpdateStmt {
+        if (_.isString(column))
+            this.columns.push({column: column});
+        else
+            this.columns.push(column);
+        this.values.push(value);
+        return this;
+    }
+
+    addTable(table: string | SelectTable): UpdateStmt {
+        if (_.isString(table))
+            this.table = {table: table};
+        else
+            this.table = table;
+        return this;
+    }
+
+    addWhere(operand1: Operand, oper: BooleanOper, operand2: Operand): UpdateStmt {
+        this.where.push({operand1: operand1, oper: oper, operand2: operand2});
+        return this;
+    }
+
+
+    private emitTable(table: SelectTable, e: Emitter, level: string): UpdateStmt {
+        e.emitLevel(level);
+        if (table.db)
+            e.emitQuotedName(table.db).emit("..");
+        if (!table.table && !table.raw)
+            throwError("SelectStmt: table.name or table.raw not defined");
+        if (table.table)
+            e.emitQuotedName(table.table);
+        if (table.raw)
+            e.emit(table.raw);
+        if (table.as)
+            e.emit(" ").emitQuotedName(table.as);
+        return this;
+    }
+
+
+    toSql(dialect: SqlDialect): string {
+
+        let e = new Emitter();
+        e.dialect = dialect;
+        e.noLevels = this instanceof InlineSelectStmt;
+
+        e.emit("UPDATE").emit(" ");
+        this.emitTable(this.table, e, "");
+        e.emit(" SET").emitLine();
+
+        this.columns.forEach((col: Column, index: number) => {
+            e.emitColumn(col, "  ");
+            e.emit("=");
+            e.emitOperand(this.values[index]);
+
+            if (index !== this.columns.length - 1)
+                e.emit(",");
+            e.emitLine();
+        });
+
+        // e.emit("FROM").emitLine();
+        // this.from.forEach((table: SelectColumn, index: number) => {
+        //     this.emitSelectTable(table, e, "  ");
+        //     if (index !== this.from.length - 1)
+        //         e.emit(",");
+        //     e.emitLine();
+        // });
+
+        if (this.where.length > 0) {
+            e.emit("WHERE").emitLine();
+            this.where.forEach((where: WhereClause, index: number) => {
+                e.emitWhere(where, "  ");
+                if (index !== this.where.length - 1)
+                    e.emit(" AND ");
+                e.emitLine();
+            });
+
+        }
+        else
+           throwError("UpdateStmt.toSql(): 'WHERE' clause is empty");
+
+        return e.toSql();
+    }
 }

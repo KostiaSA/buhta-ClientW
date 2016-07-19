@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import * as io from "socket.io-client";
-import {SelectStmt} from "./Sql2";
+import {SelectStmt, UpdateStmt} from "./Sql2";
 import {throwError} from "../buhta-core/Error";
 
 
@@ -84,6 +84,11 @@ export class Db {
         }
         return null;
     }
+
+    // updateFromObject(sql: string | UpdateStmt, obj: any, unknownRecord: "error"|"ignore"|"insert" = "error"): Promise<"ok"|string> {
+    //
+    // }
+
 
     selectToObject<T>(sql: string | SelectStmt, obj: T, unknownProps: "error"|"ignore"|"assign" = "error"): Promise<any|string> {
 

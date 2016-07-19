@@ -30,7 +30,7 @@ import {DesignedObject} from "../DesignedObject";
 import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import {throwError} from "../../buhta-core/Error";
-import {SelectStmt, InlineSelectStmt} from "../../buhta-sql/Sql2";
+import {SelectStmt, InlineSelectStmt, UpdateStmt} from "../../buhta-sql/Sql2";
 import {DataTable, Db} from "../../buhta-sql/Db";
 import {SchemaObject} from "../../buhta-schema/SchemaObject";
 import {Schema} from "../../buhta-schema/Schema";
@@ -521,7 +521,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         let sql = new SelectStmt();
         sql.addColumn("*");
         sql.addFrom("SchemaObject");
-        sql.addWhere("name", "like", "'%таблица%'");
+        sql.addWhere("name", "LIKE", "'%таблица%'");
 
         let x: SchemaObject = new SchemaObject(new Schema());
         db.selectToObject<SchemaObject>(sql, x, "assign").done((obj) => {
@@ -533,6 +533,16 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             console.log(obj);
 
         });
+
+        let sql2 = new UpdateStmt();
+        sql2.addTable("SchemaObject");
+        sql2.addColumnAndValue("JSON", "'это json 33'");
+        sql2.addColumnAndValue("JSON2", "'это json 332'");
+        sql2.addWhere("name", "LIKE", "'%НоваяТаблица12%'");
+        sql2.addWhere("id", "=", 12);
+
+        console.log(sql2.toSql("mssql"));
+
         //
         // db.selectToObject<SchemaObject>("select top 1 * from SchemaObject", x).done((obj) => {
         //     console.log(x);
