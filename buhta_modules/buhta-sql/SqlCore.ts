@@ -13,6 +13,11 @@ export type SqlDataType =
         "date" | "datetime" | "timestamp" | "blob";
 
 
+export interface SqlStmt {
+    toSql(dialect: SqlDialect): string;
+}
+
+
 export interface WhereClause {
     operand1?: Operand;
     oper?: BooleanOper;

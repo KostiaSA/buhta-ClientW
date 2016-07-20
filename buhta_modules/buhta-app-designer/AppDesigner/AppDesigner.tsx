@@ -511,27 +511,54 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     testObservable() {
 
         let db = new SqlDb();
-        db.dbName = "schema";
+        db.dbName = "schema-pg";
+        db.dialect = "pg";
+        db.dbName = "schema-mssql";
         db.dialect = "mssql";
-        //db.dialect = "pg";
 
-        let sql = new CreateTableStmt();
-        sql.addTable("SchemaObject");
-        sql.addColumn({column: "id", dataType: "guid", notNull: true, primaryKey: true});
-        sql.addColumn("parentObjectID", "guid");
-        sql.addColumn("name", "string", 128);
-        sql.addColumn("description", "text");
+        // let s = new SelectStmt();
+        // s.addColumnAs("'123'","жопа");
+        // s.addColumnRaw("getdate() as ddd");
+        // s.addColumnRaw("NULL as nu");
 
-        sql.addColumn("createDateTime", "datetime");
-        sql.addColumn("updateDateTime", "datetime");
-        sql.addColumn("createUserId", "guid");
-        sql.addColumn("updateUserId", "guid");
+        db.selectToObject<any>("select 'eee' as eee, getdate() ddd", {}, "assign").done((obj) => {
+             console.log(obj);
+                });
 
-        sql.addColumn("lockByUserId", "guid");
-        sql.addColumn("lockDateTime", "datetime");
+        // db.selectToObject<any>("select 'eee' as eee, CURRENT_TIMESTAMP ddd", {}, "assign").done((obj) => {
+        //     console.log(obj);
+        // });
 
-        console.log(sql.toSql("pg"));
-        console.log(sql.toSql("mysql"));
+        // db.selectToObject<any>("select E'\\x01020304' as bbb, * from \"SchemaObject\"", {}, "assign").done((obj) => {
+        //     console.log(obj);
+        // });
+        //
+        //
+        // let sql = new CreateTableStmt();
+        // sql.addTable("SchemaObject333");
+        // sql.addColumn({column: "id", dataType: "guid", notNull: true, primaryKey: true});
+        // sql.addColumn("parentObjectID", "guid");
+        // sql.addColumn("name", "string", 128);
+        // sql.addColumn("description", "text");
+        //
+        // sql.addColumn("createDateTime", "datetime");
+        // sql.addColumn("updateDateTime", "datetime");
+        // sql.addColumn("createUserId", "guid");
+        // sql.addColumn("updateUserId", "guid");
+        //
+        // sql.addColumn("lockByUserId", "guid");
+        // sql.addColumn("lockDateTime", "datetime");
+        //
+        // console.log(sql.toSql("pg"));
+        // console.log(sql.toSql("mysql"));
+        //
+        // db.executeSQL(sql)
+        //     .then((fake) => {
+        //         console.log("create SchemaObject333 ok");
+        //     })
+        //     .catch((error) => {
+        //         throwError(error);
+        //     });
 
         //throwError("жопа");
 

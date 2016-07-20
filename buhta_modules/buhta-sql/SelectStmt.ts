@@ -124,13 +124,15 @@ export class SelectStmt {
             e.emitLine();
         });
 
-        e.emit("FROM").emitLine();
-        this.from.forEach((table: SelectColumn, index: number) => {
-            this.emitSelectTable(table, e, "  ");
-            if (index !== this.from.length - 1)
-                e.emit(",");
-            e.emitLine();
-        });
+        if (this.from.length > 0) {
+            e.emit("FROM").emitLine();
+            this.from.forEach((table: SelectColumn, index: number) => {
+                this.emitSelectTable(table, e, "  ");
+                if (index !== this.from.length - 1)
+                    e.emit(",");
+                e.emitLine();
+            });
+        }
 
         if (this.where.length > 0) {
             e.emit("WHERE").emitLine();

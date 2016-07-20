@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as io from "socket.io-client";
 import {throwError} from "../buhta-core/Error";
 import {SelectStmt} from "./SelectStmt";
-import {SqlDialect} from "./SqlCore";
+import {SqlDialect, SqlStmt} from "./SqlCore";
 
 
 // общее с client и server ------------------
@@ -44,12 +44,10 @@ export class DataTable {
 
 export class DataColumn {
     name: string;
-    //dataType: ColumnDataType;
-    parse: SqlValueParseMode;
+    type: string;
+    isDateTime: boolean;
 
-    constructor(public table: DataTable, name?: string) {
-        this.name = name || "";
-
+    constructor(public table: DataTable) {
     }
 }
 
@@ -90,7 +88,7 @@ export class SqlDb {
     // }
 
 
-    selectToObject<T>(sql: string | SelectStmt, obj: T, unknownProps: "error"|"ignore"|"assign" = "error"): Promise<any|string> {
+    selectToObject<T>(sql: string | SqlStmt, obj: T, unknownProps: "error"|"ignore"|"assign" = "error"): Promise<any|string> {
 
         let promise: Promise<any|string> = new Promise(
             (resolve: (obj: T) => void, reject: (error: string) => void) => {
@@ -138,11 +136,11 @@ export class SqlDb {
         // });
     }
 
-    executeSQL(sql: string | SelectStmt): Promise<DataTable|string> {
+    executeSQL(sql: string | SqlStmt): Promise<DataTable|string> {
 
         let getSqlText = (): string => {
-            if (sql instanceof SelectStmt)
-                return sql.toSql(this.dialect);
+            if ((sql as SqlStmt).toSql)
+                return (sql as SqlStmt).toSql(this.dialect);
             else if (_.isString(sql))
                 return sql;
             else {
@@ -167,37 +165,43 @@ export class SqlDb {
                 socket.emit("executeSQL", req);
                 socket.once(queryId, (response: ExecuteSqlSocketAnswer) => {
 
-                    if (response.error) {
-                        reject(response.error);
-                    }
-                    else {
-                        let dataTable = new DataTable();
-
-                        for (let i = 0; i < response.columns!.length; i++) {
-                            let dataColumn = new DataColumn(dataTable, response.columns![i].name);
-                            dataColumn.parse = response.columns![i].parse;
-                            dataTable.columns.push(dataColumn);
+                        if (response.error) {
+                            reject(response.error);
                         }
+                        else {
+                            let dataTable = new DataTable();
 
-                        response.rows!.forEach((row: any) => {
-
-                            let dataRow = new DataRow(dataTable);
-
-                            for (let i = 0; i < dataTable.columns.length; i++) {
-                                if (response.columns![i].parse === "Date")
-                                    dataRow[dataTable.columns[i].name] = new Date(row[i]);
-                                else
-                                    dataRow[dataTable.columns[i].name] = row[i];
-                                //dataRow[i] = row[i];
+                            for (let i = 0; i < response.columns!.length; i++) {
+                                let dataColumn = new DataColumn(dataTable);
+                                _.assign(dataColumn, response.columns![i]);
+                                if (this.dialect === "mssql") {
+                                    if (dataColumn.type.indexOf("Date") >= 0 || dataColumn.type.indexOf("Time") >= 0) {
+                                        dataColumn.isDateTime = true;
+                                    }
+                                }
+                                dataTable.columns.push(dataColumn);
                             }
 
-                            dataTable.rows.push(dataRow);
-                        });
+                            response.rows!.forEach((row: any) => {
 
-                        resolve(dataTable);
+                                let dataRow = new DataRow(dataTable);
+
+                                dataTable.columns.forEach((col, index) => {
+                                    if (col.isDateTime)
+                                        dataRow[col.name] = new Date(row[index]);
+                                    else
+                                        dataRow[col.name] = row[index];
+
+                                });
+
+                                dataTable.rows.push(dataRow);
+                            });
+
+                            resolve(dataTable);
+                        }
+
                     }
-
-                });
+                );
 
 
             }
