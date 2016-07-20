@@ -45,6 +45,7 @@ export class DataTable {
 export class DataColumn {
     name: string;
     type: string;  // для mssql
+    mysqlDataType: number;  // для mysql
     isDateTime: boolean;
     dataTypeID: number; // для pg;
     constructor(public table: DataTable) {
@@ -172,12 +173,97 @@ export class SqlDb {
                                 let dataColumn = new DataColumn(dataTable);
                                 _.assign(dataColumn, response.columns![i]);
                                 if (this.dialect === "mssql") {
+                                    //////////////////////////////////
+                                    // export var TYPES: {
+                                    //     VarChar:          sqlTypeFactoryWithLength;
+                                    //     NVarChar:         sqlTypeFactoryWithLength;
+                                    //     Text:             sqlTypeFactoryWithNoParams;
+                                    //     Int:              sqlTypeFactoryWithNoParams;
+                                    //     BigInt:           sqlTypeFactoryWithNoParams;
+                                    //     TinyInt:          sqlTypeFactoryWithNoParams;
+                                    //     SmallInt:         sqlTypeFactoryWithNoParams;
+                                    //     Bit:              sqlTypeFactoryWithNoParams;
+                                    //     Float:            sqlTypeFactoryWithNoParams;
+                                    //     Numeric:          sqlTypeFactoryWithPrecisionScale;
+                                    //     Decimal:          sqlTypeFactoryWithPrecisionScale;
+                                    //     Real:             sqlTypeFactoryWithNoParams;
+                                    //     Date:             sqlTypeFactoryWithNoParams;
+                                    //     DateTime:         sqlTypeFactoryWithNoParams;
+                                    //     DateTime2:        sqlTypeFactoryWithScale;
+                                    //     DateTimeOffset:   sqlTypeFactoryWithScale;
+                                    //     SmallDateTime:    sqlTypeFactoryWithNoParams;
+                                    //     Time:             sqlTypeFactoryWithScale;
+                                    //     UniqueIdentifier: sqlTypeFactoryWithNoParams;
+                                    //     SmallMoney:       sqlTypeFactoryWithNoParams;
+                                    //     Money:            sqlTypeFactoryWithNoParams;
+                                    //     Binary:           sqlTypeFactoryWithNoParams;
+                                    //     VarBinary:        sqlTypeFactoryWithLength;
+                                    //     Image:            sqlTypeFactoryWithNoParams;
+                                    //     Xml:              sqlTypeFactoryWithNoParams;
+                                    //     Char:             sqlTypeFactoryWithLength;
+                                    //     NChar:            sqlTypeFactoryWithLength;
+                                    //     NText:            sqlTypeFactoryWithNoParams;
+                                    //     TVP:              sqlTypeFactoryWithTvpType;
+                                    //     UDT:              sqlTypeFactoryWithNoParams;
+                                    //     Geography:        sqlTypeFactoryWithNoParams;
+                                    //     Geometry:         sqlTypeFactoryWithNoParams;
+                                    // };
+                                    //////////////////////////////////
                                     if (dataColumn.type.indexOf("Date") >= 0 || dataColumn.type.indexOf("Time") >= 0) {
                                         dataColumn.isDateTime = true;
                                     }
                                 }
                                 else if (this.dialect === "pg") {
-                                    console.log(dataColumn);
+                                    ///////////////////////////////////
+                                    //     Bool        ->   16
+                                    //     ByteA       ->   17
+                                    //     Char        ->   18
+                                    //     Name        ->   19
+                                    //     Int8        ->   20
+                                    //     Int2        ->   21
+                                    //     Int4        ->   23
+                                    //     RegProc     ->   24
+                                    //     Text        ->   25
+                                    //     Oid         ->   26
+                                    //     Tid         ->   27
+                                    //     Xid         ->   28
+                                    //     Cid         ->   29
+                                    //     Xml         ->  142
+                                    //     Point       ->  600
+                                    //     LSeg        ->  601
+                                    //     Path        ->  602
+                                    //     Box         ->  603
+                                    //     Polygon     ->  604
+                                    //     Line        ->  628
+                                    //     Cidr        ->  650
+                                    //     Float4      ->  700
+                                    //     Float8      ->  701
+                                    //     AbsTime     ->  702
+                                    //     RelTime     ->  703
+                                    //     TInterval   ->  704
+                                    //     Unknown     ->  705
+                                    //     Circle      ->  718
+                                    //     Money       ->  790
+                                    //     MacAddr     ->  829
+                                    //     Inet        ->  869
+                                    //     BpChar      -> 1042
+                                    //     VarChar     -> 1043
+                                    //     Date        -> 1082
+                                    //     Time        -> 1083
+                                    //     Timestamp   -> 1114
+                                    //     TimestampTZ -> 1184
+                                    //     Interval    -> 1186
+                                    //     TimeTZ      -> 1266
+                                    //     Bit         -> 1560
+                                    //     VarBit      -> 1562
+                                    //     Numeric     -> 1700
+                                    //     RefCursor   -> 1790
+                                    //     Record      -> 2249
+                                    //     Void        -> 2278
+                                    //     UUID        -> 2950
+                                    //     JSON        ->  114
+                                    //     JSONB       -> 3802
+                                    // /////////////////////////////////
                                     if (
                                         dataColumn.dataTypeID === 1082 ||
                                         dataColumn.dataTypeID === 1083 ||
@@ -187,6 +273,49 @@ export class SqlDb {
                                         dataColumn.dataTypeID === 1266 ||
                                         dataColumn.dataTypeID === 702 ||
                                         dataColumn.dataTypeID === 703
+                                    ) {
+                                        dataColumn.isDateTime = true;
+                                    }
+                                }
+                                else if (this.dialect === "mysql") {
+                                    ////////////////////////
+                                    // int	BIT = 16
+                                    // int	BLOB = 252
+                                    // int	CHAR = 1
+                                    // int	DATE = 10
+                                    // int	DATETIME = 12
+                                    // int	DECIMAL = 0
+                                    // int	DOUBLE = 5
+                                    // int	ENUM = 247
+                                    // int	FLOAT = 4
+                                    // int	GEOMETRY = 255
+                                    // int	INT24 = 9
+                                    // int	INTERVAL = 247
+                                    // int	LONG = 3
+                                    // int	LONG_BLOB = 251
+                                    // int	LONGLONG = 8
+                                    // int	MEDIUM_BLOB = 250
+                                    // int	NEWDATE = 14
+                                    // int	NEWDECIMAL = 246
+                                    // int	NULL = 6
+                                    // int	SET = 248
+                                    // int	SHORT = 2
+                                    // int	STRING = 254
+                                    // int	TIME = 11
+                                    // int	TIMESTAMP = 7
+                                    // int	TINY = 1
+                                    // int	TINY_BLOB = 249
+                                    // int	VAR_STRING = 253
+                                    // int	VARCHAR = 15
+                                    // int	YEAR = 13
+                                    ////////////////////////
+                                    dataColumn.mysqlDataType = dataColumn.type as any;
+                                    if (
+                                        dataColumn.mysqlDataType === 10 ||
+                                        dataColumn.mysqlDataType === 12 ||
+                                        dataColumn.mysqlDataType === 247 ||
+                                        dataColumn.mysqlDataType === 11 ||
+                                        dataColumn.mysqlDataType === 7
                                     ) {
                                         dataColumn.isDateTime = true;
                                     }

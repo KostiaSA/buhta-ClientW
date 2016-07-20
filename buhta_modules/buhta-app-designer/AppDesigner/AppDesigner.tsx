@@ -515,6 +515,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         db.dialect = "pg";
 //        db.dbName = "schema-mssql";
   //      db.dialect = "mssql";
+        db.dbName = "schema-mysql";
+        db.dialect = "mysql";
 
         // let s = new SelectStmt();
         // s.addColumnAs("'123'","жопа");
@@ -525,9 +527,19 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         //      console.log(obj);
         //         });
 
-         db.selectToObject<any>("select 'eee' as eee, CURRENT_TIMESTAMP ddd", {}, "assign").done((obj) => {
-             console.log(obj);
-         });
+         // db.selectToObject<any>("select 'eee' as eee, CURRENT_TIMESTAMP ddd", {}, "assign").done((obj) => {
+         //     console.log(obj);
+         // });
+
+
+        db.selectToObject<any>("SELECT * FROM sakila.film", {}, "assign").done((obj) => {
+            console.log(obj);
+        });
+
+        // db.selectToObject<any>("SELECT * FROM sakila.film; select 'qqq' as qqq, now() as now, 0xc9c9c8c7c6 as blober, null as null777", {}, "assign").done((obj) => {
+        //     console.log(obj);
+        // });
+
 
         // db.selectToObject<any>("select E'\\x01020304' as bbb, * from \"SchemaObject\"", {}, "assign").done((obj) => {
         //     console.log(obj);
