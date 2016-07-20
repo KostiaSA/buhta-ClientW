@@ -513,21 +513,21 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         let db = new SqlDb();
         db.dbName = "schema-pg";
         db.dialect = "pg";
-        db.dbName = "schema-mssql";
-        db.dialect = "mssql";
+//        db.dbName = "schema-mssql";
+  //      db.dialect = "mssql";
 
         // let s = new SelectStmt();
         // s.addColumnAs("'123'","жопа");
         // s.addColumnRaw("getdate() as ddd");
         // s.addColumnRaw("NULL as nu");
 
-        db.selectToObject<any>("select 'eee' as eee, getdate() ddd", {}, "assign").done((obj) => {
-             console.log(obj);
-                });
+        // db.selectToObject<any>("select 'eee' as eee, getdate() ddd", {}, "assign").done((obj) => {
+        //      console.log(obj);
+        //         });
 
-        // db.selectToObject<any>("select 'eee' as eee, CURRENT_TIMESTAMP ddd", {}, "assign").done((obj) => {
-        //     console.log(obj);
-        // });
+         db.selectToObject<any>("select 'eee' as eee, CURRENT_TIMESTAMP ddd", {}, "assign").done((obj) => {
+             console.log(obj);
+         });
 
         // db.selectToObject<any>("select E'\\x01020304' as bbb, * from \"SchemaObject\"", {}, "assign").done((obj) => {
         //     console.log(obj);

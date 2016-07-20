@@ -44,9 +44,9 @@ export class DataTable {
 
 export class DataColumn {
     name: string;
-    type: string;
+    type: string;  // для mssql
     isDateTime: boolean;
-
+    dataTypeID: number; // для pg;
     constructor(public table: DataTable) {
     }
 }
@@ -151,10 +151,7 @@ export class SqlDb {
 
         let promise: Promise<DataTable|string> = new Promise(
             (resolve: (str: DataTable) => void, reject: (error: string) => void) => {
-                //const a: string = "hello from Promise";
-                //resolve(a);
                 let queryId = "query-" + Math.random().toString(36).slice(2);
-
 
                 let req: ExecuteSqlSocketRequest = {
                     dbName: this.dbName,
@@ -176,6 +173,21 @@ export class SqlDb {
                                 _.assign(dataColumn, response.columns![i]);
                                 if (this.dialect === "mssql") {
                                     if (dataColumn.type.indexOf("Date") >= 0 || dataColumn.type.indexOf("Time") >= 0) {
+                                        dataColumn.isDateTime = true;
+                                    }
+                                }
+                                else if (this.dialect === "pg") {
+                                    console.log(dataColumn);
+                                    if (
+                                        dataColumn.dataTypeID === 1082 ||
+                                        dataColumn.dataTypeID === 1083 ||
+                                        dataColumn.dataTypeID === 1114 ||
+                                        dataColumn.dataTypeID === 1184 ||
+                                        dataColumn.dataTypeID === 1186 ||
+                                        dataColumn.dataTypeID === 1266 ||
+                                        dataColumn.dataTypeID === 702 ||
+                                        dataColumn.dataTypeID === 703
+                                    ) {
                                         dataColumn.isDateTime = true;
                                     }
                                 }
@@ -206,10 +218,6 @@ export class SqlDb {
 
             }
         );
-        //let promise: JQueryDeferred<DataTable>;
-        //promise = $.Deferred<DataTable>();
-
-        //  socket.once('connect',() => {
         return promise;
     }
 
