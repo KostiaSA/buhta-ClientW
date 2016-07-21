@@ -7,21 +7,49 @@ import {SelectStmt} from "../buhta-sql/SelectStmt";
 
 function getTestString() {
     let ret: string[] = [];
-    for (let i = 32; i < 128; i++)
+    for (let i = 1; i <= 8000; i++)
         ret.push(String.fromCharCode(i));
     return ret.join("");
 
 }
 
+function badCodes() {
+    let socket = io.connect();
+
+    for (let i = 0; i < 2560; i++) {
+        let str = String.fromCharCode(i);
+        let strJson = JSON.stringify(str);
+
+        let queryId = "query-" + Math.random().toString(36).slice(2);
+        let req = {
+            queryId: queryId,
+            str: str
+        };
+
+        socket.emit("echo", req);
+        socket.once(queryId, (response: any) => {
+            if (str !== response.str)
+                console.log({i, str, strJson, response: response.str});
+        });
+
+
+        //let strRestored = JSON.parse(strJson);
+        //if (str !== strRestored)
+        //console.log({i, str, strJson, strRestored});
+    }
+    console.log("badCodes-end3");
+}
+
 function select_one_row(dialect: SqlDialect, done: () => void) {
+
 
     let db = new SqlDb();
     db.dbName = "test-" + dialect;
     db.dialect = dialect;
 
     let testStr = getTestString();
-    testStr = getTestString() + "精選品牌全球速賣通集合暢銷科技發現趨勢樣式";
-    testStr = "\0жопа?";
+    //testStr = getTestString() + "精選品牌全球速賣通集合暢銷科技發現趨勢樣式";
+    //testStr = getTestString();
 
     let select = new SelectStmt();
     select.addColumnAs(asSqlString(testStr, dialect), "testStr");
@@ -38,8 +66,8 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
 
 
     db.selectToObject<any>(select, {}, "assign").done((obj) => {
-        console.log(obj.testStr);
-        console.log(testStr);
+//        console.log(testStr);
+//        console.log(obj.testStr);
         assert.equal(obj.testStr, testStr);
         done();
     });
@@ -55,6 +83,12 @@ function test_sql(dialect: SqlDialect, done: () => void) {
 
 @suite("sql dialects")
 class Hello {
+    @test @skip
+    basCodes() {
+        badCodes();
+    }
+
+
     @test
     mssql(done: () => void) {
         let dialect: SqlDialect = "mssql";
