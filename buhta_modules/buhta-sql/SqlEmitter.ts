@@ -35,10 +35,10 @@ export class SqlEmitter {
 
     emitQuotedName(name: string): SqlEmitter {
 
-        if (name.slice(0, 1) === "'" && name.slice(-1) === "'")
+        if ((name.slice(0, 1) === "'" || name.slice(0, 2) === "N'") && name.slice(-1) === "'")
             this.sql.push(name); // строка живьем, когда в одиночных в кавычках
         else {
-            this.checkForInvalidChars(name, "[", "]", "`", "\"");
+            this.checkForInvalidChars(name, "[", "]", "`", "\"", "N'");
 
             if (this.dialect === "mssql")
                 this.sql.push("[" + name + "]");
