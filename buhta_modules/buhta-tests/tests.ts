@@ -7,7 +7,7 @@ import {SelectStmt} from "../buhta-sql/SelectStmt";
 
 function getTestString() {
     let ret: string[] = [];
-    for (let i = 1; i <= 8000; i++)
+    for (let i = 1; i <= 20000; i++)
         ret.push(String.fromCharCode(i));
     return ret.join("");
 
@@ -48,8 +48,6 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
     db.dialect = dialect;
 
     let testStr = getTestString();
-    //testStr = getTestString() + "精選品牌全球速賣通集合暢銷科技發現趨勢樣式";
-    //testStr = getTestString();
 
     let select = new SelectStmt();
     select.addColumnAs(asSqlString(testStr, dialect), "testStr");

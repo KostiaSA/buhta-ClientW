@@ -69,7 +69,7 @@ export class DataRow {
 }
 
 function mysql_escape_string(str: string) {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char: string): string {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\]/g, function (char: string): string {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -86,49 +86,20 @@ function mysql_escape_string(str: string) {
             case "\"":
             case "'":
             case "\\":
-                return "\\" + char; // prepends a backslash to backslash, percent,
-            case "%":
-                return "%";
-
+                return "\\" + char;
             default:
                 throw "mysql_escape_string?";
         }
     });
 }
 
-// function pg_escape_string(str: string) {
-//     return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char: string): string {
-//         switch (char) {
-//             case "\0":
-//                 return "\\0";
-//             case "\x08":
-//                 return "\\b";
-//             case "\x09":
-//                 return "\\t";
-//             case "\x1a":
-//                 return "\\z";
-//             case "\n":
-//                 return "\\n";
-//             case "\r":
-//                 return "\\r";
-//             case "\"":
-//             case "'":
-//             case "\\":
-//             case "%":
-//                 return "\\\\" + char; // prepends a backslash to backslash, percent,
-//             // and double/single quotes
-//             default: throw "mysql_escape_string?";
-//         }
-//     });
-// }
 
 export function asSqlString(str: any, dialect: SqlDialect) {
-//    return "N'" + str.toString().replace("'", "''").replace("?", "'+CHAR(63)+'") + "'";
     if (dialect === "mssql")
         return "N'" + str.toString().replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
     else if (dialect === "pg")
-        return "'" + str.toString().replace("'", "''").replace("?", "'||chr(63)||'").replace("\0", "") + "'";
-    //return "'" + pg_escape_string(str).replace("?", "'||CHR(63)||'") + "'";
+        // симол с кодом 0 запрещен в postgresql, поэтому стираем его
+        return "'" + str.toString().replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
     else
         return "'" + mysql_escape_string(str) + "'";
 }
