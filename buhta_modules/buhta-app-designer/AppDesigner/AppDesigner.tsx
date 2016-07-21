@@ -22,7 +22,6 @@ import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
-import {executeSQL} from "../../buhta-core/SQL";
 import {Button} from "../../buhta-core/Components/Button/Button";
 import {SqlTable} from "../../components/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
@@ -411,49 +410,49 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         }
 
-        executeSQL("select TOP 10 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
-            .done((table: DataTable|string) => {
-
-                if (table instanceof DataTable) {
-                    let vids = table.rows.map<Vid>((r) => {
-
-                        let vid = new Vid();
-                        vid.Num = "*" + r["Номер"];
-                        vid.Name = "*" + r["Название"];
-
-                        return vid;
-                    });
-
-                    console.log("select TOP 10 ==> ");
-                    //console.log(vids);
-
-                    let dataSource = new TreeGridArrayDataSource(vids);
-                    dataSource.params.getNewRow = () => new Vid();
-                    //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
-                    dataSource.params.getEmptyDataSourceMessage = () =>
-                        <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
-
-                    let win2 =
-                        <TreeGrid
-                            dataSource={dataSource}
-                            editable={true}
-                        >
-                        </TreeGrid>;
-
-                    let openParam: OpenWindowParams = {
-                        title: "test grid 2",
-                        top: 20,
-                        left: 20,
-                        height: 500
-                    };
-
-                    appInstance.desktop.openWindow(win2, openParam);
-                }
-
-            })
-            .fail((err: any) => {
-                throwError(err);
-            });
+        // executeSQL("select TOP 10 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+        //     .done((table: DataTable|string) => {
+        //
+        //         if (table instanceof DataTable) {
+        //             let vids = table.rows.map<Vid>((r) => {
+        //
+        //                 let vid = new Vid();
+        //                 vid.Num = "*" + r["Номер"];
+        //                 vid.Name = "*" + r["Название"];
+        //
+        //                 return vid;
+        //             });
+        //
+        //             console.log("select TOP 10 ==> ");
+        //             //console.log(vids);
+        //
+        //             let dataSource = new TreeGridArrayDataSource(vids);
+        //             dataSource.params.getNewRow = () => new Vid();
+        //             //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
+        //             dataSource.params.getEmptyDataSourceMessage = () =>
+        //                 <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
+        //
+        //             let win2 =
+        //                 <TreeGrid
+        //                     dataSource={dataSource}
+        //                     editable={true}
+        //                 >
+        //                 </TreeGrid>;
+        //
+        //             let openParam: OpenWindowParams = {
+        //                 title: "test grid 2",
+        //                 top: 20,
+        //                 left: 20,
+        //                 height: 500
+        //             };
+        //
+        //             appInstance.desktop.openWindow(win2, openParam);
+        //         }
+        //
+        //     })
+        //     .fail((err: any) => {
+        //         throwError(err);
+        //     });
 
 
     }

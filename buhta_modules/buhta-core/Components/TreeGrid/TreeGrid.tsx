@@ -4,7 +4,6 @@ import shallowCompare = require("react-addons-shallow-compare");
 
 //import {executeSQL} from "../buhta-core/SQL";
 import {ComponentProps, Component, ComponentState} from "../Component";
-import {executeSQL} from "../../SQL";
 import {TreeGridColumns} from "./TreeGridColumns";
 import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
 import {Keycode} from "../../Keycode";
