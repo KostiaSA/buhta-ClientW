@@ -14,3 +14,13 @@ export function throwError(error: string | Error): never {
     throw err;
 }
 
+export function throwAbstractError(): never {
+    // todo: отключить в production режиме
+    console.error("abstract error");
+
+    let err: any;
+    err = new Error("abstract error");
+    err.$$isThrowError = true;
+
+    throw err;
+}

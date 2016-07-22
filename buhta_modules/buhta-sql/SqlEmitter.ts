@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import {Operand, WhereClause} from "./SqlCore";
+import {Operand, WhereClause, SqlValue} from "./SqlCore";
 import {SqlDialect} from "./SqlCore";
 import {throwError} from "../buhta-core/Error";
 
@@ -35,10 +35,10 @@ export class SqlEmitter {
 
     emitQuotedName(name: string): SqlEmitter {
 
-        if ((name.slice(0, 1) === "'" || name.slice(0, 2) === "N'") && name.slice(-1) === "'")
+        if (name.slice(0, 1) === "'" && name.slice(-1) === "'")
             this.sql.push(name); // строка живьем, когда в одиночных в кавычках
         else {
-            this.checkForInvalidChars(name, "[", "]", "`", "\"", "N'");
+            this.checkForInvalidChars(name, "[", "]", "`", "\"");
 
             if (this.dialect === "mssql")
                 this.sql.push("[" + name + "]");
@@ -51,7 +51,31 @@ export class SqlEmitter {
             }
         }
         return this;
-    }
+    }    
+    // emitQuotedName(nameOrValue: string | SqlValue): SqlEmitter {
+    //     console.log(nameOrValue);
+    //     if ((nameOrValue as SqlValue).toSql)
+    //         this.sql.push((nameOrValue as SqlValue).toSql());
+    //     else {
+    //         let name = nameOrValue.toString();
+    //         if ((name.slice(0, 1) === "'" || name.slice(0, 2) === "N'") && name.slice(-1) === "'")
+    //             this.sql.push(name); // строка живьем, когда в одиночных в кавычках
+    //         else {
+    //             this.checkForInvalidChars(name, "[", "]", "`", "\"", "N'");
+    //
+    //             if (this.dialect === "mssql")
+    //                 this.sql.push("[" + name + "]");
+    //             else if (this.dialect === "pg")
+    //                 this.sql.push("\"" + name + "\"");
+    //             else if (this.dialect === "mysql")
+    //                 this.sql.push("`" + name + "`");
+    //             else {
+    //                 throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
+    //             }
+    //         }
+    //     }
+    //     return this;
+    // }
 
     emitOperand(operand: Operand): SqlEmitter {
         if (_.isNumber(operand))

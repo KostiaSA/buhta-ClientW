@@ -39,6 +39,7 @@ module.exports = {
          "react-dom": "ReactDOM",
          "lodash": "_",
          "jquery":"$",
-         "socket.io-client":"io"
+         "socket.io-client":"io",
+         "moment": "moment"
      },
 };

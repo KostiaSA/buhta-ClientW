@@ -11,4 +11,13 @@ function throwError(error) {
     throw err;
 }
 exports.throwError = throwError;
+function throwAbstractError() {
+    // todo: отключить в production режиме
+    console.error("abstract error");
+    var err;
+    err = new Error("abstract error");
+    err.$$isThrowError = true;
+    throw err;
+}
+exports.throwAbstractError = throwAbstractError;
 //# sourceMappingURL=Error.js.map

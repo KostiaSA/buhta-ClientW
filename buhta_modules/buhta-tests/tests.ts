@@ -1,8 +1,9 @@
 import {suite, test, slow, timeout, skip, only} from "mocha-typescript";
-import {SqlDb, asSqlString} from "../buhta-sql/SqlDb";
+import {SqlDb} from "../buhta-sql/SqlDb";
 import {assert} from "chai";
-import {SqlDialect} from "../buhta-sql/SqlCore";
+import {SqlDialect, SqlString, SqlDateTime, SqlDate} from "../buhta-sql/SqlCore";
 import {SelectStmt} from "../buhta-sql/SelectStmt";
+import * as moment from "moment";
 
 
 function getTestString() {
@@ -48,25 +49,20 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
     db.dialect = dialect;
 
     let testStr = getTestString();
+    let testDate = new Date(2016, 11, 28);
+    let testDateTime = new Date();
 
     let select = new SelectStmt();
-    select.addColumnAs(asSqlString(testStr, dialect), "testStr");
-    // s.addColumnRaw("getdate() as ddd");
-    // s.addColumnRaw("NULL as nu");
-
-    // db.selectToObject<any>("select 'eee' as eee, getdate() ddd", {}, "assign").done((obj) => {
-    //      console.log(obj);
-    //         });
-
-    // db.selectToObject<any>("select 'eee' as eee, CURRENT_TIMESTAMP ddd", {}, "assign").done((obj) => {
-    //     console.log(obj);
-    // });
-
+    select.addColumnAs(new SqlString(testStr, dialect), "testStr");
+    select.addColumnAs(new SqlDate(testDate, dialect), "testDate");
+    select.addColumnAs(new SqlDateTime(testDateTime, dialect), "testDateTime");
 
     db.selectToObject<any>(select, {}, "assign").done((obj) => {
-//        console.log(testStr);
-//        console.log(obj.testStr);
+        //console.log(testDate);
+        //console.log(obj.testDate);
         assert.equal(obj.testStr, testStr);
+        assert.equal(obj.testDate.getTime(), testDate.getTime());
+        assert.equal(obj.testDateTime.getTime(), testDateTime.getTime());
         done();
     });
 
@@ -81,9 +77,12 @@ function test_sql(dialect: SqlDialect, done: () => void) {
 
 @suite("sql dialects")
 class Hello {
-    @test @skip
-    basCodes() {
-        badCodes();
+    @test
+    @skip
+    //@only
+    first_test() {
+        //badCodes();
+        console.log(moment(new Date()).format("YYYY-MM-DD HH:mm:ss.SSS"));
     }
 
 

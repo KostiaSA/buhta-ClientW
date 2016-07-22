@@ -47,6 +47,7 @@ export class DataColumn {
     type: string;  // для mssql
     mysqlDataType: number;  // для mysql
     isDateTime: boolean;
+    isOnlyDate: boolean;
     dataTypeID: number; // для pg;
     constructor(public table: DataTable) {
     }
@@ -68,41 +69,6 @@ export class DataRow {
     //[index: number]: DataType;
 }
 
-function mysql_escape_string(str: string) {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\]/g, function (char: string): string {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\Z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-                return "\\" + char;
-            default:
-                throw "mysql_escape_string?";
-        }
-    });
-}
-
-
-export function asSqlString(str: any, dialect: SqlDialect) {
-    if (dialect === "mssql")
-        return "N'" + str.toString().replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
-    else if (dialect === "pg")
-        // симол с кодом 0 запрещен в postgresql, поэтому стираем его
-        return "'" + str.toString().replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
-    else
-        return "'" + mysql_escape_string(str) + "'";
-}
 
 export class SqlDb {
     dbName: string;
@@ -247,6 +213,9 @@ export class SqlDb {
                                     if (dataColumn.type.indexOf("Date") >= 0 || dataColumn.type.indexOf("Time") >= 0) {
                                         dataColumn.isDateTime = true;
                                     }
+                                    if (dataColumn.type === "Date") {
+                                        dataColumn.isOnlyDate = true;
+                                    }
                                 }
                                 else if (this.dialect === "pg") {
                                     ///////////////////////////////////
@@ -311,6 +280,10 @@ export class SqlDb {
                                     ) {
                                         dataColumn.isDateTime = true;
                                     }
+                                    if (dataColumn.dataTypeID === 1082) {
+                                        dataColumn.isOnlyDate = true;
+                                    }
+
                                 }
                                 else if (this.dialect === "mysql") {
                                     ////////////////////////
@@ -354,6 +327,9 @@ export class SqlDb {
                                     ) {
                                         dataColumn.isDateTime = true;
                                     }
+                                    if (dataColumn.mysqlDataType === 10) {
+                                        dataColumn.isOnlyDate = true;
+                                    }
                                 }
                                 dataTable.columns.push(dataColumn);
                             }
@@ -363,8 +339,12 @@ export class SqlDb {
                                 let dataRow = new DataRow(dataTable);
 
                                 dataTable.columns.forEach((col, index) => {
-                                    if (col.isDateTime)
+                                    if (col.isDateTime) {
                                         dataRow[col.name] = new Date(row[index]);
+                                        if (col.isOnlyDate)
+                                            dataRow[col.name].setHours(0, 0, 0, 0);
+
+                                    }
                                     else
                                         dataRow[col.name] = row[index];
 

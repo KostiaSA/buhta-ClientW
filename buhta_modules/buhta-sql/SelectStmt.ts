@@ -1,6 +1,6 @@
 import {throwError} from "../buhta-core/Error";
 import * as _ from "lodash";
-import {SqlDialect} from "./SqlCore";
+import {SqlDialect, SqlValue} from "./SqlCore";
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 
@@ -8,6 +8,7 @@ import {SqlEmitter} from "./SqlEmitter";
 export interface SelectColumn {
     table?: string;
     column?: string;
+    value?: SqlValue;
     raw?: string;
     as?: string;
 }
@@ -26,9 +27,11 @@ export class SelectStmt {
     from: SelectTable[] = [];
     where: WhereClause[] = [];
 
-    addColumn(...column: (string | SelectColumn | "*")[]): SelectStmt {
+    addColumn(...column: (string | SelectColumn | "*" | SqlValue)[]): SelectStmt {
         column.forEach((col) => {
-            if (col === "*")
+            if (col instanceof SqlValue)
+                this.columns.push({value: col});
+            else if (col === "*")
                 this.columns.push({raw: "*"});
             else if (_.isString(col))
                 this.columns.push({column: col});
@@ -38,8 +41,10 @@ export class SelectStmt {
         return this;
     }
 
-    addColumnAs(column: string | SelectColumn, as: string): SelectStmt {
-        if (_.isString(column))
+    addColumnAs(column: string | SelectColumn | SqlValue, as: string): SelectStmt {
+        if (column instanceof SqlValue)
+            this.columns.push({value: column, as: as});
+        else if (_.isString(column))
             this.columns.push({column: column, as: as});
         else {
             column.as = as;
@@ -85,10 +90,12 @@ export class SelectStmt {
         e.emitLevel(level);
         if (col.table)
             e.emitQuotedName(col.table).emit(".");
-        if (!col.column && !col.raw)
-            throwError("SelectStmt: column.name or column.raw not defined");
+        if (!col.column && !col.raw && !col.value)
+            throwError("SelectStmt: column.name or column.raw or column.value not defined");
         if (col.column)
             e.emitQuotedName(col.column);
+        if (col.value)
+            e.emit(col.value.toSql());
         if (col.raw)
             e.emit(col.raw);
         if (col.as)
