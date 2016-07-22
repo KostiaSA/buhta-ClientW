@@ -1,9 +1,15 @@
+import * as uuid from "UUID";
 import {suite, test, slow, timeout, skip, only} from "mocha-typescript";
 import {SqlDb} from "../buhta-sql/SqlDb";
 import {assert} from "chai";
-import {SqlDialect, SqlString, SqlDateTime, SqlDate} from "../buhta-sql/SqlCore";
+import {
+    SqlDialect, SqlStringValue, SqlDateTimeValue, SqlDateValue, SqlNumberValue,
+    SqlGuidValue
+} from "../buhta-sql/SqlCore";
 import {SelectStmt} from "../buhta-sql/SelectStmt";
 import * as moment from "moment";
+
+
 
 
 function getTestString() {
@@ -51,18 +57,30 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
     let testStr = getTestString();
     let testDate = new Date(2016, 11, 28);
     let testDateTime = new Date();
+    let testNumber = 1.79E+308;
+    let testNumber2 = 9007199254740991;
+    let testNumber3 = 9.0071992547402233224;
+    let testGuid = uuid.v1().toString();
 
     let select = new SelectStmt();
-    select.addColumnAs(new SqlString(testStr, dialect), "testStr");
-    select.addColumnAs(new SqlDate(testDate, dialect), "testDate");
-    select.addColumnAs(new SqlDateTime(testDateTime, dialect), "testDateTime");
+    // select.addColumnAs(new SqlStringValue(testStr, dialect), "testStr");
+    // select.addColumnAs(new SqlDateValue(testDate, dialect), "testDate");
+    // select.addColumnAs(new SqlDateTimeValue(testDateTime, dialect), "testDateTime");
+    // select.addColumnAs(new SqlNumberValue(testNumber, dialect), "testNumber");
+    // select.addColumnAs(new SqlNumberValue(testNumber2, dialect), "testNumber2");
+    // select.addColumnAs(new SqlNumberValue(testNumber3, dialect), "testNumber3");
+    select.addColumnAs(new SqlGuidValue(testGuid, dialect), "testGuid");
 
     db.selectToObject<any>(select, {}, "assign").done((obj) => {
         //console.log(testDate);
         //console.log(obj.testDate);
-        assert.equal(obj.testStr, testStr);
-        assert.equal(obj.testDate.getTime(), testDate.getTime());
-        assert.equal(obj.testDateTime.getTime(), testDateTime.getTime());
+        // assert.equal(obj.testStr, testStr);
+        // assert.equal(obj.testDate.getTime(), testDate.getTime());
+        // assert.equal(obj.testDateTime.getTime(), testDateTime.getTime());
+        // assert.equal(obj.testNumber, testNumber);
+        // assert.equal(obj.testNumber2, testNumber2);
+        // assert.equal(obj.testNumber3, testNumber3);
+        assert.equal(obj.testGuid, testGuid);
         done();
     });
 
@@ -82,7 +100,7 @@ class Hello {
     //@only
     first_test() {
         //badCodes();
-        console.log(moment(new Date()).format("YYYY-MM-DD HH:mm:ss.SSS"));
+        console.log(uuid.v1());
     }
 
 

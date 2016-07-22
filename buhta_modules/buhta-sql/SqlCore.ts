@@ -1,6 +1,9 @@
 import * as moment from "moment";
+import * as uuid from "UUID";
+
 import {SelectColumn} from "./SelectStmt";
 import {throwError, throwAbstractError} from "../buhta-core/Error";
+
 export type SqlDialect = "mssql" | "pg" | "mysql";
 
 export type BooleanOper = "=" | ">" | "<" | ">=" | "<=" | "<>" | "!=" | "LIKE";
@@ -34,7 +37,7 @@ export class SqlValue {
     }
 }
 
-export class SqlString extends SqlValue {
+export class SqlStringValue extends SqlValue {
     constructor(public value: string, public dialect: SqlDialect) {
         super();
     }
@@ -54,7 +57,18 @@ export class SqlString extends SqlValue {
     }
 }
 
-export class SqlDate extends SqlValue {
+export class SqlNumberValue extends SqlValue {
+    constructor(public value: number, public dialect: SqlDialect) {
+        super();
+    }
+
+    toSql(): string {
+        return this.value.toString();
+    }
+}
+
+
+export class SqlDateValue extends SqlValue {
     constructor(public value: Date, public dialect: SqlDialect) {
         super();
     }
@@ -74,7 +88,38 @@ export class SqlDate extends SqlValue {
     }
 }
 
-export class SqlDateTime extends SqlValue {
+function toHexString(bytes: any) {
+    return bytes.map(function (byte:any) {
+        return ("00" + (byte & 0xFF).toString(16)).slice(-2);
+    }).join("");
+}
+
+function mysql_guid_to_str(guid: uuid.UUID): string {
+    return "0x" + toHexString(guid);
+}
+
+export class SqlGuidValue extends SqlValue {
+    constructor(public value: string, public dialect: SqlDialect) {
+        super();
+    }
+
+    toSql(): string {
+
+        if (this.dialect === "mssql")
+            return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
+        else if (this.dialect === "pg")
+            return "UUID '" + this.value + "'";
+        else if (this.dialect === "mysql")
+            return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+        else {
+            throwError("invalid sql dialect " + this.dialect);
+            throw "fake";
+        }
+
+    }
+}
+
+export class SqlDateTimeValue extends SqlValue {
     constructor(public value: Date, public dialect: SqlDialect) {
         super();
     }
@@ -85,7 +130,7 @@ export class SqlDateTime extends SqlValue {
         else if (this.dialect === "pg")
             return "TIMESTAMP(3) WITH TIME ZONE '" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS ZZ") + "'";
         else if (this.dialect === "mysql")
-            // timezone не воспринимает
+        // timezone не воспринимает
             return "STR_TO_DATE('" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "','%Y-%c-%d %k:%i:%s.%f')";
         else {
             throwError("invalid sql dialect " + this.dialect);

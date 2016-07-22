@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import * as io from "socket.io-client";
+import * as uuid from "UUID";
 import {throwError} from "../buhta-core/Error";
 import {SelectStmt} from "./SelectStmt";
 import {SqlDialect, SqlStmt} from "./SqlCore";
@@ -45,10 +46,14 @@ export class DataTable {
 export class DataColumn {
     name: string;
     type: string;  // для mssql
+    length: number;
     mysqlDataType: number;  // для mysql
     isDateTime: boolean;
     isOnlyDate: boolean;
     dataTypeID: number; // для pg;
+    isGuid: boolean;
+    charsetNr: number;
+
     constructor(public table: DataTable) {
     }
 }
@@ -216,6 +221,9 @@ export class SqlDb {
                                     if (dataColumn.type === "Date") {
                                         dataColumn.isOnlyDate = true;
                                     }
+                                    if (dataColumn.type === "UniqueIdentifier") {
+                                        dataColumn.isGuid = true;
+                                    }
                                 }
                                 else if (this.dialect === "pg") {
                                     ///////////////////////////////////
@@ -283,6 +291,9 @@ export class SqlDb {
                                     if (dataColumn.dataTypeID === 1082) {
                                         dataColumn.isOnlyDate = true;
                                     }
+                                    if (dataColumn.dataTypeID === 2950) {
+                                        dataColumn.isGuid = true;
+                                    }
 
                                 }
                                 else if (this.dialect === "mysql") {
@@ -330,6 +341,11 @@ export class SqlDb {
                                     if (dataColumn.mysqlDataType === 10) {
                                         dataColumn.isOnlyDate = true;
                                     }
+                                    if (dataColumn.mysqlDataType === 253 &&
+                                        dataColumn.length === 16 &&
+                                        dataColumn.charsetNr === 63) {
+                                        dataColumn.isGuid = true;
+                                    }
                                 }
                                 dataTable.columns.push(dataColumn);
                             }
@@ -344,6 +360,13 @@ export class SqlDb {
                                         if (col.isOnlyDate)
                                             dataRow[col.name].setHours(0, 0, 0, 0);
 
+                                    }
+                                    else if (col.isGuid) {
+                                        if (this.dialect === "mysql") {
+                                            dataRow[col.name] = (uuid as any).unparse(new Uint8Array(row[index]));
+                                        }
+                                        else
+                                            dataRow[col.name] = row[index].toLowerCase();
                                     }
                                     else
                                         dataRow[col.name] = row[index];

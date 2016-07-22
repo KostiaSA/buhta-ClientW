@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var moment = require("moment");
+var uuid = require("UUID");
 var Error_1 = require("../buhta-core/Error");
 var SqlValue = (function () {
     function SqlValue() {
@@ -17,14 +18,14 @@ var SqlValue = (function () {
     return SqlValue;
 }());
 exports.SqlValue = SqlValue;
-var SqlString = (function (_super) {
-    __extends(SqlString, _super);
-    function SqlString(value, dialect) {
+var SqlStringValue = (function (_super) {
+    __extends(SqlStringValue, _super);
+    function SqlStringValue(value, dialect) {
         _super.call(this);
         this.value = value;
         this.dialect = dialect;
     }
-    SqlString.prototype.toSql = function () {
+    SqlStringValue.prototype.toSql = function () {
         if (this.dialect === "mssql")
             return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
         else if (this.dialect === "pg")
@@ -37,17 +38,30 @@ var SqlString = (function (_super) {
             throw "fake";
         }
     };
-    return SqlString;
+    return SqlStringValue;
 }(SqlValue));
-exports.SqlString = SqlString;
-var SqlDate = (function (_super) {
-    __extends(SqlDate, _super);
-    function SqlDate(value, dialect) {
+exports.SqlStringValue = SqlStringValue;
+var SqlNumberValue = (function (_super) {
+    __extends(SqlNumberValue, _super);
+    function SqlNumberValue(value, dialect) {
         _super.call(this);
         this.value = value;
         this.dialect = dialect;
     }
-    SqlDate.prototype.toSql = function () {
+    SqlNumberValue.prototype.toSql = function () {
+        return this.value.toString();
+    };
+    return SqlNumberValue;
+}(SqlValue));
+exports.SqlNumberValue = SqlNumberValue;
+var SqlDateValue = (function (_super) {
+    __extends(SqlDateValue, _super);
+    function SqlDateValue(value, dialect) {
+        _super.call(this);
+        this.value = value;
+        this.dialect = dialect;
+    }
+    SqlDateValue.prototype.toSql = function () {
         if (this.dialect === "mssql")
             return "CONVERT(DATE,'" + moment(this.value).format("YYYYMMDD") + "')";
         else if (this.dialect === "pg")
@@ -59,17 +73,47 @@ var SqlDate = (function (_super) {
             throw "fake";
         }
     };
-    return SqlDate;
+    return SqlDateValue;
 }(SqlValue));
-exports.SqlDate = SqlDate;
-var SqlDateTime = (function (_super) {
-    __extends(SqlDateTime, _super);
-    function SqlDateTime(value, dialect) {
+exports.SqlDateValue = SqlDateValue;
+function toHexString(bytes) {
+    return bytes.map(function (byte) {
+        return ("00" + (byte & 0xFF).toString(16)).slice(-2);
+    }).join("");
+}
+function mysql_guid_to_str(guid) {
+    return "0x" + toHexString(guid);
+}
+var SqlGuidValue = (function (_super) {
+    __extends(SqlGuidValue, _super);
+    function SqlGuidValue(value, dialect) {
         _super.call(this);
         this.value = value;
         this.dialect = dialect;
     }
-    SqlDateTime.prototype.toSql = function () {
+    SqlGuidValue.prototype.toSql = function () {
+        if (this.dialect === "mssql")
+            return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
+        else if (this.dialect === "pg")
+            return "UUID '" + this.value + "'";
+        else if (this.dialect === "mysql")
+            return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+        else {
+            Error_1.throwError("invalid sql dialect " + this.dialect);
+            throw "fake";
+        }
+    };
+    return SqlGuidValue;
+}(SqlValue));
+exports.SqlGuidValue = SqlGuidValue;
+var SqlDateTimeValue = (function (_super) {
+    __extends(SqlDateTimeValue, _super);
+    function SqlDateTimeValue(value, dialect) {
+        _super.call(this);
+        this.value = value;
+        this.dialect = dialect;
+    }
+    SqlDateTimeValue.prototype.toSql = function () {
         if (this.dialect === "mssql")
             return "CONVERT(DATETIMEOFFSET,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS Z") + "')";
         else if (this.dialect === "pg")
@@ -82,9 +126,9 @@ var SqlDateTime = (function (_super) {
             throw "fake";
         }
     };
-    return SqlDateTime;
+    return SqlDateTimeValue;
 }(SqlValue));
-exports.SqlDateTime = SqlDateTime;
+exports.SqlDateTimeValue = SqlDateTimeValue;
 function mysql_escape_string(str) {
     return str.replace(/[\0\x08\x09\x1a\n\r"'\\]/g, function (char) {
         switch (char) {

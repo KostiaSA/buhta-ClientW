@@ -9,7 +9,8 @@
     "react-addons-shallow-compare": "registry:dt/react-addons-shallow-compare#0.14.0+20160316155526",
     "react-dnd": "registry:dt/react-dnd#1.1.4+20160316155526",
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
-    "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654"
+    "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654",
+    "uuid": "registry:dt/uuid#3.3.0+20160316155526"
   },
   "dependencies": {
     "lodash": "registry:npm/lodash#4.0.0+20160416211519"
