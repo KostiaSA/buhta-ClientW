@@ -18,6 +18,56 @@ var SqlValue = (function () {
     return SqlValue;
 }());
 exports.SqlValue = SqlValue;
+function mssql_escape_string(str) {
+    return str.replace(/./g, function (char) {
+        switch (char) {
+            case "'":
+                return "''";
+            case "?":
+                return "'+CHAR(63)+N'";
+            default:
+                return char;
+        }
+    });
+}
+function pg_escape_string(str) {
+    return str.replace(/./g, function (char) {
+        switch (char) {
+            case "\0":
+                return "";
+            case "'":
+                return "''";
+            case "?":
+                return "'||CHR(63)||'";
+            default:
+                return char;
+        }
+    });
+}
+function mysql_escape_string(str) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\Z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+                return "\\" + char;
+            default:
+                throw "mysql_escape_string?";
+        }
+    });
+}
 var SqlStringValue = (function (_super) {
     __extends(SqlStringValue, _super);
     function SqlStringValue(value, dialect) {
@@ -27,10 +77,12 @@ var SqlStringValue = (function (_super) {
     }
     SqlStringValue.prototype.toSql = function () {
         if (this.dialect === "mssql")
-            return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
+            //return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
+            return "N'" + mssql_escape_string(this.value) + "'";
         else if (this.dialect === "pg")
             // симол с кодом 0 запрещен в postgresql, поэтому стираем его
-            return "'" + this.value.replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
+            //            return "'" + this.value.replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
+            return "'" + pg_escape_string(this.value) + "'";
         else if (this.dialect === "mysql")
             return "'" + mysql_escape_string(this.value) + "'";
         else {
@@ -129,30 +181,6 @@ var SqlDateTimeValue = (function (_super) {
     return SqlDateTimeValue;
 }(SqlValue));
 exports.SqlDateTimeValue = SqlDateTimeValue;
-function mysql_escape_string(str) {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\]/g, function (char) {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\Z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-                return "\\" + char;
-            default:
-                throw "mysql_escape_string?";
-        }
-    });
-}
 // export function asSqlString(str: any, dialect: SqlDialect) {
 //     if (dialect === "mssql")
 //         return "N'" + str.toString().replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";

@@ -37,6 +37,59 @@ export class SqlValue {
     }
 }
 
+function mssql_escape_string(str: string) {
+    return str.replace(/./g, function (char: string): string {
+        switch (char) {
+            case "'":
+                return "''";
+            case "?":
+                return "'+CHAR(63)+N'";
+            default:
+                return char;
+        }
+    });
+}
+
+function pg_escape_string(str: string) {
+    return str.replace(/./g, function (char: string): string {
+        switch (char) {
+            case "\0":
+                return "";
+            case "'":
+                return "''";
+            case "?":
+                return "'||CHR(63)||'";
+            default:
+                return char;
+        }
+    });
+}
+
+function mysql_escape_string(str: string) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\]/g, function (char: string): string {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\Z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+                return "\\" + char;
+            default:
+                throw "mysql_escape_string?";
+        }
+    });
+}
+
 export class SqlStringValue extends SqlValue {
     constructor(public value: string, public dialect: SqlDialect) {
         super();
@@ -44,10 +97,12 @@ export class SqlStringValue extends SqlValue {
 
     toSql(): string {
         if (this.dialect === "mssql")
-            return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
+        //return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
+            return "N'" + mssql_escape_string(this.value) + "'";
         else if (this.dialect === "pg")
         // симол с кодом 0 запрещен в postgresql, поэтому стираем его
-            return "'" + this.value.replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
+//            return "'" + this.value.replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
+            return "'" + pg_escape_string(this.value) + "'";
         else if (this.dialect === "mysql")
             return "'" + mysql_escape_string(this.value) + "'";
         else {
@@ -89,7 +144,7 @@ export class SqlDateValue extends SqlValue {
 }
 
 function toHexString(bytes: any) {
-    return bytes.map(function (byte:any) {
+    return bytes.map(function (byte: any) {
         return ("00" + (byte & 0xFF).toString(16)).slice(-2);
     }).join("");
 }
@@ -140,30 +195,6 @@ export class SqlDateTimeValue extends SqlValue {
     }
 }
 
-function mysql_escape_string(str: string) {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\]/g, function (char: string): string {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\Z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-                return "\\" + char;
-            default:
-                throw "mysql_escape_string?";
-        }
-    });
-}
 
 // export function asSqlString(str: any, dialect: SqlDialect) {
 //     if (dialect === "mssql")
