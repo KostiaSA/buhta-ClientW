@@ -8,8 +8,8 @@ import {
 } from "../buhta-sql/SqlCore";
 import {SelectStmt} from "../buhta-sql/SelectStmt";
 import * as moment from "moment";
-import {CreateTableStmtTest} from "./Sql/CreateTableStmt.test";
 
+export * from "./sql/CreateTableStmt.test";
 
 
 function getTestString() {
@@ -29,7 +29,6 @@ function getLongTestString(mb: number) { // в мегабайтах
 }
 
 function badCodes() {
-    let x=new CreateTableStmtTest();
 
     let socket = io.connect();
 
@@ -75,7 +74,7 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
 
     let select = new SelectStmt();
     select.addColumnAs(new SqlStringValue(testStr, dialect), "testStr");
-  //  select.addColumnAs(new SqlStringValue(testLongStr, dialect), "testLongStr");
+    //  select.addColumnAs(new SqlStringValue(testLongStr, dialect), "testLongStr");
     select.addColumnAs(new SqlDateValue(testDate, dialect), "testDate");
     select.addColumnAs(new SqlDateTimeValue(testDateTime, dialect), "testDateTime");
     select.addColumnAs(new SqlNumberValue(testNumber, dialect), "testNumber");
@@ -87,7 +86,7 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
         //console.log(testDate);
         //console.log(obj.testDate);
         assert.equal(obj.testStr, testStr);
-       // assert.equal(obj.testLongStr, testLongStr);
+        // assert.equal(obj.testLongStr, testLongStr);
         assert.equal(obj.testDate.getTime(), testDate.getTime());
         assert.equal(obj.testDateTime.getTime(), testDateTime.getTime());
         assert.equal(obj.testNumber, testNumber);

@@ -1,4 +1,5 @@
 import {suite, test, slow, timeout, skip, only} from "mocha-typescript";
+import {assert} from "chai";
 import {SqlDialect} from "../../buhta-sql/SqlCore";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 import {SqlDb} from "../../buhta-sql/SqlDb";
@@ -41,13 +42,15 @@ function test_proc(dialect: SqlDialect, done: () => void) {
 }
 
 
-@suite("sql dialects")
+
+@suite("CreateTableStmtTest")
 //@skip
 export class CreateTableStmtTest {
 
     @test
     mssql(done: () => void) {
         let dialect: SqlDialect = "mssql";
+        done();
         test_proc(dialect, done);
 
     }
