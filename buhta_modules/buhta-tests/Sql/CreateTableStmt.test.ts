@@ -4,6 +4,7 @@ import {SqlDialect} from "../../buhta-sql/SqlCore";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 import {SqlDb} from "../../buhta-sql/SqlDb";
 import {DropTableStmt} from "../../buhta-sql/DropTableStmt";
+import {DropTableIfExistsStmt} from "../../buhta-sql/DropTableIfExistsStmt";
 
 
 function create_table_proc(dialect: SqlDialect, done: () => void) {
@@ -65,20 +66,80 @@ function drop_table_proc(dialect: SqlDialect, done: () => void) {
 
 }
 
+function drop_table_if_exist_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new DropTableIfExistsStmt();
+    sql.addTable("BuhtaTestTable");
+
+    db.executeSQL(sql)
+        .then((fake) => {
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+
 @suite("Sql CreateTableStmt")
 //@skip
 export class CreateTableStmtTest {
+    @test
+    mssql_drop_table_if_exist(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        drop_table_if_exist_proc(dialect, done);
+    }
 
-    @test @timeout(5000)
+    @test
     mssql_create_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
         create_table_proc(dialect, done);
     }
 
-    @test @timeout(5000)
+    @test
     mssql_drop_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
         drop_table_proc(dialect, done);
     }
 
+    @test
+    pg_drop_table_if_exist(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        drop_table_if_exist_proc(dialect, done);
+    }
+
+    @test
+    pg_create_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        create_table_proc(dialect, done);
+    }
+
+    @test
+    pg_drop_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        drop_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_drop_table_if_exist(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        drop_table_if_exist_proc(dialect, done);
+    }
+
+    @test
+    mysql_create_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        create_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_drop_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        drop_table_proc(dialect, done);
+    }
 }

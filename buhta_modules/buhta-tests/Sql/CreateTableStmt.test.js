@@ -9,6 +9,7 @@ var mocha_typescript_1 = require("mocha-typescript");
 var CreateTableStmt_1 = require("../../buhta-sql/CreateTableStmt");
 var SqlDb_1 = require("../../buhta-sql/SqlDb");
 var DropTableStmt_1 = require("../../buhta-sql/DropTableStmt");
+var DropTableIfExistsStmt_1 = require("../../buhta-sql/DropTableIfExistsStmt");
 function create_table_proc(dialect, done) {
     var db = new SqlDb_1.SqlDb();
     db.dbName = "test-" + dialect;
@@ -57,9 +58,28 @@ function drop_table_proc(dialect, done) {
         throw error;
     });
 }
+function drop_table_if_exist_proc(dialect, done) {
+    var db = new SqlDb_1.SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+    var sql = new DropTableIfExistsStmt_1.DropTableIfExistsStmt();
+    sql.addTable("BuhtaTestTable");
+    db.executeSQL(sql)
+        .then(function (fake) {
+        done();
+    })
+        .catch(function (error) {
+        console.error(error);
+        throw error;
+    });
+}
 var CreateTableStmtTest = (function () {
     function CreateTableStmtTest() {
     }
+    CreateTableStmtTest.prototype.mssql_drop_table_if_exist = function (done) {
+        var dialect = "mssql";
+        drop_table_if_exist_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.mssql_create_table = function (done) {
         var dialect = "mssql";
         create_table_proc(dialect, done);
@@ -68,14 +88,57 @@ var CreateTableStmtTest = (function () {
         var dialect = "mssql";
         drop_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.pg_drop_table_if_exist = function (done) {
+        var dialect = "pg";
+        drop_table_if_exist_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_create_table = function (done) {
+        var dialect = "pg";
+        create_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_drop_table = function (done) {
+        var dialect = "pg";
+        drop_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_drop_table_if_exist = function (done) {
+        var dialect = "mysql";
+        drop_table_if_exist_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_create_table = function (done) {
+        var dialect = "mysql";
+        create_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_drop_table = function (done) {
+        var dialect = "mysql";
+        drop_table_proc(dialect, done);
+    };
     __decorate([
-        mocha_typescript_1.test,
-        mocha_typescript_1.timeout(5000)
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_drop_table_if_exist", null);
+    __decorate([
+        mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mssql_create_table", null);
     __decorate([
-        mocha_typescript_1.test,
-        mocha_typescript_1.timeout(5000)
+        mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mssql_drop_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_drop_table_if_exist", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_create_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_drop_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_drop_table_if_exist", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_create_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_drop_table", null);
     CreateTableStmtTest = __decorate([
         mocha_typescript_1.suite("Sql CreateTableStmt")
     ], CreateTableStmtTest);
