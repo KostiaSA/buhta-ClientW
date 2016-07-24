@@ -3,9 +3,10 @@ import {assert} from "chai";
 import {SqlDialect} from "../../buhta-sql/SqlCore";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 import {SqlDb} from "../../buhta-sql/SqlDb";
+import {DropTableStmt} from "../../buhta-sql/DropTableStmt";
 
 
-function test_proc(dialect: SqlDialect, done: () => void) {
+function create_table_proc(dialect: SqlDialect, done: () => void) {
 
     let db = new SqlDb();
     db.dbName = "test-" + dialect;
@@ -15,7 +16,6 @@ function test_proc(dialect: SqlDialect, done: () => void) {
     sql.addTable("BuhtaTestTable");
     sql.addColumn({column: "guid", dataType: "guid", notNull: true, primaryKey: true});
     sql.addColumn("str250", "string", 250);
-    sql.addColumn("strMax", "string");
     sql.addColumn("text", "text");
 
     sql.addColumn("sbyte", "sbyte");
@@ -37,23 +37,48 @@ function test_proc(dialect: SqlDialect, done: () => void) {
     db.executeSQL(sql)
         .then((fake) => {
             done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
         });
 
 }
 
+function drop_table_proc(dialect: SqlDialect, done: () => void) {
 
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
 
-@suite("CreateTableStmtTest")
+    let sql = new DropTableStmt();
+    sql.addTable("BuhtaTestTable");
+
+    db.executeSQL(sql)
+        .then((fake) => {
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+
+@suite("Sql CreateTableStmt")
 //@skip
 export class CreateTableStmtTest {
 
-    @test
-    mssql(done: () => void) {
+    @test @timeout(5000)
+    mssql_create_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
-        done();
-        test_proc(dialect, done);
-
+        create_table_proc(dialect, done);
     }
 
+    @test @timeout(5000)
+    mssql_drop_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        drop_table_proc(dialect, done);
+    }
 
 }
