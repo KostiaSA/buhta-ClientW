@@ -1,6 +1,8 @@
 import * as _ from "lodash";
 import * as io from "socket.io-client";
 import * as uuid from "UUID";
+import * as moment from "moment";
+
 import {throwError} from "../buhta-core/Error";
 import {SelectStmt} from "./SelectStmt";
 import {SqlDialect, SqlStmt} from "./SqlCore";
@@ -217,14 +219,16 @@ export class SqlDb {
                                         //     Geometry:         sqlTypeFactoryWithNoParams;
                                         // };
                                         //////////////////////////////////
-                                        if (dataColumn.type.indexOf("Date") >= 0 || dataColumn.type.indexOf("Time") >= 0) {
-                                            dataColumn.isDateTime = true;
-                                        }
-                                        if (dataColumn.type === "Date") {
-                                            dataColumn.isOnlyDate = true;
-                                        }
-                                        if (dataColumn.type === "UniqueIdentifier") {
-                                            dataColumn.isGuid = true;
+                                        if (dataColumn.type) {  // !!! у double почему-то не заполнен type, херня какая-то
+                                            if (dataColumn.type.indexOf("Date") >= 0 || dataColumn.type.indexOf("Time") >= 0) {
+                                                dataColumn.isDateTime = true;
+                                            }
+                                            if (dataColumn.type === "Date") {
+                                                dataColumn.isOnlyDate = true;
+                                            }
+                                            if (dataColumn.type === "UniqueIdentifier") {
+                                                dataColumn.isGuid = true;
+                                            }
                                         }
                                     }
                                     else if (this.dialect === "pg") {
@@ -363,6 +367,11 @@ export class SqlDb {
                                             dataRow[col.name] = new Date(row[index]);
                                             if (col.isOnlyDate)
                                                 dataRow[col.name].setHours(0, 0, 0, 0);
+                                            else {
+                                                if (this.dialect === "mssql") { // mssql - убираем timezone
+                                                    dataRow[col.name] = moment(dataRow[col.name]).add((dataRow[col.name] as Date).getTimezoneOffset(), "minutes").toDate();
+                                                }
+                                            }
 
                                         }
                                         else if (col.isGuid) {

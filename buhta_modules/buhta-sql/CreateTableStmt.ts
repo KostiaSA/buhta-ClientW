@@ -98,8 +98,9 @@ export class CreateTableStmt {
             case "text": e.emit("NVARCHAR(MAX)"); break;
             case "guid": e.emit("UNIQUEIDENTIFIER"); break;
             case "date": e.emit("DATE"); break;
-            case "datetime": e.emit("DATETIME"); break;
-            case "timestamp": e.emit("DATETIME DEFAULT(GETDATE())"); break;
+            //case "datetime": e.emit("DATETIMEOFFSET"); break;
+            case "datetime": e.emit("DATETIME2"); break;
+            case "timestamp": e.emit("DATETIME2 DEFAULT(GETDATE())"); break;
             case "blob": e.emit(" IMAGE"); break;
 
             default: throwError("NotImplemented");
@@ -131,6 +132,7 @@ export class CreateTableStmt {
             case "guid": e.emit("UUID"); break;
             case "date": e.emit("DATE"); break;
             case "datetime": e.emit("TIMESTAMP"); break;
+            //case "datetime": e.emit("TIMESTAMP WITH TIME ZONE"); break;
             case "timestamp": e.emit("TIMESTAMP DEFAULT CURRENT_TIMESTAMP"); break;
             case "blob": e.emit(" BYTEA"); break;
 
@@ -162,7 +164,7 @@ export class CreateTableStmt {
             case "text": e.emit("LONGTEXT"); break;
             case "guid": e.emit("BINARY(16)"); break;
             case "date": e.emit("DATE"); break;
-            case "datetime": e.emit("DATETIME"); break;
+            case "datetime": e.emit("DATETIME(3)"); break;
             case "timestamp": e.emit("TIMESTAMP"); break;
             case "blob": e.emit(" LONGBLOB"); break;
 

@@ -1,11 +1,12 @@
 import {suite, test, slow, timeout, skip, only} from "mocha-typescript";
 import {assert} from "chai";
-import {SqlDialect, SqlGuidValue, SqlNewGuidValue, SqlStringValue} from "../../buhta-sql/SqlCore";
+import {SqlDialect, SqlGuidValue, SqlNewGuidValue, SqlStringValue, SqlDateValue} from "../../buhta-sql/SqlCore";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
-import {SqlDb} from "../../buhta-sql/SqlDb";
+import {SqlDb, DataTable} from "../../buhta-sql/SqlDb";
 import {DropTableStmt} from "../../buhta-sql/DropTableStmt";
 import {DropTableIfExistsStmt} from "../../buhta-sql/DropTableIfExistsStmt";
 import {InsertStmt} from "../../buhta-sql/InsertStmt";
+import {SelectStmt} from "../../buhta-sql/SelectStmt";
 
 
 function create_table_proc(dialect: SqlDialect, done: () => void) {
@@ -104,13 +105,13 @@ const testShort = -32768;
 const testUShort = 65535;
 const testInt = -2147483648;
 const testUInt = 4294967295;
-const testLong = -9007199254740991; // не настоящий, это js Number.MIN_SAFE_INTEGER
-const testULong = 9007199254740991; // не настоящий, это js Number.MAX_SAFE_INTEGER
-const testFloat = 3.402823e38;
+const testLong = -9007199254740991; // не настоящий long, это js Number.MIN_SAFE_INTEGER
+const testULong = 9007199254740991; // не настоящий ulong, это js Number.MAX_SAFE_INTEGER
+const testFloat = 3.40282e38;
 const testDouble = Number.MAX_VALUE;
 const testDecimal = -9007199254740.99;
 const testDate = new Date(3000, 1, 1);
-const testDateTime = new Date(9998, 12, 31, 23, 59, 59, 99);
+const testDateTime = new Date(3000, 11, 31, 23, 59, 59, 999);
 
 function insert_table_proc(dialect: SqlDialect, done: () => void) {
 
@@ -150,6 +151,65 @@ function insert_table_proc(dialect: SqlDialect, done: () => void) {
 
 }
 
+function select_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new SelectStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", "str250", "text", "sbyte");
+    sql.column("byte");
+    sql.column("short");
+    sql.column("ushort");
+    sql.column("int");
+    sql.column("uint");
+
+    sql.column("long")
+        .column("ulong")
+        .column("float")
+        .column("double")
+        .column("decimal")
+        .column("date")
+        .column("datetime")
+        .where("guid", "=", new SqlGuidValue(testGuid, dialect));
+
+    db.executeSQL(sql)
+        .then((table: DataTable) => {
+            let row = table.rows[0];
+
+            //    assert.equal(row["guid"], testGuid);
+            assert.equal(row["str250"], testStr250);
+            assert.equal(row["text"], testText);
+            assert.equal(row["sbyte"], testSByte);
+            assert.equal(row["byte"], testByte);
+            assert.equal(row["short"], testShort);
+            assert.equal(row["int"], testInt);
+            assert.equal(row["uint"], testUInt);
+            assert.equal(row["long"], testLong);
+
+            assert.equal(row["ulong"], testULong);
+
+            //console.log({fromDb1: row["float"], test: testFloat, sub: row["float"] - testFloat});
+            assert.isBelow(Math.abs(row["float"] - testFloat), 1e+33);
+
+            assert.equal(row["decimal"], testDecimal);
+            assert.equal(row["date"].getTime(), testDate.getTime());
+
+            console.log({fromDb1: row["datetime"], test: testDateTime});
+            assert.equal(row["datetime"].getTime(), testDateTime.getTime());
+
+            //assert.equal(row["double"], testDouble);
+
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
 
 @suite("Sql CreateTableStmt")
 //@skip
@@ -170,6 +230,12 @@ export class CreateTableStmtTest {
     mssql_insert_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
         insert_table_proc(dialect, done);
+    }
+
+    @test
+    mssql_select_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        select_table_proc(dialect, done);
     }
 
     @test @skip
@@ -196,6 +262,12 @@ export class CreateTableStmtTest {
         insert_table_proc(dialect, done);
     }
 
+    @test
+    pg_select_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        select_table_proc(dialect, done);
+    }
+
     @test @skip
     pg_drop_table(done: () => void) {
         let dialect: SqlDialect = "pg";
@@ -218,6 +290,12 @@ export class CreateTableStmtTest {
     mysql_insert_table(done: () => void) {
         let dialect: SqlDialect = "mysql";
         insert_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_select_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        select_table_proc(dialect, done);
     }
 
     @test @skip

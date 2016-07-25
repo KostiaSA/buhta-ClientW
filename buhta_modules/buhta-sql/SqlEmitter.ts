@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import {Operand, WhereClause, SqlValue} from "./SqlCore";
+import {Operand, WhereClause, SqlValue, SqlDateValue, SqlNumberValue} from "./SqlCore";
 import {SqlDialect} from "./SqlCore";
 import {throwError} from "../buhta-core/Error";
 
@@ -52,6 +52,7 @@ export class SqlEmitter {
         }
         return this;
     }
+
     // emitQuotedName(nameOrValue: string | SqlValue): SqlEmitter {
     //     console.log(nameOrValue);
     //     if ((nameOrValue as SqlValue).toSql)
@@ -82,6 +83,12 @@ export class SqlEmitter {
             this.emit(operand.toString());
         else if (_.isString(operand))
             this.emitQuotedName(operand);
+        else if (operand instanceof SqlValue)
+            this.emit(operand.toSql());
+        else if (_.isDate(operand))
+            this.emit(new SqlDateValue(operand, this.dialect).toString());
+        else if (_.isNumber(operand))
+            this.emit(new SqlNumberValue(operand, this.dialect).toString());
         else if (operand.raw || operand.colName) {
             //todo emitSelColumn(operand, "");
             //this.emitSelColumn(operand, "");

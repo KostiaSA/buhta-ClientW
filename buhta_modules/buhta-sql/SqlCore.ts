@@ -8,7 +8,7 @@ export type SqlDialect = "mssql" | "pg" | "mysql";
 
 export type BooleanOper = "=" | ">" | "<" | ">=" | "<=" | "<>" | "!=" | "LIKE";
 
-export type Operand = string | number | SelectColumn;
+export type Operand = string | number | Date | SelectColumn | SqlValue;
 
 export type SqlDataType =
     "sbyte" | "byte" | "short" | "ushort" | "int" | "uint" | "long" | "ulong" |
@@ -212,9 +212,9 @@ export class SqlDateTimeValue extends SqlValue {
 
     toSql(): string {
         if (this.dialect === "mssql")
-            return "CONVERT(DATETIMEOFFSET,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS Z") + "')";
+            return "CONVERT(DATETIME2,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS") + "')";
         else if (this.dialect === "pg")
-            return "TIMESTAMP(3) WITH TIME ZONE '" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS ZZ") + "'";
+            return "TIMESTAMP(3)'" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "'";
         else if (this.dialect === "mysql")
         // timezone не воспринимает
             return "STR_TO_DATE('" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "','%Y-%c-%d %k:%i:%s.%f')";
@@ -224,6 +224,20 @@ export class SqlDateTimeValue extends SqlValue {
         }
 
     }
+    // toSql(): string {
+    //     if (this.dialect === "mssql")
+    //         return "CONVERT(DATETIMEOFFSET,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS Z") + "')";
+    //     else if (this.dialect === "pg")
+    //         return "TIMESTAMP(3) WITH TIME ZONE '" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS ZZ") + "'";
+    //     else if (this.dialect === "mysql")
+    //     // timezone не воспринимает
+    //         return "STR_TO_DATE('" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "','%Y-%c-%d %k:%i:%s.%f')";
+    //     else {
+    //         throwError("invalid sql dialect " + this.dialect);
+    //         throw "fake";
+    //     }
+    //
+    // }
 }
 
 

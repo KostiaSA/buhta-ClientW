@@ -1,6 +1,6 @@
 import {throwError} from "../buhta-core/Error";
 import * as _ from "lodash";
-import {SqlDialect, SqlValue, SqlDateValue, SqlNumberValue} from "./SqlCore";
+import {SqlDialect, SqlValue, SqlDateValue, SqlNumberValue, SqlDateTimeValue} from "./SqlCore";
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 
@@ -23,74 +23,74 @@ export interface SelectTable {
 
 export class SelectStmt {
 
-    columns: SelectColumn[] = [];
-    from: SelectTable[] = [];
-    where: WhereClause[] = [];
+    _selectColumns: SelectColumn[] = [];
+    _selectTable: SelectTable[] = [];
+    _where: WhereClause[] = [];
 
-    addColumn(...column: (string | SelectColumn | "*" | SqlValue)[]): SelectStmt {
+    column(...column: (string | SelectColumn | "*" | SqlValue)[]): SelectStmt {
         column.forEach((col) => {
             if (col instanceof SqlValue)
-                this.columns.push({value: col});
+                this._selectColumns.push({value: col});
             else if (col === "*")
-                this.columns.push({raw: "*"});
+                this._selectColumns.push({raw: "*"});
             else if (_.isString(col))
-                this.columns.push({colName: col});
+                this._selectColumns.push({colName: col});
             else if (col.raw)
-                this.columns.push({raw: col.raw});
+                this._selectColumns.push({raw: col.raw});
             else if (col.colName)
-                this.columns.push(col);
+                this._selectColumns.push(col);
             else
                 throwError("SelectStmt.column(): invalid column type");
         });
         return this;
     }
 
-    addColumnAs(column: string | SelectColumn | SqlValue, as: string): SelectStmt {
+    columnAs(column: string | SelectColumn | SqlValue, as: string): SelectStmt {
         if (column instanceof SqlValue)
-            this.columns.push({value: column, as: as});
+            this._selectColumns.push({value: column, as: as});
         else if (_.isString(column))
-            this.columns.push({colName: column, as: as});
+            this._selectColumns.push({colName: column, as: as});
         else {
             column.as = as;
-            this.columns.push(column);
+            this._selectColumns.push(column);
         }
         return this;
     }
 
-    addColumnRaw(rawSql: string): SelectStmt {
-        this.columns.push({raw: rawSql});
+    columnRaw(rawSql: string): SelectStmt {
+        this._selectColumns.push({raw: rawSql});
         return this;
     }
 
-    addFrom(table: string | SelectTable): SelectStmt {
+    table(table: string | SelectTable): SelectStmt {
         if (_.isString(table))
-            this.from.push({tableName: table});
+            this._selectTable.push({tableName: table});
         else
-            this.from.push(table);
+            this._selectTable.push(table);
         return this;
     }
 
-    addFromRaw(rawSql: string): SelectStmt {
-        this.from.push({raw: rawSql});
+    tableRaw(rawSql: string): SelectStmt {
+        this._selectTable.push({raw: rawSql});
         return this;
     }
 
-    addFromAs(table: string | SelectTable, as: string): SelectStmt {
+    tableAs(table: string | SelectTable, as: string): SelectStmt {
         if (_.isString(table))
-            this.from.push({tableName: table, as: as});
+            this._selectTable.push({tableName: table, as: as});
         else {
             table.as = as;
-            this.from.push(table);
+            this._selectTable.push(table);
         }
         return this;
     }
 
-    addWhere(operand1: Operand, oper: BooleanOper, operand2: Operand): SelectStmt {
-        this.where.push({operand1: operand1, oper: oper, operand2: operand2});
+    where(operand1: Operand, oper: BooleanOper, operand2: Operand): SelectStmt {
+        this._where.push({operand1: operand1, oper: oper, operand2: operand2});
         return this;
     }
 
-    emitSelectColumn(col: SelectColumn, e: SqlEmitter, level: string) {
+    private emitSelectColumn(col: SelectColumn, e: SqlEmitter, level: string) {
         e.emitLevel(level);
         if (col.tableName)
             e.emitQuotedName(col.tableName).emit(".");
@@ -104,7 +104,7 @@ export class SelectStmt {
             if (_.isNumber(col.raw))
                 e.emit(new SqlNumberValue(col.raw, e.dialect).toSql());
             else if (_.isDate(col.raw))
-                e.emit(new SqlDateValue(col.raw, e.dialect).toSql());
+                e.emit(new SqlDateTimeValue(col.raw, e.dialect).toSql());
             else if (_.isString(col.raw))
                 e.emit(col.raw);
             else
@@ -136,28 +136,28 @@ export class SelectStmt {
         e.noLevels = this instanceof InlineSelectStmt;
 
         e.emit("SELECT").emitLine();
-        this.columns.forEach((col: SelectColumn, index: number) => {
+        this._selectColumns.forEach((col: SelectColumn, index: number) => {
             this.emitSelectColumn(col, e, "  ");
-            if (index !== this.columns.length - 1)
+            if (index !== this._selectColumns.length - 1)
                 e.emit(",");
             e.emitLine();
         });
 
-        if (this.from.length > 0) {
+        if (this._selectTable.length > 0) {
             e.emit("FROM").emitLine();
-            this.from.forEach((table: SelectTable, index: number) => {
+            this._selectTable.forEach((table: SelectTable, index: number) => {
                 this.emitSelectTable(table, e, "  ");
-                if (index !== this.from.length - 1)
+                if (index !== this._selectTable.length - 1)
                     e.emit(",");
                 e.emitLine();
             });
         }
 
-        if (this.where.length > 0) {
+        if (this._where.length > 0) {
             e.emit("WHERE").emitLine();
-            this.where.forEach((where: WhereClause, index: number) => {
+            this._where.forEach((where: WhereClause, index: number) => {
                 e.emitWhere(where, "  ");
-                if (index !== this.where.length - 1)
+                if (index !== this._where.length - 1)
                     e.emit(" AND ");
                 e.emitLine();
             });

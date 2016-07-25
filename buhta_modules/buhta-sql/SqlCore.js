@@ -194,9 +194,9 @@ var SqlDateTimeValue = (function (_super) {
     }
     SqlDateTimeValue.prototype.toSql = function () {
         if (this.dialect === "mssql")
-            return "CONVERT(DATETIMEOFFSET,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS Z") + "')";
+            return "CONVERT(DATETIME2,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS") + "')";
         else if (this.dialect === "pg")
-            return "TIMESTAMP(3) WITH TIME ZONE '" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS ZZ") + "'";
+            return "TIMESTAMP(3)'" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "'";
         else if (this.dialect === "mysql")
             // timezone не воспринимает
             return "STR_TO_DATE('" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "','%Y-%c-%d %k:%i:%s.%f')";

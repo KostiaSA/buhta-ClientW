@@ -1,6 +1,6 @@
 import {throwError} from "../buhta-core/Error";
 import * as _ from "lodash";
-import {SqlDialect, SqlValue, SqlNumberValue, SqlDateValue} from "./SqlCore";
+import {SqlDialect, SqlValue, SqlNumberValue, SqlDateValue, SqlDateTimeValue} from "./SqlCore";
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 import {SelectTable, SelectColumn} from "./SelectStmt";
@@ -126,7 +126,7 @@ export class InsertStmt {
             if (_.isNumber(col.raw))
                 e.emit(new SqlNumberValue(col.raw, e.dialect).toSql());
             else if (_.isDate(col.raw))
-                e.emit(new SqlDateValue(col.raw, e.dialect).toSql());
+                e.emit(new SqlDateTimeValue(col.raw, e.dialect).toSql());
             else if (_.isString(col.raw))
                 e.emit(col.raw);
             else {

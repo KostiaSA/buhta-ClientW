@@ -6,12 +6,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var mocha_typescript_1 = require("mocha-typescript");
+var chai_1 = require("chai");
 var SqlCore_1 = require("../../buhta-sql/SqlCore");
 var CreateTableStmt_1 = require("../../buhta-sql/CreateTableStmt");
 var SqlDb_1 = require("../../buhta-sql/SqlDb");
 var DropTableStmt_1 = require("../../buhta-sql/DropTableStmt");
 var DropTableIfExistsStmt_1 = require("../../buhta-sql/DropTableIfExistsStmt");
 var InsertStmt_1 = require("../../buhta-sql/InsertStmt");
+var SelectStmt_1 = require("../../buhta-sql/SelectStmt");
 function create_table_proc(dialect, done) {
     var db = new SqlDb_1.SqlDb();
     db.dbName = "test-" + dialect;
@@ -91,13 +93,13 @@ var testShort = -32768;
 var testUShort = 65535;
 var testInt = -2147483648;
 var testUInt = 4294967295;
-var testLong = -9007199254740991; // не настоящий, это js Number.MIN_SAFE_INTEGER
-var testULong = 9007199254740991; // не настоящий, это js Number.MAX_SAFE_INTEGER
-var testFloat = 3.402823e38;
+var testLong = -9007199254740991; // не настоящий long, это js Number.MIN_SAFE_INTEGER
+var testULong = 9007199254740991; // не настоящий ulong, это js Number.MAX_SAFE_INTEGER
+var testFloat = 3.40282e38;
 var testDouble = Number.MAX_VALUE;
 var testDecimal = -9007199254740.99;
 var testDate = new Date(3000, 1, 1);
-var testDateTime = new Date(9998, 12, 31, 23, 59, 59, 99);
+var testDateTime = new Date(3000, 11, 31, 23, 59, 59, 999);
 function insert_table_proc(dialect, done) {
     var db = new SqlDb_1.SqlDb();
     db.dbName = "test-" + dialect;
@@ -131,6 +133,53 @@ function insert_table_proc(dialect, done) {
         throw error;
     });
 }
+function select_table_proc(dialect, done) {
+    var db = new SqlDb_1.SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+    var sql = new SelectStmt_1.SelectStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", "str250", "text", "sbyte");
+    sql.column("byte");
+    sql.column("short");
+    sql.column("ushort");
+    sql.column("int");
+    sql.column("uint");
+    sql.column("long")
+        .column("ulong")
+        .column("float")
+        .column("double")
+        .column("decimal")
+        .column("date")
+        .column("datetime")
+        .where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid, dialect));
+    db.executeSQL(sql)
+        .then(function (table) {
+        var row = table.rows[0];
+        //    assert.equal(row["guid"], testGuid);
+        chai_1.assert.equal(row["str250"], testStr250);
+        chai_1.assert.equal(row["text"], testText);
+        chai_1.assert.equal(row["sbyte"], testSByte);
+        chai_1.assert.equal(row["byte"], testByte);
+        chai_1.assert.equal(row["short"], testShort);
+        chai_1.assert.equal(row["int"], testInt);
+        chai_1.assert.equal(row["uint"], testUInt);
+        chai_1.assert.equal(row["long"], testLong);
+        chai_1.assert.equal(row["ulong"], testULong);
+        //console.log({fromDb1: row["float"], test: testFloat, sub: row["float"] - testFloat});
+        chai_1.assert.isBelow(Math.abs(row["float"] - testFloat), 1e+33);
+        chai_1.assert.equal(row["decimal"], testDecimal);
+        chai_1.assert.equal(row["date"].getTime(), testDate.getTime());
+        console.log({ fromDb1: row["datetime"], test: testDateTime });
+        chai_1.assert.equal(row["datetime"].getTime(), testDateTime.getTime());
+        //assert.equal(row["double"], testDouble);
+        done();
+    })
+        .catch(function (error) {
+        console.error(error);
+        throw error;
+    });
+}
 var CreateTableStmtTest = (function () {
     function CreateTableStmtTest() {
     }
@@ -145,6 +194,10 @@ var CreateTableStmtTest = (function () {
     CreateTableStmtTest.prototype.mssql_insert_table = function (done) {
         var dialect = "mssql";
         insert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_select_table = function (done) {
+        var dialect = "mssql";
+        select_table_proc(dialect, done);
     };
     CreateTableStmtTest.prototype.mssql_drop_table = function (done) {
         var dialect = "mssql";
@@ -162,6 +215,10 @@ var CreateTableStmtTest = (function () {
         var dialect = "pg";
         insert_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.pg_select_table = function (done) {
+        var dialect = "pg";
+        select_table_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.pg_drop_table = function (done) {
         var dialect = "pg";
         drop_table_proc(dialect, done);
@@ -178,6 +235,10 @@ var CreateTableStmtTest = (function () {
         var dialect = "mysql";
         insert_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.mysql_select_table = function (done) {
+        var dialect = "mysql";
+        select_table_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.mysql_drop_table = function (done) {
         var dialect = "mysql";
         drop_table_proc(dialect, done);
@@ -193,6 +254,9 @@ var CreateTableStmtTest = (function () {
         mocha_typescript_1.timeout(10000)
     ], CreateTableStmtTest.prototype, "mssql_insert_table", null);
     __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_select_table", null);
+    __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "mssql_drop_table", null);
@@ -206,6 +270,9 @@ var CreateTableStmtTest = (function () {
         mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "pg_insert_table", null);
     __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_select_table", null);
+    __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "pg_drop_table", null);
@@ -218,6 +285,9 @@ var CreateTableStmtTest = (function () {
     __decorate([
         mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mysql_insert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_select_table", null);
     __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip
