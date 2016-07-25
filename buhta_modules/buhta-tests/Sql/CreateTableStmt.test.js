@@ -96,7 +96,7 @@ var testUInt = 4294967295;
 var testLong = -9007199254740991; // не настоящий long, это js Number.MIN_SAFE_INTEGER
 var testULong = 9007199254740991; // не настоящий ulong, это js Number.MAX_SAFE_INTEGER
 var testFloat = 3.40282e38;
-var testDouble = Number.MAX_VALUE;
+var testDouble = 1.797693134862315e+308; // Number.MAX_VALUE postgres не тянет, пришлось убрать одну цифру;
 var testDecimal = -9007199254740.99;
 var testDate = new Date(3000, 1, 1);
 var testDateTime = new Date(3000, 11, 31, 23, 59, 59, 999);
@@ -166,13 +166,12 @@ function select_table_proc(dialect, done) {
         chai_1.assert.equal(row["uint"], testUInt);
         chai_1.assert.equal(row["long"], testLong);
         chai_1.assert.equal(row["ulong"], testULong);
-        //console.log({fromDb1: row["float"], test: testFloat, sub: row["float"] - testFloat});
         chai_1.assert.isBelow(Math.abs(row["float"] - testFloat), 1e+33);
         chai_1.assert.equal(row["decimal"], testDecimal);
         chai_1.assert.equal(row["date"].getTime(), testDate.getTime());
-        console.log({ fromDb1: row["datetime"], test: testDateTime });
         chai_1.assert.equal(row["datetime"].getTime(), testDateTime.getTime());
-        //assert.equal(row["double"], testDouble);
+        console.log({ fromDb1: row["double"], test: testDouble, sub: row["double"] - testDouble });
+        chai_1.assert.isBelow(Math.abs(row["double"] - testDouble), 5e+293);
         done();
     })
         .catch(function (error) {
