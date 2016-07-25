@@ -125,9 +125,9 @@ function insert_table_proc(dialect: SqlDialect, done: () => void) {
 
     let sql = new InsertStmt();
     sql.table("BuhtaTestTable");
-    sql.column("guid", new SqlGuidValue(testGuid, dialect));
-    sql.column("str250", new SqlStringValue(testStr250, dialect));
-    sql.column("text", new SqlStringValue(testText, dialect));
+    sql.column("guid", new SqlGuidValue(testGuid));
+    sql.column("str250", new SqlStringValue(testStr250));
+    sql.column("text", new SqlStringValue(testText));
     sql.column("sbyte", testSByte);
     sql.column("byte", testByte);
     sql.column("short", testShort);
@@ -177,7 +177,7 @@ function select_table_proc(dialect: SqlDialect, done: () => void) {
         .column("decimal")
         .column("date")
         .column("datetime")
-        .where("guid", "=", new SqlGuidValue(testGuid, dialect));
+        .where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
         .then((table: DataTable) => {
@@ -221,10 +221,10 @@ function update_table_proc(dialect: SqlDialect, done: () => void) {
 
     let sql = new UpdateStmt();
     sql.table("BuhtaTestTable");
-    sql.column("str250", new SqlStringValue(updateTestStr250, dialect));
+    sql.column("str250", new SqlStringValue(updateTestStr250));
     sql.column("int", updateTestInt);
     sql.column("short", "byte");
-    sql.where("guid", "=", new SqlGuidValue(testGuid, dialect));
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
         .then((fake) => {
@@ -245,7 +245,7 @@ function check_update_table_proc(dialect: SqlDialect, done: () => void) {
     let sql = new SelectStmt();
     sql.table("BuhtaTestTable");
     sql.column("guid", "str250", "int", "short");
-    sql.where("guid", "=", new SqlGuidValue(testGuid, dialect));
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
         .then((table: DataTable) => {

@@ -121,12 +121,12 @@ export class UpdateStmt {
         if (col.colName)
             e.emitQuotedName(col.colName);
         if (col.value)
-            e.emit(col.value.toSql());
+            e.emit(col.value.toSql(e.dialect));
         if (col.raw) {
             if (_.isNumber(col.raw))
-                e.emit(new SqlNumberValue(col.raw, e.dialect).toSql());
+                e.emit(new SqlNumberValue(col.raw).toSql(e.dialect));
             else if (_.isDate(col.raw))
-                e.emit(new SqlDateTimeValue(col.raw, e.dialect).toSql());
+                e.emit(new SqlDateTimeValue(col.raw).toSql(e.dialect));
             else if (_.isString(col.raw))
                 e.emit(col.raw);
             else {

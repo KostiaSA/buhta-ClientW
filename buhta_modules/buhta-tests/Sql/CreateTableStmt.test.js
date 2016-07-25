@@ -109,9 +109,9 @@ function insert_table_proc(dialect, done) {
     db.dialect = dialect;
     var sql = new InsertStmt_1.InsertStmt();
     sql.table("BuhtaTestTable");
-    sql.column("guid", new SqlCore_1.SqlGuidValue(testGuid, dialect));
-    sql.column("str250", new SqlCore_1.SqlStringValue(testStr250, dialect));
-    sql.column("text", new SqlCore_1.SqlStringValue(testText, dialect));
+    sql.column("guid", new SqlCore_1.SqlGuidValue(testGuid));
+    sql.column("str250", new SqlCore_1.SqlStringValue(testStr250));
+    sql.column("text", new SqlCore_1.SqlStringValue(testText));
     sql.column("sbyte", testSByte);
     sql.column("byte", testByte);
     sql.column("short", testShort);
@@ -155,7 +155,7 @@ function select_table_proc(dialect, done) {
         .column("decimal")
         .column("date")
         .column("datetime")
-        .where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid, dialect));
+        .where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (table) {
         var row = table.rows[0];
@@ -188,10 +188,10 @@ function update_table_proc(dialect, done) {
     db.dialect = dialect;
     var sql = new UpdateStmt_1.UpdateStmt();
     sql.table("BuhtaTestTable");
-    sql.column("str250", new SqlCore_1.SqlStringValue(updateTestStr250, dialect));
+    sql.column("str250", new SqlCore_1.SqlStringValue(updateTestStr250));
     sql.column("int", updateTestInt);
     sql.column("short", "byte");
-    sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid, dialect));
+    sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (fake) {
         done();
@@ -208,7 +208,7 @@ function check_update_table_proc(dialect, done) {
     var sql = new SelectStmt_1.SelectStmt();
     sql.table("BuhtaTestTable");
     sql.column("guid", "str250", "int", "short");
-    sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid, dialect));
+    sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (table) {
         var row = table.rows[0];

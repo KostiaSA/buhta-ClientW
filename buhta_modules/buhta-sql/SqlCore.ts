@@ -30,7 +30,7 @@ export interface WhereClause {
 }
 
 export class SqlValue {
-    toSql(): string {
+    toSql(dialect: SqlDialect): string {
         console.log("toSql1");
         throwAbstractError();
         throw "fake";
@@ -96,52 +96,52 @@ function mysql_escape_string(str: string) {
 }
 
 export class SqlStringValue extends SqlValue {
-    constructor(public value: string, public dialect: SqlDialect) {
+    constructor(public value: string) {
         super();
     }
 
-    toSql(): string {
-        if (this.dialect === "mssql")
+    toSql(dialect: SqlDialect): string {
+        if (dialect === "mssql")
         //return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
             return "N'" + mssql_escape_string(this.value) + "'";
-        else if (this.dialect === "pg")
+        else if (dialect === "pg")
         // симол с кодом 0 запрещен в postgresql, поэтому стираем его
 //            return "'" + this.value.replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
             return "'" + pg_escape_string(this.value) + "'";
-        else if (this.dialect === "mysql")
+        else if (dialect === "mysql")
             return "'" + mysql_escape_string(this.value) + "'";
         else {
-            throwError("invalid sql dialect " + this.dialect);
+            throwError("invalid sql dialect " + dialect);
             throw "fake";
         }
     }
 }
 
 export class SqlNumberValue extends SqlValue {
-    constructor(public value: number, public dialect: SqlDialect) {
+    constructor(public value: number) {
         super();
     }
 
-    toSql(): string {
+    toSql(dialect: SqlDialect): string {
         return this.value.toString();
     }
 }
 
 
 export class SqlDateValue extends SqlValue {
-    constructor(public value: Date, public dialect: SqlDialect) {
+    constructor(public value: Date) {
         super();
     }
 
-    toSql(): string {
-        if (this.dialect === "mssql")
+    toSql(dialect: SqlDialect): string {
+        if (dialect === "mssql")
             return "CONVERT(DATE,'" + moment(this.value).format("YYYYMMDD") + "')";
-        else if (this.dialect === "pg")
+        else if (dialect === "pg")
             return "DATE '" + moment(this.value).format("YYYY-MM-DD") + "'";
-        else if (this.dialect === "mysql")
+        else if (dialect === "mysql")
             return "STR_TO_DATE('" + moment(this.value).format("YYYY-MM-DD") + "','%Y-%c-%d')";
         else {
-            throwError("invalid sql dialect " + this.dialect);
+            throwError("invalid sql dialect " + dialect);
             throw "fake";
         }
 
@@ -160,20 +160,20 @@ function mysql_guid_to_str(guid: uuid.UUID): string {
 }
 
 export class SqlGuidValue extends SqlValue {
-    constructor(public value: string, public dialect: SqlDialect) {
+    constructor(public value: string) {
         super();
     }
 
-    toSql(): string {
+    toSql(dialect: SqlDialect): string {
 
-        if (this.dialect === "mssql")
+        if (dialect === "mssql")
             return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
-        else if (this.dialect === "pg")
+        else if (dialect === "pg")
             return "UUID '" + this.value + "'";
-        else if (this.dialect === "mysql")
+        else if (dialect === "mysql")
             return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
         else {
-            throwError("invalid sql dialect " + this.dialect);
+            throwError("invalid sql dialect " + dialect);
             throw "fake";
         }
 
@@ -181,24 +181,24 @@ export class SqlGuidValue extends SqlValue {
 }
 
 export class SqlNewGuidValue extends SqlValue {
-    constructor(public dialect: SqlDialect) {
+    constructor() {
         super();
     }
 
     private value: string;
 
-    toSql(): string {
+    toSql(dialect: SqlDialect): string {
         if (!this.value)
             this.value = getNewGuid();
 
-        if (this.dialect === "mssql")
+        if (dialect === "mssql")
             return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
-        else if (this.dialect === "pg")
+        else if (dialect === "pg")
             return "UUID '" + this.value + "'";
-        else if (this.dialect === "mysql")
+        else if (dialect === "mysql")
             return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
         else {
-            throwError("invalid sql dialect " + this.dialect);
+            throwError("invalid sql dialect " + dialect);
             throw "fake";
         }
 
@@ -206,24 +206,25 @@ export class SqlNewGuidValue extends SqlValue {
 }
 
 export class SqlDateTimeValue extends SqlValue {
-    constructor(public value: Date, public dialect: SqlDialect) {
+    constructor(public value: Date) {
         super();
     }
 
-    toSql(): string {
-        if (this.dialect === "mssql")
+    toSql(dialect: SqlDialect): string {
+        if (dialect === "mssql")
             return "CONVERT(DATETIME2,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS") + "')";
-        else if (this.dialect === "pg")
+        else if (dialect === "pg")
             return "TIMESTAMP(3)'" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "'";
-        else if (this.dialect === "mysql")
+        else if (dialect === "mysql")
         // timezone не воспринимает
             return "STR_TO_DATE('" + moment(this.value).format("YYYY-MM-DD HH:mm:ss.SSS") + "','%Y-%c-%d %k:%i:%s.%f')";
         else {
-            throwError("invalid sql dialect " + this.dialect);
+            throwError("invalid sql dialect " + dialect);
             throw "fake";
         }
 
     }
+
     // toSql(): string {
     //     if (this.dialect === "mssql")
     //         return "CONVERT(DATETIMEOFFSET,'" + moment(this.value).format("YYYYMMDD HH:mm:ss.SSS Z") + "')";

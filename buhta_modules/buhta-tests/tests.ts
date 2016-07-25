@@ -73,14 +73,14 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
     let testGuid = uuid.v1().toString();
 
     let select = new SelectStmt();
-    select.columnAs(new SqlStringValue(testStr, dialect), "testStr");
+    select.columnAs(new SqlStringValue(testStr), "testStr");
     //  select.addColumnAs(new SqlStringValue(testLongStr, dialect), "testLongStr");
-    select.columnAs(new SqlDateValue(testDate, dialect), "testDate");
-    select.columnAs(new SqlDateTimeValue(testDateTime, dialect), "testDateTime");
-    select.columnAs(new SqlNumberValue(testNumber, dialect), "testNumber");
-    select.columnAs(new SqlNumberValue(testNumber2, dialect), "testNumber2");
-    select.columnAs(new SqlNumberValue(testNumber3, dialect), "testNumber3");
-    select.columnAs(new SqlGuidValue(testGuid, dialect), "testGuid");
+    select.columnAs(new SqlDateValue(testDate), "testDate");
+    select.columnAs(new SqlDateTimeValue(testDateTime), "testDateTime");
+    select.columnAs(new SqlNumberValue(testNumber), "testNumber");
+    select.columnAs(new SqlNumberValue(testNumber2), "testNumber2");
+    select.columnAs(new SqlNumberValue(testNumber3), "testNumber3");
+    select.columnAs(new SqlGuidValue(testGuid), "testGuid");
 
     db.selectToObject<any>(select, {}, "assign").done((obj) => {
         //console.log(testDate);
