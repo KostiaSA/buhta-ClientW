@@ -289,7 +289,7 @@ var CreateTableStmtTest = (function () {
         var dialect = "mssql";
         delete_table_proc(dialect, done);
     };
-    CreateTableStmtTest.prototype.mssql_delete_update_table = function (done) {
+    CreateTableStmtTest.prototype.mssql_check_delete_table = function (done) {
         var dialect = "mssql";
         check_delete_table_proc(dialect, done);
     };
@@ -325,7 +325,7 @@ var CreateTableStmtTest = (function () {
         var dialect = "pg";
         delete_table_proc(dialect, done);
     };
-    CreateTableStmtTest.prototype.pg_delete_update_table = function (done) {
+    CreateTableStmtTest.prototype.pg_check_delete_table = function (done) {
         var dialect = "pg";
         check_delete_table_proc(dialect, done);
     };
@@ -361,7 +361,7 @@ var CreateTableStmtTest = (function () {
         var dialect = "mysql";
         delete_table_proc(dialect, done);
     };
-    CreateTableStmtTest.prototype.mysql_delete_update_table = function (done) {
+    CreateTableStmtTest.prototype.mysql_check_delete_table = function (done) {
         var dialect = "mysql";
         check_delete_table_proc(dialect, done);
     };
@@ -393,7 +393,7 @@ var CreateTableStmtTest = (function () {
     ], CreateTableStmtTest.prototype, "mssql_delete_table", null);
     __decorate([
         mocha_typescript_1.test
-    ], CreateTableStmtTest.prototype, "mssql_delete_update_table", null);
+    ], CreateTableStmtTest.prototype, "mssql_check_delete_table", null);
     __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip
@@ -421,7 +421,7 @@ var CreateTableStmtTest = (function () {
     ], CreateTableStmtTest.prototype, "pg_delete_table", null);
     __decorate([
         mocha_typescript_1.test
-    ], CreateTableStmtTest.prototype, "pg_delete_update_table", null);
+    ], CreateTableStmtTest.prototype, "pg_check_delete_table", null);
     __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip
@@ -449,7 +449,7 @@ var CreateTableStmtTest = (function () {
     ], CreateTableStmtTest.prototype, "mysql_delete_table", null);
     __decorate([
         mocha_typescript_1.test
-    ], CreateTableStmtTest.prototype, "mysql_delete_update_table", null);
+    ], CreateTableStmtTest.prototype, "mysql_check_delete_table", null);
     __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip

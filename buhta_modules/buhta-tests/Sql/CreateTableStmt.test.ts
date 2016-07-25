@@ -356,7 +356,7 @@ export class CreateTableStmtTest {
     }
 
     @test
-    mssql_delete_update_table(done: () => void) {
+    mssql_check_delete_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
         check_delete_table_proc(dialect, done);
     }
@@ -410,7 +410,7 @@ export class CreateTableStmtTest {
     }
 
     @test
-    pg_delete_update_table(done: () => void) {
+    pg_check_delete_table(done: () => void) {
         let dialect: SqlDialect = "pg";
         check_delete_table_proc(dialect, done);
     }
@@ -464,7 +464,7 @@ export class CreateTableStmtTest {
     }
 
     @test
-    mysql_delete_update_table(done: () => void) {
+    mysql_check_delete_table(done: () => void) {
         let dialect: SqlDialect = "mysql";
         check_delete_table_proc(dialect, done);
     }

@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {SqlDialect, SqlValue, SqlNumberValue, SqlDateValue, SqlDateTimeValue} from "./SqlCore";
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
-import {SelectTable, SelectColumn} from "./SelectStmt";
+//import {SelectTable, SelectColumn} from "./SelectStmt";
 
 
 export interface DeleteTable {
@@ -14,40 +14,25 @@ export interface DeleteTable {
 
 export class DeleteStmt {
 
-    private _updateTable: DeleteTable[] = [];
-
-    private _selectTable: SelectTable[] = [];
+    private _deleteTable: DeleteTable[] = [];
     private _where: WhereClause[] = [];
 
     table(table: string | DeleteTable): DeleteStmt {
-        if (this._updateTable.length > 0)
+        if (this._deleteTable.length > 0)
             throwError("DeleteStmt.table(): one delete table is already defined");
 
         if (_.isString(table))
-            this._updateTable.push({tableName: table});
+            this._deleteTable.push({tableName: table});
         else
-            this._updateTable.push(table);
+            this._deleteTable.push(table);
         return this;
     }
 
     tableRaw(rawSql: string): DeleteStmt {
-        if (this._updateTable.length > 0)
+        if (this._deleteTable.length > 0)
             throwError("DeleteStmt.table(): one delete table is already defined");
 
-        this._updateTable.push({raw: rawSql});
-        return this;
-    }
-
-    fromTable(table: string | SelectTable): DeleteStmt {
-        if (_.isString(table))
-            this._selectTable.push({tableName: table});
-        else
-            this._selectTable.push(table);
-        return this;
-    }
-
-    fromTableRaw(rawSql: string): DeleteStmt {
-        this._selectTable.push({raw: rawSql});
+        this._deleteTable.push({raw: rawSql});
         return this;
     }
 
@@ -70,43 +55,18 @@ export class DeleteStmt {
     }
 
 
-    private emitSelectTable(table: SelectTable, e: SqlEmitter, level: string): DeleteStmt {
-        e.emitLevel(level);
-        if (table.dbName)
-            e.emitQuotedName(table.dbName).emit("..");
-        if (!table.tableName && !table.raw)
-            throwError("DeleteStmt: table.tableName or table.raw not defined");
-        if (table.tableName)
-            e.emitQuotedName(table.tableName);
-        if (table.raw)
-            e.emit(table.raw);
-        if (table.as)
-            e.emit(" ").emitQuotedName(table.as);
-        return this;
-    }
-
     toSql(dialect: SqlDialect): string {
 
         let e = new SqlEmitter();
         e.dialect = dialect;
         e.noLevels = false;
 
-        if (this._updateTable.length === 0)
-            throwError("DeleteStmt: update table not defined");
+        if (this._deleteTable.length === 0)
+            throwError("DeleteStmt: delete table not defined");
 
         e.emit("DELETE FROM ");
-        this.emitDeleteTable(this._updateTable[0], e, "");
+        this.emitDeleteTable(this._deleteTable[0], e, "");
         e.emitLine();
-
-        if (this._selectTable.length > 0) {
-            e.emit("FROM").emitLine();
-            this._selectTable.forEach((table: SelectTable, index: number) => {
-                this.emitSelectTable(table, e, "  ");
-                if (index !== this._selectTable.length - 1)
-                    e.emit(",");
-                e.emitLine();
-            });
-        }
 
         if (this._where.length > 0) {
             e.emit("WHERE").emitLine();
@@ -119,7 +79,7 @@ export class DeleteStmt {
 
         }
         else
-            throwError("DeleteStmt: where clause is not defined");
+            throwError("DeleteStmt: 'where' clause is not defined");
 
         return e.toSql();
     }
