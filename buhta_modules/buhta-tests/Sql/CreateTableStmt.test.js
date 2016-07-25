@@ -14,6 +14,7 @@ var DropTableStmt_1 = require("../../buhta-sql/DropTableStmt");
 var DropTableIfExistsStmt_1 = require("../../buhta-sql/DropTableIfExistsStmt");
 var InsertStmt_1 = require("../../buhta-sql/InsertStmt");
 var SelectStmt_1 = require("../../buhta-sql/SelectStmt");
+var UpdateStmt_1 = require("../../buhta-sql/UpdateStmt");
 function create_table_proc(dialect, done) {
     var db = new SqlDb_1.SqlDb();
     db.dbName = "test-" + dialect;
@@ -86,7 +87,7 @@ function getTestString() {
 //const testGuid = "1473a9f0-524e-11e6-af1b-d58df55606f6";
 var testGuid = "ffffffff-ffff-ffff-ffff-ffffffffffff";
 var testStr250 = "var common[] = require('./common');";
-var testText = "getTestString() + getTestString() + getTestString() + getTestString()";
+var testText = getTestString() + getTestString() + getTestString() + getTestString();
 var testSByte = -128;
 var testByte = 255;
 var testShort = -32768;
@@ -100,6 +101,8 @@ var testDouble = 1.797693134862315e+308; // Number.MAX_VALUE postgres не тя�
 var testDecimal = -9007199254740.99;
 var testDate = new Date(3000, 1, 1);
 var testDateTime = new Date(3000, 11, 31, 23, 59, 59, 999);
+var updateTestStr250 = "The above \ncopyright * notice and this ? permis'sion' [notice] shall 熱賣產品在您的國家 be included in";
+var updateTestInt = 214483648;
 function insert_table_proc(dialect, done) {
     var db = new SqlDb_1.SqlDb();
     db.dbName = "test-" + dialect;
@@ -170,8 +173,48 @@ function select_table_proc(dialect, done) {
         chai_1.assert.equal(row["decimal"], testDecimal);
         chai_1.assert.equal(row["date"].getTime(), testDate.getTime());
         chai_1.assert.equal(row["datetime"].getTime(), testDateTime.getTime());
-        console.log({ fromDb1: row["double"], test: testDouble, sub: row["double"] - testDouble });
+        //console.log({fromDb1: row["double"], test: testDouble, sub: row["double"] - testDouble});
         chai_1.assert.isBelow(Math.abs(row["double"] - testDouble), 5e+293);
+        done();
+    })
+        .catch(function (error) {
+        console.error(error);
+        throw error;
+    });
+}
+function update_table_proc(dialect, done) {
+    var db = new SqlDb_1.SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+    var sql = new UpdateStmt_1.UpdateStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("str250", new SqlCore_1.SqlStringValue(updateTestStr250, dialect));
+    sql.column("int", updateTestInt);
+    sql.column("short", "byte");
+    sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid, dialect));
+    db.executeSQL(sql)
+        .then(function (fake) {
+        done();
+    })
+        .catch(function (error) {
+        console.error(error);
+        throw error;
+    });
+}
+function check_update_table_proc(dialect, done) {
+    var db = new SqlDb_1.SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+    var sql = new SelectStmt_1.SelectStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", "str250", "int", "short");
+    sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid, dialect));
+    db.executeSQL(sql)
+        .then(function (table) {
+        var row = table.rows[0];
+        chai_1.assert.equal(row["str250"], updateTestStr250);
+        chai_1.assert.equal(row["short"], testByte);
+        chai_1.assert.equal(row["int"], updateTestInt);
         done();
     })
         .catch(function (error) {
@@ -198,6 +241,14 @@ var CreateTableStmtTest = (function () {
         var dialect = "mssql";
         select_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.mssql_update_table = function (done) {
+        var dialect = "mssql";
+        update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_check_update_table = function (done) {
+        var dialect = "mssql";
+        check_update_table_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.mssql_drop_table = function (done) {
         var dialect = "mssql";
         drop_table_proc(dialect, done);
@@ -217,6 +268,14 @@ var CreateTableStmtTest = (function () {
     CreateTableStmtTest.prototype.pg_select_table = function (done) {
         var dialect = "pg";
         select_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_update_table = function (done) {
+        var dialect = "pg";
+        update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_check_update_table = function (done) {
+        var dialect = "pg";
+        check_update_table_proc(dialect, done);
     };
     CreateTableStmtTest.prototype.pg_drop_table = function (done) {
         var dialect = "pg";
@@ -238,6 +297,14 @@ var CreateTableStmtTest = (function () {
         var dialect = "mysql";
         select_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.mysql_update_table = function (done) {
+        var dialect = "mysql";
+        update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_check_update_table = function (done) {
+        var dialect = "mysql";
+        check_update_table_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.mysql_drop_table = function (done) {
         var dialect = "mysql";
         drop_table_proc(dialect, done);
@@ -256,6 +323,12 @@ var CreateTableStmtTest = (function () {
         mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mssql_select_table", null);
     __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_check_update_table", null);
+    __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "mssql_drop_table", null);
@@ -272,6 +345,12 @@ var CreateTableStmtTest = (function () {
         mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "pg_select_table", null);
     __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_check_update_table", null);
+    __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "pg_drop_table", null);
@@ -287,6 +366,12 @@ var CreateTableStmtTest = (function () {
     __decorate([
         mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mysql_select_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_check_update_table", null);
     __decorate([
         mocha_typescript_1.test,
         mocha_typescript_1.skip

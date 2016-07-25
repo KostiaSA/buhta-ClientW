@@ -7,6 +7,7 @@ import {DropTableStmt} from "../../buhta-sql/DropTableStmt";
 import {DropTableIfExistsStmt} from "../../buhta-sql/DropTableIfExistsStmt";
 import {InsertStmt} from "../../buhta-sql/InsertStmt";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
+import {UpdateStmt} from "../../buhta-sql/UpdateStmt";
 
 
 function create_table_proc(dialect: SqlDialect, done: () => void) {
@@ -98,7 +99,7 @@ function getTestString() {
 //const testGuid = "1473a9f0-524e-11e6-af1b-d58df55606f6";
 const testGuid = "ffffffff-ffff-ffff-ffff-ffffffffffff";
 const testStr250 = "var common[] = require('./common');";
-const testText = "getTestString() + getTestString() + getTestString() + getTestString()";
+const testText = getTestString() + getTestString() + getTestString() + getTestString();
 const testSByte = -128;
 const testByte = 255;
 const testShort = -32768;
@@ -112,6 +113,9 @@ const testDouble = 1.797693134862315e+308; // Number.MAX_VALUE postgres не т�
 const testDecimal = -9007199254740.99;
 const testDate = new Date(3000, 1, 1);
 const testDateTime = new Date(3000, 11, 31, 23, 59, 59, 999);
+
+const updateTestStr250 = "The above \ncopyright * notice and this ? permis'sion' [notice] shall 熱賣產品在您的國家 be included in";
+const updateTestInt = 214483648;
 
 function insert_table_proc(dialect: SqlDialect, done: () => void) {
 
@@ -197,8 +201,59 @@ function select_table_proc(dialect: SqlDialect, done: () => void) {
             assert.equal(row["date"].getTime(), testDate.getTime());
             assert.equal(row["datetime"].getTime(), testDateTime.getTime());
 
-            console.log({fromDb1: row["double"], test: testDouble, sub: row["double"] - testDouble});
+            //console.log({fromDb1: row["double"], test: testDouble, sub: row["double"] - testDouble});
             assert.isBelow(Math.abs(row["double"] - testDouble), 5e+293);
+
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+
+function update_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new UpdateStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("str250", new SqlStringValue(updateTestStr250, dialect));
+    sql.column("int", updateTestInt);
+    sql.column("short", "byte");
+    sql.where("guid", "=", new SqlGuidValue(testGuid, dialect));
+
+    db.executeSQL(sql)
+        .then((fake) => {
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+function check_update_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new SelectStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", "str250", "int", "short");
+    sql.where("guid", "=", new SqlGuidValue(testGuid, dialect));
+
+    db.executeSQL(sql)
+        .then((table: DataTable) => {
+            let row = table.rows[0];
+
+            assert.equal(row["str250"], updateTestStr250);
+            assert.equal(row["short"], testByte);
+            assert.equal(row["int"], updateTestInt);
 
             done();
         })
@@ -236,6 +291,18 @@ export class CreateTableStmtTest {
         select_table_proc(dialect, done);
     }
 
+    @test
+    mssql_update_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        update_table_proc(dialect, done);
+    }
+
+    @test
+    mssql_check_update_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        check_update_table_proc(dialect, done);
+    }
+
     @test @skip
     mssql_drop_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
@@ -266,6 +333,18 @@ export class CreateTableStmtTest {
         select_table_proc(dialect, done);
     }
 
+    @test
+    pg_update_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        update_table_proc(dialect, done);
+    }
+
+    @test
+    pg_check_update_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        check_update_table_proc(dialect, done);
+    }
+
     @test @skip
     pg_drop_table(done: () => void) {
         let dialect: SqlDialect = "pg";
@@ -294,6 +373,18 @@ export class CreateTableStmtTest {
     mysql_select_table(done: () => void) {
         let dialect: SqlDialect = "mysql";
         select_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_update_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        update_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_check_update_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        check_update_table_proc(dialect, done);
     }
 
     @test @skip

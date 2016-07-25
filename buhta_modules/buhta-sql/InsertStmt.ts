@@ -172,33 +172,46 @@ export class InsertStmt {
         });
         e.emit(")").emitLine();
 
-        e.emit("SELECT").emitLine();
-        this._selectColumns.forEach((col: SelectColumn, index: number) => {
-            this.emitSelectColumn(col, e, "  ");
-            if (index !== this._selectColumns.length - 1)
-                e.emit(",");
-            e.emitLine();
-        });
-
         if (this._selectTable.length > 0) {
-            e.emit("FROM").emitLine();
-            this._selectTable.forEach((table: SelectTable, index: number) => {
-                this.emitSelectTable(table, e, "  ");
-                if (index !== this._selectTable.length - 1)
+
+            e.emit("SELECT").emitLine();
+            this._selectColumns.forEach((col: SelectColumn, index: number) => {
+                this.emitSelectColumn(col, e, "  ");
+                if (index !== this._selectColumns.length - 1)
                     e.emit(",");
                 e.emitLine();
             });
-        }
 
-        if (this._where.length > 0) {
-            e.emit("WHERE").emitLine();
-            this._where.forEach((where: WhereClause, index: number) => {
-                e.emitWhere(where, "  ");
-                if (index !== this._where.length - 1)
-                    e.emit(" AND ");
+            if (this._selectTable.length > 0) {
+                e.emit("FROM").emitLine();
+                this._selectTable.forEach((table: SelectTable, index: number) => {
+                    this.emitSelectTable(table, e, "  ");
+                    if (index !== this._selectTable.length - 1)
+                        e.emit(",");
+                    e.emitLine();
+                });
+            }
+
+            if (this._where.length > 0) {
+                e.emit("WHERE").emitLine();
+                this._where.forEach((where: WhereClause, index: number) => {
+                    e.emitWhere(where, "  ");
+                    if (index !== this._where.length - 1)
+                        e.emit(" AND ");
+                    e.emitLine();
+                });
+
+            }
+        }
+        else {
+            e.emit("VALUES (").emitLine();
+            this._selectColumns.forEach((col: SelectColumn, index: number) => {
+                this.emitSelectColumn(col, e, "  ");
+                if (index !== this._selectColumns.length - 1)
+                    e.emit(",");
                 e.emitLine();
             });
-
+            e.emit(")");
         }
 
         return e.toSql();
