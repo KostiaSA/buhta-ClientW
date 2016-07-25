@@ -37,6 +37,11 @@ export class SqlValue {
     }
 }
 
+export function getNewGuid(): string {
+    return uuid.v1().toString();
+}
+
+
 function mssql_escape_string(str: string) {
     return str.replace(/./g, function (char: string): string {
         switch (char) {
@@ -143,6 +148,7 @@ export class SqlDateValue extends SqlValue {
     }
 }
 
+
 function toHexString(bytes: any) {
     return bytes.map(function (byte: any) {
         return ("00" + (byte & 0xFF).toString(16)).slice(-2);
@@ -159,6 +165,31 @@ export class SqlGuidValue extends SqlValue {
     }
 
     toSql(): string {
+
+        if (this.dialect === "mssql")
+            return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
+        else if (this.dialect === "pg")
+            return "UUID '" + this.value + "'";
+        else if (this.dialect === "mysql")
+            return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+        else {
+            throwError("invalid sql dialect " + this.dialect);
+            throw "fake";
+        }
+
+    }
+}
+
+export class SqlNewGuidValue extends SqlValue {
+    constructor(public dialect: SqlDialect) {
+        super();
+    }
+
+    private value: string;
+
+    toSql(): string {
+        if (!this.value)
+            this.value = getNewGuid();
 
         if (this.dialect === "mssql")
             return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";

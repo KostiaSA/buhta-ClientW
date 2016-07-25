@@ -51,7 +51,7 @@ export class SqlEmitter {
             }
         }
         return this;
-    }    
+    }
     // emitQuotedName(nameOrValue: string | SqlValue): SqlEmitter {
     //     console.log(nameOrValue);
     //     if ((nameOrValue as SqlValue).toSql)
@@ -82,7 +82,7 @@ export class SqlEmitter {
             this.emit(operand.toString());
         else if (_.isString(operand))
             this.emitQuotedName(operand);
-        else if (operand.raw || operand.column) {
+        else if (operand.raw || operand.colName) {
             //todo emitSelColumn(operand, "");
             //this.emitSelColumn(operand, "");
         }

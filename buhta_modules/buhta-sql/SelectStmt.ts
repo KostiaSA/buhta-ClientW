@@ -1,21 +1,21 @@
 import {throwError} from "../buhta-core/Error";
 import * as _ from "lodash";
-import {SqlDialect, SqlValue} from "./SqlCore";
+import {SqlDialect, SqlValue, SqlDateValue, SqlNumberValue} from "./SqlCore";
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 
 
 export interface SelectColumn {
-    table?: string;
-    column?: string;
+    tableName?: string;
+    colName?: string;
     value?: SqlValue;
-    raw?: string;
+    raw?: string|number|Date;
     as?: string;
 }
 
 export interface SelectTable {
-    db?: string;
-    table?: string;
+    dbName?: string;
+    tableName?: string;
     select?: InlineSelectStmt;
     as?: string;
     raw?: string;
@@ -34,9 +34,13 @@ export class SelectStmt {
             else if (col === "*")
                 this.columns.push({raw: "*"});
             else if (_.isString(col))
-                this.columns.push({column: col});
-            else
+                this.columns.push({colName: col});
+            else if (col.raw)
+                this.columns.push({raw: col.raw});
+            else if (col.colName)
                 this.columns.push(col);
+            else
+                throwError("SelectStmt.column(): invalid column type");
         });
         return this;
     }
@@ -45,7 +49,7 @@ export class SelectStmt {
         if (column instanceof SqlValue)
             this.columns.push({value: column, as: as});
         else if (_.isString(column))
-            this.columns.push({column: column, as: as});
+            this.columns.push({colName: column, as: as});
         else {
             column.as = as;
             this.columns.push(column);
@@ -60,7 +64,7 @@ export class SelectStmt {
 
     addFrom(table: string | SelectTable): SelectStmt {
         if (_.isString(table))
-            this.from.push({table: table});
+            this.from.push({tableName: table});
         else
             this.from.push(table);
         return this;
@@ -73,7 +77,7 @@ export class SelectStmt {
 
     addFromAs(table: string | SelectTable, as: string): SelectStmt {
         if (_.isString(table))
-            this.from.push({table: table, as: as});
+            this.from.push({tableName: table, as: as});
         else {
             table.as = as;
             this.from.push(table);
@@ -88,28 +92,36 @@ export class SelectStmt {
 
     emitSelectColumn(col: SelectColumn, e: SqlEmitter, level: string) {
         e.emitLevel(level);
-        if (col.table)
-            e.emitQuotedName(col.table).emit(".");
-        if (!col.column && !col.raw && !col.value)
+        if (col.tableName)
+            e.emitQuotedName(col.tableName).emit(".");
+        if (!col.colName && !col.raw && !col.value)
             throwError("SelectStmt: column.name or column.raw or column.value not defined");
-        if (col.column)
-            e.emitQuotedName(col.column);
+        if (col.colName)
+            e.emitQuotedName(col.colName);
         if (col.value)
             e.emit(col.value.toSql());
-        if (col.raw)
-            e.emit(col.raw);
+        if (col.raw) {
+            if (_.isNumber(col.raw))
+                e.emit(new SqlNumberValue(col.raw, e.dialect).toSql());
+            else if (_.isDate(col.raw))
+                e.emit(new SqlDateValue(col.raw, e.dialect).toSql());
+            else if (_.isString(col.raw))
+                e.emit(col.raw);
+            else
+                throwError("SelectStmt.emitSelectColumn(): invalid column 'raw' type");
+        }
         if (col.as)
             e.emit(" ").emitQuotedName(col.as);
     }
 
     private emitSelectTable(table: SelectTable, e: SqlEmitter, level: string): SelectStmt {
         e.emitLevel(level);
-        if (table.db)
-            e.emitQuotedName(table.db).emit("..");
-        if (!table.table && !table.raw)
-            throwError("SelectStmt: table.name or table.raw not defined");
-        if (table.table)
-            e.emitQuotedName(table.table);
+        if (table.dbName)
+            e.emitQuotedName(table.dbName).emit("..");
+        if (!table.tableName && !table.raw)
+            throwError("SelectStmt: table.tableName or table.raw not defined");
+        if (table.tableName)
+            e.emitQuotedName(table.tableName);
         if (table.raw)
             e.emit(table.raw);
         if (table.as)
@@ -133,7 +145,7 @@ export class SelectStmt {
 
         if (this.from.length > 0) {
             e.emit("FROM").emitLine();
-            this.from.forEach((table: SelectColumn, index: number) => {
+            this.from.forEach((table: SelectTable, index: number) => {
                 this.emitSelectTable(table, e, "  ");
                 if (index !== this.from.length - 1)
                     e.emit(",");

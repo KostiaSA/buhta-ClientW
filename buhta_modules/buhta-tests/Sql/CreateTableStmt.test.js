@@ -6,10 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var mocha_typescript_1 = require("mocha-typescript");
+var SqlCore_1 = require("../../buhta-sql/SqlCore");
 var CreateTableStmt_1 = require("../../buhta-sql/CreateTableStmt");
 var SqlDb_1 = require("../../buhta-sql/SqlDb");
 var DropTableStmt_1 = require("../../buhta-sql/DropTableStmt");
 var DropTableIfExistsStmt_1 = require("../../buhta-sql/DropTableIfExistsStmt");
+var InsertStmt_1 = require("../../buhta-sql/InsertStmt");
 function create_table_proc(dialect, done) {
     var db = new SqlDb_1.SqlDb();
     db.dbName = "test-" + dialect;
@@ -73,6 +75,62 @@ function drop_table_if_exist_proc(dialect, done) {
         throw error;
     });
 }
+function getTestString() {
+    var ret = [];
+    for (var i = 1; i <= 20000; i++)
+        ret.push(String.fromCharCode(i));
+    return ret.join("");
+}
+//const testGuid = "1473a9f0-524e-11e6-af1b-d58df55606f6";
+var testGuid = "ffffffff-ffff-ffff-ffff-ffffffffffff";
+var testStr250 = "var common[] = require('./common');";
+var testText = "getTestString() + getTestString() + getTestString() + getTestString()";
+var testSByte = -128;
+var testByte = 255;
+var testShort = -32768;
+var testUShort = 65535;
+var testInt = -2147483648;
+var testUInt = -4294967295;
+var testLong = -9007199254740991; // не настоящий, это js Number.MIN_SAFE_INTEGER
+var testULong = 9007199254740991; // не настоящий, это js Number.MAX_SAFE_INTEGER
+var testFloat = 3.402823e38;
+var testDouble = Number.MAX_VALUE;
+var testDecimal = -9007199254740.99;
+var testDate = new Date(3000, 1, 1);
+var testDateTime = new Date(9998, 12, 31, 23, 59, 59, 99);
+function insert_table_proc(dialect, done) {
+    var db = new SqlDb_1.SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+    var sql = new InsertStmt_1.InsertStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", new SqlCore_1.SqlGuidValue(testGuid, dialect));
+    sql.column("str250", new SqlCore_1.SqlStringValue(testStr250, dialect));
+    sql.column("text", new SqlCore_1.SqlStringValue(testText, dialect));
+    sql.column("sbyte", testSByte);
+    sql.column("byte", testByte);
+    sql.column("short", testShort);
+    sql.column("ushort", testUShort);
+    sql.column("int", testInt);
+    sql.column("uint", testUInt);
+    sql.column("long", testLong);
+    sql.column("ulong", testULong);
+    sql.column("float", testFloat);
+    sql.column("double", testDouble);
+    sql.column("decimal", testDecimal);
+    sql.column("date", testDate);
+    sql.column("datetime", testDateTime);
+    // sql.column("timestamp", "timestamp");
+    // sql.column("blob", "blob");
+    db.executeSQL(sql)
+        .then(function (fake) {
+        done();
+    })
+        .catch(function (error) {
+        console.error(error);
+        throw error;
+    });
+}
 var CreateTableStmtTest = (function () {
     function CreateTableStmtTest() {
     }
@@ -83,6 +141,10 @@ var CreateTableStmtTest = (function () {
     CreateTableStmtTest.prototype.mssql_create_table = function (done) {
         var dialect = "mssql";
         create_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_insert_table = function (done) {
+        var dialect = "mssql";
+        insert_table_proc(dialect, done);
     };
     CreateTableStmtTest.prototype.mssql_drop_table = function (done) {
         var dialect = "mssql";
@@ -96,6 +158,10 @@ var CreateTableStmtTest = (function () {
         var dialect = "pg";
         create_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.pg_insert_table = function (done) {
+        var dialect = "pg";
+        insert_table_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.pg_drop_table = function (done) {
         var dialect = "pg";
         drop_table_proc(dialect, done);
@@ -108,6 +174,10 @@ var CreateTableStmtTest = (function () {
         var dialect = "mysql";
         create_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.mysql_insert_table = function (done) {
+        var dialect = "mysql";
+        insert_table_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.mysql_drop_table = function (done) {
         var dialect = "mysql";
         drop_table_proc(dialect, done);
@@ -119,7 +189,12 @@ var CreateTableStmtTest = (function () {
         mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mssql_create_table", null);
     __decorate([
-        mocha_typescript_1.test
+        mocha_typescript_1.test,
+        mocha_typescript_1.timeout(10000)
+    ], CreateTableStmtTest.prototype, "mssql_insert_table", null);
+    __decorate([
+        mocha_typescript_1.test,
+        mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "mssql_drop_table", null);
     __decorate([
         mocha_typescript_1.test
@@ -129,6 +204,10 @@ var CreateTableStmtTest = (function () {
     ], CreateTableStmtTest.prototype, "pg_create_table", null);
     __decorate([
         mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_insert_table", null);
+    __decorate([
+        mocha_typescript_1.test,
+        mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "pg_drop_table", null);
     __decorate([
         mocha_typescript_1.test
@@ -138,6 +217,10 @@ var CreateTableStmtTest = (function () {
     ], CreateTableStmtTest.prototype, "mysql_create_table", null);
     __decorate([
         mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_insert_table", null);
+    __decorate([
+        mocha_typescript_1.test,
+        mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "mysql_drop_table", null);
     CreateTableStmtTest = __decorate([
         mocha_typescript_1.suite("Sql CreateTableStmt")

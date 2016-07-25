@@ -18,6 +18,10 @@ var SqlValue = (function () {
     return SqlValue;
 }());
 exports.SqlValue = SqlValue;
+function getNewGuid() {
+    return uuid.v1().toString();
+}
+exports.getNewGuid = getNewGuid;
 function mssql_escape_string(str) {
     return str.replace(/./g, function (char) {
         switch (char) {
@@ -158,6 +162,29 @@ var SqlGuidValue = (function (_super) {
     return SqlGuidValue;
 }(SqlValue));
 exports.SqlGuidValue = SqlGuidValue;
+var SqlNewGuidValue = (function (_super) {
+    __extends(SqlNewGuidValue, _super);
+    function SqlNewGuidValue(dialect) {
+        _super.call(this);
+        this.dialect = dialect;
+    }
+    SqlNewGuidValue.prototype.toSql = function () {
+        if (!this.value)
+            this.value = getNewGuid();
+        if (this.dialect === "mssql")
+            return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
+        else if (this.dialect === "pg")
+            return "UUID '" + this.value + "'";
+        else if (this.dialect === "mysql")
+            return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+        else {
+            Error_1.throwError("invalid sql dialect " + this.dialect);
+            throw "fake";
+        }
+    };
+    return SqlNewGuidValue;
+}(SqlValue));
+exports.SqlNewGuidValue = SqlNewGuidValue;
 var SqlDateTimeValue = (function (_super) {
     __extends(SqlDateTimeValue, _super);
     function SqlDateTimeValue(value, dialect) {

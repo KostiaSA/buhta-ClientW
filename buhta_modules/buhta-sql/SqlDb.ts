@@ -31,6 +31,7 @@ export interface ExecuteSqlSocketAnswer {
 }
 // общее с client и server ------------------
 
+
 let socket = io.connect();
 
 export class DataTable {

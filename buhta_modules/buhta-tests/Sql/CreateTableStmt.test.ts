@@ -1,10 +1,11 @@
 import {suite, test, slow, timeout, skip, only} from "mocha-typescript";
 import {assert} from "chai";
-import {SqlDialect} from "../../buhta-sql/SqlCore";
+import {SqlDialect, SqlGuidValue, SqlNewGuidValue, SqlStringValue} from "../../buhta-sql/SqlCore";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 import {SqlDb} from "../../buhta-sql/SqlDb";
 import {DropTableStmt} from "../../buhta-sql/DropTableStmt";
 import {DropTableIfExistsStmt} from "../../buhta-sql/DropTableIfExistsStmt";
+import {InsertStmt} from "../../buhta-sql/InsertStmt";
 
 
 function create_table_proc(dialect: SqlDialect, done: () => void) {
@@ -86,6 +87,70 @@ function drop_table_if_exist_proc(dialect: SqlDialect, done: () => void) {
 
 }
 
+function getTestString() {
+    let ret: string[] = [];
+    for (let i = 1; i <= 20000; i++)
+        ret.push(String.fromCharCode(i));
+    return ret.join("");
+}
+
+//const testGuid = "1473a9f0-524e-11e6-af1b-d58df55606f6";
+const testGuid = "ffffffff-ffff-ffff-ffff-ffffffffffff";
+const testStr250 = "var common[] = require('./common');";
+const testText = "getTestString() + getTestString() + getTestString() + getTestString()";
+const testSByte = -128;
+const testByte = 255;
+const testShort = -32768;
+const testUShort = 65535;
+const testInt = -2147483648;
+const testUInt = -4294967295;
+const testLong = -9007199254740991; // не настоящий, это js Number.MIN_SAFE_INTEGER
+const testULong = 9007199254740991; // не настоящий, это js Number.MAX_SAFE_INTEGER
+const testFloat = 3.402823e38;
+const testDouble = Number.MAX_VALUE;
+const testDecimal = -9007199254740.99;
+const testDate = new Date(3000, 1, 1);
+const testDateTime = new Date(9998, 12, 31, 23, 59, 59, 99);
+
+function insert_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new InsertStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", new SqlGuidValue(testGuid, dialect));
+    sql.column("str250", new SqlStringValue(testStr250, dialect));
+    sql.column("text", new SqlStringValue(testText, dialect));
+    sql.column("sbyte", testSByte);
+    sql.column("byte", testByte);
+    sql.column("short", testShort);
+    sql.column("ushort", testUShort);
+    sql.column("int", testInt);
+    sql.column("uint", testUInt);
+    sql.column("long", testLong);
+    sql.column("ulong", testULong);
+    sql.column("float", testFloat);
+    sql.column("double", testDouble);
+    sql.column("decimal", testDecimal);
+    sql.column("date", testDate);
+    sql.column("datetime", testDateTime);
+    // sql.column("timestamp", "timestamp");
+    // sql.column("blob", "blob");
+
+    db.executeSQL(sql)
+        .then((fake) => {
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+
+
 @suite("Sql CreateTableStmt")
 //@skip
 export class CreateTableStmtTest {
@@ -101,7 +166,13 @@ export class CreateTableStmtTest {
         create_table_proc(dialect, done);
     }
 
-    @test
+    @test @timeout(10000)
+    mssql_insert_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        insert_table_proc(dialect, done);
+    }
+
+    @test @skip
     mssql_drop_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
         drop_table_proc(dialect, done);
@@ -120,6 +191,12 @@ export class CreateTableStmtTest {
     }
 
     @test
+    pg_insert_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        insert_table_proc(dialect, done);
+    }
+
+    @test @skip
     pg_drop_table(done: () => void) {
         let dialect: SqlDialect = "pg";
         drop_table_proc(dialect, done);
@@ -138,6 +215,12 @@ export class CreateTableStmtTest {
     }
 
     @test
+    mysql_insert_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        insert_table_proc(dialect, done);
+    }
+
+    @test @skip
     mysql_drop_table(done: () => void) {
         let dialect: SqlDialect = "mysql";
         drop_table_proc(dialect, done);
