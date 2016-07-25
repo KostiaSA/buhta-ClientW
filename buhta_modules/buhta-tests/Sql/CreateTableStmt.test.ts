@@ -8,6 +8,7 @@ import {DropTableIfExistsStmt} from "../../buhta-sql/DropTableIfExistsStmt";
 import {InsertStmt} from "../../buhta-sql/InsertStmt";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
 import {UpdateStmt} from "../../buhta-sql/UpdateStmt";
+import {DeleteStmt} from "../../buhta-sql/DeleteStmt";
 
 
 function create_table_proc(dialect: SqlDialect, done: () => void) {
@@ -264,6 +265,51 @@ function check_update_table_proc(dialect: SqlDialect, done: () => void) {
 
 }
 
+function delete_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new DeleteStmt();
+    sql.table("BuhtaTestTable");
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+    db.executeSQL(sql)
+        .then((fake) => {
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+
+function check_delete_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new SelectStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("*");
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+    db.executeSQL(sql)
+        .then((table: DataTable) => {
+            let row = table.rows[0];
+            assert.equal(table.rows.length, 0);
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+
 @suite("Sql CreateTableStmt")
 //@skip
 export class CreateTableStmtTest {
@@ -301,6 +347,18 @@ export class CreateTableStmtTest {
     mssql_check_update_table(done: () => void) {
         let dialect: SqlDialect = "mssql";
         check_update_table_proc(dialect, done);
+    }
+
+    @test
+    mssql_delete_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        delete_table_proc(dialect, done);
+    }
+
+    @test
+    mssql_delete_update_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        check_delete_table_proc(dialect, done);
     }
 
     @test @skip
@@ -345,6 +403,18 @@ export class CreateTableStmtTest {
         check_update_table_proc(dialect, done);
     }
 
+    @test
+    pg_delete_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        delete_table_proc(dialect, done);
+    }
+
+    @test
+    pg_delete_update_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        check_delete_table_proc(dialect, done);
+    }
+
     @test @skip
     pg_drop_table(done: () => void) {
         let dialect: SqlDialect = "pg";
@@ -385,6 +455,18 @@ export class CreateTableStmtTest {
     mysql_check_update_table(done: () => void) {
         let dialect: SqlDialect = "mysql";
         check_update_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_delete_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        delete_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_delete_update_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        check_delete_table_proc(dialect, done);
     }
 
     @test @skip

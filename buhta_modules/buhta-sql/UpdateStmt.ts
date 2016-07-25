@@ -64,7 +64,7 @@ export class UpdateStmt {
 
     tableRaw(rawSql: string): UpdateStmt {
         if (this._updateTable.length > 0)
-            throwError("UpdateStmt.table(): one insert table is already defined");
+            throwError("UpdateStmt.table(): one update table is already defined");
 
         this._updateTable.push({raw: rawSql});
         return this;
@@ -94,7 +94,7 @@ export class UpdateStmt {
         if (table.dbName)
             e.emitQuotedName(table.dbName).emit("..");
         if (!table.tableName && !table.raw)
-            throwError("InsertTableStmt: table.tableName or table.raw not defined");
+            throwError("UpdateStmt: table.tableName or table.raw not defined");
         if (table.tableName)
             e.emitQuotedName(table.tableName);
         if (table.raw)
