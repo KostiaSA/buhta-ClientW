@@ -53,6 +53,48 @@ export class SqlEmitter {
         return this;
     }
 
+    emitBeginTransaction(): SqlEmitter {
+
+        if (this.dialect === "mssql")
+            this.sql.push("BEGIN TRAN;");
+        else if (this.dialect === "pg")
+            this.sql.push("START TRANSACTION;");
+        else if (this.dialect === "mysql")
+            this.sql.push("START TRANSACTION;");
+        else {
+            throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
+        }
+        return this;
+    }
+
+    emitCommit(): SqlEmitter {
+
+        if (this.dialect === "mssql")
+            this.sql.push("COMMIT;");
+        else if (this.dialect === "pg")
+            this.sql.push("COMMIT;");
+        else if (this.dialect === "mysql")
+            this.sql.push("COMMIT;");
+        else {
+            throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
+        }
+        return this;
+    }
+
+    emitRollback(): SqlEmitter {
+
+        if (this.dialect === "mssql")
+            this.sql.push("ROLLBACK;");
+        else if (this.dialect === "pg")
+            this.sql.push("ROLLBACK;");
+        else if (this.dialect === "mysql")
+            this.sql.push("ROLLBACK;");
+        else {
+            throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
+        }
+        return this;
+    }
+
     // emitQuotedName(nameOrValue: string | SqlValue): SqlEmitter {
     //     console.log(nameOrValue);
     //     if ((nameOrValue as SqlValue).toSql)

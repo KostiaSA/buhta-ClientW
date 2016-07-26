@@ -9,6 +9,7 @@ import {InsertStmt} from "../../buhta-sql/InsertStmt";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
 import {UpdateStmt} from "../../buhta-sql/UpdateStmt";
 import {DeleteStmt} from "../../buhta-sql/DeleteStmt";
+import {UpsertStmt} from "../../buhta-sql/UpsertStmt";
 
 
 function create_table_proc(dialect: SqlDialect, done: () => void) {
@@ -237,6 +238,7 @@ function update_table_proc(dialect: SqlDialect, done: () => void) {
         });
 
 }
+
 function check_update_table_proc(dialect: SqlDialect, done: () => void) {
 
     let db = new SqlDb();
@@ -254,6 +256,107 @@ function check_update_table_proc(dialect: SqlDialect, done: () => void) {
 
             assert.equal(row["str250"], updateTestStr250);
             assert.equal(row["short"], testByte);
+            assert.equal(row["int"], updateTestInt);
+
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+
+function upsert_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new UpsertStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", new SqlGuidValue(testGuid));
+    sql.column("str250", new SqlStringValue(updateTestStr250));
+    sql.column("int", updateTestInt);
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+    db.executeSQL(sql)
+        .then((fake) => {
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+function check_upsert_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new SelectStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", "str250", "int", "short");
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+    db.executeSQL(sql)
+        .then((table: DataTable) => {
+            let row = table.rows[0];
+
+            assert.equal(row["guid"], testGuid);
+            assert.equal(row["str250"], updateTestStr250);
+            assert.equal(row["int"], updateTestInt);
+
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+function upsert2_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new UpsertStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", new SqlGuidValue(testGuid));
+    sql.column("str250", new SqlStringValue(testStr250));
+    sql.column("int", updateTestInt);
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+    db.executeSQL(sql)
+        .then((fake) => {
+            done();
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
+
+}
+function check_upsert2_table_proc(dialect: SqlDialect, done: () => void) {
+
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let sql = new SelectStmt();
+    sql.table("BuhtaTestTable");
+    sql.column("guid", "str250", "int", "short");
+    sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+    db.executeSQL(sql)
+        .then((table: DataTable) => {
+            let row = table.rows[0];
+
+            assert.equal(row["guid"], testGuid);
+            assert.equal(row["str250"], testStr250);
             assert.equal(row["int"], updateTestInt);
 
             done();
@@ -313,59 +416,84 @@ function check_delete_table_proc(dialect: SqlDialect, done: () => void) {
 @suite("Sql CreateTableStmt")
 //@skip
 export class CreateTableStmtTest {
-    @test
-    mssql_drop_table_if_exist(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        drop_table_if_exist_proc(dialect, done);
-    }
-
-    @test
-    mssql_create_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        create_table_proc(dialect, done);
-    }
-
-    @test @timeout(10000)
-    mssql_insert_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        insert_table_proc(dialect, done);
-    }
-
-    @test
-    mssql_select_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        select_table_proc(dialect, done);
-    }
-
-    @test
-    mssql_update_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        update_table_proc(dialect, done);
-    }
-
-    @test
-    mssql_check_update_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        check_update_table_proc(dialect, done);
-    }
-
-    @test
-    mssql_delete_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        delete_table_proc(dialect, done);
-    }
-
-    @test
-    mssql_check_delete_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        check_delete_table_proc(dialect, done);
-    }
-
-    @test @skip
-    mssql_drop_table(done: () => void) {
-        let dialect: SqlDialect = "mssql";
-        drop_table_proc(dialect, done);
-    }
+    // @test
+    // mssql_drop_table_if_exist(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     drop_table_if_exist_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_create_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     create_table_proc(dialect, done);
+    // }
+    //
+    // @test @timeout(10000)
+    // mssql_insert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     insert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_select_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     select_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_check_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     check_update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_check_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     check_delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_check_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     check_upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     upsert2_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mssql_check_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     check_upsert2_table_proc(dialect, done);
+    // }
+    //
+    //
+    // @test @skip
+    // mssql_drop_table(done: () => void) {
+    //     let dialect: SqlDialect = "mssql";
+    //     drop_table_proc(dialect, done);
+    // }
 
     @test
     pg_drop_table_if_exist(done: () => void) {
@@ -379,99 +507,148 @@ export class CreateTableStmtTest {
         create_table_proc(dialect, done);
     }
 
-    @test
-    pg_insert_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        insert_table_proc(dialect, done);
-    }
-
-    @test
-    pg_select_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        select_table_proc(dialect, done);
-    }
-
-    @test
-    pg_update_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        update_table_proc(dialect, done);
-    }
-
-    @test
-    pg_check_update_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        check_update_table_proc(dialect, done);
-    }
-
-    @test
-    pg_delete_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        delete_table_proc(dialect, done);
-    }
-
-    @test
-    pg_check_delete_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        check_delete_table_proc(dialect, done);
-    }
-
-    @test @skip
-    pg_drop_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        drop_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_drop_table_if_exist(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        drop_table_if_exist_proc(dialect, done);
-    }
-
-    @test
-    mysql_create_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        create_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_insert_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        insert_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_select_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        select_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_update_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        update_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_check_update_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        check_update_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_delete_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        delete_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_check_delete_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        check_delete_table_proc(dialect, done);
-    }
-
-    @test @skip
-    mysql_drop_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        drop_table_proc(dialect, done);
-    }
+    // @test
+    // pg_insert_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     insert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_select_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     select_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_check_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     check_update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_check_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     check_delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_check_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     check_upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     upsert2_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_check_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     check_upsert2_table_proc(dialect, done);
+    // }
+    //
+    //
+    // @test @skip
+    // pg_drop_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     drop_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_drop_table_if_exist(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     drop_table_if_exist_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_create_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     create_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_insert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     insert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_select_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     select_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     upsert2_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_upsert2_table_proc(dialect, done);
+    // }
+    //
+    // @test @skip
+    // mysql_drop_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     drop_table_proc(dialect, done);
+    // }
 }

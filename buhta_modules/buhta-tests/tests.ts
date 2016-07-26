@@ -117,6 +117,7 @@ class Hello {
 
 
     @test @timeout(5000)
+    @skip
     mssql(done: () => void) {
         let dialect: SqlDialect = "mssql";
         test_sql(dialect, done);
@@ -124,6 +125,7 @@ class Hello {
     }
 
     @test @timeout(5000)
+    @skip
     postgres(done: () => void) {
         let dialect: SqlDialect = "pg";
         test_sql(dialect, done);
@@ -131,6 +133,7 @@ class Hello {
     }
 
     @test @timeout(5000)
+    @skip
     mysql(done: () => void) {
         let dialect: SqlDialect = "mysql";
         test_sql(dialect, done);
