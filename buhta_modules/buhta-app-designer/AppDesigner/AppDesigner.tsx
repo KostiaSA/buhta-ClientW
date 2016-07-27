@@ -510,30 +510,25 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     testObservable() {
 
         let db = new SqlDb();
-        db.dbName = "schema-pg";
-        db.dialect = "pg";
+//        db.dbName = "schema-pg";
+//        db.dialect = "pg";
 //        db.dbName = "schema-mssql";
-  //      db.dialect = "mssql";
+        //      db.dialect = "mssql";
         db.dbName = "schema-mysql";
         db.dialect = "mysql";
 
-        // let s = new SelectStmt();
-        // s.addColumnAs("'123'","жопа");
-        // s.addColumnRaw("getdate() as ddd");
-        // s.addColumnRaw("NULL as nu");
 
-        // db.selectToObject<any>("select 'eee' as eee, getdate() ddd", {}, "assign").done((obj) => {
-        //      console.log(obj);
-        //         });
+         db.selectToObject<any>("SELECT * FROM sakila.film", {}, "assign").done((obj) => {
+             console.log(obj);
+         });
 
-         // db.selectToObject<any>("select 'eee' as eee, CURRENT_TIMESTAMP ddd", {}, "assign").done((obj) => {
-         //     console.log(obj);
-         // });
-
-
-        db.selectToObject<any>("SELECT * FROM sakila.film", {}, "assign").done((obj) => {
-            console.log(obj);
-        });
+        db.executeSQL("SELECT * FROM sakila.film")
+            .then((obj: DataTable) => {
+                console.log(obj);
+            })
+            .catch((err: string) => {
+                console.error(err);
+            });
 
         // db.selectToObject<any>("SELECT * FROM sakila.film; select 'qqq' as qqq, now() as now, 0xc9c9c8c7c6 as blober, null as null777", {}, "assign").done((obj) => {
         //     console.log(obj);

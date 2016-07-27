@@ -416,6 +416,72 @@ function check_delete_table_proc(dialect: SqlDialect, done: () => void) {
 @suite("Sql CreateTableStmt")
 //@skip
 export class CreateTableStmtTest {
+
+    @test
+    new_pg_100(done: () => void) {
+
+        let db = new SqlDb();
+        db.dbName = "test-pg";
+        db.dialect = "pg";
+
+        // let sql = new SelectStmt();
+        // sql.table("BuhtaTestTable");
+        // sql.column("guid", "str250", "int", "short");
+        // sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+        let sql: string[] = [];
+
+        for (let i = 0; i < 100; i++)
+            sql.push("select " + i + " as a777");
+
+        db.executeSQL(sql)
+            .then((table: DataTable) => {
+                let row = table.rows[0];
+
+                assert.equal(row["a777"], 777);
+
+                done();
+            })
+            .catch((error) => {
+                console.error(error);
+                throw error;
+            });
+    }
+
+    @test @timeout(15000)
+    new_pg_101(done: () => void) {
+
+        let db = new SqlDb();
+        db.dbName = "test-pg";
+        db.dialect = "pg";
+
+        // let sql = new SelectStmt();
+        // sql.table("BuhtaTestTable");
+        // sql.column("guid", "str250", "int", "short");
+        // sql.where("guid", "=", new SqlGuidValue(testGuid));
+
+        let sql: string[] = [];
+
+        for (let i = 0; i < 5000; i++) {
+            setTimeout(() => {
+                db.executeSQL("select " + i + " as a777")
+                    .then((table: DataTable) => {
+                        let row = table.rows[0];
+
+                        assert.equal(row["a777"], 777);
+
+                        done();
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        throw error;
+                    });
+
+            }, i * 10);
+        }
+    }
+
+
     // @test
     // mssql_drop_table_if_exist(done: () => void) {
     //     let dialect: SqlDialect = "mssql";
@@ -495,17 +561,17 @@ export class CreateTableStmtTest {
     //     drop_table_proc(dialect, done);
     // }
 
-    @test
-    pg_drop_table_if_exist(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        drop_table_if_exist_proc(dialect, done);
-    }
-
-    @test
-    pg_create_table(done: () => void) {
-        let dialect: SqlDialect = "pg";
-        create_table_proc(dialect, done);
-    }
+    // @test
+    // pg_drop_table_if_exist(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     drop_table_if_exist_proc(dialect, done);
+    // }
+    //
+    // @test
+    // pg_create_table(done: () => void) {
+    //     let dialect: SqlDialect = "pg";
+    //     create_table_proc(dialect, done);
+    // }
 
     // @test
     // pg_insert_table(done: () => void) {
