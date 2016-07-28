@@ -634,11 +634,12 @@ export class SqlDb {
                                                 if (dataColumn.mysqlDataType === 10) {
                                                     dataColumn.isOnlyDate = true;
                                                 }
-                                                if (dataColumn.mysqlDataType === 253 &&
+                                                if ((dataColumn.mysqlDataType === 253 || dataColumn.mysqlDataType === 254) &&
                                                     dataColumn.length === 16 &&
                                                     dataColumn.charsetNr === 63) {
                                                     dataColumn.isGuid = true;
                                                 }
+                                                //console.log(dataColumn);
                                             }
                                             dataTable.columns.push(dataColumn);
                                         }
@@ -663,7 +664,10 @@ export class SqlDb {
                                                 }
                                                 else if (col.isGuid) {
                                                     if (this.dialect === "mysql") {
-                                                        dataRow[col.name] = (uuid as any).unparse(new Uint8Array(row[index]));
+                                                        if (_.isArrayBuffer(row[index]))
+                                                            dataRow[col.name] = (uuid as any).unparse(new Uint8Array(row[index]));
+                                                        else
+                                                            dataRow[col.name] = row[index];
                                                     }
                                                     else
                                                         dataRow[col.name] = row[index].toLowerCase();
@@ -895,7 +899,7 @@ export class SqlDb {
                                                     if (dataColumn.mysqlDataType === 10) {
                                                         dataColumn.isOnlyDate = true;
                                                     }
-                                                    if (dataColumn.mysqlDataType === 253 &&
+                                                    if ((dataColumn.mysqlDataType === 253 || dataColumn.mysqlDataType === 254) &&
                                                         dataColumn.length === 16 &&
                                                         dataColumn.charsetNr === 63) {
                                                         dataColumn.isGuid = true;
@@ -924,7 +928,11 @@ export class SqlDb {
                                                     }
                                                     else if (col.isGuid) {
                                                         if (this.dialect === "mysql") {
-                                                            dataRow[col.name] = (uuid as any).unparse(new Uint8Array(row[index]));
+                                                            if (_.isArrayBuffer(row[index]))
+                                                                dataRow[col.name] = (uuid as any).unparse(new Uint8Array(row[index]));
+                                                            else
+                                                                dataRow[col.name] = row[index];
+
                                                         }
                                                         else
                                                             dataRow[col.name] = row[index].toLowerCase();

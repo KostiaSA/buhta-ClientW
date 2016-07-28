@@ -41,8 +41,6 @@ function pg_escape_string(str) {
                 return "";
             case "'":
                 return "''";
-            case "?":
-                return "'||CHR(63)||'";
             default:
                 return char;
         }

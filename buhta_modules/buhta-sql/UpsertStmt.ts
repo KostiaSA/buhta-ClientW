@@ -161,7 +161,7 @@ export class UpsertStmt {
         return this;
     }
 
-    toSql(dialect: SqlDialect): string {
+    toSql(dialect: SqlDialect): string[] {
 
         let e = new SqlEmitter();
         e.dialect = dialect;
@@ -170,11 +170,15 @@ export class UpsertStmt {
         if (this._UpsertTable.length === 0)
             throwError("UpsertStmt: Upsert table not defined");
 
+        if (dialect === "mssql") {
+            e.emitBeginTransaction().emitLine();
+        }
+
         if (dialect === "pg") {
             e.emit("DO $$ BEGIN").emitLine();
         }
 
-        if (dialect !== "pg") {
+        if (dialect === "mysql") {
             e.emitBeginTransaction().emitLine();
         }
 
@@ -288,13 +292,18 @@ export class UpsertStmt {
         }
 
         e.emit(";").emitLine();
-        if (dialect !== "pg") {
+
+        if (dialect === "mssql") {
             e.emitCommit().emitLine();
         }
         if (dialect === "pg") {
+            e.emitCommit();
             e.emit("END$$;");
         }
-        return e.toSql();
+        if (dialect === "mysql") {
+            e.emitCommit().emitLine();
+        }
+        return [e.toSql()];
     }
 }
 
