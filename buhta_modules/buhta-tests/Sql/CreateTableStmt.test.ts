@@ -417,102 +417,132 @@ function check_delete_table_proc(dialect: SqlDialect, done: () => void) {
 //@skip
 export class CreateTableStmtTest {
 
-    @skip @test @timeout(15000)
-    new_pg_select_batch_2000(done: () => void) {
-
-        let db = new SqlDb();
-        db.dbName = "test-pg";
-        db.dialect = "pg";
-
-        let sql: string[] = [];
-
-        let total = 2000;
-        for (let i = 0; i < total; i++)
-            sql.push("select " + i + " as a777");
-
-        db.executeSQLBatch(sql)
-            .then((tables: DataTable[]) => {
-
-                for (let i = 0; i < total; i++) {
-                    let row = tables[i].rows[0];
-                    assert.equal(row["a777"], i);
-                }
-
-                done();
-            })
-            .catch((error) => {
-                console.error(error);
-                throw error;
-            });
-    }
-
-    @skip @test @timeout(45000)
-    new_pg_select_2000(done: () => void) {
-
-        let db = new SqlDb();
-        db.dbName = "test-pg";
-        db.dialect = "pg";
-
-        let sql: string[] = [];
-
-        let counter = 0;
-        let total = 2000;
-        for (let i = 0; i < total; i++) {
-            //setTimeout(() => {
-            db.executeSQL("select " + i + " as a777")
-                .then((table: DataTable) => {
-                    let row = table.rows[0];
-
-                    assert.equal(row["a777"], i);
-
-                    counter++;
-                    if (counter === total)
-                        done();
-                })
-                .catch((error) => {
-                    console.error(error);
-                    throw error;
-                });
-
-            //}, i * 5);
-        }
-    }
+    // @skip @test @timeout(15000)
+    // new_pg_select_batch_2000(done: () => void) {
+    //
+    //     let db = new SqlDb();
+    //     db.dbName = "test-pg";
+    //     db.dialect = "pg";
+    //
+    //     let sql: string[] = [];
+    //
+    //     let total = 2000;
+    //     for (let i = 0; i < total; i++)
+    //         sql.push("select " + i + " as a777");
+    //
+    //     db.executeSQLBatch(sql)
+    //         .then((tables: DataTable[]) => {
+    //
+    //             for (let i = 0; i < total; i++) {
+    //                 let row = tables[i].rows[0];
+    //                 assert.equal(row["a777"], i);
+    //             }
+    //
+    //             done();
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //             throw error;
+    //         });
+    // }
+    //
+    // @skip @test @timeout(45000)
+    // new_pg_select_2000(done: () => void) {
+    //
+    //     let db = new SqlDb();
+    //     db.dbName = "test-pg";
+    //     db.dialect = "pg";
+    //
+    //     let sql: string[] = [];
+    //
+    //     let counter = 0;
+    //     let total = 2000;
+    //     for (let i = 0; i < total; i++) {
+    //         //setTimeout(() => {
+    //         db.executeSQL("select " + i + " as a777")
+    //             .then((table: DataTable) => {
+    //                 let row = table.rows[0];
+    //
+    //                 assert.equal(row["a777"], i);
+    //
+    //                 counter++;
+    //                 if (counter === total)
+    //                     done();
+    //             })
+    //             .catch((error) => {
+    //                 console.error(error);
+    //                 throw error;
+    //             });
+    //
+    //         //}, i * 5);
+    //     }
+    // }
+    //
+    // @test @timeout(15000)
+    // mysql_select_batch_2000(done: () => void) {
+    //
+    //     let db = new SqlDb();
+    //     db.dbName = "test-mysql";
+    //     db.dialect = "mysql";
+    //
+    //     let sql: string[] = [];
+    //
+    //     let total = 2000;
+    //     for (let i = 0; i < total; i++)
+    //         sql.push("select " + i + " as a777");
+    //
+    //     db.executeSQLBatch(sql)
+    //         .then((tables: DataTable[]) => {
+    //
+    //             for (let i = 0; i < total; i++) {
+    //                 let row = tables[i].rows[0];
+    //                 assert.equal(row["a777"], i);
+    //             }
+    //
+    //             done();
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //             throw error;
+    //         });
+    // }
+    //
+    // @test @timeout(15000)
+    // mysql_select_2000(done: () => void) {
+    //
+    //     let db = new SqlDb();
+    //     db.dbName = "test-mysql";
+    //     db.dialect = "mysql";
+    //
+    //     // let sql: string[] = [];
+    //
+    //     let counter = 0;
+    //     let total = 2000;
+    //     for (let i = 0; i < total; i++) {
+    //         db.executeSQL("select " + i + " as a777")
+    //             .then((table: DataTable) => {
+    //                 let row = table.rows[0];
+    //
+    //                 assert.equal(row["a777"], i);
+    //
+    //                 counter++;
+    //                 if (counter === total)
+    //                     done();
+    //             })
+    //             .catch((error) => {
+    //                 console.error(error);
+    //                 throw error;
+    //             });
+    //
+    //     }
+    // }
 
     @test @timeout(15000)
-    mysql_select_batch_2000(done: () => void) {
+    mssql_select_2000(done: () => void) {
 
         let db = new SqlDb();
-        db.dbName = "test-mysql";
-        db.dialect = "mysql";
-
-        let sql: string[] = [];
-
-        let total = 2000;
-        for (let i = 0; i < total; i++)
-            sql.push("select " + i + " as a777");
-
-        db.executeSQLBatch(sql)
-            .then((tables: DataTable[]) => {
-
-                for (let i = 0; i < total; i++) {
-                    let row = tables[i].rows[0];
-                    assert.equal(row["a777"], i);
-                }
-
-                done();
-            })
-            .catch((error) => {
-                console.error(error);
-                throw error;
-            });
-    }
-
-    @test @timeout(15000)
-    mysql_select_2000(done: () => void) {
-
-        let db = new SqlDb();
-        db.dbName = "test-mysql";
-        db.dialect = "mysql";
+        db.dbName = "test-mssql";
+        db.dialect = "mssql";
 
         // let sql: string[] = [];
 
@@ -536,7 +566,6 @@ export class CreateTableStmtTest {
 
         }
     }
-
 
     // @test
     // mssql_drop_table_if_exist(done: () => void) {
@@ -696,81 +725,81 @@ export class CreateTableStmtTest {
     //     drop_table_proc(dialect, done);
     // }
     //
-    @test
-    mysql_drop_table_if_exist(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        drop_table_if_exist_proc(dialect, done);
-    }
-
-    @test
-    mysql_create_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        create_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_insert_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        insert_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_select_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        select_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_update_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        update_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_check_update_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        check_update_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_delete_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        delete_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_check_delete_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        check_delete_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_upsert_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        upsert_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_check_upsert_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        check_upsert_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_upsert2_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        upsert2_table_proc(dialect, done);
-    }
-
-    @test
-    mysql_check_upsert2_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        check_upsert2_table_proc(dialect, done);
-    }
-
-    @test @skip
-    mysql_drop_table(done: () => void) {
-        let dialect: SqlDialect = "mysql";
-        drop_table_proc(dialect, done);
-    }
+    // @test
+    // mysql_drop_table_if_exist(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     drop_table_if_exist_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_create_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     create_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_insert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     insert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_select_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     select_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_update_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_update_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_delete_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_delete_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_upsert_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_upsert_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     upsert2_table_proc(dialect, done);
+    // }
+    //
+    // @test
+    // mysql_check_upsert2_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     check_upsert2_table_proc(dialect, done);
+    // }
+    //
+    // @test @skip
+    // mysql_drop_table(done: () => void) {
+    //     let dialect: SqlDialect = "mysql";
+    //     drop_table_proc(dialect, done);
+    // }
 }
