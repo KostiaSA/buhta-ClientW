@@ -45,9 +45,9 @@ export function auth(login: string, password: string): Promise<string> {
 }
 
 export function checkAuth(): Promise<string> {
-    console.log("checkAuth");
+    //console.log("checkAuth");
     if (authOk) {
-        console.log("checkAuthOk");
+      //  console.log("checkAuthOk");
         return new Promise(
             (resolve: (okStr: "ok") => void, reject: (error: string) => void) => {
                 resolve("ok");
@@ -56,7 +56,7 @@ export function checkAuth(): Promise<string> {
 
     }
     else {
-        console.log("checkAuth-req");
+        //console.log("checkAuth-req");
 
         return auth("admin", "admin");
     }
