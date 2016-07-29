@@ -182,8 +182,8 @@ function select_table_proc(dialect: SqlDialect, done: () => void) {
         .where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
-        .then((table: DataTable) => {
-            let row = table.rows[0];
+        .then((table: DataTable[]) => {
+            let row = table[0].rows[0];
 
             //    assert.equal(row["guid"], testGuid);
             assert.equal(row["str250"], testStr250);
@@ -251,8 +251,8 @@ function check_update_table_proc(dialect: SqlDialect, done: () => void) {
     sql.where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
-        .then((table: DataTable) => {
-            let row = table.rows[0];
+        .then((table: DataTable[]) => {
+            let row = table[0].rows[0];
 
             assert.equal(row["str250"], updateTestStr250);
             assert.equal(row["short"], testByte);
@@ -280,7 +280,7 @@ function upsert_table_proc(dialect: SqlDialect, done: () => void) {
     sql.column("int", updateTestInt);
     sql.where("guid", "=", new SqlGuidValue(testGuid));
 
-    db.executeSQLBatch(sql.toSql(dialect))
+    db.executeSQL(sql.toSql(dialect))
         .then((fake) => {
             done();
         })
@@ -302,8 +302,8 @@ function check_upsert_table_proc(dialect: SqlDialect, done: () => void) {
     sql.where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
-        .then((table: DataTable) => {
-            let row = table.rows[0];
+        .then((table: DataTable[]) => {
+            let row = table[0].rows[0];
 
             assert.equal(row["guid"], testGuid);
             assert.equal(row["str250"], updateTestStr250);
@@ -330,7 +330,7 @@ function upsert2_table_proc(dialect: SqlDialect, done: () => void) {
     sql.column("int", updateTestInt);
     sql.where("guid", "=", new SqlGuidValue(testGuid));
 
-    db.executeSQLBatch(sql.toSql(dialect))
+    db.executeSQL(sql.toSql(dialect))
         .then((fake) => {
             done();
         })
@@ -352,8 +352,8 @@ function check_upsert2_table_proc(dialect: SqlDialect, done: () => void) {
     sql.where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
-        .then((table: DataTable) => {
-            let row = table.rows[0];
+        .then((table: DataTable[]) => {
+            let row = table[0].rows[0];
 
             assert.equal(row["guid"], testGuid);
             assert.equal(row["str250"], testStr250);
@@ -401,9 +401,9 @@ function check_delete_table_proc(dialect: SqlDialect, done: () => void) {
     sql.where("guid", "=", new SqlGuidValue(testGuid));
 
     db.executeSQL(sql)
-        .then((table: DataTable) => {
-            let row = table.rows[0];
-            assert.equal(table.rows.length, 0);
+        .then((table: DataTable[]) => {
+            let row = table[0].rows[0];
+            assert.equal(table[0].rows.length, 0);
             done();
         })
         .catch((error) => {
@@ -630,7 +630,7 @@ export class CreateTableStmtTest {
         let dialect: SqlDialect = "mssql";
         update_table_proc(dialect, done);
     }
-    
+
     @test
     mssql_check_update_table(done: () => void) {
         let dialect: SqlDialect = "mssql";

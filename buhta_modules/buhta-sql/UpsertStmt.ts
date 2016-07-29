@@ -4,6 +4,7 @@ import {SqlDialect, SqlValue, SqlNumberValue, SqlDateValue, SqlDateTimeValue} fr
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 import {SelectTable, SelectColumn} from "./SelectStmt";
+import {SqlBatch} from "./SqlDb";
 
 
 export interface UpsertColumn {
@@ -161,7 +162,9 @@ export class UpsertStmt {
         return this;
     }
 
-    toSql(dialect: SqlDialect): string[] {
+    toSql(dialect: SqlDialect): SqlBatch {
+
+        let batch: string[] = [];
 
         let e = new SqlEmitter();
         e.dialect = dialect;
@@ -170,17 +173,21 @@ export class UpsertStmt {
         if (this._UpsertTable.length === 0)
             throwError("UpsertStmt: Upsert table not defined");
 
-        if (dialect === "mssql") {
-            e.emitBeginTransaction().emitLine();
-        }
+        e.emitBeginTransaction();
+        batch.push(e.toSql());
+        e.clear();
 
-        if (dialect === "pg") {
-            e.emit("DO $$ BEGIN").emitLine();
-        }
-
-        if (dialect === "mysql") {
-            e.emitBeginTransaction().emitLine();
-        }
+        // if (dialect === "mssql") {
+        //     e.emitBeginTransaction().emitLine();
+        // }
+        //
+        // if (dialect === "pg") {
+        //     e.emit("DO $$ BEGIN").emitLine();
+        // }
+        //
+        // if (dialect === "mysql") {
+        //     e.emitBeginTransaction().emitLine();
+        // }
 
         e.emit("UPDATE ");
         this.emitUpsertTable(this._UpsertTable[0], e, "");
@@ -217,7 +224,8 @@ export class UpsertStmt {
             });
 
         }
-        e.emit(";").emitLine();
+        batch.push(e.toSql());
+        e.clear();
 
         e.emit("INSERT INTO ");
         this.emitUpsertTable(this._UpsertTable[0], e, "");
@@ -290,20 +298,26 @@ export class UpsertStmt {
             });
             e.emit(")");
         }
+        batch.push(e.toSql());
+        e.clear();
 
-        e.emit(";").emitLine();
+        e.emitCommit();
+        batch.push(e.toSql());
 
-        if (dialect === "mssql") {
-            e.emitCommit().emitLine();
-        }
-        if (dialect === "pg") {
-            e.emitCommit();
-            e.emit("END$$;");
-        }
-        if (dialect === "mysql") {
-            e.emitCommit().emitLine();
-        }
-        return [e.toSql()];
+        // e.emit(";").emitLine();
+        //
+        // if (dialect === "mssql") {
+        //     e.emitCommit().emitLine();
+        // }
+        // if (dialect === "pg") {
+        //     e.emitCommit();
+        //     e.emit("END$$;");
+        // }
+        // if (dialect === "mysql") {
+        //     e.emitCommit().emitLine();
+        // }
+
+        return batch;
     }
 }
 

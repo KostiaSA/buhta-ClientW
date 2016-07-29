@@ -18,8 +18,8 @@ export class WorkLoad2000Test {
         let total = 2000;
         for (let i = 0; i < total; i++) {
             db.executeSQL("select " + i + " as a777")
-                .then((table: DataTable) => {
-                    let row = table.rows[0];
+                .then((table: DataTable[]) => {
+                    let row = table[0].rows[0];
 
                     assert.equal(row["a777"], i);
 
@@ -48,7 +48,7 @@ export class WorkLoad2000Test {
         for (let i = 0; i < total; i++)
             sql.push("select " + i + " as a777");
 
-        db.executeSQLBatch(sql)
+        db.executeSQL(sql)
             .then((tables: DataTable[]) => {
 
                 for (let i = 0; i < total; i++) {
@@ -77,7 +77,7 @@ export class WorkLoad2000Test {
         let total = 2000;
         for (let i = 0; i < total; i++) {
             //setTimeout(() => {
-            db.executeSQLBatch(["select " + i + " as a777"])
+            db.executeSQL(["select " + i + " as a777"])
                 .then((table: DataTable[]) => {
                     let row = table[0].rows[0];
 
@@ -113,7 +113,7 @@ export class WorkLoad2000Test {
                 sql.push("select " + i + " as a777");
         }
 
-        db.executeSQLBatch(sql)
+        db.executeSQL(sql)
             .then((tables: DataTable[]) => {
 
                 for (let i = 0; i < total; i++) {
@@ -142,8 +142,8 @@ export class WorkLoad2000Test {
         let total = 2000;
         for (let i = 0; i < total; i++) {
             db.executeSQL("select " + i + " as a777")
-                .then((table: DataTable) => {
-                    let row = table.rows[0];
+                .then((table: DataTable[]) => {
+                    let row = table[0].rows[0];
 
                     assert.equal(row["a777"], i);
 
@@ -172,7 +172,7 @@ export class WorkLoad2000Test {
         for (let i = 0; i < total; i++)
             sql.push("select " + i + " as a777");
 
-        db.executeSQLBatch(sql)
+        db.executeSQL(sql)
             .then((tables: DataTable[]) => {
 
                 for (let i = 0; i < total; i++) {

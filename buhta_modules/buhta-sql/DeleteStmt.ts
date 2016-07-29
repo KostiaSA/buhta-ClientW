@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import {SqlDialect, SqlValue, SqlNumberValue, SqlDateValue, SqlDateTimeValue} from "./SqlCore";
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
+import {SqlBatch} from "./SqlDb";
 //import {SelectTable, SelectColumn} from "./SelectStmt";
 
 
@@ -55,7 +56,7 @@ export class DeleteStmt {
     }
 
 
-    toSql(dialect: SqlDialect): string {
+    toSql(dialect: SqlDialect): SqlBatch {
 
         let e = new SqlEmitter();
         e.dialect = dialect;

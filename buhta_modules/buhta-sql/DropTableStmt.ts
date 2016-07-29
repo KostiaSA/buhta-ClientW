@@ -2,6 +2,7 @@ import * as _ from "lodash";
 import {SqlDataType, SqlDialect} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 import {throwError} from "../buhta-core/Error";
+import {SqlBatch} from "./SqlDb";
 
 
 export interface DropTable {
@@ -37,7 +38,7 @@ export class DropTableStmt {
 
 
 
-    toSql(dialect: SqlDialect): string {
+    toSql(dialect: SqlDialect): SqlBatch {
 
         let e = new SqlEmitter();
         e.dialect = dialect;

@@ -523,7 +523,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
          });
 
         db.executeSQL("SELECT * FROM sakila.film")
-            .then((obj: DataTable) => {
+            .then((obj: DataTable[]) => {
                 console.log(obj);
             })
             .catch((err: string) => {

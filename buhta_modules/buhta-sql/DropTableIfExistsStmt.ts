@@ -3,6 +3,7 @@ import {SqlDataType, SqlDialect} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 import {throwError} from "../buhta-core/Error";
 import {DropTable} from "./DropTableStmt";
+import {SqlBatch} from "./SqlDb";
 
 
 export class DropTableIfExistsStmt {
@@ -41,7 +42,7 @@ export class DropTableIfExistsStmt {
     }
 
 
-    toSql(dialect: SqlDialect): string {
+    toSql(dialect: SqlDialect): SqlBatch {
 
         let e = new SqlEmitter();
         e.dialect = dialect;

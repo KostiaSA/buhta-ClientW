@@ -8,6 +8,10 @@ export class SqlEmitter {
     dialect: SqlDialect;
     noLevels: boolean;
 
+    clear() {
+        this.sql = [];
+    }
+
     emit(str: string): SqlEmitter {
         this.sql.push(str);
         return this;
@@ -56,11 +60,11 @@ export class SqlEmitter {
     emitBeginTransaction(): SqlEmitter {
 
         if (this.dialect === "mssql")
-            this.sql.push("BEGIN TRAN;");
+            this.sql.push("BEGIN TRAN");
         else if (this.dialect === "pg")
-            this.sql.push("START TRANSACTION;");
+            this.sql.push("START TRANSACTION");
         else if (this.dialect === "mysql")
-            this.sql.push("START TRANSACTION;");
+            this.sql.push("START TRANSACTION");
         else {
             throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
         }
@@ -70,11 +74,11 @@ export class SqlEmitter {
     emitCommit(): SqlEmitter {
 
         if (this.dialect === "mssql")
-            this.sql.push("COMMIT;");
+            this.sql.push("COMMIT");
         else if (this.dialect === "pg")
-            this.sql.push("COMMIT;");
+            this.sql.push("COMMIT");
         else if (this.dialect === "mysql")
-            this.sql.push("COMMIT;");
+            this.sql.push("COMMIT");
         else {
             throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
         }
@@ -84,11 +88,11 @@ export class SqlEmitter {
     emitRollback(): SqlEmitter {
 
         if (this.dialect === "mssql")
-            this.sql.push("ROLLBACK;");
+            this.sql.push("ROLLBACK");
         else if (this.dialect === "pg")
-            this.sql.push("ROLLBACK;");
+            this.sql.push("ROLLBACK");
         else if (this.dialect === "mysql")
-            this.sql.push("ROLLBACK;");
+            this.sql.push("ROLLBACK");
         else {
             throwError("SqlEmitter: invalid sql dialect '" + this.dialect + "'");
         }

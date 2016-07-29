@@ -3,6 +3,7 @@ import * as uuid from "UUID";
 
 import {SelectColumn} from "./SelectStmt";
 import {throwError, throwAbstractError} from "../buhta-core/Error";
+import {SqlBatch} from "./SqlDb";
 
 export type SqlDialect = "mssql" | "pg" | "mysql";
 
@@ -19,7 +20,7 @@ export type SqlDataType =
 
 
 export interface SqlStmt {
-    toSql(dialect: SqlDialect): string;
+    toSql(dialect: SqlDialect): SqlBatch;
 }
 
 export interface WhereClause {

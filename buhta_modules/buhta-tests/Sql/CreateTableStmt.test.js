@@ -160,7 +160,7 @@ function select_table_proc(dialect, done) {
         .where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (table) {
-        var row = table.rows[0];
+        var row = table[0].rows[0];
         //    assert.equal(row["guid"], testGuid);
         chai_1.assert.equal(row["str250"], testStr250);
         chai_1.assert.equal(row["text"], testText);
@@ -213,7 +213,7 @@ function check_update_table_proc(dialect, done) {
     sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (table) {
-        var row = table.rows[0];
+        var row = table[0].rows[0];
         chai_1.assert.equal(row["str250"], updateTestStr250);
         chai_1.assert.equal(row["short"], testByte);
         chai_1.assert.equal(row["int"], updateTestInt);
@@ -234,7 +234,7 @@ function upsert_table_proc(dialect, done) {
     sql.column("str250", new SqlCore_1.SqlStringValue(updateTestStr250));
     sql.column("int", updateTestInt);
     sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
-    db.executeSQLBatch(sql.toSql(dialect))
+    db.executeSQL(sql.toSql(dialect))
         .then(function (fake) {
         done();
     })
@@ -253,7 +253,7 @@ function check_upsert_table_proc(dialect, done) {
     sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (table) {
-        var row = table.rows[0];
+        var row = table[0].rows[0];
         chai_1.assert.equal(row["guid"], testGuid);
         chai_1.assert.equal(row["str250"], updateTestStr250);
         chai_1.assert.equal(row["int"], updateTestInt);
@@ -274,7 +274,7 @@ function upsert2_table_proc(dialect, done) {
     sql.column("str250", new SqlCore_1.SqlStringValue(testStr250));
     sql.column("int", updateTestInt);
     sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
-    db.executeSQLBatch(sql.toSql(dialect))
+    db.executeSQL(sql.toSql(dialect))
         .then(function (fake) {
         done();
     })
@@ -293,7 +293,7 @@ function check_upsert2_table_proc(dialect, done) {
     sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (table) {
-        var row = table.rows[0];
+        var row = table[0].rows[0];
         chai_1.assert.equal(row["guid"], testGuid);
         chai_1.assert.equal(row["str250"], testStr250);
         chai_1.assert.equal(row["int"], updateTestInt);
@@ -330,8 +330,8 @@ function check_delete_table_proc(dialect, done) {
     sql.where("guid", "=", new SqlCore_1.SqlGuidValue(testGuid));
     db.executeSQL(sql)
         .then(function (table) {
-        var row = table.rows[0];
-        chai_1.assert.equal(table.rows.length, 0);
+        var row = table[0].rows[0];
+        chai_1.assert.equal(table[0].rows.length, 0);
         done();
     })
         .catch(function (error) {

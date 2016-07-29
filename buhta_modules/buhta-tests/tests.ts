@@ -10,7 +10,7 @@ import {SelectStmt} from "../buhta-sql/SelectStmt";
 import * as moment from "moment";
 
 export * from "./sql/CreateTableStmt.test";
-export * from "./sql/WorkLoad2000.test";
+//export * from "./sql/WorkLoad2000.test";
 
 
 function getTestString() {

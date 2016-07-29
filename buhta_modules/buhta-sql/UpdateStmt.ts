@@ -4,6 +4,7 @@ import {SqlDialect, SqlValue, SqlNumberValue, SqlDateValue, SqlDateTimeValue} fr
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 import {SelectTable, SelectColumn} from "./SelectStmt";
+import {SqlBatch} from "./SqlDb";
 
 
 export interface UpdateColumn {
@@ -152,7 +153,7 @@ export class UpdateStmt {
         return this;
     }
 
-    toSql(dialect: SqlDialect): string {
+    toSql(dialect: SqlDialect): SqlBatch {
 
         let e = new SqlEmitter();
         e.dialect = dialect;
