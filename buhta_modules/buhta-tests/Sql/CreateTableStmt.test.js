@@ -486,10 +486,36 @@ var CreateTableStmtTest = (function () {
             _loop_1(i);
         }
     };
+    CreateTableStmtTest.prototype.mssql_select_batch_2000 = function (done) {
+        var db = new SqlDb_1.SqlDb();
+        db.dbName = "test-mssql";
+        db.dialect = "mssql";
+        var sql = [];
+        var total = 2000;
+        for (var i = 0; i < total; i++)
+            sql.push("select " + i + " as a777");
+        db.executeSQLBatch(sql)
+            .then(function (tables) {
+            for (var i = 0; i < total; i++) {
+                var row = tables[i].rows[0];
+                chai_1.assert.equal(row["a777"], i);
+            }
+            done();
+        })
+            .catch(function (error) {
+            console.error(error);
+            throw error;
+        });
+    };
     __decorate([
+        mocha_typescript_1.skip,
         mocha_typescript_1.test,
         mocha_typescript_1.timeout(15000)
     ], CreateTableStmtTest.prototype, "mssql_select_2000", null);
+    __decorate([
+        mocha_typescript_1.test,
+        mocha_typescript_1.timeout(15000)
+    ], CreateTableStmtTest.prototype, "mssql_select_batch_2000", null);
     CreateTableStmtTest = __decorate([
         mocha_typescript_1.suite("Sql CreateTableStmt")
     ], CreateTableStmtTest);

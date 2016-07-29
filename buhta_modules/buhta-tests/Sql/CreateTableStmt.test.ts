@@ -537,7 +537,7 @@ export class CreateTableStmtTest {
     //     }
     // }
 
-    @test @timeout(15000)
+    @skip @test @timeout(15000)
     mssql_select_2000(done: () => void) {
 
         let db = new SqlDb();
@@ -565,6 +565,35 @@ export class CreateTableStmtTest {
                 });
 
         }
+    }
+
+    @test @timeout(15000)
+    mssql_select_batch_2000(done: () => void) {
+
+        let db = new SqlDb();
+        db.dbName = "test-mssql";
+        db.dialect = "mssql";
+
+        let sql: string[] = [];
+
+        let total = 2000;
+        for (let i = 0; i < total; i++)
+            sql.push("select " + i + " as a777");
+
+        db.executeSQLBatch(sql)
+            .then((tables: DataTable[]) => {
+
+                for (let i = 0; i < total; i++) {
+                    let row = tables[i].rows[0];
+                    assert.equal(row["a777"], i);
+                }
+
+                done();
+            })
+            .catch((error) => {
+                console.error(error);
+                throw error;
+            });
     }
 
     // @test
