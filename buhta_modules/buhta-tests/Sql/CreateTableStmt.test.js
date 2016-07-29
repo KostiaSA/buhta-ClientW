@@ -342,8 +342,8 @@ function check_delete_table_proc(dialect, done) {
 var CreateTableStmtTest = (function () {
     function CreateTableStmtTest() {
     }
-    // @skip @test @timeout(15000)
-    // new_pg_select_batch_2000(done: () => void) {
+    // @test @timeout(15000)
+    // pg_select_batch_2000(done: () => void) {
     //
     //     let db = new SqlDb();
     //     db.dbName = "test-pg";
@@ -352,8 +352,12 @@ var CreateTableStmtTest = (function () {
     //     let sql: string[] = [];
     //
     //     let total = 2000;
-    //     for (let i = 0; i < total; i++)
-    //         sql.push("select " + i + " as a777");
+    //     for (let i = 0; i < total; i++) {
+    //         if (i === 100)
+    //             sql.push("select " + i + " as a777");
+    //         else
+    //             sql.push("select " + i + " as a777");
+    //     }
     //
     //     db.executeSQLBatch(sql)
     //         .then((tables: DataTable[]) => {
@@ -371,8 +375,8 @@ var CreateTableStmtTest = (function () {
     //         });
     // }
     //
-    // @skip @test @timeout(45000)
-    // new_pg_select_2000(done: () => void) {
+    // @test @timeout(45000)
+    // pg_select_2000(done: () => void) {
     //
     //     let db = new SqlDb();
     //     db.dbName = "test-pg";
@@ -384,6 +388,37 @@ var CreateTableStmtTest = (function () {
     //     let total = 2000;
     //     for (let i = 0; i < total; i++) {
     //         //setTimeout(() => {
+    //         db.executeSQLBatch(["select " + i + " as a777"])
+    //             .then((table: DataTable[]) => {
+    //                 let row = table[0].rows[0];
+    //
+    //                 assert.equal(row["a777"], i);
+    //
+    //                 counter++;
+    //                 if (counter === total)
+    //                     done();
+    //             })
+    //             .catch((error) => {
+    //                 console.error(error);
+    //                 throw error;
+    //             });
+    //
+    //         //}, i * 5);
+    //     }
+    // }
+    //
+    // @test @timeout(15000)
+    // mysql_select_2000(done: () => void) {
+    //
+    //     let db = new SqlDb();
+    //     db.dbName = "test-mysql";
+    //     db.dialect = "mysql";
+    //
+    //     // let sql: string[] = [];
+    //
+    //     let counter = 0;
+    //     let total = 2000;
+    //     for (let i = 0; i < total; i++) {
     //         db.executeSQL("select " + i + " as a777")
     //             .then((table: DataTable) => {
     //                 let row = table.rows[0];
@@ -399,7 +434,6 @@ var CreateTableStmtTest = (function () {
     //                 throw error;
     //             });
     //
-    //         //}, i * 5);
     //     }
     // }
     //
@@ -433,11 +467,11 @@ var CreateTableStmtTest = (function () {
     // }
     //
     // @test @timeout(15000)
-    // mysql_select_2000(done: () => void) {
+    // mssql_select_2000(done: () => void) {
     //
     //     let db = new SqlDb();
-    //     db.dbName = "test-mysql";
-    //     db.dialect = "mysql";
+    //     db.dbName = "test-mssql";
+    //     db.dialect = "mssql";
     //
     //     // let sql: string[] = [];
     //
@@ -461,61 +495,312 @@ var CreateTableStmtTest = (function () {
     //
     //     }
     // }
-    CreateTableStmtTest.prototype.mssql_select_2000 = function (done) {
-        var db = new SqlDb_1.SqlDb();
-        db.dbName = "test-mssql";
-        db.dialect = "mssql";
-        // let sql: string[] = [];
-        var counter = 0;
-        var total = 2000;
-        var _loop_1 = function(i) {
-            db.executeSQL("select " + i + " as a777")
-                .then(function (table) {
-                var row = table.rows[0];
-                chai_1.assert.equal(row["a777"], i);
-                counter++;
-                if (counter === total)
-                    done();
-            })
-                .catch(function (error) {
-                console.error(error);
-                throw error;
-            });
-        };
-        for (var i = 0; i < total; i++) {
-            _loop_1(i);
-        }
+    //
+    // @test @timeout(15000)
+    // mssql_select_batch_2000(done: () => void) {
+    //
+    //     let db = new SqlDb();
+    //     db.dbName = "test-mssql";
+    //     db.dialect = "mssql";
+    //
+    //     let sql: string[] = [];
+    //
+    //     let total = 2000;
+    //     for (let i = 0; i < total; i++)
+    //         sql.push("select " + i + " as a777");
+    //
+    //     db.executeSQLBatch(sql)
+    //         .then((tables: DataTable[]) => {
+    //
+    //             for (let i = 0; i < total; i++) {
+    //                 let row = tables[i].rows[0];
+    //                 assert.equal(row["a777"], i);
+    //             }
+    //
+    //             done();
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //             throw error;
+    //         });
+    // }
+    CreateTableStmtTest.prototype.mssql_drop_table_if_exist = function (done) {
+        var dialect = "mssql";
+        drop_table_if_exist_proc(dialect, done);
     };
-    CreateTableStmtTest.prototype.mssql_select_batch_2000 = function (done) {
-        var db = new SqlDb_1.SqlDb();
-        db.dbName = "test-mssql";
-        db.dialect = "mssql";
-        var sql = [];
-        var total = 2000;
-        for (var i = 0; i < total; i++)
-            sql.push("select " + i + " as a777");
-        db.executeSQLBatch(sql)
-            .then(function (tables) {
-            for (var i = 0; i < total; i++) {
-                var row = tables[i].rows[0];
-                chai_1.assert.equal(row["a777"], i);
-            }
-            done();
-        })
-            .catch(function (error) {
-            console.error(error);
-            throw error;
-        });
+    CreateTableStmtTest.prototype.mssql_create_table = function (done) {
+        var dialect = "mssql";
+        create_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_insert_table = function (done) {
+        var dialect = "mssql";
+        insert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_select_table = function (done) {
+        var dialect = "mssql";
+        select_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_update_table = function (done) {
+        var dialect = "mssql";
+        update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_check_update_table = function (done) {
+        var dialect = "mssql";
+        check_update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_delete_table = function (done) {
+        var dialect = "mssql";
+        delete_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_check_delete_table = function (done) {
+        var dialect = "mssql";
+        check_delete_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_upsert_table = function (done) {
+        var dialect = "mssql";
+        upsert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_check_upsert_table = function (done) {
+        var dialect = "mssql";
+        check_upsert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_upsert2_table = function (done) {
+        var dialect = "mssql";
+        upsert2_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_check_upsert2_table = function (done) {
+        var dialect = "mssql";
+        check_upsert2_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mssql_drop_table = function (done) {
+        var dialect = "mssql";
+        drop_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_drop_table_if_exist = function (done) {
+        var dialect = "pg";
+        drop_table_if_exist_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_create_table = function (done) {
+        var dialect = "pg";
+        create_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_insert_table = function (done) {
+        var dialect = "pg";
+        insert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_select_table = function (done) {
+        var dialect = "pg";
+        select_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_update_table = function (done) {
+        var dialect = "pg";
+        update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_check_update_table = function (done) {
+        var dialect = "pg";
+        check_update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_delete_table = function (done) {
+        var dialect = "pg";
+        delete_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_check_delete_table = function (done) {
+        var dialect = "pg";
+        check_delete_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_upsert_table = function (done) {
+        var dialect = "pg";
+        upsert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_check_upsert_table = function (done) {
+        var dialect = "pg";
+        check_upsert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_upsert2_table = function (done) {
+        var dialect = "pg";
+        upsert2_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_check_upsert2_table = function (done) {
+        var dialect = "pg";
+        check_upsert2_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_drop_table = function (done) {
+        var dialect = "pg";
+        drop_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_drop_table_if_exist = function (done) {
+        var dialect = "mysql";
+        drop_table_if_exist_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_create_table = function (done) {
+        var dialect = "mysql";
+        create_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_insert_table = function (done) {
+        var dialect = "mysql";
+        insert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_select_table = function (done) {
+        var dialect = "mysql";
+        select_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_update_table = function (done) {
+        var dialect = "mysql";
+        update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_check_update_table = function (done) {
+        var dialect = "mysql";
+        check_update_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_delete_table = function (done) {
+        var dialect = "mysql";
+        delete_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_check_delete_table = function (done) {
+        var dialect = "mysql";
+        check_delete_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_upsert_table = function (done) {
+        var dialect = "mysql";
+        upsert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_check_upsert_table = function (done) {
+        var dialect = "mysql";
+        check_upsert_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_upsert2_table = function (done) {
+        var dialect = "mysql";
+        upsert2_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_check_upsert2_table = function (done) {
+        var dialect = "mysql";
+        check_upsert2_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.mysql_drop_table = function (done) {
+        var dialect = "mysql";
+        drop_table_proc(dialect, done);
     };
     __decorate([
-        mocha_typescript_1.skip,
-        mocha_typescript_1.test,
-        mocha_typescript_1.timeout(15000)
-    ], CreateTableStmtTest.prototype, "mssql_select_2000", null);
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_drop_table_if_exist", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_create_table", null);
     __decorate([
         mocha_typescript_1.test,
-        mocha_typescript_1.timeout(15000)
-    ], CreateTableStmtTest.prototype, "mssql_select_batch_2000", null);
+        mocha_typescript_1.timeout(10000)
+    ], CreateTableStmtTest.prototype, "mssql_insert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_select_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_check_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_delete_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_check_delete_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_upsert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_check_upsert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_upsert2_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_check_upsert2_table", null);
+    __decorate([
+        mocha_typescript_1.test,
+        mocha_typescript_1.skip
+    ], CreateTableStmtTest.prototype, "mssql_drop_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_drop_table_if_exist", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_create_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_insert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_select_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_check_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_delete_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_check_delete_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_upsert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_check_upsert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_upsert2_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_check_upsert2_table", null);
+    __decorate([
+        mocha_typescript_1.test,
+        mocha_typescript_1.skip
+    ], CreateTableStmtTest.prototype, "pg_drop_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_drop_table_if_exist", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_create_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_insert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_select_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_check_update_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_delete_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_check_delete_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_upsert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_check_upsert_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_upsert2_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_check_upsert2_table", null);
+    __decorate([
+        mocha_typescript_1.test,
+        mocha_typescript_1.skip
+    ], CreateTableStmtTest.prototype, "mysql_drop_table", null);
     CreateTableStmtTest = __decorate([
         mocha_typescript_1.suite("Sql CreateTableStmt")
     ], CreateTableStmtTest);
