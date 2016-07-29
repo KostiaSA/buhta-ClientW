@@ -739,8 +739,8 @@ export class SqlDb {
                             queryId: queryId
                         };
 
-                        console.log(this.dialect);
-                        console.log(req.sql);
+                        //console.log(this.dialect);
+                        //console.log(req.sql);
 
                         socket.emit("executeSqlBatch", req);
 
