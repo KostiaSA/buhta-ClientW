@@ -9,9 +9,10 @@
 // import {SelectStmt} from "../buhta-sql/SelectStmt";
 // import * as moment from "moment";
 
-export * from "./sql/CheckDataTypes.test";
-export * from "./sql/WorkLoad2000.test";
-export * from "./sql/CreateTableStmt.test";
+// export * from "./sql/CheckDataTypes.test";
+// export * from "./sql/WorkLoad2000.test";
+// export * from "./sql/CreateTableStmt.test";
+export * from "./sql/MultiSelect.test";
 
 
 
