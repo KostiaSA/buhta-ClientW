@@ -71,7 +71,7 @@ function drop_table_if_exist_proc(dialect, done) {
     db.dbName = "test-" + dialect;
     db.dialect = dialect;
     var sql = new DropTableIfExistsStmt_1.DropTableIfExistsStmt();
-    sql.addTable("BuhtaTestTable");
+    sql.table("BuhtaTestTable");
     db.executeSQL(sql)
         .then(function (fake) {
         done();
@@ -355,7 +355,7 @@ function create_temp_table_proc(dialect, done) {
     insert_sql.column("id", 999);
     insert_sql.column("name", "'test str 1'");
     batch.push(insert_sql);
-    batch.push(new DropTableStmt_1.DropTableStmt("#BuhtaTestTempTable"));
+    //  batch.push(new DropTableStmt("#BuhtaTestTempTable"));
     db.executeSQL(batch)
         .then(function (tables) {
         done();

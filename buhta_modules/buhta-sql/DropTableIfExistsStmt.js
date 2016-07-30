@@ -3,13 +3,15 @@ var _ = require("lodash");
 var SqlEmitter_1 = require("./SqlEmitter");
 var Error_1 = require("../buhta-core/Error");
 var DropTableIfExistsStmt = (function () {
-    function DropTableIfExistsStmt() {
+    function DropTableIfExistsStmt(table) {
+        if (table)
+            this.table(table);
     }
-    DropTableIfExistsStmt.prototype.addTable = function (table) {
+    DropTableIfExistsStmt.prototype.table = function (table) {
         if (_.isString(table))
-            this.table = { table: table };
+            this._table = { table: table };
         else
-            this.table = table;
+            this._table = table;
         return this;
     };
     DropTableIfExistsStmt.prototype.emitDropTable = function (table, e, level) {
@@ -26,12 +28,19 @@ var DropTableIfExistsStmt = (function () {
     };
     DropTableIfExistsStmt.prototype.emitDropTableName = function (table, e, level) {
         e.emitLevel(level);
-        if (table.db)
-            e.emit(table.db).emit("..");
-        if (table.table)
-            e.emit(table.table);
         if (table.raw)
             e.emit(table.raw);
+        else {
+            if (e.dialect === "mssql" && table.table.startsWith("#")) {
+                e.emit("tempdb.." + table.table);
+            }
+            else {
+                if (table.db)
+                    e.emit(table.db).emit("..");
+                if (table.table)
+                    e.emit(table.table);
+            }
+        }
         return this;
     };
     DropTableIfExistsStmt.prototype.toSql = function (dialect) {
@@ -40,18 +49,18 @@ var DropTableIfExistsStmt = (function () {
         e.noLevels = false;
         if (dialect === "mssql") {
             e.emit("IF OBJECT_ID('");
-            this.emitDropTableName(this.table, e, "");
+            this.emitDropTableName(this._table, e, "");
             e.emit("','U') IS NOT NULL ");
             e.emit("DROP TABLE ");
-            this.emitDropTable(this.table, e, "");
+            this.emitDropTable(this._table, e, "");
         }
         else if (dialect === "pg") {
             e.emit("DROP TABLE IF EXISTS ");
-            this.emitDropTable(this.table, e, "");
+            this.emitDropTable(this._table, e, "");
         }
         else if (dialect === "mysql") {
             e.emit("DROP TABLE IF EXISTS ");
-            this.emitDropTable(this.table, e, "");
+            this.emitDropTable(this._table, e, "");
         }
         else {
             Error_1.throwError("DropTableIfExistsStmt.toSql(): invalid sql dialect '" + dialect + "'");

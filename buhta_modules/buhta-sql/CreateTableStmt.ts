@@ -3,6 +3,7 @@ import {SqlDataType, SqlDialect} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 import {throwError} from "../buhta-core/Error";
 import {SqlBatch} from "./SqlDb";
+import {DropTableIfExistsStmt} from "./DropTableIfExistsStmt";
 
 export interface CreateColumn {
     column?: string;
@@ -332,7 +333,10 @@ export class CreateTableStmt {
         //     index.EmitCreateSql(sql, lang, identStr);
         // });
 
-        return e.toSql();
+        if (this.isTempTable)
+            return [new DropTableIfExistsStmt(this._table), e.toSql()];
+        else
+            return e.toSql();
     }
 
 }

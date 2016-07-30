@@ -79,7 +79,7 @@ function drop_table_if_exist_proc(dialect: SqlDialect, done: () => void) {
     db.dialect = dialect;
 
     let sql = new DropTableIfExistsStmt();
-    sql.addTable("BuhtaTestTable");
+    sql.table("BuhtaTestTable");
 
     db.executeSQL(sql)
         .then((fake) => {
@@ -433,7 +433,7 @@ function create_temp_table_proc(dialect: SqlDialect, done: () => void) {
     insert_sql.column("name", "'test str 1'");
     batch.push(insert_sql);
 
-    batch.push(new DropTableStmt("#BuhtaTestTempTable"));
+  //  batch.push(new DropTableStmt("#BuhtaTestTempTable"));
 
     db.executeSQL(batch)
         .then((tables: DataTable[]) => {

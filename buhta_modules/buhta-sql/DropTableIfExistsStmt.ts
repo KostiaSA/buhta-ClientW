@@ -7,13 +7,18 @@ import {SqlBatch} from "./SqlDb";
 
 
 export class DropTableIfExistsStmt {
-    table: DropTable;
+    constructor(table?: string | DropTable) {
+        if (table)
+            this.table(table);
+    }
 
-    addTable(table: string | DropTable): DropTableIfExistsStmt {
+    _table: DropTable;
+
+    table(table: string | DropTable): DropTableIfExistsStmt {
         if (_.isString(table))
-            this.table = {table: table};
+            this._table = {table: table};
         else
-            this.table = table;
+            this._table = table;
         return this;
     }
 
@@ -32,12 +37,21 @@ export class DropTableIfExistsStmt {
 
     private emitDropTableName(table: DropTable, e: SqlEmitter, level: string): DropTableIfExistsStmt {
         e.emitLevel(level);
-        if (table.db)
-            e.emit(table.db).emit("..");
-        if (table.table)
-            e.emit(table.table);
+
+
         if (table.raw)
             e.emit(table.raw);
+        else {
+            if (e.dialect === "mssql" && table.table!.startsWith("#")) {
+                e.emit("tempdb.." + table.table);
+            }
+            else {
+                if (table.db)
+                    e.emit(table.db).emit("..");
+                if (table.table)
+                    e.emit(table.table);
+            }
+        }
         return this;
     }
 
@@ -50,18 +64,18 @@ export class DropTableIfExistsStmt {
 
         if (dialect === "mssql") {
             e.emit("IF OBJECT_ID('");
-            this.emitDropTableName(this.table, e, "");
+            this.emitDropTableName(this._table, e, "");
             e.emit("','U') IS NOT NULL ");
             e.emit("DROP TABLE ");
-            this.emitDropTable(this.table, e, "");
+            this.emitDropTable(this._table, e, "");
         }
         else if (dialect === "pg") {
             e.emit("DROP TABLE IF EXISTS ");
-            this.emitDropTable(this.table, e, "");
+            this.emitDropTable(this._table, e, "");
         }
         else if (dialect === "mysql") {
             e.emit("DROP TABLE IF EXISTS ");
-            this.emitDropTable(this.table, e, "");
+            this.emitDropTable(this._table, e, "");
         }
         else {
             throwError("DropTableIfExistsStmt.toSql(): invalid sql dialect '" + dialect + "'");
