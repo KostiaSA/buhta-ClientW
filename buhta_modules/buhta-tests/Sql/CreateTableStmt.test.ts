@@ -2,7 +2,7 @@ import {suite, test, slow, timeout, skip, only} from "mocha-typescript";
 import {assert} from "chai";
 import {SqlDialect, SqlGuidValue, SqlNewGuidValue, SqlStringValue, SqlDateValue} from "../../buhta-sql/SqlCore";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
-import {SqlDb, DataTable} from "../../buhta-sql/SqlDb";
+import {SqlDb, DataTable, SqlBatch} from "../../buhta-sql/SqlDb";
 import {DropTableStmt} from "../../buhta-sql/DropTableStmt";
 import {DropTableIfExistsStmt} from "../../buhta-sql/DropTableIfExistsStmt";
 import {InsertStmt} from "../../buhta-sql/InsertStmt";
@@ -10,6 +10,7 @@ import {SelectStmt} from "../../buhta-sql/SelectStmt";
 import {UpdateStmt} from "../../buhta-sql/UpdateStmt";
 import {DeleteStmt} from "../../buhta-sql/DeleteStmt";
 import {UpsertStmt} from "../../buhta-sql/UpsertStmt";
+import {CreateTempTableStmt} from "../../buhta-sql/CreateTempTableStmt";
 
 
 function create_table_proc(dialect: SqlDialect, done: () => void) {
@@ -19,26 +20,26 @@ function create_table_proc(dialect: SqlDialect, done: () => void) {
     db.dialect = dialect;
 
     let sql = new CreateTableStmt();
-    sql.addTable("BuhtaTestTable");
-    sql.addColumn({column: "guid", dataType: "guid", notNull: true, primaryKey: true});
-    sql.addColumn("str250", "string", 250);
-    sql.addColumn("text", "text");
+    sql.table("BuhtaTestTable");
+    sql.column({column: "guid", dataType: "guid", notNull: true, primaryKey: true});
+    sql.column("str250", "string", 250);
+    sql.column("text", "text");
 
-    sql.addColumn("sbyte", "sbyte");
-    sql.addColumn("byte", "byte");
-    sql.addColumn("short", "short");
-    sql.addColumn("ushort", "ushort");
-    sql.addColumn("int", "int");
-    sql.addColumn("uint", "uint");
-    sql.addColumn("long", "long");
-    sql.addColumn("ulong", "ulong");
-    sql.addColumn("float", "float");
-    sql.addColumn("double", "double");
-    sql.addColumn({column: "decimal", dataType: "decimal", dataLen: 15, decimals: 2});
-    sql.addColumn("date", "date");
-    sql.addColumn("datetime", "datetime");
-    sql.addColumn("timestamp", "timestamp");
-    sql.addColumn("blob", "blob");
+    sql.column("sbyte", "sbyte");
+    sql.column("byte", "byte");
+    sql.column("short", "short");
+    sql.column("ushort", "ushort");
+    sql.column("int", "int");
+    sql.column("uint", "uint");
+    sql.column("long", "long");
+    sql.column("ulong", "ulong");
+    sql.column("float", "float");
+    sql.column("double", "double");
+    sql.column({column: "decimal", dataType: "decimal", dataLen: 15, decimals: 2});
+    sql.column("date", "date");
+    sql.column("datetime", "datetime");
+    sql.column("timestamp", "timestamp");
+    sql.column("blob", "blob");
 
     db.executeSQL(sql)
         .then((fake) => {
@@ -58,7 +59,7 @@ function drop_table_proc(dialect: SqlDialect, done: () => void) {
     db.dialect = dialect;
 
     let sql = new DropTableStmt();
-    sql.addTable("BuhtaTestTable");
+    sql.table("BuhtaTestTable");
 
     db.executeSQL(sql)
         .then((fake) => {
@@ -413,6 +414,37 @@ function check_delete_table_proc(dialect: SqlDialect, done: () => void) {
 
 }
 
+function create_temp_table_proc(dialect: SqlDialect, done: () => void) {
+    let db = new SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+
+    let batch: SqlBatch = [];
+
+    let create_sql = new CreateTempTableStmt();
+    create_sql.table("#BuhtaTestTempTable");
+    create_sql.column({column: "id", dataType: "int", notNull: true, primaryKey: true});
+    create_sql.column("name", "string", 50);
+    batch.push(create_sql);
+
+    let insert_sql = new InsertStmt();
+    insert_sql.table("#BuhtaTestTempTable");
+    insert_sql.column("id", 999);
+    insert_sql.column("name", "'test str 1'");
+    batch.push(insert_sql);
+
+    batch.push(new DropTableStmt("#BuhtaTestTempTable"));
+
+    db.executeSQL(batch)
+        .then((tables: DataTable[]) => {
+            done();
+        })
+        .catch((error) => {
+            throw error;
+        });
+}
+
+
 @suite("Sql CreateTableStmt")
 //@skip
 export class CreateTableStmtTest {
@@ -681,6 +713,13 @@ export class CreateTableStmtTest {
     }
 
     @test
+    mssql_create_temp_table(done: () => void) {
+        let dialect: SqlDialect = "mssql";
+        create_temp_table_proc(dialect, done);
+    }
+
+
+    @test
     pg_drop_table_if_exist(done: () => void) {
         let dialect: SqlDialect = "pg";
         drop_table_if_exist_proc(dialect, done);
@@ -760,6 +799,12 @@ export class CreateTableStmtTest {
     }
 
     @test
+    pg_create_temp_table(done: () => void) {
+        let dialect: SqlDialect = "pg";
+        create_temp_table_proc(dialect, done);
+    }
+
+    @test
     mysql_drop_table_if_exist(done: () => void) {
         let dialect: SqlDialect = "mysql";
         drop_table_if_exist_proc(dialect, done);
@@ -835,5 +880,11 @@ export class CreateTableStmtTest {
     mysql_drop_table(done: () => void) {
         let dialect: SqlDialect = "mysql";
         drop_table_proc(dialect, done);
+    }
+
+    @test
+    mysql_create_temp_table(done: () => void) {
+        let dialect: SqlDialect = "mysql";
+        create_temp_table_proc(dialect, done);
     }
 }

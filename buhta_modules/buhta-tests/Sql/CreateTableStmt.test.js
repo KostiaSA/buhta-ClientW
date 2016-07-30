@@ -17,30 +17,31 @@ var SelectStmt_1 = require("../../buhta-sql/SelectStmt");
 var UpdateStmt_1 = require("../../buhta-sql/UpdateStmt");
 var DeleteStmt_1 = require("../../buhta-sql/DeleteStmt");
 var UpsertStmt_1 = require("../../buhta-sql/UpsertStmt");
+var CreateTempTableStmt_1 = require("../../buhta-sql/CreateTempTableStmt");
 function create_table_proc(dialect, done) {
     var db = new SqlDb_1.SqlDb();
     db.dbName = "test-" + dialect;
     db.dialect = dialect;
     var sql = new CreateTableStmt_1.CreateTableStmt();
-    sql.addTable("BuhtaTestTable");
-    sql.addColumn({ column: "guid", dataType: "guid", notNull: true, primaryKey: true });
-    sql.addColumn("str250", "string", 250);
-    sql.addColumn("text", "text");
-    sql.addColumn("sbyte", "sbyte");
-    sql.addColumn("byte", "byte");
-    sql.addColumn("short", "short");
-    sql.addColumn("ushort", "ushort");
-    sql.addColumn("int", "int");
-    sql.addColumn("uint", "uint");
-    sql.addColumn("long", "long");
-    sql.addColumn("ulong", "ulong");
-    sql.addColumn("float", "float");
-    sql.addColumn("double", "double");
-    sql.addColumn({ column: "decimal", dataType: "decimal", dataLen: 15, decimals: 2 });
-    sql.addColumn("date", "date");
-    sql.addColumn("datetime", "datetime");
-    sql.addColumn("timestamp", "timestamp");
-    sql.addColumn("blob", "blob");
+    sql.table("BuhtaTestTable");
+    sql.column({ column: "guid", dataType: "guid", notNull: true, primaryKey: true });
+    sql.column("str250", "string", 250);
+    sql.column("text", "text");
+    sql.column("sbyte", "sbyte");
+    sql.column("byte", "byte");
+    sql.column("short", "short");
+    sql.column("ushort", "ushort");
+    sql.column("int", "int");
+    sql.column("uint", "uint");
+    sql.column("long", "long");
+    sql.column("ulong", "ulong");
+    sql.column("float", "float");
+    sql.column("double", "double");
+    sql.column({ column: "decimal", dataType: "decimal", dataLen: 15, decimals: 2 });
+    sql.column("date", "date");
+    sql.column("datetime", "datetime");
+    sql.column("timestamp", "timestamp");
+    sql.column("blob", "blob");
     db.executeSQL(sql)
         .then(function (fake) {
         done();
@@ -55,7 +56,7 @@ function drop_table_proc(dialect, done) {
     db.dbName = "test-" + dialect;
     db.dialect = dialect;
     var sql = new DropTableStmt_1.DropTableStmt();
-    sql.addTable("BuhtaTestTable");
+    sql.table("BuhtaTestTable");
     db.executeSQL(sql)
         .then(function (fake) {
         done();
@@ -339,6 +340,30 @@ function check_delete_table_proc(dialect, done) {
         throw error;
     });
 }
+function create_temp_table_proc(dialect, done) {
+    var db = new SqlDb_1.SqlDb();
+    db.dbName = "test-" + dialect;
+    db.dialect = dialect;
+    var batch = [];
+    var create_sql = new CreateTempTableStmt_1.CreateTempTableStmt();
+    create_sql.table("#BuhtaTestTempTable");
+    create_sql.column({ column: "id", dataType: "int", notNull: true, primaryKey: true });
+    create_sql.column("name", "string", 50);
+    batch.push(create_sql);
+    var insert_sql = new InsertStmt_1.InsertStmt();
+    insert_sql.table("#BuhtaTestTempTable");
+    insert_sql.column("id", 999);
+    insert_sql.column("name", "'test str 1'");
+    batch.push(insert_sql);
+    batch.push(new DropTableStmt_1.DropTableStmt("#BuhtaTestTempTable"));
+    db.executeSQL(batch)
+        .then(function (tables) {
+        done();
+    })
+        .catch(function (error) {
+        throw error;
+    });
+}
 var CreateTableStmtTest = (function () {
     function CreateTableStmtTest() {
     }
@@ -576,6 +601,10 @@ var CreateTableStmtTest = (function () {
         var dialect = "mssql";
         drop_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.mssql_create_temp_table = function (done) {
+        var dialect = "mssql";
+        create_temp_table_proc(dialect, done);
+    };
     CreateTableStmtTest.prototype.pg_drop_table_if_exist = function (done) {
         var dialect = "pg";
         drop_table_if_exist_proc(dialect, done);
@@ -627,6 +656,10 @@ var CreateTableStmtTest = (function () {
     CreateTableStmtTest.prototype.pg_drop_table = function (done) {
         var dialect = "pg";
         drop_table_proc(dialect, done);
+    };
+    CreateTableStmtTest.prototype.pg_create_temp_table = function (done) {
+        var dialect = "pg";
+        create_temp_table_proc(dialect, done);
     };
     CreateTableStmtTest.prototype.mysql_drop_table_if_exist = function (done) {
         var dialect = "mysql";
@@ -680,6 +713,10 @@ var CreateTableStmtTest = (function () {
         var dialect = "mysql";
         drop_table_proc(dialect, done);
     };
+    CreateTableStmtTest.prototype.mysql_create_temp_table = function (done) {
+        var dialect = "mysql";
+        create_temp_table_proc(dialect, done);
+    };
     __decorate([
         mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mssql_drop_table_if_exist", null);
@@ -723,6 +760,9 @@ var CreateTableStmtTest = (function () {
     ], CreateTableStmtTest.prototype, "mssql_drop_table", null);
     __decorate([
         mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mssql_create_temp_table", null);
+    __decorate([
+        mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "pg_drop_table_if_exist", null);
     __decorate([
         mocha_typescript_1.test
@@ -763,6 +803,9 @@ var CreateTableStmtTest = (function () {
     ], CreateTableStmtTest.prototype, "pg_drop_table", null);
     __decorate([
         mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "pg_create_temp_table", null);
+    __decorate([
+        mocha_typescript_1.test
     ], CreateTableStmtTest.prototype, "mysql_drop_table_if_exist", null);
     __decorate([
         mocha_typescript_1.test
@@ -801,6 +844,9 @@ var CreateTableStmtTest = (function () {
         mocha_typescript_1.test,
         mocha_typescript_1.skip
     ], CreateTableStmtTest.prototype, "mysql_drop_table", null);
+    __decorate([
+        mocha_typescript_1.test
+    ], CreateTableStmtTest.prototype, "mysql_create_temp_table", null);
     CreateTableStmtTest = __decorate([
         mocha_typescript_1.suite("Sql CreateTableStmt")
     ], CreateTableStmtTest);

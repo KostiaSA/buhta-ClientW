@@ -541,19 +541,19 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         //
         //
         // let sql = new CreateTableStmt();
-        // sql.addTable("SchemaObject333");
-        // sql.addColumn({column: "id", dataType: "guid", notNull: true, primaryKey: true});
-        // sql.addColumn("parentObjectID", "guid");
-        // sql.addColumn("name", "string", 128);
-        // sql.addColumn("description", "text");
+        // sql.table("SchemaObject333");
+        // sql.column({column: "id", dataType: "guid", notNull: true, primaryKey: true});
+        // sql.column("parentObjectID", "guid");
+        // sql.column("name", "string", 128);
+        // sql.column("description", "text");
         //
-        // sql.addColumn("createDateTime", "datetime");
-        // sql.addColumn("updateDateTime", "datetime");
-        // sql.addColumn("createUserId", "guid");
-        // sql.addColumn("updateUserId", "guid");
+        // sql.column("createDateTime", "datetime");
+        // sql.column("updateDateTime", "datetime");
+        // sql.column("createUserId", "guid");
+        // sql.column("updateUserId", "guid");
         //
-        // sql.addColumn("lockByUserId", "guid");
-        // sql.addColumn("lockDateTime", "datetime");
+        // sql.column("lockByUserId", "guid");
+        // sql.column("lockDateTime", "datetime");
         //
         // console.log(sql.toSql("pg"));
         // console.log(sql.toSql("mysql"));
@@ -573,7 +573,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         // }
         //
         // let sql = new SelectStmt();
-        // sql.addColumn("*");
+        // sql.column("*");
         // sql.addFrom("SchemaObject");
         // sql.addWhere("name", "LIKE", "'%таблица%'");
         //
@@ -589,7 +589,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         // });
         //
         // let sql2 = new UpdateStmt();
-        // sql2.addTable("SchemaObject");
+        // sql2.table("SchemaObject");
         // sql2.addColumnAndValue("JSON", "'это json 33'");
         // sql2.addColumnAndValue("JSON2", "'это json 332'");
         // sql2.addWhere("name", "LIKE", "'%НоваяТаблица12%'");
@@ -618,8 +618,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         //     ;//.eq("");
 
         // let x = new SelectStmt();
-        // x.addColumn("номер");
-        // x.addColumn("название");
+        // x.column("номер");
+        // x.column("название");
         // x.addFrom("Организация");
         //
         // console.log(x.toSql("mssql"));

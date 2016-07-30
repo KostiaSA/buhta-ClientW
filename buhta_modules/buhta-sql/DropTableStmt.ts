@@ -13,13 +13,18 @@ export interface DropTable {
 
 
 export class DropTableStmt {
-    table: DropTable;
+    constructor(table?: string | DropTable) {
+        if (table)
+            this.table(table);
+    }
 
-    addTable(table: string | DropTable): DropTableStmt {
+    _table: DropTable;
+
+    table(table: string | DropTable): DropTableStmt {
         if (_.isString(table))
-            this.table = {table: table};
+            this._table = {table: table};
         else
-            this.table = table;
+            this._table = table;
         return this;
     }
 
@@ -37,7 +42,6 @@ export class DropTableStmt {
     }
 
 
-
     toSql(dialect: SqlDialect): SqlBatch {
 
         let e = new SqlEmitter();
@@ -45,7 +49,7 @@ export class DropTableStmt {
         e.noLevels = false;
 
         e.emit("DROP TABLE ");
-        this.emitDropTable(this.table, e, "");
+        this.emitDropTable(this._table, e, "");
 
         return e.toSql();
     }
