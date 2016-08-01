@@ -1,8 +1,11 @@
 import {SchemaObject} from "../buhta-schema/SchemaObject";
-let buhta = new BuhtaHost();
+import {SchemaTable} from "../buhta-schema/SchemaTable/SchemaTable";
+import {SchemaTableColumn} from "../buhta-schema/SchemaTable/SchemaTableColumn";
 
-(window as any)["buhta"] = buhta;
+export let buhta: any = {};
 
-export class BuhtaHost {
-    SchemaObject: Function = SchemaObject.constructor;
-}
+buhta.SchemaObject = SchemaObject;
+buhta.SchemaTable = SchemaTable;
+buhta.SchemaTableColumn= SchemaTableColumn;
+
+(window as any).buhta = buhta;
