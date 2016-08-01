@@ -9,7 +9,6 @@ import {TestBuhtaObject1} from "../Test1/testBuhtaObject1";
 import {buhta} from "../buhta-core/BuhtaHost";  // не удалять
 let fakeBuhtaHost = buhta; // не удалять
 
-
 // ReactDOM.render(
 //     <Hello compiler="TypeScript" framework="React" />,
 //     document.getElementById("example")
