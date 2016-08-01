@@ -32,13 +32,13 @@ var DropTableIfExistsStmt = (function () {
             e.emit(table.raw);
         else {
             if (e.dialect === "mssql" && table.table.startsWith("#")) {
-                e.emit("tempdb.." + table.table);
+                e.emitStringValue("tempdb.." + table.table);
             }
             else {
-                if (table.db)
-                    e.emit(table.db).emit("..");
-                if (table.table)
-                    e.emit(table.table);
+                if (table.db && table.table)
+                    e.emitStringValue(table.db + ".." + table.table);
+                else if (table.table)
+                    e.emitStringValue(table.table);
             }
         }
         return this;
@@ -48,9 +48,9 @@ var DropTableIfExistsStmt = (function () {
         e.dialect = dialect;
         e.noLevels = false;
         if (dialect === "mssql") {
-            e.emit("IF OBJECT_ID('");
+            e.emit("IF OBJECT_ID(");
             this.emitDropTableName(this._table, e, "");
-            e.emit("','U') IS NOT NULL ");
+            e.emit(",'U') IS NOT NULL ");
             e.emit("DROP TABLE ");
             this.emitDropTable(this._table, e, "");
         }

@@ -1,4 +1,5 @@
 import {SchemaObjectId} from "./SchemaObject";
+import {SqlBatch} from "../buhta-sql/SqlDb";
 
 export interface SchemaObjectTable {
     id?: SchemaObjectId;
@@ -12,4 +13,10 @@ export interface SchemaObjectTable {
     lockDateTime?: Date;
     lockedByUserID?: SchemaObjectId;
     position?: number;
+}
+
+
+export function initSchemaStorage() {
+    let batch: SqlBatch = [];
+
 }

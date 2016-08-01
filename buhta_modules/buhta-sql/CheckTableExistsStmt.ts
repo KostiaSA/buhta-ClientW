@@ -6,7 +6,9 @@ import {DropTable} from "./DropTableStmt";
 import {SqlBatch} from "./SqlDb";
 
 
-export class DropTableIfExistsStmt {
+// возвращает 1 или 0 если таблица существует/не существует
+
+export class CheckTableExistsStmt {
     constructor(table?: string | DropTable) {
         if (table)
             this.table(table);
@@ -14,7 +16,7 @@ export class DropTableIfExistsStmt {
 
     _table: DropTable;
 
-    table(table: string | DropTable): DropTableIfExistsStmt {
+    table(table: string | DropTable): CheckTableExistsStmt {
         if (_.isString(table))
             this._table = {table: table};
         else
@@ -22,22 +24,8 @@ export class DropTableIfExistsStmt {
         return this;
     }
 
-    private emitDropTable(table: DropTable, e: SqlEmitter, level: string): DropTableIfExistsStmt {
+    private emitTableName(table: DropTable, e: SqlEmitter, level: string): CheckTableExistsStmt {
         e.emitLevel(level);
-        if (table.db)
-            e.emitQuotedName(table.db).emit("..");
-        if (!table.table && !table.raw)
-            throwError("DropTableIfExistsStmt: table.name or table.raw not defined");
-        if (table.table)
-            e.emitQuotedName(table.table);
-        if (table.raw)
-            e.emit(table.raw);
-        return this;
-    }
-
-    private emitDropTableName(table: DropTable, e: SqlEmitter, level: string): DropTableIfExistsStmt {
-        e.emitLevel(level);
-
 
         if (table.raw)
             e.emit(table.raw);
@@ -63,22 +51,23 @@ export class DropTableIfExistsStmt {
         e.noLevels = false;
 
         if (dialect === "mssql") {
-            e.emit("IF OBJECT_ID(");
-            this.emitDropTableName(this._table, e, "");
-            e.emit(",'U') IS NOT NULL ");
-            e.emit("DROP TABLE ");
-            this.emitDropTable(this._table, e, "");
+            e.emit("SELECT CASE WHEN OBJECT_ID(");
+            this.emitTableName(this._table, e, "");
+            e.emit(",'U') IS NULL THEN 0 ELSE 1 END AS result");
         }
         else if (dialect === "pg") {
-            e.emit("DROP TABLE IF EXISTS ");
-            this.emitDropTable(this._table, e, "");
+            e.emit("SELECT COUNT(1) FROM pg_catalog.pg_class c ");
+            e.emit("JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace ");
+            e.emit("WHERE  n.nspname = 'public' AND c.relname = ");
+            this.emitTableName(this._table, e, "");
         }
         else if (dialect === "mysql") {
-            e.emit("DROP TABLE IF EXISTS ");
-            this.emitDropTable(this._table, e, "");
+            e.emit("SELECT COUNT(1) AS result FROM Information_schema.Tables ");
+            e.emit("where table_schema=SCHEMA() AND table_name=");
+            this.emitTableName(this._table, e, "");
         }
         else {
-            throwError("DropTableIfExistsStmt.toSql(): invalid sql dialect '" + dialect + "'");
+            throwError("CheckTableExistsStmt.toSql(): invalid sql dialect '" + dialect + "'");
         }
 
         return e.toSql();

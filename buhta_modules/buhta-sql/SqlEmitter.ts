@@ -1,5 +1,8 @@
 import * as _ from "lodash";
-import {Operand, WhereClause, SqlValue, SqlDateValue, SqlNumberValue, SqlDateTimeValue} from "./SqlCore";
+import {
+    Operand, WhereClause, SqlValue, SqlDateValue, SqlNumberValue, SqlDateTimeValue,
+    SqlStringValue
+} from "./SqlCore";
 import {SqlDialect} from "./SqlCore";
 import {throwError} from "../buhta-core/Error";
 
@@ -14,6 +17,11 @@ export class SqlEmitter {
 
     emit(str: string): SqlEmitter {
         this.sql.push(str);
+        return this;
+    }
+
+    emitStringValue(str: string): SqlEmitter {
+        this.sql.push(new SqlStringValue(str).toSql(this.dialect));
         return this;
     }
 
