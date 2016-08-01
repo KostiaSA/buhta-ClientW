@@ -36,7 +36,7 @@ export class SelectStmt {
                 this._selectColumns.push({raw: "*"});
             else if (_.isString(col))
                 this._selectColumns.push({colName: col});
-            else if (col.raw)
+            else if (col.raw !== undefined)
                 this._selectColumns.push({raw: col.raw});
             else if (col.colName)
                 this._selectColumns.push(col);
@@ -95,11 +95,11 @@ export class SelectStmt {
         e.emitLevel(level);
         if (col.tableName)
             e.emitQuotedName(col.tableName).emit(".");
-        if (!col.colName && !col.raw && !col.value)
+        if (!col.colName && col.raw === undefined && col.value === undefined)
             throwError("SelectStmt: column.name or column.raw or column.value not defined");
         if (col.colName)
             e.emitQuotedName(col.colName);
-        if (col.value)
+        if (col.value !== undefined)
             e.emit(col.value.toSql(e.dialect));
         if (col.raw) {
             if (_.isNumber(col.raw))

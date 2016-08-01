@@ -1,6 +1,9 @@
 import {throwError} from "../buhta-core/Error";
 import * as _ from "lodash";
-import {SqlDialect, SqlValue, SqlNumberValue, SqlDateValue, SqlDateTimeValue} from "./SqlCore";
+import {
+    SqlDialect, SqlValue, SqlNumberValue, SqlDateValue, SqlDateTimeValue, SqlGuidValue,
+    SqlNullValue, SqlStringValue
+} from "./SqlCore";
 import {Operand, BooleanOper, WhereClause} from "./SqlCore";
 import {SqlEmitter} from "./SqlEmitter";
 import {SelectTable, SelectColumn} from "./SelectStmt";
@@ -27,7 +30,12 @@ export class UpsertStmt {
     private _selectColumns: SelectColumn[] = [];
     private _where: WhereClause[] = [];
 
-    column(column: string | UpsertColumn, value: string|number|Date|SelectColumn|SqlValue): UpsertStmt {
+    constructor(table?: string | UpsertTable) {
+        if (table)
+            this.table(table);
+    }
+
+    column(column: string | UpsertColumn, value: null|string|number|Date|SelectColumn|SqlValue): UpsertStmt {
         if (_.isString(column))
             this._UpsertColumns.push({colName: column});
         else if (column.colName)
@@ -37,10 +45,13 @@ export class UpsertStmt {
         else
             throwError("UpsertStmt.column(): invalid column type");
 
-        if (value instanceof SqlValue)
+        if (value === null)
+            this._selectColumns.push({value: new SqlNullValue()});
+        else if (value instanceof SqlValue)
             this._selectColumns.push({value: value});
         else if (_.isString(value))
-            this._selectColumns.push({colName: value});
+//            this._selectColumns.push({colName: value});
+            this._selectColumns.push({value: new SqlStringValue(value)});
         else if (_.isNumber(value) || _.isDate(value))
             this._selectColumns.push({raw: value});
         else if (value.raw)
@@ -104,21 +115,21 @@ export class UpsertStmt {
 
     private emitUpdateColumn(col: UpsertColumn, e: SqlEmitter, level: string) {
         e.emitLevel(level);
-        if (!col.colName && !col.raw)
+        if (!col.colName && col.raw === undefined)
             throwError("UpsertStmt: column.colName or column.raw not defined");
         if (col.colName)
             e.emitQuotedName(col.colName);
-        if (col.raw)
+        if (col.raw !== undefined)
             e.emit(col.raw);
     }
 
     private emitInsertColumn(col: UpsertColumn, e: SqlEmitter, level: string) {
         e.emitLevel(level);
-        if (!col.colName && !col.raw)
+        if (!col.colName && col.raw === undefined)
             throwError("UpsertStmt: column.colName or column.raw not defined");
         if (col.colName)
             e.emitQuotedName(col.colName);
-        if (col.raw)
+        if (col.raw !== undefined)
             e.emit(col.raw);
     }
 
@@ -126,13 +137,13 @@ export class UpsertStmt {
         e.emitLevel(level);
         if (col.tableName)
             e.emitQuotedName(col.tableName).emit(".");
-        if (!col.colName && !col.raw && !col.value)
+        if (!col.colName && col.raw === undefined && col.value === undefined)
             throwError("UpsertStmt: column.colName or column.raw or column.value not defined");
         if (col.colName)
             e.emitQuotedName(col.colName);
-        if (col.value)
+        if (col.value !== undefined)
             e.emit(col.value.toSql(e.dialect));
-        if (col.raw) {
+        if (col.raw !== undefined) {
             if (_.isNumber(col.raw))
                 e.emit(new SqlNumberValue(col.raw).toSql(e.dialect));
             else if (_.isDate(col.raw))

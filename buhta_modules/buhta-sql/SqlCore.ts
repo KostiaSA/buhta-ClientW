@@ -9,7 +9,7 @@ export type SqlDialect = "mssql" | "pg" | "mysql";
 
 export type BooleanOper = "=" | ">" | "<" | ">=" | "<=" | "<>" | "!=" | "LIKE";
 
-export type Operand = string | number | Date | SelectColumn | SqlValue;
+export type Operand = null | string | number | Date | SelectColumn | SqlValue;
 
 export type SqlDataType =
     "sbyte" | "byte" | "short" | "ushort" | "int" | "uint" | "long" | "ulong" |
@@ -159,18 +159,43 @@ function mysql_guid_to_str(guid: uuid.UUID): string {
 }
 
 export class SqlGuidValue extends SqlValue {
-    constructor(public value: string) {
+    constructor(public value: string | null) {
+        super();
+    }
+
+    toSql(dialect: SqlDialect): string {
+
+        if (this.value === null)
+            return new SqlNullValue().toSql(dialect);
+        else {
+            if (dialect === "mssql")
+                return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
+            else if (dialect === "pg")
+                return "UUID '" + this.value + "'";
+            else if (dialect === "mysql")
+                return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+            else {
+                throwError("invalid sql dialect " + dialect);
+                throw "fake";
+            }
+        }
+
+    }
+}
+
+export class SqlNullValue extends SqlValue {
+    constructor() {
         super();
     }
 
     toSql(dialect: SqlDialect): string {
 
         if (dialect === "mssql")
-            return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
+            return "NULL";
         else if (dialect === "pg")
-            return "UUID '" + this.value + "'";
+            return "NULL";
         else if (dialect === "mysql")
-            return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+            return "NULL";
         else {
             throwError("invalid sql dialect " + dialect);
             throw "fake";

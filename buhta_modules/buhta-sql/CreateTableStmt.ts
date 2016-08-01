@@ -26,7 +26,31 @@ export class CreateTableStmt {
     isTempTable: boolean;
     _table: CreateTable;
     columns: CreateColumn[] = [];
+    
+    constructor(table?: string | CreateTable) {
+        if (table)
+            this.table(table);
+    }
 
+
+    primaryKeyColumn(column: string | CreateColumn, dataType?: SqlDataType, dataLen?: number, decimals?: number): CreateTableStmt {
+        if (_.isObject(column)) {
+            this.columns.push(column);
+        }
+        else {
+            this.columns.push({
+                column: column.toString(),
+                dataType: dataType,
+                dataLen: dataLen,
+                decimals: decimals,
+                notNull: true, 
+                primaryKey: true
+            });
+
+        }
+        return this;
+    }
+    
     column(column: string | CreateColumn, dataType?: SqlDataType, dataLen?: number, decimals?: number): CreateTableStmt {
         if (_.isObject(column)) {
             this.columns.push(column);
@@ -279,9 +303,9 @@ export class CreateTableStmt {
 
     private emitCreateColumn(col: CreateColumn, e: SqlEmitter, level: string) {
         e.emitLevel(level);
-        if (!(col.column && col.dataType) && !col.raw)
+        if (!(col.column && col.dataType) && col.raw === undefined)
             throwError("CreateTableStmt: column.name+column.dataType or column.raw not defined");
-        if ((col.column || col.dataType) && col.raw)
+        if ((col.column || col.dataType) && col.raw !== undefined)
             throwError("CreateTableStmt: column.name+column.dataType and column.raw defined");
         if (col.column)
             e.emitQuotedName(col.column);
@@ -291,7 +315,7 @@ export class CreateTableStmt {
             e.emit(" NOT NULL");
         if (col.primaryKey)
             e.emit(" PRIMARY KEY");
-        if (col.raw)
+        if (col.raw !== undefined)
             e.emit(col.raw);
     }
 

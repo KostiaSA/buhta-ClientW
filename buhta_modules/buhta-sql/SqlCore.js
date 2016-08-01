@@ -142,20 +142,44 @@ var SqlGuidValue = (function (_super) {
         this.value = value;
     }
     SqlGuidValue.prototype.toSql = function (dialect) {
-        if (dialect === "mssql")
-            return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
-        else if (dialect === "pg")
-            return "UUID '" + this.value + "'";
-        else if (dialect === "mysql")
-            return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+        if (this.value === null)
+            return new SqlNullValue().toSql(dialect);
         else {
-            Error_1.throwError("invalid sql dialect " + dialect);
-            throw "fake";
+            if (dialect === "mssql")
+                return "CONVERT(UNIQUEIDENTIFIER,'" + this.value + "')";
+            else if (dialect === "pg")
+                return "UUID '" + this.value + "'";
+            else if (dialect === "mysql")
+                return "convert(" + mysql_guid_to_str(uuid.parse(this.value)) + ",binary(16))";
+            else {
+                Error_1.throwError("invalid sql dialect " + dialect);
+                throw "fake";
+            }
         }
     };
     return SqlGuidValue;
 }(SqlValue));
 exports.SqlGuidValue = SqlGuidValue;
+var SqlNullValue = (function (_super) {
+    __extends(SqlNullValue, _super);
+    function SqlNullValue() {
+        _super.call(this);
+    }
+    SqlNullValue.prototype.toSql = function (dialect) {
+        if (dialect === "mssql")
+            return "NULL";
+        else if (dialect === "pg")
+            return "NULL";
+        else if (dialect === "mysql")
+            return "NULL";
+        else {
+            Error_1.throwError("invalid sql dialect " + dialect);
+            throw "fake";
+        }
+    };
+    return SqlNullValue;
+}(SqlValue));
+exports.SqlNullValue = SqlNullValue;
 var SqlNewGuidValue = (function (_super) {
     __extends(SqlNewGuidValue, _super);
     function SqlNewGuidValue() {

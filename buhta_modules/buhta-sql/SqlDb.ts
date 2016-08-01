@@ -84,6 +84,7 @@ export class DataColumn {
     dataTypeID: number; // для pg;
     isGuid: boolean;
     charsetNr: number;
+    isPgBigInt: boolean;
 
     constructor(public table: DataTable) {
     }
@@ -107,8 +108,16 @@ export class DataRow {
 
 
 export class SqlDb {
+
+    constructor(dbName?: string, dialect?: SqlDialect) {
+        if (dbName)
+            this.dbName = dbName;
+        if (dialect)
+            this.dialect = dialect;
+    }
+
     dbName: string;
-    dialect: SqlDialect;
+    dialect: SqlDialect
 
     // ищет в объекте свойство с заданным именем в режиме case insensitive,
     // возвращает имя найденного свойства или null
@@ -714,6 +723,28 @@ export class SqlDb {
         return ret;
     }
 
+    selectToBoolean(sql: SqlBatch): Promise<boolean|string> {
+        return this.executeSQL(sql)
+            .then((tables: DataTable[]) => {
+                    if (tables[0].rows.length === 0)
+                        throwError("rows count === 0");
+                    else {
+                        let value = tables[0].rows[0].$$getValue(0);
+                        if (value === 0 || value === "false")
+                            return false;
+                        else
+                        if (value === 1 || value === "true")
+                            return true;
+                        else {
+                            console.log(value);
+                            throwError("SqlDb.selectToBoolean(): select result should be 0, 1, 'true' or 'false'");
+                        }
+                    }
+                }
+            ) as Promise<boolean|string>;
+
+    }
+
 
     executeSQL(sql: SqlBatch): Promise<DataTable[]|string> {
 
@@ -875,7 +906,10 @@ export class SqlDb {
                                                     if (dataColumn.dataTypeID === 2950) {
                                                         dataColumn.isGuid = true;
                                                     }
-
+                                                    if (dataColumn.dataTypeID === 20) {
+                                                        dataColumn.isPgBigInt = true;
+                                                    }
+                                                    //console.log(dataColumn);
                                                 }
                                                 else if (this.dialect === "mysql") {
                                                     ////////////////////////
@@ -959,6 +993,9 @@ export class SqlDb {
                                                         }
                                                         else
                                                             dataRow[col.name] = row[index].toLowerCase();
+                                                    }
+                                                    else if (col.isPgBigInt) {
+                                                            dataRow[col.name] = Number.parseInt(row[index]);
                                                     }
                                                     else
                                                         dataRow[col.name] = row[index];

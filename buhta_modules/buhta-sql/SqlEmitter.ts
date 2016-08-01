@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import {
     Operand, WhereClause, SqlValue, SqlDateValue, SqlNumberValue, SqlDateTimeValue,
-    SqlStringValue
+    SqlStringValue, SqlNullValue, SqlGuidValue
 } from "./SqlCore";
 import {SqlDialect} from "./SqlCore";
 import {throwError} from "../buhta-core/Error";
@@ -133,7 +133,9 @@ export class SqlEmitter {
     // }
 
     emitOperand(operand: Operand): SqlEmitter {
-        if (_.isNumber(operand))
+        if (operand === null)
+            this.emit(new SqlNullValue().toSql(this.dialect));
+        else if (_.isNumber(operand))
             this.emit(operand.toString());
         else if (_.isString(operand))
             this.emitQuotedName(operand);
@@ -159,8 +161,21 @@ export class SqlEmitter {
             this.emit(where.raw);
         else {
             this.emitOperand(where.operand1!).emit(" ");
-            this.emit(where.oper!).emit(" ");
-            this.emitOperand(where.operand2!);
+
+            if (where.operand2 === null ||
+                where.operand2 instanceof SqlNullValue ||
+                (where.operand2 as any).value === null) {
+                if (where.oper === "=")
+                    this.emit("IS NULL");
+                else if (where.oper === "<>")
+                    this.emit("IS NOT NULL");
+                else
+                    throwError("SelectStmt.emitOperand(): invalid compare operation '" + where.oper + "' for NULL");
+            }
+            else {
+                this.emit(where.oper!).emit(" ");
+                this.emitOperand(where.operand2!);
+            }
         }
         this.emit(")");
     }

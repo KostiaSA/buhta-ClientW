@@ -4,6 +4,7 @@ import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
 import {SchemaTable} from "./SchemaTable";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+import {SqlDataType} from "../../buhta-sql/SqlCore";
 
 export class SchemaTableColumn extends DesignedObject {
     constructor(private $$table: SchemaTable) {
@@ -30,8 +31,12 @@ export class SchemaTableColumn extends DesignedObject {
         inputDescription: "sql тип колонки"
     })
     @GridColumn({caption: "Тип"})
-    dataType: string;
+    dataType: SqlDataType;
 
+    dataLen: number;
+    decimals: number;
+    notNull: boolean;
+    primaryKey: boolean;
 
     toString() {
         return this.name + " of (" + this.table.name + ")";

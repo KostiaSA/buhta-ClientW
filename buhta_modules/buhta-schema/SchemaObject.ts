@@ -1,5 +1,6 @@
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {Schema} from "./Schema";
+import {getNewGuid} from "../buhta-sql/SqlCore";
 
 export type SchemaObjectId = string;
 
@@ -45,7 +46,7 @@ export class SchemaObject extends DesignedObject {
 }
 
 export function newSchemaObjectId(): SchemaObjectId {
-    return Math.random().toString(36).slice(2, 16);
+    return getNewGuid();
 }
 
 //

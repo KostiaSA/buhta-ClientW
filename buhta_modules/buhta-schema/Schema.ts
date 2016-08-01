@@ -1,9 +1,27 @@
 import {SchemaObject, SchemaObjectId} from "./SchemaObject";
 import {SchemaDatabase} from "./SchemaDatabase";
-import {SqlDb} from "../buhta-sql/SqlDb";
+import {SqlDb, SqlBatch} from "../buhta-sql/SqlDb";
+import {CheckTableExistsStmt} from "../buhta-sql/CheckTableExistsStmt";
+import {throwError} from "../buhta-core/Error";
+import {CreateTableStmt} from "../buhta-sql/CreateTableStmt";
+import {UpsertStmt} from "../buhta-sql/UpsertStmt";
+import {SqlNewGuidValue, getNewGuid, SqlGuidValue} from "../buhta-sql/SqlCore";
+
+
+let defaultSchema: Schema;
+
+export function getSchema(): Schema {
+    if (!defaultSchema) {
+        defaultSchema = new Schema(new SqlDb("schema", "mssql"));
+    }
+    return defaultSchema;
+}
 
 export class Schema {
-    db: SqlDb;
+    constructor(public db: SqlDb) {
+
+    }
+
 
     private objects_cache: { [key: string]: SchemaObject; } = {};
 
@@ -31,10 +49,32 @@ export class Schema {
         return obj as T;
     }
 
-    saveObject(objectToSave: SchemaObject) {
+    saveObject(objectToSave: SchemaObject): Promise<void|string> {
+
+        if (!objectToSave.id)
+            objectToSave.id = getNewGuid();
 
         if (!objectToSave.createDate)
             objectToSave.createDate = new Date();
+
+        let sql = new UpsertStmt("SchemaObject")
+            .column("id", new SqlGuidValue(objectToSave.id))
+            .column("parentObjectId", new SqlGuidValue(objectToSave.parentObjectID))
+            .column("name", objectToSave.name)
+            .column("description", objectToSave.description)
+            .column("createDate", objectToSave.createDate)
+            .column("createUserId", new SqlGuidValue(objectToSave.createUserID))
+            .column("changeDate", objectToSave.changeDate)
+            .column("changeUserId", new SqlGuidValue(objectToSave.changeUserID))
+            .column("lockDateTime", objectToSave.lockDateTime)
+            .column("lockedByUserId", new SqlGuidValue(objectToSave.lockedByUserID))
+            .column("position", objectToSave.position)
+            .where("id", "=", new SqlGuidValue(objectToSave.id));
+
+        return this.db.executeSQL(sql).then(() => {
+            this.resetObjectCache(objectToSave.id!);
+
+        });
 
         // var sql = new StringBuilder();
         // sql.AppendLine(@"BEGIN TRAN");
@@ -103,13 +143,41 @@ export class Schema {
         //     db.SetCommand(sql.ToString()).ExecuteNonQuery();
         // }
 
-        this.resetObjectCache(objectToSave.id!);
 
 // if (AfterSaveSchemaObject!=null)
 // {
 //     AfterSaveSchemaObject(objectToSave);
 // }
+    }
 
+    initSchemaStorage(): Promise<void|string> {
+        let batch: SqlBatch = [];
+
+        return this.db.selectToBoolean(new CheckTableExistsStmt("SchemaObject"))
+            .then((isTableExists: boolean) => {
+                if (isTableExists)
+                    throwError("таблица 'SchemaObject' уже существует, выберите чистую базу данных");
+
+                let sql = new CreateTableStmt("SchemaObject")
+                    .primaryKeyColumn("id", "guid")
+                    .column("parentObjectId", "guid")
+                    .column("name", "string", 255)
+                    .column("description", "string", 1000)
+                    .column("createDate", "datetime")
+                    .column("createUserId", "guid")
+                    .column("changeDate", "datetime")
+                    .column("changeUserId", "guid")
+                    .column("lockDateTime", "datetime")
+                    .column("lockedByUserId", "guid")
+                    .column("position", "int");
+
+                this.db.executeSQL(sql);
+
+            });
+        // .then(() => {
+        //
+        //
+        // });
 
     }
 }
