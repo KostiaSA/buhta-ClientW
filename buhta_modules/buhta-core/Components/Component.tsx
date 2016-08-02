@@ -6,6 +6,7 @@ import {ComponentPlugin} from "../Plugins/Plugin";
 import {Window} from "./Window/Window";
 import {Desktop, OpenMessageWindowParams} from "./Desktop/Desktop";
 import {throwError} from "../Error";
+import {BaseControl} from "../../buhta-ui/BaseControl";
 
 
 export interface XOnClickProps {
@@ -17,7 +18,7 @@ export interface ComponentProps<S> extends React.ClassAttributes<Element> {
     style?: React.CSSProperties;
     className?: string;
     children?: React.ReactNode;
-
+    buhtaControl?: BaseControl;
     onWillMount?: (state: S) => void;
 }
 
@@ -35,8 +36,14 @@ export class ComponentState<P> {
     // style: React.CSSProperties;
 }
 
+export interface ComponentContext {
+    parentWindow?: Window;
+    parentDesktop?: Desktop;
+}
 
 export class Component<P extends ComponentProps<S>, S extends ComponentState<P>> extends React.Component<P, S> {
+
+    context: ComponentContext;
 
     plugins: ComponentPlugin<any, any>[] = [];
 
@@ -48,6 +55,11 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         //     this.plugins.push(plugInstance);
         // });
     }
+
+    static contextTypes = {
+        parentDesktop: React.PropTypes.any,
+        parentWindow: React.PropTypes.any
+    };
 
     nativeElement: HTMLElement;
 
@@ -72,7 +84,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
                 return (parent as any).$$desktop as Desktop;
             parent = parent.parentElement;
         }
-        throwError("getParentDesktop(): desktop not found");  
+        throwError("getParentDesktop(): desktop not found");
         return {} as Desktop;  // fake typescript 2
     }
 
@@ -263,6 +275,8 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     }
 
     getRenderProps() {
+        if (this.props.buhtaControl)
+            this.props.buhtaControl.reactElement = this;
         this.renderProps.className = this.renderClassName();
         this.renderProps.style = this.renderStyles;
         _.assign(this.renderProps.style, this.props.style);

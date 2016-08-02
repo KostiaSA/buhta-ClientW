@@ -7,9 +7,9 @@ export class BaseControl extends DesignedObject {
     name: string;
     parent: BaseControl;
     children: BaseControl[] = [];
+    reactElement: Component<any, any>;
 
-    
-    getComponent(): React.ReactElement<any>  {
+    getComponent(): React.ReactElement<any> {
         throwAbstractError();
         throw  "fake";
     }

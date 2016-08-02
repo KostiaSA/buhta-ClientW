@@ -20,6 +20,9 @@ export class Button extends Component<ButtonProps, ButtonState> {
         this.state = new ButtonState(this);
         this.plugins.push(new VisiblePlugin(this));
         this.plugins.push(new OnClickPlugin(this));
+        console.log("render button context");
+        console.log(context);
+
     }
 
     render() {

@@ -21,7 +21,8 @@ export class SchemaForm extends SchemaComponent {
             return child.getComponent();
         });
 
-        return <Panel sizeTo="parent"> {children} </Panel>;
+        this.reactElement = <Panel sizeTo = "parent" > {children} </Panel>;
+        return this.reactElement;
         // let props: PanelProps = {
         //     sizeTo: this.sizeTo
         // };

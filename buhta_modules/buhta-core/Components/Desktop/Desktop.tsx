@@ -105,8 +105,17 @@ export class DesktopWindow implements OpenWindowParams {
 export class Desktop extends Component<DesktopProps, DesktopState> {
     constructor(props: DesktopProps, context: any) {
         super(props, context);
+        this.context = context;
         this.props = props;
         this.state = new DesktopState(this);
+    }
+
+    static childContextTypes  = {
+        parentDesktop: React.PropTypes.any
+    };
+
+    getChildContext() {
+        return {parentDesktop: this};
     }
 
     protected willMount() {
