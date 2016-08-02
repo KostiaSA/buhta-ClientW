@@ -5,7 +5,9 @@ import {CheckTableExistsStmt} from "../buhta-sql/CheckTableExistsStmt";
 import {throwError} from "../buhta-core/Error";
 import {CreateTableStmt} from "../buhta-sql/CreateTableStmt";
 import {UpsertStmt} from "../buhta-sql/UpsertStmt";
-import {SqlNewGuidValue, getNewGuid, SqlGuidValue} from "../buhta-sql/SqlCore";
+import {SqlNewGuidValue, getNewGuid, SqlGuidValue, SqlStringValue} from "../buhta-sql/SqlCore";
+import {objectToHostJavaScript} from "../buhta-core/objectToHostJavaScript";
+import {SelectStmt} from "../buhta-sql/SelectStmt";
 
 
 let defaultSchema: Schema;
@@ -23,30 +25,44 @@ export class Schema {
     }
 
 
-    private objects_cache: { [key: string]: SchemaObject; } = {};
+    private objects_cache: { [key: string]: () => SchemaObject; } = {};
 
     resetObjectCache(id: SchemaObjectId) {
         delete this.objects_cache[id];
     }
 
-    getObject<T extends SchemaObject>(id: SchemaObjectId): T {
+    getObject<T extends SchemaObject>(id: SchemaObjectId): Promise<T|string> {
         // foreach (var helperTable in HelperTables)
         // if (helperTable.ID==ID)
         // return helperTable as T;
-        let obj = this.objects_cache[id];
-        if (!this.objects_cache[id]) {
-            // using (var db = GetMetadataDbManager())
-            //  {
-            // var obj_cache_to_load = db.SetCommand("SELECT * FROM SchemaObject WHERE ID=" + ID.AsSQL()).ExecuteObject<SchemaObject_cache>();
-            // if (obj_cache_to_load == null)
-            // return null;
-            // obj_cache_to_load.Schema = this;
-            // Objects_cache.Add(ID, obj_cache_to_load);
-            // }
 
-        }
+        return new Promise<T|string>(
+            (resolve: (obj: T) => void, reject: (error: string) => void) => {
+                let objConstructor = this.objects_cache[id];
 
-        return obj as T;
+                if (!objConstructor) {
+
+                    let select = new SelectStmt()
+                        .table("SchemaObject")
+                        .column("jsCode")
+                        .where("id", "=", new SqlGuidValue(id));
+
+                    this.db.selectToString(select)
+                        .then((jsCode) => {
+                            objConstructor = eval("(function(){return " + jsCode + "})");
+                            this.objects_cache[id] = objConstructor;
+                            resolve(objConstructor() as T);
+                        })
+                        .catch((error) => {
+                            reject(error);
+                        });
+
+                }
+                else
+                    resolve(objConstructor() as T);
+
+            });
+
     }
 
     saveObject(objectToSave: SchemaObject): Promise<void|string> {
@@ -60,14 +76,15 @@ export class Schema {
         let sql = new UpsertStmt("SchemaObject")
             .column("id", new SqlGuidValue(objectToSave.id))
             .column("parentObjectId", new SqlGuidValue(objectToSave.parentObjectID))
-            .column("name", objectToSave.name)
-            .column("description", objectToSave.description)
+            .column("name", new SqlStringValue(objectToSave.name))
+            .column("description", new SqlStringValue(objectToSave.description))
             .column("createDate", objectToSave.createDate)
             .column("createUserId", new SqlGuidValue(objectToSave.createUserID))
             .column("changeDate", objectToSave.changeDate)
             .column("changeUserId", new SqlGuidValue(objectToSave.changeUserID))
             .column("lockDateTime", objectToSave.lockDateTime)
             .column("lockedByUserId", new SqlGuidValue(objectToSave.lockedByUserID))
+            .column("jsCode", new SqlStringValue(objectToHostJavaScript(objectToSave)))
             .column("position", objectToSave.position)
             .where("id", "=", new SqlGuidValue(objectToSave.id));
 
@@ -169,6 +186,7 @@ export class Schema {
                     .column("changeUserId", "guid")
                     .column("lockDateTime", "datetime")
                     .column("lockedByUserId", "guid")
+                    .column("jsCode", "text")
                     .column("position", "int");
 
                 this.db.executeSQL(sql);

@@ -7,13 +7,13 @@ import {GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {SqlDataType} from "../../buhta-sql/SqlCore";
 
 export class SchemaTableColumn extends DesignedObject {
-    constructor(private $$table: SchemaTable) {
+    constructor(public table: SchemaTable) {
         super();
     }
 
-    get table(): SchemaTable {
-        return this.$$table;
-    }
+    // get table(): SchemaTable {
+    //     return this.$$table;
+    // }
 
     @StringEditor({
         inputCaption: "Имя колонки",

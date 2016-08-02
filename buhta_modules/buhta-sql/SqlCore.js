@@ -77,18 +77,22 @@ var SqlStringValue = (function (_super) {
         this.value = value;
     }
     SqlStringValue.prototype.toSql = function (dialect) {
-        if (dialect === "mssql")
-            //return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
-            return "N'" + mssql_escape_string(this.value) + "'";
-        else if (dialect === "pg")
-            // симол с кодом 0 запрещен в postgresql, поэтому стираем его
-            //            return "'" + this.value.replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
-            return "'" + pg_escape_string(this.value) + "'";
-        else if (dialect === "mysql")
-            return "'" + mysql_escape_string(this.value) + "'";
+        if (this.value === null)
+            return new SqlNullValue().toSql(dialect);
         else {
-            Error_1.throwError("invalid sql dialect " + dialect);
-            throw "fake";
+            if (dialect === "mssql")
+                //return "N'" + this.value.replace("'", "''").replace("?", "'+CHAR(63)+N'") + "'";
+                return "N'" + mssql_escape_string(this.value) + "'";
+            else if (dialect === "pg")
+                // симол с кодом 0 запрещен в postgresql, поэтому стираем его
+                //            return "'" + this.value.replace("'", "''").replace("?", "'||CHR(63)||'").replace("\0", "") + "'";
+                return "'" + pg_escape_string(this.value) + "'";
+            else if (dialect === "mysql")
+                return "'" + mysql_escape_string(this.value) + "'";
+            else {
+                Error_1.throwError("invalid sql dialect " + dialect);
+                throw "fake";
+            }
         }
     };
     return SqlStringValue;

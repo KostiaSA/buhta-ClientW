@@ -732,11 +732,10 @@ export class SqlDb {
                         let value = tables[0].rows[0].$$getValue(0);
                         if (value === 0 || value === "false")
                             return false;
-                        else
-                        if (value === 1 || value === "true")
+                        else if (value === 1 || value === "true")
                             return true;
                         else {
-                            console.log(value);
+//                            console.log(value);
                             throwError("SqlDb.selectToBoolean(): select result should be 0, 1, 'true' or 'false'");
                         }
                     }
@@ -745,6 +744,56 @@ export class SqlDb {
 
     }
 
+    selectToString(sql: SqlBatch): Promise<string|string> {
+        return this.executeSQL(sql)
+            .then((tables: DataTable[]) => {
+                    if (tables[0].rows.length === 0)
+                        throwError("rows count === 0");
+                    else {
+                        let value = tables[0].rows[0].$$getValue(0);
+                        if (value === null || _.isString(value))
+                            return value;
+                        else
+                            throwError("SqlDb.selectToString(): select result should be a string");
+                    }
+                }
+            ) as Promise<string|string>;
+
+    }
+
+    selectToNumber(sql: SqlBatch): Promise<number|string> {
+        return this.executeSQL(sql)
+            .then((tables: DataTable[]) => {
+                    if (tables[0].rows.length === 0)
+                        throwError("rows count === 0");
+                    else {
+                        let value = tables[0].rows[0].$$getValue(0);
+                        if (value === null || _.isNumber(value))
+                            return value;
+                        else
+                            throwError("SqlDb.selectToNumber(): select result should be a number");
+                    }
+                }
+            ) as Promise<number|string>;
+
+    }
+
+    selectToDate(sql: SqlBatch): Promise<Date|string> {
+        return this.executeSQL(sql)
+            .then((tables: DataTable[]) => {
+                    if (tables[0].rows.length === 0)
+                        throwError("rows count === 0");
+                    else {
+                        let value = tables[0].rows[0].$$getValue(0);
+                        if (value === null || _.isDate(value))
+                            return value;
+                        else
+                            throwError("SqlDb.selectToDate(): select result should be a date/time");
+                    }
+                }
+            ) as Promise<Date|string>;
+
+    }
 
     executeSQL(sql: SqlBatch): Promise<DataTable[]|string> {
 
@@ -995,7 +1044,7 @@ export class SqlDb {
                                                             dataRow[col.name] = row[index].toLowerCase();
                                                     }
                                                     else if (col.isPgBigInt) {
-                                                            dataRow[col.name] = Number.parseInt(row[index]);
+                                                        dataRow[col.name] = Number.parseInt(row[index]);
                                                     }
                                                     else
                                                         dataRow[col.name] = row[index];

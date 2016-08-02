@@ -2,20 +2,35 @@ import * as _ from "lodash";
 import {throwError} from "./Error";
 import {getObjectConstructorName} from "./getObjectConstructorName";
 
-export function objectToHostJavaScript(obj: any): string {
+export function objectToHostJavaScript(obj: any, refs?: any): string {
+
+    let noRefs = false;
+    if (refs === undefined) {
+        refs = [];
+        noRefs = true;
+    }
+
+    if (refs[obj.$$refId])
+        return "refs[" + obj.$$refId + "]";
 
     let js: string[] = [];
-    js.push("(function (){");
+    js.push("(function (refs){");
 
     if (!obj.$$getHostConstructor)
         throwError("objectToHostJavaScript(): saved object '" + getObjectConstructorName(obj) + "' must have function '$$getHostConstructor'");
 
     let constructorName = obj.$$getHostConstructor();
 
+    obj.$$refId = refs.length;
+    refs.push(obj);
+
+    js.push("if (refs === undefined) refs = [];");
     js.push("var obj=new " + constructorName + "();");
+    js.push("refs[" + obj.$$refId + "] = obj;");
+
 
     for (let propName in obj) {
-        if (obj.hasOwnProperty(propName)) {
+        if (obj.hasOwnProperty(propName) && propName.substring(0, 2) !== "$$" && !_.isFunction(obj[propName])) {
             let propValue: any = obj[propName];
 
             js.push("obj." + propName + "=");
@@ -26,28 +41,32 @@ export function objectToHostJavaScript(obj: any): string {
                 js.push(propValue.toString());
             else if (_.isString(propValue))
                 js.push(JSON.stringify(propValue));
+            else if (_.isDate(propValue))
+                js.push("new Date(\"" + propValue.toISOString() + "\")");
+            else if (_.isArray(propValue)) {
+                js.push("[");
+                propValue.forEach((item: any, index: number) => {
+                    js.push(objectToHostJavaScript(item, refs));
+                    if (index < propValue.length - 1)
+                        js.push(",");
+                });
+                js.push("]");
+            }
+            else if (_.isObject(propValue))
+                js.push(objectToHostJavaScript(propValue, refs));
             else
                 throwError("objectToHostJavaScript(): unknown type for property '" + propName + "'");
-            // if (propName.substring(0, 2) !== "$$") {
-            //     if (_.isArray(propValue)) {
-            //         cloned[propName] = cloneArray(propValue, refsClones);
-            //     }
-            //     else if (_.isObject(propValue)) {
-            //         cloned[propName] = cloneObject(propValue, refsClones);
-            //     }
-            //     else
-            //         cloned[propName] = obj[propName];
-            // }
-            // else {
-            //
-            //     cloned[propName] = cloneObject$$(propValue, refsClones);
-            // }
             js.push(";");
         }
     }
-}
 
-js.push("return obj;})()");
-return js.join("");
+    if (noRefs) {
+        js.push("return obj;})()");
+        return js_beautify(js.join(""));
+    }
+    else {
+        js.push("return obj;})(refs)");
+        return js.join("");
+    }
 
 }

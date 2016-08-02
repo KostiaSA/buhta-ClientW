@@ -1,9 +1,10 @@
 ﻿import {PropertyEditorInfo, BasePropertyEditor} from "./PropertyEditors/BasePropertyEditor";
 import * as _ from "lodash";
 import {ObservableOnChangeHandler} from "../buhta-core/Observable";
+import {getObjectConstructorName} from "../buhta-core/getObjectConstructorName";
 
 export class DesignedObject {
-    
+
     [name: string]: any;
 
     getClassName() {
@@ -20,6 +21,10 @@ export class DesignedObject {
     $$unwatchedProps: string[] = ["propertyEditors", "$$unwatchedProps"];
     $$changeCount: number;
     $$onChange: ObservableOnChangeHandler<DesignedObject>;
+    
+    $$getHostConstructor = (): string => {
+        return "buhta." + getObjectConstructorName(this);
+    }
 
     // id: string;
     // name: string;
