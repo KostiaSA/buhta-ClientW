@@ -59,6 +59,8 @@ function test_proc(dialect: SqlDialect, done: () => void) {
         })
         .then((table: SchemaTable) => {
             assert.equal(table.name, "Организация");
+            assert.equal(table.columns[1].name, "Номер");
+            assert.equal(table, table.columns[2].table);
             done();
         })
         .catch((error) => {
