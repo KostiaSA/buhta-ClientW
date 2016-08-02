@@ -31,10 +31,12 @@ import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPrope
 import {throwError} from "../../buhta-core/Error";
 import {DataTable, SqlDb} from "../../buhta-sql/SqlDb";
 import {SchemaObject} from "../../buhta-schema/SchemaObject";
-import {Schema} from "../../buhta-schema/Schema";
+import {Schema, getSchema} from "../../buhta-schema/Schema";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
 import {UpdateStmt} from "../../buhta-sql/UpdateStmt";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
+import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
+import {ButtonControl} from "../../buhta-ui/ButtonControl";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -518,9 +520,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         db.dialect = "mysql";
 
 
-         db.selectToObject<any>("SELECT * FROM sakila.film", {}, "assign").done((obj) => {
-             console.log(obj);
-         });
+        db.selectToObject<any>("SELECT * FROM sakila.film", {}, "assign").done((obj) => {
+            console.log(obj);
+        });
 
         db.executeSQL("SELECT * FROM sakila.film")
             .then((obj: DataTable[]) => {
@@ -668,6 +670,29 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         // console.log("10");
     }
 
+    testOpenSchemaForm() {
+
+        let form = new SchemaForm(getSchema());
+
+        let but1 = new ButtonControl();
+        but1.text = "Буттон1";
+        form.children.push(but1);
+
+        let but2 = new ButtonControl();
+        but2.text = "Буттон2";
+        form.children.push(but2);
+
+
+        let openParam: OpenWindowParams = {
+            title: "окно 1 222222",
+            top: 250,
+            left: 250
+        };
+
+        appInstance.desktop.openSchemaForm(form, openParam);
+
+    };
+
     render() {
         this.addClassName("app-designer");
 
@@ -703,6 +728,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <br/>
                                 <button onClick={() => { this.testObservable(); }}>test OBSERVABLE</button>
+                                <br/>
+                                <button onClick={() => { this.testOpenSchemaForm(); }}>test SchemaForm</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

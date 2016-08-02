@@ -6,6 +6,9 @@ import {Window, WindowState} from "../Window/Window";
 import {MoveStartEvent} from "../Movable/Movable";
 import {Button} from "../Button/Button";
 import {throwError} from "../../Error";
+import {SchemaObjectId} from "../../../buhta-schema/SchemaObject";
+import {Schema} from "../../../buhta-schema/Schema";
+import {SchemaForm} from "../../../buhta-schema/SchemaForm/SchemaForm";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -113,6 +116,11 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     }
 
 //    private windows: WindowInfo[] = [];
+
+    openSchemaForm(form: SchemaForm, openParams?: OpenWindowParams) {
+        let winContent = form.getComponent();
+        this.openWindow(winContent, openParams);
+    }
 
     openWindow(winContent: React.ReactNode, openParams?: OpenWindowParams) {
         if (!openParams)

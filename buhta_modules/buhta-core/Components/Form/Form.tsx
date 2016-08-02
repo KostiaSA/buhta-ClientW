@@ -75,14 +75,14 @@ export class Form extends Component<FormProps, any> {
 
         if (React.Children.toArray(this.props.children as React.ReactNode).length === 1) { // один контрол в форме, обычно treelist
 
-            if (this.props.sizeTo==="parent")
+            if (this.props.sizeTo === "parent")
                 this.addStyles({height: "100%"});
 
             return <div {...this.getRenderProps()}>{this.props.children}</div>;
         }
         else {
 
-            this.addStyles({ width: "inherit"});
+            this.addStyles({width: "inherit"});
 
             return (
                 <table ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
