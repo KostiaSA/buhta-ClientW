@@ -37,6 +37,8 @@ export interface TreeGridProps extends ComponentProps<TreeGridState> {
     denyUpdate?: boolean;
     denyDelete?: boolean;
 
+    dragDropNodes?: boolean;
+
     onCreateNewRecord?: () => any;
 
 }
@@ -59,6 +61,9 @@ export class TreeGridState extends ComponentState<TreeGridProps> {
     headerTableElement: HTMLElement;
     bodyTableElement: HTMLElement;
     footerTableElement: HTMLElement;
+
+    isCellDragging: boolean;
+    draggingDataObject: any;
 }
 
 export class InternalColumn {
@@ -612,6 +617,14 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         console.log("render-rows: " + this.state.rows.length);
         this.state.rows.forEach((row: InternalRow, index: number) => {
             ret.push(this.renderRow(row, index));
+            // if (this.state.isCellDragging) {
+            //     let fakeRow = (
+            //         <tr>
+            //             <td colspan="100">уроды</td>
+            //         </tr>
+            //     );
+            //     ret.push(fakeRow);
+            // }
         });
 
         //console.log("renderRows-end()");
@@ -637,16 +650,77 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         return ret;
     }
 
+    private handleDragStart = (e: DragEvent) => {
+        console.log("drag start");
+        this.state.isCellDragging = true;
+        // this.startClientX = e.clientX;
+        // this.startClientY = e.clientY;
+        //
+        // if (this.props.onMoveStart)
+        //     this.props.onMoveStart({bindX: this.bindX.bind(this), bindY: this.bindY.bind(this)});
+        //
+        // e.dataTransfer.setData("movable", "");
+        // //e.dataTransfer.dropEffect = 'move';
+        //
+        // this.dragOver_Binded = this.handleDragOver.bind(this);
+        // document.addEventListener("dragover", this.dragOver_Binded);
+
+
+    }
+
+    private handleDragEnd = (e: DragEvent) => {
+        this.state.isCellDragging = false;
+        let $tbody = $(e.target).parents("tbody").first();
+        $tbody.find(".drop-allow-cell").removeClass("drop-allow-cell");
+        $tbody.find(".drop-deny-cell").removeClass("drop-deny-cell");
+        this.forceUpdate();
+//        console.log("drag end");
+        // document.removeEventListener("dragover", this.dragOver_Binded);
+        // if (this.props.onMoveEnd)
+        //     this.props.onMoveEnd({
+        //         deltaX: e.clientX - this.startClientX,
+        //         deltaY: e.clientY - this.startClientY
+        //     });
+        // this.bindedX = [];
+        // this.bindedY = [];
+    }
+
+    private handleDragOver = (e: DragEvent) => {
+        console.log("drag over");
+
+        let $tbody = $(e.target).parents("tbody").first();
+        $tbody.find(".drop-allow-cell").removeClass("drop-allow-cell");
+        $tbody.find(".drop-deny-cell").removeClass("drop-deny-cell");
+
+        let $tr = $(e.target).parents("tr").first();
+
+        let relativeY = (e.clientY - $tr.offset().top) / $tr.outerHeight();
+
+        if (relativeY < 0.33)
+            $tr.prev().children("td").addClass("drop-allow-cell");
+        else if (relativeY < 0.66)
+            $tr.prev().children("td").addClass("drop-allow-cellXXX");
+        else
+            $tr.children("td").addClass("drop-allow-cell");
+
+        //console.log({top: $tr.offset().top, y: e.clientY});
+        console.log(relativeY);
+
+        //console.log($(e.target).parents("tbody").first());
+        //console.log(e.clientX);
+        //console.log(e.clientY);
+    }
+
     private renderCell(row: InternalRow, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
 
         let sourceObject = row.getSourceObject();
-        let str = "";
+        let cellContent: any = "";
         if (col.props.propertyName === undefined)
-            str = "'propertyName' undefined";
+            cellContent = "'propertyName' undefined";
         else if (sourceObject[col.props.propertyName] === undefined)
-            str = "bad property '" + col.props.propertyName + "'";
+            cellContent = "bad property '" + col.props.propertyName + "'";
         else
-            str = sourceObject[col.props.propertyName].toString();  // todo col.props.propertyName || ""
+            cellContent = sourceObject[col.props.propertyName];  // todo col.props.propertyName || ""
         //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
         // return <td key={colIndex}>
         //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
@@ -660,9 +734,9 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         }
 
         let tdStyle: any = {overflow: "hidden"};
-        if (this.props.treeMode !== "flat" && col.props.showHierarchyTree) {
-            tdStyle.borderBottomColor = "rgba(255, 0, 0, 0)";
-        }
+        // if (this.props.treeMode !== "flat" && col.props.showHierarchyTree) {
+        //     tdStyle.borderBottomColor = "rgba(255, 0, 0, 0)";
+        // }
 
         let strSpanStyle: any = {
             lineHeight: "100%",
@@ -671,7 +745,20 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         if (this.props.treeMode !== "flat" && col.props.showHierarchyTree && node.expanded && node.children.length > 0) {
             strSpanStyle.fontWeight = "bold";
         }
-        let strSpan = <span style={ strSpanStyle}>{str}</span>;
+
+
+        let strSpanProps: any = {};
+
+        if (this.props.dragDropNodes === true && col.props.showHierarchyTree === true) {
+            strSpanProps.draggable = true;
+            strSpanProps.className = "draggable";
+            strSpanProps.onDragStart = this.handleDragStart;
+            strSpanProps.onDragEnd = this.handleDragEnd;
+            //strSpanProps.onDragOver = this.handleDragOver;
+            console.log("DD");
+        }
+
+        let strSpan = <span style={ strSpanStyle} {...strSpanProps}>{cellContent}</span>;
 
 
         let collapseIconDiv: React.ReactNode = [];
@@ -719,6 +806,10 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         }
 
+        let tdDragOver: any;
+        if (this.props.dragDropNodes === true) {
+            tdDragOver = this.handleDragOver;
+        }
 
         return (
             <td
@@ -726,6 +817,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 style={tdStyle}
                 ref={ (e) => row.cellElements[colIndex] = e}
                 onClick={ (e) => { this.setFocusedCell(rowIndex,colIndex);} }
+                onDragOver={tdDragOver}
             >
                 <div style={{ display:"flex", flexDirection: "row", alignItems:"center" }}>
                     <div className="row-checkbox" style={{ flex: "0 0 auto"}}>

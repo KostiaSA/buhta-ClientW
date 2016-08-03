@@ -1,3 +1,5 @@
+@import "../../node_modules/bulma/bulma"
+
 .tree-grid
 
 
@@ -41,6 +43,12 @@
     border: 1px solid #dedede
     padding: 2px 2px 2px 4px
 
+  > tbody > tr > td.drop-allow-cell
+      border-bottom: rgba($green,.2) solid 4px
+
+  > tbody > tr > td.drop-deny-cell
+      border-bottom: rgba($red,.2) solid 4px
+
 .tree-grid-header, .tree-grid-footer
   /*table-layout: fixed;
   /*background: white;
@@ -51,9 +59,11 @@
     padding: 2px 2px 2px 4px
     background-color: #eaeaea
 
+
 .tree-grid-focused-row
   background-color: #f3f3f3
 
 .tree-grid-focused-cell
   background-color: #e2e2e2
   //outline: #53a1eb 1px dotted
+

@@ -122,13 +122,13 @@ var SchemaComponentDesigner = (function (_super) {
                 React.createElement(Flex_1.Flex, null, 
                     React.createElement(Tabs_1.Tabs, {sizeTo: "parent", onWillMount: function (state) { console.log("onWillMount-auto-form-tabs"); }, onChangeActiveTab: function (state, tab) { console.log("setActiveTab"); console.log(tab); }}, 
                         React.createElement(Tabs_1.Tab, {key: "1", title: "Основная"}, 
-                            React.createElement(TreeGrid_1.TreeGrid, {dataSource: dataSource, treeMode: "childrenList", hierarchyFieldName: "children", autoExpandNodesToLevel: 100, editable: true, denyDelete: true}, 
+                            React.createElement(TreeGrid_1.TreeGrid, {dataSource: dataSource, treeMode: "childrenList", hierarchyFieldName: "children", autoExpandNodesToLevel: 100, editable: true, denyDelete: true, dragDropNodes: true}, 
                                 React.createElement(TreeGridColumns_1.TreeGridColumns, null, 
                                     React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Control", propertyName: "$$controlName", showHierarchyTree: true, width: 200}), 
-                                    React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Свойства", propertyName: "$$controlMainProps", width: 400}), 
-                                    React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Свойства2", propertyName: "Название", width: 400}))
-                            ), 
-                            ";"), 
+                                    React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Свойства", propertyName: "$$controlMainProps", width: 300}), 
+                                    React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "События", propertyName: "$$controlEvents", width: 300}))
+                            )
+                        ), 
                         React.createElement(Tabs_1.Tab, {key: "2", title: "Кто-когда"}))
                 ), 
                 React.createElement(Fixed_1.Fixed, null, 

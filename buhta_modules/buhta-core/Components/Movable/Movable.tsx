@@ -3,15 +3,15 @@ import {ComponentProps, Component} from "../Component";
 import DragEventHandler = __React.DragEventHandler;
 
 export interface MovableProps extends ComponentProps<any> {
-    onMoveStart?: (event: MoveStartEvent)=>void;
-    onMove?: (event: MoveEvent)=>void;
-    onMoveEnd?: (event: MoveEndEvent)=>void;
+    onMoveStart?: (event: MoveStartEvent) => void;
+    onMove?: (event: MoveEvent) => void;
+    onMoveEnd?: (event: MoveEndEvent) => void;
 }
 
 
 export interface MoveStartEvent {
-    bindX: (obj: Object, propName: string, movedCallback?: ()=>void)=>void;
-    bindY: (obj: Object, propName: string, movedCallback?: ()=>void)=>void;
+    bindX: (obj: Object, propName: string, movedCallback?: () => void) => void;
+    bindY: (obj: Object, propName: string, movedCallback?: () => void) => void;
 }
 
 export interface MoveEvent {
@@ -27,13 +27,13 @@ export interface MoveEndEvent {
 
 interface BindedObject {
     obj: any;
-    propName: string
+    propName: string;
     startValue: number;
     movedCallback?: () => void;
     lastValue: number;
 }
 
-export class Movable extends Component<MovableProps,any> {
+export class Movable extends Component<MovableProps, any> {
     constructor(props: any, context: any) {
         super(props, context);
         this.props = props;
@@ -107,7 +107,7 @@ export class Movable extends Component<MovableProps,any> {
             }
         });
 
-        this.bindedY.forEach((bind)=> {
+        this.bindedY.forEach((bind) => {
             let newValue = bind.startValue + e.clientY - this.startClientY;
             if (newValue !== bind.lastValue) {
                 bind.obj[bind.propName] = newValue;

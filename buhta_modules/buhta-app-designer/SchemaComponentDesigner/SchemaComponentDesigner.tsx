@@ -157,6 +157,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                     autoExpandNodesToLevel={100}
                                     editable={true}
                                     denyDelete={true}
+                                    dragDropNodes={true}
                                 >
                                     <TreeGridColumns>
                                         <TreeGridColumn caption="Control" propertyName="$$controlName"
@@ -164,13 +165,13 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                                         width={200}>
                                         </TreeGridColumn>
                                         <TreeGridColumn caption="Свойства" propertyName="$$controlMainProps"
-                                                        width={400}>
+                                                        width={300}>
                                         </TreeGridColumn>
-                                        <TreeGridColumn caption="Свойства2" propertyName="Название"
-                                                        width={400}>
+                                        <TreeGridColumn caption="События" propertyName="$$controlEvents"
+                                                        width={300}>
                                         </TreeGridColumn>
                                     </TreeGridColumns>
-                                </TreeGrid>;
+                                </TreeGrid>
                             </Tab>
                             <Tab key="2" title="Кто-когда">
 

@@ -34,8 +34,6 @@ var Button = (function (_super) {
         this.state = new ButtonState(this);
         this.plugins.push(new VisiblePlugin_1.VisiblePlugin(this));
         this.plugins.push(new OnClickPlugin_1.OnClickPlugin(this));
-        console.log("render button context");
-        console.log(context);
     }
     Button.prototype.render = function () {
         this.addClassName("button");
