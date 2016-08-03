@@ -16,13 +16,20 @@ export class SchemaForm extends SchemaComponent {
 
     sizeTo: "parent" | "content";
 
-    getComponent(): React.ReactElement<any> {
-        let children = this.children.map((child) => {
-            return child.getComponent();
-        });
+    getProps(): PanelProps {
+        return {
+            sizeTo: "parent"
+        };
+    }
 
-        this.reactElement = <Panel sizeTo = "parent" > {children} </Panel>;
-        return this.reactElement;
+    getComponent(): Function {
+        return Panel;
+        // let children = this.children.map((child) => {
+        //     return child.getComponent();
+        // });
+        //
+        // this.reactElement = <Panel sizeTo = "parent" > {children} </Panel>;
+        // return this.reactElement;
         // let props: PanelProps = {
         //     sizeTo: this.sizeTo
         // };

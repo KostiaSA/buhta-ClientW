@@ -1,6 +1,7 @@
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {Schema} from "./Schema";
 import {getNewGuid} from "../buhta-sql/SqlCore";
+import {throwAbstractError} from "../buhta-core/Error";
 
 export type SchemaObjectId = string;
 
@@ -42,6 +43,12 @@ export class SchemaObject extends DesignedObject {
     getTypeDisplay(): string {
         return "Объект";
     }
+
+    getDesigner(): JSX.Element {
+        throwAbstractError();
+        throw  "fake";
+    }
+    
 
 }
 

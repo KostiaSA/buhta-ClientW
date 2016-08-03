@@ -36,9 +36,9 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
 
         this.clonedDesignedObject = DeepClone<DesignedObject>(this.props.designedObject);
 
-        console.log("cloned");
-        console.log(this.props.designedObject);
-        console.log(this.clonedDesignedObject);
+       // console.log("cloned");
+       // console.log(this.props.designedObject);
+       // console.log(this.clonedDesignedObject);
 
         this.observableDesignedObject = Observable<DesignedObject>(this.clonedDesignedObject, () => {
             this.needToSave = true;

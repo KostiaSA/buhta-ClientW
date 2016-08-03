@@ -9,6 +9,7 @@ import {throwError} from "../../Error";
 import {SchemaObjectId} from "../../../buhta-schema/SchemaObject";
 import {Schema} from "../../../buhta-schema/Schema";
 import {SchemaForm} from "../../../buhta-schema/SchemaForm/SchemaForm";
+import {SchemaComponent} from "../../../buhta-schema/SchemaComponent/SchemaComponent";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -127,7 +128,12 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 //    private windows: WindowInfo[] = [];
 
     openSchemaForm(form: SchemaForm, openParams?: OpenWindowParams) {
-        let winContent = form.getComponent();
+        let winContent = form.render();
+        this.openWindow(winContent, openParams);
+    }
+    
+    openSchemaComponentDesigner(component: SchemaComponent, openParams?: OpenWindowParams) {
+        let winContent = component.getDesigner();
         this.openWindow(winContent, openParams);
     }
 

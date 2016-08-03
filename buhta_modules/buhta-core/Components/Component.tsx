@@ -275,8 +275,8 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     }
 
     getRenderProps() {
-        if (this.props.buhtaControl)
-            this.props.buhtaControl.reactElement = this;
+        // if (this.props.buhtaControl)
+        //     this.props.buhtaControl.reactElement = this;
         this.renderProps.className = this.renderClassName();
         this.renderProps.style = this.renderStyles;
         _.assign(this.renderProps.style, this.props.style);

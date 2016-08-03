@@ -4,7 +4,7 @@ import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringProperty
 import {Component} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
 
-export class ButtonControl extends BaseControl implements ButtonProps {
+export class ButtonControl extends BaseControl {
     @StringEditor({
         inputCaption: "Текст"
     })
@@ -13,17 +13,31 @@ export class ButtonControl extends BaseControl implements ButtonProps {
 
     handleOnClick: Function;
 
-    getComponent(): React.ReactElement<any> {
-
-        return (
-            <Button buhtaControl={this}>
-                {this.text}
-            </Button>
-        );
-        // ButtonControl.prototype.getComponent = function () {
-        //     return (React.createElement(Button_1.Button, {buhtaControl: this}, this.text));
-        // };
-
+    beforeRender() {
+        super.beforeRender();
+        this.children.length = 0;
+        this.children.push(this.text);
     }
+
+    getProps(): ButtonProps {
+        return {};
+    }
+
+    getComponent(): Function {
+        return Button;
+    }
+
+// getComponent(): React.ReactElement<any> {
+    //
+    //     return (
+    //         <Button buhtaControl={this}>
+    //             {this.text}
+    //         </Button>
+    //     );
+    //     // ButtonControl.prototype.getComponent = function () {
+    //     //     return (React.createElement(Button_1.Button, {buhtaControl: this}, this.text));
+    //     // };
+    //
+    // }
 
 }

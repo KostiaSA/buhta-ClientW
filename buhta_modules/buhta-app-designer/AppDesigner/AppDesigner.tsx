@@ -693,6 +693,29 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     };
 
+    testSchemaFormDesigner() {
+
+        let form = new SchemaForm(getSchema());
+
+        let but1 = new ButtonControl();
+        but1.text = "Буттон 1222";
+        form.children.push(but1);
+
+        let but2 = new ButtonControl();
+        but2.text = "Буттон 2222";
+        form.children.push(but2);
+
+
+        let openParam: OpenWindowParams = {
+            title: "дизайнер компонента",
+            top: 50,
+            left: 50
+        };
+
+        appInstance.desktop.openSchemaComponentDesigner(form, openParam);
+
+    };
+
     render() {
         this.addClassName("app-designer");
 
@@ -726,10 +749,12 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { this.testWindowAutoSize(); }}>test WIN AUTOSIZE</button>
                                 <br/>
-                                <br/>
                                 <button onClick={() => { this.testObservable(); }}>test OBSERVABLE</button>
                                 <br/>
                                 <button onClick={() => { this.testOpenSchemaForm(); }}>test SchemaForm</button>
+                                <br/>
+                                <br/>
+                                <button onClick={() => { this.testSchemaFormDesigner(); }}>test SchemaFormDesigner</button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>
