@@ -668,11 +668,21 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     }
 
+
+    private clearDragCssClasses(target: JQuery) {
+
+    }
+
     private handleDragEnd = (e: DragEvent) => {
         this.state.isCellDragging = false;
         let $tbody = $(e.target).parents("tbody").first();
-        $tbody.find(".drop-allow-cell").removeClass("drop-allow-cell");
-        $tbody.find(".drop-deny-cell").removeClass("drop-deny-cell");
+        $tbody.find(".drop-allow-after-cell").removeClass("drop-allow-after-cell");
+        $tbody.find(".drop-deny-after-cell").removeClass("drop-deny-after-cell");
+        $tbody
+            .find(".drop-arrow")
+            .addClass("is-hidden")
+            .removeClass("drop-deny-into-cell")
+            .removeClass("drop-allow-into-cell");
         this.forceUpdate();
 //        console.log("drag end");
         // document.removeEventListener("dragover", this.dragOver_Binded);
@@ -689,19 +699,24 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         console.log("drag over");
 
         let $tbody = $(e.target).parents("tbody").first();
-        $tbody.find(".drop-allow-cell").removeClass("drop-allow-cell");
-        $tbody.find(".drop-deny-cell").removeClass("drop-deny-cell");
+        $tbody.find(".drop-allow-after-cell").removeClass("drop-allow-after-cell");
+        $tbody.find(".drop-deny-after-cell").removeClass("drop-deny-after-cell");
+        $tbody
+            .find(".drop-arrow")
+            .addClass("is-hidden")
+            .removeClass("drop-deny-into-cell")
+            .removeClass("drop-allow-into-cell");
 
         let $tr = $(e.target).parents("tr").first();
 
         let relativeY = (e.clientY - $tr.offset().top) / $tr.outerHeight();
 
         if (relativeY < 0.33)
-            $tr.prev().children("td").addClass("drop-allow-cell");
+            $tr.prev().children("td").addClass("drop-allow-after-cell");
         else if (relativeY < 0.66)
-            $tr.prev().children("td").addClass("drop-allow-cellXXX");
+            $tr.children("td").find(".drop-arrow").removeClass("is-hidden").addClass("drop-allow-into-cell");
         else
-            $tr.children("td").addClass("drop-allow-cell");
+            $tr.children("td").addClass("drop-allow-after-cell");
 
         //console.log({top: $tr.offset().top, y: e.clientY});
         console.log(relativeY);
@@ -811,6 +826,17 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             tdDragOver = this.handleDragOver;
         }
 
+        let dropArrowDiv: any;
+
+        if (col.props.showHierarchyTree) {
+            dropArrowDiv = (
+                <div className="drop-arrow is-hidden" style={{ flex: "0 0 auto"}}>
+                    <i className="fa fa-arrow-right" style={{verticalAlign: "middle"}}></i>
+                </div>
+
+            );
+        }
+
         return (
             <td
                 key={colIndex}
@@ -820,6 +846,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                 onDragOver={tdDragOver}
             >
                 <div style={{ display:"flex", flexDirection: "row", alignItems:"center" }}>
+                    {dropArrowDiv}
                     <div className="row-checkbox" style={{ flex: "0 0 auto"}}>
 
                     </div>

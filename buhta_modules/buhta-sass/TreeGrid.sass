@@ -43,11 +43,21 @@
     border: 1px solid #dedede
     padding: 2px 2px 2px 4px
 
-  > tbody > tr > td.drop-allow-cell
-      border-bottom: rgba($green,.2) solid 4px
+  > tbody > tr > td.drop-allow-after-cell
+      border-bottom: rgba($green,.5) solid 4px
 
-  > tbody > tr > td.drop-deny-cell
-      border-bottom: rgba($red,.2) solid 4px
+  > tbody > tr > td.drop-deny-after-cell
+      border-bottom: rgba($red,.5) solid 4px
+
+  > tbody > tr > td .drop-arrow
+    position: absolute
+    left: -4px
+
+  > tbody > tr > td .drop-arrow.drop-allow-into-cell
+      color: rgba($green,.95)
+
+  > tbody > tr > td .drop-arrow.drop-deny-into-cell
+      color: rgba($red,.95)
 
 .tree-grid-header, .tree-grid-footer
   /*table-layout: fixed;
