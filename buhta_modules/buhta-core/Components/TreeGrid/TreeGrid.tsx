@@ -696,7 +696,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     }
 
     private handleDragOver = (e: DragEvent) => {
-        console.log("drag over");
+        //console.log("drag over");
 
         let $tbody = $(e.target).parents("tbody").first();
         $tbody.find(".drop-allow-after-cell").removeClass("drop-allow-after-cell");
@@ -719,7 +719,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             $tr.children("td").addClass("drop-allow-after-cell");
 
         //console.log({top: $tr.offset().top, y: e.clientY});
-        console.log(relativeY);
+        //console.log(relativeY);
 
         //console.log($(e.target).parents("tbody").first());
         //console.log(e.clientX);
