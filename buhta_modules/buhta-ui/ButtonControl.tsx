@@ -27,6 +27,10 @@ export class ButtonControl extends BaseControl {
         return Button;
     }
 
+    get $$controlName(){
+        return "<Button>";
+    }
+
 // getComponent(): React.ReactElement<any> {
     //
     //     return (

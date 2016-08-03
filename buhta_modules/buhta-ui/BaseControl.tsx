@@ -35,4 +35,7 @@ export class BaseControl extends DesignedObject {
         return React.createElement(this.getComponent() as any, this.getProps(), children);
     }
 
+    get $$controlName(){
+        return "<baseControl>";
+    }
 }

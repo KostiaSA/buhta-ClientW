@@ -37,6 +37,7 @@ import {UpdateStmt} from "../../buhta-sql/UpdateStmt";
 import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {ButtonControl} from "../../buhta-ui/ButtonControl";
+import {PanelControl} from "../../buhta-ui/PanelControl";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -682,6 +683,17 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         but2.text = "Буттон2";
         form.children.push(but2);
 
+        let panel = new PanelControl();
+        form.children.push(panel);
+
+        let but3 = new ButtonControl();
+        but3.text = "Буттон3";
+        panel.children.push(but3);
+
+        let but4 = new ButtonControl();
+        but4.text = "Буттон4";
+        panel.children.push(but4);
+
 
         let openParam: OpenWindowParams = {
             title: "окно 1 222222",
@@ -705,6 +717,16 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         but2.text = "Буттон 2222";
         form.children.push(but2);
 
+        let panel = new PanelControl();
+        form.children.push(panel);
+
+        let but3 = new ButtonControl();
+        but3.text = "Буттон3";
+        panel.children.push(but3);
+
+        let but4 = new ButtonControl();
+        but4.text = "Буттон4";
+        panel.children.push(but4);
 
         let openParam: OpenWindowParams = {
             title: "дизайнер компонента",

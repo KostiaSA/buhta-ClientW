@@ -153,22 +153,21 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                 <TreeGrid
                                     dataSource={ dataSource }
                                     treeMode="childrenList"
-                                    hierarchyFieldName="Номер"
-                                    hierarchyDelimiters="."
-                                    autoExpandNodesToLevel={0}
+                                    hierarchyFieldName="children"
+                                    autoExpandNodesToLevel={100}
                                     editable={true}
                                     denyDelete={true}
                                 >
                                     <TreeGridColumns>
-                                        <TreeGridColumn caption="Колонка2" propertyName="Номер"
-                                                        showHierarchyTree={false}
-                                                        width={100}>
-                                        </TreeGridColumn>
-                                        <TreeGridColumn caption="Колонка3" propertyName="Название"
+                                        <TreeGridColumn caption="Control" propertyName="$$controlName"
                                                         showHierarchyTree={true}
                                                         width={200}>
                                         </TreeGridColumn>
-                                        <TreeGridColumn caption="Колонка1" propertyName="Ключ" width={80}>
+                                        <TreeGridColumn caption="Свойства" propertyName="$$controlMainProps"
+                                                        width={400}>
+                                        </TreeGridColumn>
+                                        <TreeGridColumn caption="Свойства2" propertyName="Название"
+                                                        width={400}>
                                         </TreeGridColumn>
                                     </TreeGridColumns>
                                 </TreeGrid>;

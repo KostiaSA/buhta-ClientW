@@ -18,6 +18,7 @@ import {OpenWindowParams} from "../Desktop/Desktop";
 import {appInstance} from "../App/App";
 import {TreeGridDataSource} from "./TreeGridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
+import {throwError} from "../../Error";
 
 export type TreeMode = "flat" | "parentKey" | "delimiterChar" | "childrenList";
 
@@ -78,13 +79,16 @@ export class InternalRow {
     }
 
     element: HTMLElement;
-    ///   sourceObject: any;
+    sourceRow: any;
     sourceIndex: number;
     cellElements: HTMLElement[] = [];
     node: InternalTreeNode;
 
-    get sourceData(): any {
-        return this.gridState.dataSource.getDataRows()[this.sourceIndex];
+    getSourceObject(): any {
+        if (this.sourceRow === undefined)
+            return this.gridState.dataSource.getDataRows()[this.sourceIndex];
+        else
+            return this.sourceRow;
     }
 
 }
@@ -97,6 +101,7 @@ export class InternalTreeNode {
     element: HTMLElement;
     //sourceObject: any;
     sourceIndex: number;
+    sourceRow: any;
     cellElements: HTMLElement[] = [];
 
     // для treeMode;
@@ -112,6 +117,7 @@ export class InternalTreeNode {
 
         let row = new InternalRow(this.gridState);
         row.sourceIndex = this.sourceIndex;
+        row.sourceRow = this.sourceRow;
         row.node = this;
         rows.push(row);
 
@@ -203,7 +209,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     openDeleteForm(rowToDelete: InternalRow) {
         //let rowToDelete = this.state.rows[this.state.focusedRowIndex];
-        let row = rowToDelete.sourceData as DesignedObject;
+        let row = rowToDelete.getSourceObject() as DesignedObject;
         let objectClassName = "запись";
         if (row.getClassName)
             objectClassName = row.getClassName();
@@ -335,7 +341,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         }
 
         if (this.state.columns.length === 0)
-            console.error("TreeGrid: список колонок не определен.");
+            throwError("TreeGrid: список колонок не определен.");
 
     }
 
@@ -346,29 +352,65 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
 
     private createNodes() {
-        if (!this.props.treeMode)
+        if (this.props.treeMode === "flat")
             return;
-
-        if (this.props.hierarchyFieldName) {
+        else if (this.props.treeMode === "delimiterChar") {
             this.createNodesFromHierarchyField();
         }
+        else if (this.props.treeMode === "childrenList") {
+            this.createNodesFromChildrenList();
+        }
         else
-            console.error("unknown hierarchy mode");
+            throwError("TreeGrid.createNodes(): unknown treeMode '" + this.props.treeMode + "'");
+    }
+
+    private createNodesFromChildrenList() {
+        if (!this.props.hierarchyFieldName)
+            throwError("TreeGrid: property 'hierarchyFieldName' is undefined");
+
+        this.state.nodes = [];
+
+        let addChildren = (toArray: InternalTreeNode[], dataRow: any, level: number) => {
+            if (!toArray)
+                console.error("пиздец");
+
+            let node = new InternalTreeNode(this.state);
+            node.sourceIndex = -1;
+            node.sourceRow = dataRow;
+            node.level = level;
+            node.expanded = node.level < this.props.autoExpandNodesToLevel;
+            toArray.push(node);
+
+
+            let children = dataRow[this.props.hierarchyFieldName!];
+            if (!children)
+                throwError("TreeGrid: dataRow has no children list property '" + this.props.hierarchyFieldName + "'");
+            if (!_.isArray(children))
+                throwError("TreeGrid: children list property '" + this.props.hierarchyFieldName + "' should be array");
+
+            children.forEach((dataRow: any, index: number) => {
+                addChildren(node.children, dataRow, level + 1);
+            });
+        };
+
+        this.state.dataSource.getDataRows().forEach((dataRow: any, index: number) => {
+            addChildren(this.state.nodes, dataRow, 0);
+        }, this);
+
     }
 
 
     private createNodesFromHierarchyField() {
 
-
         if (!this.state.dataSource)
             return;
 
+        if (!this.props.hierarchyFieldName)
+            throwError("TreeGrid: property 'hierarchyFieldName' is undefined");
 
         if (!this.props.hierarchyDelimiters) {
-            console.error("XTreeGrid: hierarchyDelimiters is undefined");
-            return;
+            throwError("TreeGrid: property 'hierarchyDelimiters' is undefined");
         }
-
 
         interface ISorted {
             hierarchyStr: string;
@@ -404,10 +446,11 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
             if (!parentId) {
                 if (cache[nodeId])
-                    console.error("XTreeGrid: nodeId '" + nodeId + "' is duplicated");
+                    throwError("XTreeGrid: nodeId '" + nodeId + "' is duplicated");
                 else {
                     let node = new InternalTreeNode(this.state);
                     node.sourceIndex = s.objIndex;
+                    // todo fill node.sourceRow
                     node.level = 0;
                     node.expanded = node.level < this.props.autoExpandNodesToLevel;
                     cache[nodeId] = node;
@@ -419,6 +462,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
                 let node = new InternalTreeNode(this.state);
                 node.sourceIndex = s.objIndex;
+                // todo fill node.sourceRow
                 node.level = parentNode.level + 1;
                 node.expanded = node.level < this.props.autoExpandNodesToLevel;
                 cache[s.hierarchyStr] = node;
@@ -437,7 +481,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         this.state.rows = [];
 
-        if (this.props.treeMode) {
+        if (this.props.treeMode !== "flat") {
             if (this.state.nodes) {
                 this.state.nodes.forEach((node: InternalTreeNode) => {
                     node.pushRowRecursive(this.state.rows, this.state.pageLength);
@@ -595,8 +639,14 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     private renderCell(row: InternalRow, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
 
-        let objIndex = row.sourceIndex;
-        let str = this.state.dataSource.getDataRows()[objIndex][col.props.propertyName || ""].toString();  // todo col.props.propertyName || ""
+        let sourceObject = row.getSourceObject();
+        let str = "";
+        if (col.props.propertyName === undefined)
+            str = "'propertyName' undefined";
+        else if (sourceObject[col.props.propertyName] === undefined)
+            str = "bad property '" + col.props.propertyName + "'";
+        else
+            str = sourceObject[col.props.propertyName].toString();  // todo col.props.propertyName || ""
         //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
         // return <td key={colIndex}>
         //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
@@ -605,12 +655,12 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         let node = row.node;
 
         let hierarchyPaddingDiv: React.ReactNode = [];
-        if (this.props.treeMode && (col.props.showHierarchyPadding || col.props.showHierarchyTree)) {
+        if (this.props.treeMode !== "flat" && (col.props.showHierarchyPadding || col.props.showHierarchyTree)) {
             hierarchyPaddingDiv = <span style={{width:node.level * 20, display: "inline-block"}}></span>;
         }
 
         let tdStyle: any = {overflow: "hidden"};
-        if (this.props.treeMode && col.props.showHierarchyTree) {
+        if (this.props.treeMode !== "flat" && col.props.showHierarchyTree) {
             tdStyle.borderBottomColor = "rgba(255, 0, 0, 0)";
         }
 
@@ -618,7 +668,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             lineHeight: "100%",
             display: "inline-block"
         };
-        if (this.props.treeMode && col.props.showHierarchyTree && node.expanded && node.children.length > 0) {
+        if (this.props.treeMode !== "flat" && col.props.showHierarchyTree && node.expanded && node.children.length > 0) {
             strSpanStyle.fontWeight = "bold";
         }
         let strSpan = <span style={ strSpanStyle}>{str}</span>;
@@ -626,7 +676,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         let collapseIconDiv: React.ReactNode = [];
 
-        if (this.props.treeMode && col.props.showHierarchyTree) {
+        if (this.props.treeMode !== "flat" && col.props.showHierarchyTree) {
             if (node.children.length > 0) {
                 if (node.expanded) {
                     collapseIconDiv = (
