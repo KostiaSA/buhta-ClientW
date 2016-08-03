@@ -14,6 +14,15 @@ import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Fixed} from "../../buhta-core/Components/LayoutPane/Fixed";
 import {Button} from "../../buhta-core/Components/Button/Button";
+import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
+import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
+import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
+import {
+    TreeGridComponentChildrenDataSource,
+    TreeGridComponentChildrenDataSourceParams
+} from "./TreeGridComponentChildrenDataSource";
+import {BaseControl} from "../../buhta-ui/BaseControl";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -33,20 +42,20 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     snapshot: Snapshot = new Snapshot();
 
     //needToSave: boolean = false;
-    clonedDesignedObject: DesignedObject;
-    observableDesignedObject: DesignedObject;
+    clonedDesignedObject: SchemaComponent;
+    observableDesignedObject: SchemaComponent;
 
     protected willMount() {
         super.willMount();
         this.needToSave = false;
 
-        this.clonedDesignedObject = DeepClone<DesignedObject>(this.props.designedObject);
+        this.clonedDesignedObject = DeepClone<SchemaComponent>(this.props.designedObject);
 
         // console.log("cloned");
         // console.log(this.props.designedObject);
         // console.log(this.clonedDesignedObject);
 
-        this.observableDesignedObject = Observable<DesignedObject>(this.clonedDesignedObject, () => {
+        this.observableDesignedObject = Observable<SchemaComponent>(this.clonedDesignedObject, () => {
             this.needToSave = true;
             this.forceUpdate();
         });
@@ -57,36 +66,37 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         //this.snapshot.saveObject(this.props.designedObject, "root");
     }
 
-    renderPropertyDesigners(): JSX.Element[] {
-        let ret: JSX.Element[] = [];
+    // renderPropertyDesigners(): JSX.Element[] {
+    //     let ret: JSX.Element[] = [];
+    //
+    //     getPropertyEditors(this.observableDesignedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
+    //         //console.log(propInfo);
+    //         let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
+    //             designedObject: this.observableDesignedObject,
+    //             //propertyEditorInfo: propInfo,
+    //             index: index,
+    //             key: index,
+    //             onChange: this.props.onChange,
+    //
+    //             // это из propInfo: PropertyEditorInfo, заполяется далее через _.assign
+    //             propertyName: "",
+    //             objectType: DesignedObject,
+    //             editorType: BasePropertyEditor,
+    //             propertyType: null
+    //         };
+    //
+    //         _.assign(editorProps, propInfo);
+    //
+    //         if (!editorProps.inputCaption)
+    //             editorProps.inputCaption = editorProps.propertyName;
+    //         //console.log(editorProps);
+    //
+    //         ret.push(React.createElement(propInfo.editorType, editorProps, {}));
+    //     });
+    //
+    //     return ret;
+    // }
 
-        getPropertyEditors(this.observableDesignedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
-            //console.log(propInfo);
-            let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
-                designedObject: this.observableDesignedObject,
-                //propertyEditorInfo: propInfo,
-                index: index,
-                key: index,
-                onChange: this.props.onChange,
-
-                // это из propInfo: PropertyEditorInfo, заполяется далее через _.assign
-                propertyName: "",
-                objectType: DesignedObject,
-                editorType: BasePropertyEditor,
-                propertyType: null
-            };
-
-            _.assign(editorProps, propInfo);
-
-            if (!editorProps.inputCaption)
-                editorProps.inputCaption = editorProps.propertyName;
-            //console.log(editorProps);
-
-            ret.push(React.createElement(propInfo.editorType, editorProps, {}));
-        });
-
-        return ret;
-    }
     handleSaveButtonClick = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
@@ -124,6 +134,9 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     // }
 
     render() {
+        let dataSourceParam: TreeGridComponentChildrenDataSourceParams<BaseControl | string> = {};
+        let dataSource = new TreeGridComponentChildrenDataSource<BaseControl | string>(this.observableDesignedObject.children, dataSourceParam);
+
         this.addClassName("object-designer");
         this.addProps({onChange: this.props.onChange});
 
@@ -137,7 +150,28 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                             onChangeActiveTab={ (state, tab) => { console.log("setActiveTab");console.log(tab);}}
                         >
                             <Tab key="1" title="Основная">
-
+                                <TreeGrid
+                                    dataSource={ dataSource }
+                                    treeMode="childrenList"
+                                    hierarchyFieldName="Номер"
+                                    hierarchyDelimiters="."
+                                    autoExpandNodesToLevel={0}
+                                    editable={true}
+                                    denyDelete={true}
+                                >
+                                    <TreeGridColumns>
+                                        <TreeGridColumn caption="Колонка2" propertyName="Номер"
+                                                        showHierarchyTree={false}
+                                                        width={100}>
+                                        </TreeGridColumn>
+                                        <TreeGridColumn caption="Колонка3" propertyName="Название"
+                                                        showHierarchyTree={true}
+                                                        width={200}>
+                                        </TreeGridColumn>
+                                        <TreeGridColumn caption="Колонка1" propertyName="Ключ" width={80}>
+                                        </TreeGridColumn>
+                                    </TreeGridColumns>
+                                </TreeGrid>;
                             </Tab>
                             <Tab key="2" title="Кто-когда">
 

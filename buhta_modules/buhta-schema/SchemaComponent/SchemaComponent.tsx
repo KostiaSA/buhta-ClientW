@@ -7,7 +7,7 @@ import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPrope
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {throwAbstractError} from "../../buhta-core/Error";
 import {ComponentContext, ComponentProps} from "../../buhta-core/Components/Component";
-import {SchemaComponentDesigner} from "../../buhta-app-designer/SchemaComponentDesigner/SchemaComponenttDesigner";
+import {SchemaComponentDesigner} from "../../buhta-app-designer/SchemaComponentDesigner/SchemaComponentDesigner";
 
 export class SchemaComponent extends SchemaObject {
     children: (BaseControl | string)[] = [];

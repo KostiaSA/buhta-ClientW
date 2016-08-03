@@ -19,15 +19,16 @@ import {appInstance} from "../App/App";
 import {TreeGridDataSource} from "./TreeGridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 
+export type TreeMode = "flat" | "parentKey" | "delimiterChar" | "childrenList";
 
 export interface TreeGridProps extends ComponentProps<TreeGridState> {
     dataSource: TreeGridDataSource;
     rowHeight?: number;
     keyFieldName?: string;
-    parentKeyFieldName?: string;
-    hierarchyFieldName?: string;
+    //parentKeyFieldName?: string;
+    hierarchyFieldName?: string;  // для "parentKey" | "delimiterChar" | "childrenList"
     hierarchyDelimiters?: string;
-    treeMode?: boolean;
+    treeMode?: TreeMode;
     autoExpandNodesToLevel?: number;
 
     editable?: boolean;
@@ -389,7 +390,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         sorted.forEach((s, index) => {
 
-            let hierarchyDelimiters= this.props.hierarchyDelimiters || ".";
+            let hierarchyDelimiters = this.props.hierarchyDelimiters || ".";
 
             let splitted = s.hierarchyStr.split(hierarchyDelimiters);
             let parentId: any;
@@ -595,7 +596,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     private renderCell(row: InternalRow, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
 
         let objIndex = row.sourceIndex;
-        let str = this.state.dataSource.getDataRows()[objIndex][col.props.propertyName || ""].toString();  // todo col.props.propertyName || "" 
+        let str = this.state.dataSource.getDataRows()[objIndex][col.props.propertyName || ""].toString();  // todo col.props.propertyName || ""
         //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
         // return <td key={colIndex}>
         //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
@@ -603,7 +604,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         let node = row.node;
 
-        let hierarchyPaddingDiv: React.ReactNode=[];
+        let hierarchyPaddingDiv: React.ReactNode = [];
         if (this.props.treeMode && (col.props.showHierarchyPadding || col.props.showHierarchyTree)) {
             hierarchyPaddingDiv = <span style={{width:node.level * 20, display: "inline-block"}}></span>;
         }
@@ -623,7 +624,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         let strSpan = <span style={ strSpanStyle}>{str}</span>;
 
 
-        let collapseIconDiv: React.ReactNode=[];
+        let collapseIconDiv: React.ReactNode = [];
 
         if (this.props.treeMode && col.props.showHierarchyTree) {
             if (node.children.length > 0) {
