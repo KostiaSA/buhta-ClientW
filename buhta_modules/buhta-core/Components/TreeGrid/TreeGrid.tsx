@@ -582,6 +582,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
     }
 
     protected refreshDataSource() {
+        this.props.dataSource.refresh();
         this.state.dataSource = this.props.dataSource;
         this.createColumns();
         this.createNodes();
@@ -702,6 +703,30 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             .addClass("is-hidden")
             .removeClass("drop-deny-into-cell")
             .removeClass("drop-allow-into-cell");
+        this.forceUpdate();
+    }
+    
+    private handleDrop = (e: DragEvent) => {
+
+        let $tr = $(e.target).parents("tr").first();
+        let $tr_prev = $tr.prev();
+
+        let index = Number.parseInt($tr.attr("data-source-index"));
+        let index_prev = Number.parseInt($tr_prev.attr("data-source-index"));
+
+        let relativeY = (e.clientY - $tr.offset().top) / $tr.outerHeight();
+
+        if (relativeY < 0.33) {
+            this.state.dataSource.dropAfter(this.state.draggingRowSourceIndex, index_prev, this.state.draggingMode); 
+        }
+        else if (relativeY < 0.66) {
+            this.state.dataSource.dropInto(this.state.draggingRowSourceIndex, index, this.state.draggingMode);
+        }
+        else {
+            this.state.dataSource.dropAfter(this.state.draggingRowSourceIndex, index, this.state.draggingMode);
+        }
+        
+        this.refreshDataSource();
         this.forceUpdate();
     }
 

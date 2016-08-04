@@ -21,6 +21,11 @@ export interface TreeGridDataSource<T> {
 
     canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean;
 
+    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;
+
+    dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;
+    
+    refresh(): void;
 }
 
 

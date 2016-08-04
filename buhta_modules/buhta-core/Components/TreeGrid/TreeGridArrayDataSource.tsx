@@ -100,4 +100,16 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
         return true;
     }
 
+    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+        return false;
+    }
+
+    dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+        return true;
+    }
+    
+    refresh(){
+        
+    }
+
 }

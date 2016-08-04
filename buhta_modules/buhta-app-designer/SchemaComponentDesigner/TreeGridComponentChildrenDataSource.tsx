@@ -120,15 +120,45 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
         return true;
     }
 
+
+    private hasParent(rowIndex: number, parentIndex: number): boolean {
+        let parentRow = this.flat[rowIndex].$$flatParent;
+        if (parentRow && parentRow.$$flatIndex === parentIndex)
+            return true;
+        while (parentRow) {
+            parentRow = parentRow.$$flatParent;
+            if (parentRow && parentRow.$$flatIndex === parentIndex)
+                return true;
+        }
+        return false;
+    }
+
     canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
         if (this.flat[dragRowIndex] === undefined || this.flat[targetRowIndex] === undefined)
             return false;
-        return false;
+
+        if (targetRowIndex === dragRowIndex || this.hasParent(targetRowIndex, dragRowIndex))
+            return false;
+
+        return true;
     }
 
     canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
         if (this.flat[dragRowIndex] === undefined || this.flat[targetRowIndex] === undefined)
             return false;
+
+        if (targetRowIndex === dragRowIndex || this.hasParent(targetRowIndex, dragRowIndex))
+            return false;
+
         return true;
     }
+
+    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+
+    }
+
+    dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+
+    }
+
 }
