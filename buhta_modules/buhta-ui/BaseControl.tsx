@@ -8,7 +8,11 @@ import {throwAbstractError} from "../buhta-core/Error";
 export class BaseControl extends DesignedObject {
 //    name: string;
 //    parent: BaseControl;
-    children: (BaseControl | string)[] = [];
+
+    $$flatIndex: number; // используется в TreeGridComponentChildrenDataSourceParams
+    $$flatParent: BaseControl | null; // используется в TreeGridComponentChildrenDataSourceParams
+
+    children: BaseControl[] = [];
 //    reactElement: Component<any, any>;
 
     getProps(): ComponentProps<any> {
@@ -26,10 +30,10 @@ export class BaseControl extends DesignedObject {
 
     render(): JSX.Element {
         this.beforeRender();
-        let children = this.children.map((child: BaseControl| string) => {
-            if (_.isString(child))
-                return child;
-            else
+        let children = this.children.map((child: BaseControl) => {
+            // if (_.isString(child))
+            //     return child;
+            // else
                 return child.render();
         });
         return React.createElement(this.getComponent() as any, this.getProps(), children);

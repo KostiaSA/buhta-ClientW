@@ -134,8 +134,8 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     // }
 
     render() {
-        let dataSourceParam: TreeGridComponentChildrenDataSourceParams<BaseControl | string> = {};
-        let dataSource = new TreeGridComponentChildrenDataSource<BaseControl | string>(this.observableDesignedObject.children, dataSourceParam);
+        let dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
+        let dataSource = new TreeGridComponentChildrenDataSource(this.observableDesignedObject.children, dataSourceParam);
 
         this.addClassName("object-designer");
         this.addProps({onChange: this.props.onChange});

@@ -15,11 +15,10 @@ export interface TreeGridArrayDataSourceParams<T> {
 
 }
 
-export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGridDataSource {
+export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGridDataSource<T> {
     constructor(public arrayObj: T[], public params: TreeGridArrayDataSourceParams<T> = {}) {
 
     }
-
 
     get isTreeGridDataSource() {
         return true;
@@ -49,6 +48,10 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
 
     getDataRows(): T[] {
         return this.arrayObj;
+    }
+
+    getDataRow(index: number): T {
+        return this.arrayObj[index];
     }
 
     getNewRow(): T {
@@ -84,4 +87,17 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
         else
             return "Удалить запись!";
     }
+
+    canDragRow(rowIndex: number, mode: "move" | "copy"): boolean {
+        return true;
+    }
+
+    canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+        return false;
+    }
+
+    canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+        return true;
+    }
+
 }

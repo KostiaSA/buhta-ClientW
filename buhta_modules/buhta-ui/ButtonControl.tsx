@@ -15,8 +15,8 @@ export class ButtonControl extends BaseControl {
 
     beforeRender() {
         super.beforeRender();
-        this.children.length = 0;
-        this.children.push(this.text);
+//        this.children.length = 0;
+  //      this.children.push(this.text);
     }
 
     getProps(): ButtonProps {

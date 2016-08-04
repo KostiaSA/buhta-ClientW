@@ -22,8 +22,8 @@ import {throwError} from "../../Error";
 
 export type TreeMode = "flat" | "parentKey" | "delimiterChar" | "childrenList";
 
-export interface TreeGridProps extends ComponentProps<TreeGridState> {
-    dataSource: TreeGridDataSource;
+export interface TreeGridProps<T> extends ComponentProps<TreeGridState<T>> {
+    dataSource: TreeGridDataSource<T>;
     rowHeight?: number;
     keyFieldName?: string;
     //parentKeyFieldName?: string;
@@ -43,14 +43,14 @@ export interface TreeGridProps extends ComponentProps<TreeGridState> {
 
 }
 
-export class TreeGridState extends ComponentState<TreeGridProps> {
+export class TreeGridState<T> extends ComponentState<TreeGridProps<T>> {
     columns: InternalColumn[];
     pageLength: number;
-    rows: InternalRow[];
-    nodes: InternalTreeNode[];
+    rows: InternalRow<T>[];
+    nodes: InternalTreeNode<T>[];
     focusedRowIndex: number;
     focusedCellIndex: number;
-    dataSource: TreeGridDataSource;
+    dataSource: TreeGridDataSource<T>;
 
     headerFakeRow: HTMLElement;
     footerFakeRow: HTMLElement;
@@ -63,7 +63,8 @@ export class TreeGridState extends ComponentState<TreeGridProps> {
     footerTableElement: HTMLElement;
 
     isCellDragging: boolean;
-    draggingDataObject: any;
+    draggingRowSourceIndex: number;
+    draggingMode: "move" | "copy";
 }
 
 export class InternalColumn {
@@ -78,8 +79,8 @@ export class InternalColumn {
     footerWidthNativeElement: HTMLElement;
 }
 
-export class InternalRow {
-    constructor(public gridState: TreeGridState) {
+export class InternalRow<T> {
+    constructor(public gridState: TreeGridState<T>) {
 
     }
 
@@ -87,36 +88,38 @@ export class InternalRow {
 //    sourceRow: any;
 //    sourceIndex: number;
     cellElements: HTMLElement[] = [];
-    node: InternalTreeNode;
+    node: InternalTreeNode<T>;
 
     getSourceObject(): any {
-        if (this.node.sourceRow === undefined)
-            return this.gridState.dataSource.getDataRows()[this.node.sourceIndex];
-        else
-            return this.node.sourceRow;
+        return this.gridState.dataSource.getDataRow(this.node.sourceIndex);
+        //
+        // if (this.node.sourceRow === undefined)
+        //     return this.gridState.dataSource.getDataRows()[this.node.sourceIndex];
+        // else
+        //     return this.node.sourceRow;
     }
 
 }
 
-export class InternalTreeNode {
-    constructor(public gridState: TreeGridState) {
+export class InternalTreeNode<T> {
+    constructor(public gridState: TreeGridState<T>) {
 
     }
 
     element: HTMLElement;
     //sourceObject: any;
     sourceIndex: number;
-    sourceRow: any;
+    //sourceRow: any;
     //sourceRowContainer: any;  // массив children, в котором сидит sourceRow, используется в DragDrop
     cellElements: HTMLElement[] = [];
 
     // для treeMode;
-    parent: InternalTreeNode;
-    children: InternalTreeNode[] = [];
+    parent: InternalTreeNode<T>;
+    children: InternalTreeNode<T>[] = [];
     expanded: boolean;
     level: number;
 
-    pushRowRecursive(rows: InternalRow[], maxPageLength: number) {
+    pushRowRecursive(rows: InternalRow<T>[], maxPageLength: number) {
 
         if (rows.length >= maxPageLength)
             return;
@@ -128,7 +131,7 @@ export class InternalTreeNode {
         rows.push(row);
 
         if (this.expanded) {
-            this.children.forEach((child: InternalTreeNode) => {
+            this.children.forEach((child: InternalTreeNode<T>) => {
                 child.pushRowRecursive(rows, maxPageLength);
             });
         }
@@ -136,9 +139,9 @@ export class InternalTreeNode {
 
     }
 
-    iterateRecursive(callback: (node: InternalTreeNode) => void) {
+    iterateRecursive(callback: (node: InternalTreeNode<T>) => void) {
         callback(this);
-        this.children.forEach((child: InternalTreeNode) => {
+        this.children.forEach((child: InternalTreeNode<T>) => {
             child.iterateRecursive(callback);
         });
 
@@ -147,23 +150,23 @@ export class InternalTreeNode {
 
 //const vertScrollBarWidth = 30;
 
-export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
+export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> {
 
-    constructor(props: TreeGridProps, context: any) {
+    constructor(props: TreeGridProps<any>, context: any) {
         super(props, context);
         this.state = new TreeGridState(this);
     }
 
 
-    private iterateAllNodes(callback: (node: InternalTreeNode) => void) {
-        this.state.nodes.forEach((node: InternalTreeNode) => {
+    private iterateAllNodes(callback: (node: InternalTreeNode<any>) => void) {
+        this.state.nodes.forEach((node: InternalTreeNode<any>) => {
             node.iterateRecursive(callback);
         });
     }
 
     private expandAll() {
-        this.state.nodes.forEach((node: InternalTreeNode) => {
-            node.iterateRecursive((nod: InternalTreeNode) => {
+        this.state.nodes.forEach((node: InternalTreeNode<any>) => {
+            node.iterateRecursive((nod: InternalTreeNode<any>) => {
                 nod.expanded = true;
             });
         });
@@ -173,7 +176,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     private collapseAll() {
 
-        this.iterateAllNodes((nod: InternalTreeNode) => {
+        this.iterateAllNodes((nod: InternalTreeNode<any>) => {
             nod.expanded = false;
         });
 
@@ -213,7 +216,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     }
 
-    openDeleteForm(rowToDelete: InternalRow) {
+    openDeleteForm(rowToDelete: InternalRow<any>) {
         //let rowToDelete = this.state.rows[this.state.focusedRowIndex];
         let row = rowToDelete.getSourceObject() as DesignedObject;
         let objectClassName = "запись";
@@ -275,7 +278,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         }
     }
 
-    openEditForm(row: InternalRow) {
+    openEditForm(row: InternalRow<any>) {
 
         let designedObject = this.state.dataSource.getDataRows()[row.node.sourceIndex];
 
@@ -327,7 +330,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         // если тегов <TreeGridColumn> нет, то заполняем из DataSource
         if (this.state.columns.length === 0) {
             if (this.state.dataSource.isTreeGridDataSource) {
-                let ds = this.state.dataSource as TreeGridDataSource;
+                let ds = this.state.dataSource as TreeGridDataSource<any>;
 
                 let columns = ds.getTreeGridColumns().sort((a: TreeGridColumnProps, b: TreeGridColumnProps) => {
                     return a.order - b.order;
@@ -377,25 +380,23 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         this.state.dataSource.getDataRows().forEach((dataRow: any, index: number) => {
             let node = new InternalTreeNode(this.state);
             node.sourceIndex = index;
-            node.sourceRow = dataRow;
+            //node.sourceRow = dataRow;
             this.state.nodes.push(node);
         }, this);
 
     }
 
     private createNodesFromChildrenList() {
-        if (!this.props.hierarchyFieldName)
-            throwError("TreeGrid: property 'hierarchyFieldName' is undefined");
+        //if (!this.props.hierarchyFieldName)
+        //  throwError("TreeGrid: property 'hierarchyFieldName' is undefined");
 
         this.state.nodes = [];
 
-        let addChildren = (toArray: InternalTreeNode[], dataRow: any, level: number) => {
-            if (!toArray)
-                console.error("пиздец");
+        let addChildren = (toArray: InternalTreeNode<any>[], dataRow: any, level: number) => {
 
             let node = new InternalTreeNode(this.state);
-            node.sourceIndex = -1;
-            node.sourceRow = dataRow;
+            node.sourceIndex = dataRow.$$flatIndex;
+            //node.sourceRow = dataRow;
             node.level = level;
             node.expanded = node.level < this.props.autoExpandNodesToLevel;
             toArray.push(node);
@@ -445,7 +446,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         sorted = _.sortBy(sorted, ["hierarchyStr"]);
 
-        let cache: { [hierarchyId: string]: InternalTreeNode; } = {};
+        let cache: { [hierarchyId: string]: InternalTreeNode<any>; } = {};
 
         this.state.nodes = [];
 
@@ -501,33 +502,33 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         this.state.rows = [];
 
         //if (this.props.treeMode !== "flat") {
-            if (this.state.nodes) {
-                this.state.nodes.forEach((node: InternalTreeNode) => {
-                    node.pushRowRecursive(this.state.rows, this.state.pageLength);
-                });
-            }
+        if (this.state.nodes) {
+            this.state.nodes.forEach((node: InternalTreeNode<any>) => {
+                node.pushRowRecursive(this.state.rows, this.state.pageLength);
+            });
+        }
         //}
         //else {
-            //throwError("?");
-            // if (!this.state.dataSource)
-            //     return;
-            //
-            // if (this.state.dataSource.isTreeGridDataSource) {
-            //     let ds = this.state.dataSource as TreeGridDataSource;
-            //     ds.getDataRows().forEach((obj: any, index: number) => {
-            //         let row = new InternalRow(this.state);
-            //         row.sourceIndex = index;
-            //         this.state.rows.push(row);
-            //     });
-            // }
-            // else {
-            //     this.state.dataSource.getDataRows().forEach((obj: any, index: number) => {
-            //         let row = new InternalRow(this.state);
-            //         row.sourceIndex = index;
-            //         this.state.rows.push(row);
-            //     });
-            // }
-            //this.initFocused();
+        //throwError("?");
+        // if (!this.state.dataSource)
+        //     return;
+        //
+        // if (this.state.dataSource.isTreeGridDataSource) {
+        //     let ds = this.state.dataSource as TreeGridDataSource;
+        //     ds.getDataRows().forEach((obj: any, index: number) => {
+        //         let row = new InternalRow(this.state);
+        //         row.sourceIndex = index;
+        //         this.state.rows.push(row);
+        //     });
+        // }
+        // else {
+        //     this.state.dataSource.getDataRows().forEach((obj: any, index: number) => {
+        //         let row = new InternalRow(this.state);
+        //         row.sourceIndex = index;
+        //         this.state.rows.push(row);
+        //     });
+        // }
+        //this.initFocused();
         //}
 
         if (this.state.columns && this.state.columns.length > 0 && this.state.dataSource)
@@ -612,11 +613,11 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     // }
 
 
-    protected willReceiveProps(nextProps: TreeGridProps) {
+    protected willReceiveProps(nextProps: TreeGridProps<any>) {
     }
 
 
-    protected didUpdate(prevProps: TreeGridProps, prevState: any, prevContext: any) {
+    protected didUpdate(prevProps: TreeGridProps<any>, prevState: any, prevContext: any) {
         this.handleChangeFocused();
         this.handleScroll();
     }
@@ -629,7 +630,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             return ret;
 
         console.log("render-rows: " + this.state.rows.length);
-        this.state.rows.forEach((row: InternalRow, index: number) => {
+        this.state.rows.forEach((row: InternalRow<any>, index: number) => {
             ret.push(this.renderRow(row, index));
             // if (this.state.isCellDragging) {
             //     let fakeRow = (
@@ -645,10 +646,11 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         return ret;
     }
 
-    private renderRow(row: InternalRow, rowIndex: number): JSX.Element {
+    private renderRow(row: InternalRow<any>, rowIndex: number): JSX.Element {
         return (
             <tr
                 key={rowIndex}
+                data-source-index={row.node.sourceIndex}
                 ref={ (e) => { row.element = e;}}
             >
                 { this.renderCells(row, rowIndex)}
@@ -656,7 +658,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         );
     }
 
-    private renderCells(row: InternalRow, rowIndex: number): JSX.Element[] {
+    private renderCells(row: InternalRow<any>, rowIndex: number): JSX.Element[] {
         let ret: JSX.Element[] = [];
         this.state.columns.forEach((col: InternalColumn, colIndex: number) => {
             ret.push(this.renderCell(row, rowIndex, col, colIndex));
@@ -665,20 +667,23 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     }
 
     private handleDragStart = (e: DragEvent) => {
-        console.log("drag start");
-        this.state.isCellDragging = true;
-        // this.startClientX = e.clientX;
-        // this.startClientY = e.clientY;
-        //
-        // if (this.props.onMoveStart)
-        //     this.props.onMoveStart({bindX: this.bindX.bind(this), bindY: this.bindY.bind(this)});
-        //
-        // e.dataTransfer.setData("movable", "");
-        // //e.dataTransfer.dropEffect = 'move';
-        //
-        // this.dragOver_Binded = this.handleDragOver.bind(this);
-        // document.addEventListener("dragover", this.dragOver_Binded);
 
+        let $tr = $(e.target).parents("tr").first();
+
+        let index = Number.parseInt($tr.attr("data-source-index"));
+        let mode: "move"|"copy" = "move";
+        if (e.ctrlKey)
+            mode = "copy";
+
+        if (this.state.dataSource.canDragRow(index, mode)) {
+            this.state.isCellDragging = true;
+            this.state.draggingRowSourceIndex = index;
+            this.state.draggingMode = mode;
+            e.dataTransfer.effectAllowed = mode;
+            e.dataTransfer.setData("movable", "");
+        }
+        else
+            this.state.isCellDragging = false;
 
     }
 
@@ -698,19 +703,9 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             .removeClass("drop-deny-into-cell")
             .removeClass("drop-allow-into-cell");
         this.forceUpdate();
-//        console.log("drag end");
-        // document.removeEventListener("dragover", this.dragOver_Binded);
-        // if (this.props.onMoveEnd)
-        //     this.props.onMoveEnd({
-        //         deltaX: e.clientX - this.startClientX,
-        //         deltaY: e.clientY - this.startClientY
-        //     });
-        // this.bindedX = [];
-        // this.bindedY = [];
     }
 
     private handleDragOver = (e: DragEvent) => {
-        //console.log("drag over");
 
         let $tbody = $(e.target).parents("tbody").first();
         $tbody.find(".drop-allow-after-cell").removeClass("drop-allow-after-cell");
@@ -722,25 +717,43 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             .removeClass("drop-allow-into-cell");
 
         let $tr = $(e.target).parents("tr").first();
+        let $tr_prev = $tr.prev();
+
+        let index = Number.parseInt($tr.attr("data-source-index"));
+        let index_prev = Number.parseInt($tr_prev.attr("data-source-index"));
 
         let relativeY = (e.clientY - $tr.offset().top) / $tr.outerHeight();
 
-        if (relativeY < 0.33)
-            $tr.prev().children("td").addClass("drop-allow-after-cell");
-        else if (relativeY < 0.66)
-            $tr.children("td").find(".drop-arrow").removeClass("is-hidden").addClass("drop-allow-into-cell");
-        else
-            $tr.children("td").addClass("drop-allow-after-cell");
-
-        //console.log({top: $tr.offset().top, y: e.clientY});
-        //console.log(relativeY);
-
-        //console.log($(e.target).parents("tbody").first());
-        //console.log(e.clientX);
-        //console.log(e.clientY);
+        if (relativeY < 0.33) {
+            if (this.state.dataSource.canDropAfter(this.state.draggingRowSourceIndex, index_prev, this.state.draggingMode)) {
+                $tr_prev.children("td").addClass("drop-allow-after-cell");
+                e.preventDefault();
+            }
+            else {
+                $tr_prev.children("td").addClass("drop-deny-after-cell");
+            }
+        }
+        else if (relativeY < 0.66) {
+            if (this.state.dataSource.canDropInto(this.state.draggingRowSourceIndex, index, this.state.draggingMode)) {
+                $tr.children("td").find(".drop-arrow").removeClass("is-hidden").addClass("drop-allow-into-cell");
+                e.preventDefault();
+            }
+            else {
+                $tr.children("td").find(".drop-arrow").removeClass("is-hidden").addClass("drop-deny-into-cell");
+            }
+        }
+        else {
+            if (this.state.dataSource.canDropAfter(this.state.draggingRowSourceIndex, index, this.state.draggingMode)) {
+                $tr.children("td").addClass("drop-allow-after-cell");
+                e.preventDefault();
+            }
+            else {
+                $tr.children("td").addClass("drop-deny-after-cell");
+            }
+        }
     }
 
-    private renderCell(row: InternalRow, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
+    private renderCell(row: InternalRow < any >, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
 
         let sourceObject = row.getSourceObject();
         let cellContent: any = "";
@@ -750,10 +763,6 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             cellContent = "bad property '" + col.props.propertyName + "'";
         else
             cellContent = sourceObject[col.props.propertyName];  // todo col.props.propertyName || ""
-        //let str = this.rows[rowIndex].sourceObject[col.props.propertyName].toString();
-        // return <td key={colIndex}>
-        //     <div style={{height:16, overflow:"hidden"}}>{str}</div>
-        // </td>;
 
         let node = row.node;
 
@@ -890,7 +899,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     }
 
 
-    private handleTableWheel(e: WheelEvent) {
+    private    handleTableWheel(e: WheelEvent) {
         // if (e.deltaY > 0)
         //     this.incPageStartIndex(3);
         // else if (e.deltaY < 0)
@@ -899,7 +908,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         // this.forceUpdate();
     }
 
-    private handleScroll() {
+    private    handleScroll() {
         $(this.state.headerWrapperElement).css({top: this.state.bodyWrapperElement.scrollTop});
 
         let pos = this.state.bodyWrapperElement.scrollTop + this.state.bodyWrapperElement.clientHeight - $(this.state.footerWrapperElement).outerHeight() - 0;
@@ -914,7 +923,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         if (!this.state.rows)
             return;
 
-        this.state.rows.forEach((row: InternalRow) => {
+        this.state.rows.forEach((row: InternalRow<any>) => {
             if (row.element)
                 $(row.element).removeClass("tree-grid-focused-row");
 
@@ -938,15 +947,15 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     }
 
-    private getFocusedCellElement(): HTMLElement {
+    private    getFocusedCellElement(): HTMLElement {
         return this.state.rows[this.state.focusedRowIndex].cellElements[this.state.focusedCellIndex];
     }
 
-    private getFocusedRowElement(): HTMLElement {
+    private    getFocusedRowElement(): HTMLElement {
         return this.state.rows[this.state.focusedRowIndex].element;
     }
 
-    private moveFocusedCellDown() {
+    private    moveFocusedCellDown() {
         if (!this.state.rows)
             return;
 
@@ -966,7 +975,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         }
     }
 
-    private moveFocusedCellLeft() {
+    private   moveFocusedCellLeft() {
         if (!this.state.rows)
             return;
 
@@ -977,7 +986,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         }
     }
 
-    private moveFocusedCellRight() {
+    private    moveFocusedCellRight() {
         if (!this.state.rows)
             return;
 
@@ -989,7 +998,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     }
 
 
-    private moveFocusedCellUp() {
+    private    moveFocusedCellUp() {
         if (!this.state.rows)
             return;
 
@@ -1214,7 +1223,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         return ret;
     }
 
-    protected shallowCompare(nextProps: TreeGridProps): boolean {
+    protected  shallowCompare(nextProps: TreeGridProps < any >): boolean {
         console.log("shallow-tree-grid");
         //console.log("shallow-win -> isEqial = " + this.isPropsEqual(this.props, nextProps, ["children"]));
         return !this.isPropsEqual(this.props, nextProps, ["children", "dataSource"]);

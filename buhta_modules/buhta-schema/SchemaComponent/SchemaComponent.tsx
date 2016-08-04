@@ -10,7 +10,7 @@ import {ComponentContext, ComponentProps} from "../../buhta-core/Components/Comp
 import {SchemaComponentDesigner} from "../../buhta-app-designer/SchemaComponentDesigner/SchemaComponentDesigner";
 
 export class SchemaComponent extends SchemaObject {
-    children: (BaseControl | string)[] = [];
+    children: (BaseControl)[] = [];
     //reactElement: React.ReactElement<any>;
 
     // get context(): ComponentContext {

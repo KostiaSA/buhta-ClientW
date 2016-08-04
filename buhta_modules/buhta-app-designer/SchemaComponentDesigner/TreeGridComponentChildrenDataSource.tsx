@@ -7,17 +7,36 @@ import {TreeGridColumnProps} from "../../buhta-core/Components/TreeGrid/TreeGrid
 import {getGridColumnInfos} from "../../buhta-core/Components/TreeGrid/getGridColumnInfos";
 import {throwError} from "../../buhta-core/Error";
 
-export interface TreeGridComponentChildrenDataSourceParams<T> {
+export interface TreeGridComponentChildrenDataSourceParams {
 
-    getNewRow?: () => T;
+    getNewRow?: () => BaseControl;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
 
 }
 
-export class TreeGridComponentChildrenDataSource<T extends BaseControl | string> implements TreeGridDataSource {
-    constructor(public componentChildren: T[], public params: TreeGridComponentChildrenDataSourceParams<T> = {}) {
+export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<BaseControl> {
+    constructor(public componentChildren: BaseControl[], public params: TreeGridComponentChildrenDataSourceParams = {}) {
+        this.refresh();
+    }
 
+    private flat: BaseControl[];
+
+    private pushFlatRecursive(item: BaseControl, parent: BaseControl | null) {
+        item.$$flatIndex = this.flat.length;
+        item.$$flatParent = parent;
+        this.flat.push(item);
+        item.children.forEach((child: BaseControl) => {
+            this.pushFlatRecursive(child, item);
+        });
+    }
+
+
+    refresh() {
+        this.flat = [];
+        this.componentChildren.forEach((child: BaseControl) => {
+            this.pushFlatRecursive(child, null);
+        });
     }
 
 
@@ -48,11 +67,19 @@ export class TreeGridComponentChildrenDataSource<T extends BaseControl | string>
 
     }
 
-    getDataRows(): T[] {
+    getDataRows(): BaseControl[] {
         return this.componentChildren;
     }
 
-    getNewRow(): T {
+    getDataRow(rowIndex: number): BaseControl {
+        return this.flat[rowIndex];
+    }
+
+    getRowChildren(rowIndex: number): BaseControl[] {
+        return this.flat[rowIndex].children;
+    }
+
+    getNewRow(): BaseControl {
         if (this.params.getNewRow)
             return this.params.getNewRow();
         else {
@@ -61,7 +88,7 @@ export class TreeGridComponentChildrenDataSource<T extends BaseControl | string>
         }
     }
 
-    addRow(row: T): number {
+    addRow(row: BaseControl): number {
         this.componentChildren.push(row);
         return this.componentChildren.length - 1;
     }
@@ -84,5 +111,24 @@ export class TreeGridComponentChildrenDataSource<T extends BaseControl | string>
             return this.params.getDeleteRowMessage();
         else
             return "Удалить запись!";
+    }
+
+    canDragRow(rowIndex: number, mode: "move" | "copy"): boolean {
+        if (this.flat[rowIndex] === undefined)
+            return false;
+
+        return true;
+    }
+
+    canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+        if (this.flat[dragRowIndex] === undefined || this.flat[targetRowIndex] === undefined)
+            return false;
+        return false;
+    }
+
+    canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+        if (this.flat[dragRowIndex] === undefined || this.flat[targetRowIndex] === undefined)
+            return false;
+        return true;
     }
 }
