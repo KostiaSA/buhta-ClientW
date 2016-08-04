@@ -7,7 +7,7 @@ import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
-import {Observable} from "../../buhta-core/Observable";
+//import {Observable} from "../../buhta-core/Observable";
 import {DeepClone} from "../../buhta-core/DeepClone";
 
 
@@ -28,7 +28,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
 
     needToSave: boolean = false;
     clonedDesignedObject: DesignedObject;
-    observableDesignedObject: DesignedObject;
+    //observableDesignedObject: DesignedObject;
 
     protected willMount() {
         super.willMount();
@@ -40,10 +40,11 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
        // console.log(this.props.designedObject);
        // console.log(this.clonedDesignedObject);
 
-        this.observableDesignedObject = Observable<DesignedObject>(this.clonedDesignedObject, () => {
-            this.needToSave = true;
-            this.forceUpdate();
-        });
+        // todo сделать цикл проверки deep равенства clonedDesignedObject и designedObject, вместо Observable
+        // this.observableDesignedObject = Observable<DesignedObject>(this.clonedDesignedObject, () => {
+        //     this.needToSave = true;
+        //     this.forceUpdate();
+        // });
     }
 
     protected didMount() {
@@ -54,10 +55,10 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     renderPropertyDesigners(): JSX.Element[] {
         let ret: JSX.Element[] = [];
 
-        getPropertyEditors(this.observableDesignedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
+        getPropertyEditors(this.clonedDesignedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
             //console.log(propInfo);
             let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
-                designedObject: this.observableDesignedObject,
+                designedObject: this.clonedDesignedObject,
                 //propertyEditorInfo: propInfo,
                 index: index,
                 key: index,
@@ -85,7 +86,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     handleSaveChanges = () => {
         console.log("save-changes");
         //console.log(this.props.designedObject);
-        _.assign(this.props.designedObject, this.observableDesignedObject);
+        _.assign(this.props.designedObject, this.clonedDesignedObject);
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
 

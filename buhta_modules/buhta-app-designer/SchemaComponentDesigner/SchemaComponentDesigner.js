@@ -15,7 +15,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 var React = require("react");
 var Component_1 = require("../../buhta-core/Components/Component");
 var Snapshot_1 = require("../../buhta-core/Snapshot");
-var Observable_1 = require("../../buhta-core/Observable");
+//import {Observable} from "../../buhta-core/Observable";
 var DeepClone_1 = require("../../buhta-core/DeepClone");
 var Layout_1 = require("../../buhta-core/Components/LayoutPane/Layout");
 var Flex_1 = require("../../buhta-core/Components/LayoutPane/Flex");
@@ -76,18 +76,19 @@ var SchemaComponentDesigner = (function (_super) {
         };
         this.props = props;
     }
+    //observableDesignedObject: SchemaComponent;
     SchemaComponentDesigner.prototype.willMount = function () {
-        var _this = this;
         _super.prototype.willMount.call(this);
         this.needToSave = false;
         this.clonedDesignedObject = DeepClone_1.DeepClone(this.props.designedObject);
         // console.log("cloned");
         // console.log(this.props.designedObject);
         // console.log(this.clonedDesignedObject);
-        this.observableDesignedObject = Observable_1.Observable(this.clonedDesignedObject, function () {
-            _this.needToSave = true;
-            _this.forceUpdate();
-        });
+        // todo сделать цикл проверки deep равенства clonedDesignedObject и designedObject, вместо Observable
+        // this.observableDesignedObject = Observable<SchemaComponent>(this.clonedDesignedObject, () => {
+        //     this.needToSave = true;
+        //     this.forceUpdate();
+        // });
     };
     SchemaComponentDesigner.prototype.didMount = function () {
         _super.prototype.didMount.call(this);
@@ -114,7 +115,7 @@ var SchemaComponentDesigner = (function (_super) {
     // }
     SchemaComponentDesigner.prototype.render = function () {
         var dataSourceParam = {};
-        var dataSource = new TreeGridComponentChildrenDataSource_1.TreeGridComponentChildrenDataSource(this.observableDesignedObject.children, dataSourceParam);
+        var dataSource = new TreeGridComponentChildrenDataSource_1.TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
         this.addClassName("object-designer");
         this.addProps({ onChange: this.props.onChange });
         return (React.createElement("div", __assign({}, this.getRenderProps()), 

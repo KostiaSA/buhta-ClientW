@@ -7,7 +7,7 @@ import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
-import {Observable} from "../../buhta-core/Observable";
+//import {Observable} from "../../buhta-core/Observable";
 import {DeepClone} from "../../buhta-core/DeepClone";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
@@ -43,7 +43,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
     //needToSave: boolean = false;
     clonedDesignedObject: SchemaComponent;
-    observableDesignedObject: SchemaComponent;
+    //observableDesignedObject: SchemaComponent;
 
     protected willMount() {
         super.willMount();
@@ -55,10 +55,11 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         // console.log(this.props.designedObject);
         // console.log(this.clonedDesignedObject);
 
-        this.observableDesignedObject = Observable<SchemaComponent>(this.clonedDesignedObject, () => {
-            this.needToSave = true;
-            this.forceUpdate();
-        });
+        // todo сделать цикл проверки deep равенства clonedDesignedObject и designedObject, вместо Observable
+        // this.observableDesignedObject = Observable<SchemaComponent>(this.clonedDesignedObject, () => {
+        //     this.needToSave = true;
+        //     this.forceUpdate();
+        // });
     }
 
     protected didMount() {
@@ -135,7 +136,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
     render() {
         let dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
-        let dataSource = new TreeGridComponentChildrenDataSource(this.observableDesignedObject.children, dataSourceParam);
+        let dataSource = new TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
 
         this.addClassName("object-designer");
         this.addProps({onChange: this.props.onChange});

@@ -707,6 +707,8 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     private handleDrop = (e: DragEvent) => {
 
+       // console.log("handleDrop");
+
         let $tr = $(e.target).parents("tr").first();
         let $tr_prev = $tr.prev();
 
@@ -714,6 +716,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         let index_prev = Number.parseInt($tr_prev.attr("data-source-index"));
 
         let relativeY = (e.clientY - $tr.offset().top) / $tr.outerHeight();
+
 
         if (relativeY < 0.33) {
             this.state.dataSource.dropAfter(this.state.draggingRowSourceIndex, index_prev, this.state.draggingMode);
@@ -816,8 +819,6 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             strSpanProps.className = "draggable";
             strSpanProps.onDragStart = this.handleDragStart;
             strSpanProps.onDragEnd = this.handleDragEnd;
-            strSpanProps.onDrop = this.handleDrop;
-            console.log("DD");
         }
 
         let strSpan = <span style={ strSpanStyle} {...strSpanProps}>{cellContent}</span>;
@@ -869,8 +870,10 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         }
 
         let tdDragOver: any;
+        let tdDrop: any;
         if (this.props.dragDropNodes === true) {
             tdDragOver = this.handleDragOver;
+            tdDrop = this.handleDrop;
         }
 
         let dropArrowDiv: any;
@@ -891,6 +894,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
                 ref={ (e) => row.cellElements[colIndex] = e}
                 onClick={ (e) => { this.setFocusedCell(rowIndex,colIndex);} }
                 onDragOver={tdDragOver}
+                onDrop={tdDrop}
             >
                 <div style={{ display:"flex", flexDirection: "row", alignItems:"center" }}>
                     {dropArrowDiv}

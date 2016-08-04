@@ -16,7 +16,7 @@ export class ButtonControl extends BaseControl {
     beforeRender() {
         super.beforeRender();
 //        this.children.length = 0;
-  //      this.children.push(this.text);
+        //      this.children.push(this.text);
     }
 
     getProps(): ButtonProps {
@@ -27,8 +27,14 @@ export class ButtonControl extends BaseControl {
         return Button;
     }
 
-    get $$controlName(){
+    get $$controlName() {
         return "<Button>";
+    }
+
+    get $$controlMainProps() {
+        return (
+            <span>text="{this.text}"</span>
+        );
     }
 
 // getComponent(): React.ReactElement<any> {

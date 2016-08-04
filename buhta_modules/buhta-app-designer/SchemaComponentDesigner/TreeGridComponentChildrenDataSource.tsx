@@ -26,6 +26,7 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
         item.$$flatIndex = this.flat.length;
         item.$$flatParent = parent;
         this.flat.push(item);
+        console.log({push: item.$$flatIndex, parent: item.$$flatParent});
         item.children.forEach((child: BaseControl) => {
             this.pushFlatRecursive(child, item);
         });
@@ -33,6 +34,7 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
 
 
     refresh() {
+        console.error("------refresh-----");
         this.flat = [];
         this.componentChildren.forEach((child: BaseControl) => {
             this.pushFlatRecursive(child, null);
@@ -163,13 +165,53 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
         else
             dragParentChildren = this.componentChildren;
 
-        _.pullAt(dragParentChildren, dragParentChildren.indexOf(this.flat[dragRowIndex]));
+        let deleted = _.pullAt(dragParentChildren, dragParentChildren.indexOf(this.flat[dragRowIndex]));
+        if (deleted[0] !== this.flat[dragRowIndex])
+            throw "internal error 'deleted[0] !== this.flat[dragRowIndex]' 78";
+//        console.log(deleted);
         this.flat[targetRowIndex].children.push(this.flat[dragRowIndex]);
         this.refresh();
+        // todo copy пока не работает, надо делать deep copy ноды
+
     }
 
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+        console.log("drop-after");
+        let dragParentChildren: BaseControl[];
+        if (this.flat[dragRowIndex].$$flatParent !== null)
+            dragParentChildren = this.flat[dragRowIndex].$$flatParent!.children;
+        else
+            dragParentChildren = this.componentChildren;
 
+        let targetParentChildren: BaseControl[];
+        if (this.flat[targetRowIndex].$$flatParent !== null)
+            targetParentChildren = this.flat[targetRowIndex].$$flatParent!.children;
+        else
+            targetParentChildren = this.componentChildren;
+
+        // if (targetParentChildren === undefined || targetParentChildren === null)
+        //     throw "internal error 'deleted[0] !== this.flat[dragRowIndex]' 99";
+        // if (dragParentChildren === undefined || dragParentChildren === null)
+        //     throw  "err";
+
+        if (targetParentChildren !== dragParentChildren) {
+            targetParentChildren.splice(targetParentChildren.indexOf(this.flat[targetRowIndex]) + 1, 0, this.flat[dragRowIndex]);
+            let deleted = _.pullAt(dragParentChildren, dragParentChildren.indexOf(this.flat[dragRowIndex]));
+            if (deleted[0] !== this.flat[dragRowIndex]) {
+                throw "internal error 'deleted[0] !== this.flat[dragRowIndex]' 99";
+            }
+        }
+        else {
+            let toPos = targetParentChildren.indexOf(this.flat[targetRowIndex]);
+            let fromPos = targetParentChildren.indexOf(this.flat[dragRowIndex]);
+            if (toPos > fromPos)
+                targetParentChildren.splice(toPos, 0, targetParentChildren.splice(fromPos, 1)[0]);
+            else
+                targetParentChildren.splice(toPos + 1, 0, targetParentChildren.splice(fromPos, 1)[0]);
+        }
+
+        this.refresh();
+        // todo copy пока не работает, надо делать deep copy ноды
     }
 
 }
