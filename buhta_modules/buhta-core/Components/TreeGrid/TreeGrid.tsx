@@ -84,16 +84,16 @@ export class InternalRow {
     }
 
     element: HTMLElement;
-    sourceRow: any;
-    sourceIndex: number;
+//    sourceRow: any;
+//    sourceIndex: number;
     cellElements: HTMLElement[] = [];
     node: InternalTreeNode;
 
     getSourceObject(): any {
-        if (this.sourceRow === undefined)
-            return this.gridState.dataSource.getDataRows()[this.sourceIndex];
+        if (this.node.sourceRow === undefined)
+            return this.gridState.dataSource.getDataRows()[this.node.sourceIndex];
         else
-            return this.sourceRow;
+            return this.node.sourceRow;
     }
 
 }
@@ -107,6 +107,7 @@ export class InternalTreeNode {
     //sourceObject: any;
     sourceIndex: number;
     sourceRow: any;
+    //sourceRowContainer: any;  // массив children, в котором сидит sourceRow, используется в DragDrop
     cellElements: HTMLElement[] = [];
 
     // для treeMode;
@@ -121,8 +122,8 @@ export class InternalTreeNode {
             return;
 
         let row = new InternalRow(this.gridState);
-        row.sourceIndex = this.sourceIndex;
-        row.sourceRow = this.sourceRow;
+        //row.node.sourceIndex = this.sourceIndex;
+        //row.sourceRow = this.sourceRow;
         row.node = this;
         rows.push(row);
 
@@ -184,7 +185,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
     getRowIndex(sourceIndex: number): number {
         // TODO: сделать вариант для treeMode
         for (let i = 0; i < this.state.rows.length; i++) {
-            if (this.state.rows[i].sourceIndex === sourceIndex)
+            if (this.state.rows[i].node.sourceIndex === sourceIndex)
                 return i;
         }
         return -1;
@@ -229,7 +230,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
             console.log(okResult);
             if (okResult) {
 
-                this.state.dataSource.deleteRow(rowToDelete.sourceIndex);
+                this.state.dataSource.deleteRow(rowToDelete.node.sourceIndex);
 
                 if (this.state.dataSource.getDataRows().length === 0)
                     this.refreshDataSource();
@@ -237,7 +238,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
                     let newFocusedIndex = this.state.rows.indexOf(rowToDelete);
                     if (newFocusedIndex > this.state.rows.length - 2)
                         newFocusedIndex = this.state.rows.length - 2;
-                    this.refreshRow(this.state.rows[newFocusedIndex].sourceIndex);
+                    this.refreshRow(this.state.rows[newFocusedIndex].node.sourceIndex);
                 }
                 this.forceUpdate();
             }
@@ -276,12 +277,12 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     openEditForm(row: InternalRow) {
 
-        let designedObject = this.state.dataSource.getDataRows()[row.sourceIndex];
+        let designedObject = this.state.dataSource.getDataRows()[row.node.sourceIndex];
 
         let win =
             <ObjectDesigner
                 designedObject={designedObject}
-                onSaveChanges={ () => { this.refreshRow(row.sourceIndex); }}
+                onSaveChanges={ () => { this.refreshRow(row.node.sourceIndex); }}
             >
 
             </ObjectDesigner>;
@@ -358,7 +359,7 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
     private createNodes() {
         if (this.props.treeMode === "flat")
-            return;
+            this.createNodesFromFlat();
         else if (this.props.treeMode === "delimiterChar") {
             this.createNodesFromHierarchyField();
         }
@@ -367,6 +368,19 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
         }
         else
             throwError("TreeGrid.createNodes(): unknown treeMode '" + this.props.treeMode + "'");
+    }
+
+    private createNodesFromFlat() {
+
+        this.state.nodes = [];
+
+        this.state.dataSource.getDataRows().forEach((dataRow: any, index: number) => {
+            let node = new InternalTreeNode(this.state);
+            node.sourceIndex = index;
+            node.sourceRow = dataRow;
+            this.state.nodes.push(node);
+        }, this);
+
     }
 
     private createNodesFromChildrenList() {
@@ -486,35 +500,35 @@ export class TreeGrid extends Component<TreeGridProps, TreeGridState> {
 
         this.state.rows = [];
 
-        if (this.props.treeMode !== "flat") {
+        //if (this.props.treeMode !== "flat") {
             if (this.state.nodes) {
                 this.state.nodes.forEach((node: InternalTreeNode) => {
                     node.pushRowRecursive(this.state.rows, this.state.pageLength);
                 });
             }
-        }
-        else {
-
-            if (!this.state.dataSource)
-                return;
-
-            if (this.state.dataSource.isTreeGridDataSource) {
-                let ds = this.state.dataSource as TreeGridDataSource;
-                ds.getDataRows().forEach((obj: any, index: number) => {
-                    let row = new InternalRow(this.state);
-                    row.sourceIndex = index;
-                    this.state.rows.push(row);
-                });
-            }
-            else {
-                this.state.dataSource.getDataRows().forEach((obj: any, index: number) => {
-                    let row = new InternalRow(this.state);
-                    row.sourceIndex = index;
-                    this.state.rows.push(row);
-                });
-            }
-            this.initFocused();
-        }
+        //}
+        //else {
+            //throwError("?");
+            // if (!this.state.dataSource)
+            //     return;
+            //
+            // if (this.state.dataSource.isTreeGridDataSource) {
+            //     let ds = this.state.dataSource as TreeGridDataSource;
+            //     ds.getDataRows().forEach((obj: any, index: number) => {
+            //         let row = new InternalRow(this.state);
+            //         row.sourceIndex = index;
+            //         this.state.rows.push(row);
+            //     });
+            // }
+            // else {
+            //     this.state.dataSource.getDataRows().forEach((obj: any, index: number) => {
+            //         let row = new InternalRow(this.state);
+            //         row.sourceIndex = index;
+            //         this.state.rows.push(row);
+            //     });
+            // }
+            //this.initFocused();
+        //}
 
         if (this.state.columns && this.state.columns.length > 0 && this.state.dataSource)
             this.state.columns[0].footer = this.state.dataSource.getDataRows().length + " поз.";
