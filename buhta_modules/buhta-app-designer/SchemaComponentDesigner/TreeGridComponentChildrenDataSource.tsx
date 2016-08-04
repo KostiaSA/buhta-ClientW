@@ -154,7 +154,18 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
     }
 
     dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+        console.log("drop-into");
 
+        let dragParentChildren: BaseControl[];
+
+        if (this.flat[dragRowIndex].$$flatParent !== null)
+            dragParentChildren = this.flat[dragRowIndex].$$flatParent!.children;
+        else
+            dragParentChildren = this.componentChildren;
+
+        _.pullAt(dragParentChildren, dragParentChildren.indexOf(this.flat[dragRowIndex]));
+        this.flat[targetRowIndex].children.push(this.flat[dragRowIndex]);
+        this.refresh();
     }
 
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {

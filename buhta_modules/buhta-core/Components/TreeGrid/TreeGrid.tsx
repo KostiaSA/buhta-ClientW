@@ -582,7 +582,6 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
     }
 
     protected refreshDataSource() {
-        this.props.dataSource.refresh();
         this.state.dataSource = this.props.dataSource;
         this.createColumns();
         this.createNodes();
@@ -705,7 +704,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             .removeClass("drop-allow-into-cell");
         this.forceUpdate();
     }
-    
+
     private handleDrop = (e: DragEvent) => {
 
         let $tr = $(e.target).parents("tr").first();
@@ -717,7 +716,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         let relativeY = (e.clientY - $tr.offset().top) / $tr.outerHeight();
 
         if (relativeY < 0.33) {
-            this.state.dataSource.dropAfter(this.state.draggingRowSourceIndex, index_prev, this.state.draggingMode); 
+            this.state.dataSource.dropAfter(this.state.draggingRowSourceIndex, index_prev, this.state.draggingMode);
         }
         else if (relativeY < 0.66) {
             this.state.dataSource.dropInto(this.state.draggingRowSourceIndex, index, this.state.draggingMode);
@@ -725,7 +724,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         else {
             this.state.dataSource.dropAfter(this.state.draggingRowSourceIndex, index, this.state.draggingMode);
         }
-        
+
         this.refreshDataSource();
         this.forceUpdate();
     }
@@ -817,7 +816,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             strSpanProps.className = "draggable";
             strSpanProps.onDragStart = this.handleDragStart;
             strSpanProps.onDragEnd = this.handleDragEnd;
-            //strSpanProps.onDragOver = this.handleDragOver;
+            strSpanProps.onDrop = this.handleDrop;
             console.log("DD");
         }
 

@@ -728,6 +728,17 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         but4.text = "Буттон4";
         panel.children.push(but4);
 
+        let panel1 = new PanelControl();
+        form.children.push(panel1);
+
+        let but5 = new ButtonControl();
+        but5.text = "Буттон5";
+        panel1.children.push(but5);
+
+        let but6 = new ButtonControl();
+        but6.text = "Буттон6";
+        panel1.children.push(but6);
+
         let openParam: OpenWindowParams = {
             title: "дизайнер компонента",
             top: 50,
