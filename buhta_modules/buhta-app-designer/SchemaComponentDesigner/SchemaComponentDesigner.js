@@ -26,6 +26,7 @@ var TreeGrid_1 = require("../../buhta-core/Components/TreeGrid/TreeGrid");
 var TreeGridColumns_1 = require("../../buhta-core/Components/TreeGrid/TreeGridColumns");
 var TreeGridColumn_1 = require("../../buhta-core/Components/TreeGrid/TreeGridColumn");
 var TreeGridComponentChildrenDataSource_1 = require("./TreeGridComponentChildrenDataSource");
+var DeepCompare_1 = require("../../buhta-core/DeepCompare");
 var SchemaComponentDesigner = (function (_super) {
     __extends(SchemaComponentDesigner, _super);
     function SchemaComponentDesigner(props, context) {
@@ -81,17 +82,25 @@ var SchemaComponentDesigner = (function (_super) {
         _super.prototype.willMount.call(this);
         this.needToSave = false;
         this.clonedDesignedObject = DeepClone_1.DeepClone(this.props.designedObject);
-        // console.log("cloned");
-        // console.log(this.props.designedObject);
-        // console.log(this.clonedDesignedObject);
-        // todo сделать цикл проверки deep равенства clonedDesignedObject и designedObject, вместо Observable
-        // this.observableDesignedObject = Observable<SchemaComponent>(this.clonedDesignedObject, () => {
-        //     this.needToSave = true;
-        //     this.forceUpdate();
-        // });
+    };
+    SchemaComponentDesigner.prototype.startCheckDesignedObjectIsChanged = function () {
+        var _this = this;
+        this.compareInterval = setInterval(function () {
+            console.log("deepCompare");
+            if (!DeepCompare_1.isDeepEqual(_this.clonedDesignedObject, _this.props.designedObject)) {
+                clearInterval(_this.compareInterval);
+                _this.needToSave = true;
+                _this.forceUpdate();
+            }
+        }, 200);
+    };
+    SchemaComponentDesigner.prototype.willUnmount = function () {
+        _super.prototype.willUnmount.call(this);
+        clearInterval(this.compareInterval);
     };
     SchemaComponentDesigner.prototype.didMount = function () {
         _super.prototype.didMount.call(this);
+        this.startCheckDesignedObjectIsChanged();
         //this.snapshot.saveObject(this.props.designedObject, "root");
     };
     // handleSaveChanges = () => {

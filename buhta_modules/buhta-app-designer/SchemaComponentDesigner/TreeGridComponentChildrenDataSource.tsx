@@ -26,7 +26,7 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
         item.$$flatIndex = this.flat.length;
         item.$$flatParent = parent;
         this.flat.push(item);
-        console.log({push: item.$$flatIndex, parent: item.$$flatParent});
+        //console.log({push: item.$$flatIndex, parent: item.$$flatParent});
         item.children.forEach((child: BaseControl) => {
             this.pushFlatRecursive(child, item);
         });
@@ -34,7 +34,7 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
 
 
     refresh() {
-        console.error("------refresh-----");
+        //console.error("------refresh-----");
         this.flat = [];
         this.componentChildren.forEach((child: BaseControl) => {
             this.pushFlatRecursive(child, null);
@@ -156,7 +156,7 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
     }
 
     dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
-        console.log("drop-into");
+        //console.log("drop-into");
 
         let dragParentChildren: BaseControl[];
 
@@ -176,7 +176,7 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
     }
 
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
-        console.log("drop-after");
+        //console.log("drop-after");
         let dragParentChildren: BaseControl[];
         if (this.flat[dragRowIndex].$$flatParent !== null)
             dragParentChildren = this.flat[dragRowIndex].$$flatParent!.children;

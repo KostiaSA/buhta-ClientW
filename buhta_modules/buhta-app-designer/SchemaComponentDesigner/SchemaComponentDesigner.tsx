@@ -23,6 +23,7 @@ import {
     TreeGridComponentChildrenDataSourceParams
 } from "./TreeGridComponentChildrenDataSource";
 import {BaseControl} from "../../buhta-ui/BaseControl";
+import {isDeepEqual} from "../../buhta-core/DeepCompare";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -51,19 +52,31 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
         this.clonedDesignedObject = DeepClone<SchemaComponent>(this.props.designedObject);
 
-        // console.log("cloned");
-        // console.log(this.props.designedObject);
-        // console.log(this.clonedDesignedObject);
-
-        // todo сделать цикл проверки deep равенства clonedDesignedObject и designedObject, вместо Observable
-        // this.observableDesignedObject = Observable<SchemaComponent>(this.clonedDesignedObject, () => {
-        //     this.needToSave = true;
-        //     this.forceUpdate();
-        // });
     }
+
+    private compareInterval: number;
+
+    protected startCheckDesignedObjectIsChanged() {
+        this.compareInterval = setInterval(() => {
+            console.log("deepCompare");
+            if (!isDeepEqual(this.clonedDesignedObject, this.props.designedObject)) {
+                clearInterval(this.compareInterval);
+                this.needToSave = true;
+                this.forceUpdate();
+
+            }
+        }, 200);
+    }
+
+    protected willUnmount() {
+        super.willUnmount();
+        clearInterval(this.compareInterval);
+    }
+
 
     protected didMount() {
         super.didMount();
+        this.startCheckDesignedObjectIsChanged();
         //this.snapshot.saveObject(this.props.designedObject, "root");
     }
 

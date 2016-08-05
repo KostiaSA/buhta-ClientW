@@ -9,6 +9,7 @@ import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
 //import {Observable} from "../../buhta-core/Observable";
 import {DeepClone} from "../../buhta-core/DeepClone";
+import {isDeepEqual} from "../../buhta-core/DeepCompare";
 
 
 export interface ObjectDesignerProps extends ComponentProps<any> {
@@ -33,22 +34,31 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     protected willMount() {
         super.willMount();
         this.needToSave = false;
-
         this.clonedDesignedObject = DeepClone<DesignedObject>(this.props.designedObject);
-
-       // console.log("cloned");
-       // console.log(this.props.designedObject);
-       // console.log(this.clonedDesignedObject);
-
-        // todo сделать цикл проверки deep равенства clonedDesignedObject и designedObject, вместо Observable
-        // this.observableDesignedObject = Observable<DesignedObject>(this.clonedDesignedObject, () => {
-        //     this.needToSave = true;
-        //     this.forceUpdate();
-        // });
     }
+
+    private compareInterval: number;
+
+    protected startCheckDesignedObjectIsChanged() {
+        this.compareInterval = setInterval(() => {
+            if (!isDeepEqual(this.clonedDesignedObject, this.props.designedObject)) {
+                clearInterval(this.compareInterval);
+                this.needToSave = true;
+                this.forceUpdate();
+
+            }
+        }, 200);
+    }
+
+    protected willUnmount() {
+        super.willUnmount();
+        clearInterval(this.compareInterval);
+    }
+
 
     protected didMount() {
         super.didMount();
+        this.startCheckDesignedObjectIsChanged();
         //this.snapshot.saveObject(this.props.designedObject, "root");
     }
 
