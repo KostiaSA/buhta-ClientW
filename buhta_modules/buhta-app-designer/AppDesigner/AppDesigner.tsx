@@ -39,6 +39,7 @@ import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {ButtonControl} from "../../buhta-ui/ButtonControl";
 import {PanelControl} from "../../buhta-ui/PanelControl";
 import {checkAuth} from "../../buhta-core/Auth";
+import {LocalVariableControl} from "../../buhta-ui/LocalVariableControl";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -712,6 +713,16 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let form = new SchemaForm(getSchema());
             form.id = "1F2D95A0-5AF4-11E6-91EA-8FBA7805DE8D";
+
+            let v = new LocalVariableControl();
+            v.variableName = "ИмяКнопки";
+            v.variableType = "string";
+            form.children.push(v);
+
+            let v1 = new LocalVariableControl();
+            v1.variableName = "ДатаКнопки";
+            v1.variableType = "date";
+            form.children.push(v1);
 
             let but1 = new ButtonControl();
             but1.text = "Буттон 1222";

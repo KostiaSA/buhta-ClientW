@@ -9,7 +9,12 @@ export class ButtonControl extends BaseControl {
         inputCaption: "Текст"
     })
     text: string;
-    
+
+    // @StringEditor({
+    //     inputCaption: "Текст2"
+    // })
+    // text2: string;
+
     visible: boolean;
 
     handleOnClick: Function;
@@ -22,7 +27,7 @@ export class ButtonControl extends BaseControl {
         return {text: this.text};
     }
 
-    getComponent(): Function {
+    getComponent(): Function | undefined {
         return Button;
     }
 

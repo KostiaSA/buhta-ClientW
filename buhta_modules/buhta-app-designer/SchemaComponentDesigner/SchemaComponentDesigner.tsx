@@ -14,7 +14,7 @@ import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Fixed} from "../../buhta-core/Components/LayoutPane/Fixed";
 import {Button} from "../../buhta-core/Components/Button/Button";
-import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
+import {TreeGrid, TreeGridState} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
@@ -29,6 +29,7 @@ import {OpenWindowParams} from "../../buhta-core/Components/Desktop/Desktop";
 import {appInstance} from "../../buhta-core/Components/App/App";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorName";
+import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -178,11 +179,28 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
             left: 350
         };
 
-        appInstance.desktop.openSchemaForm(this.clonedDesignedObject as SchemaForm, openParam);
+        this.getParentDesktop().openSchemaForm(this.clonedDesignedObject as SchemaForm, openParam);
     }
 
     handleUpdateButtonClick = () => {
-        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+        let designedObject = this.treeGridState.getFocusedRow();
+
+        let win =
+            <ObjectDesigner
+                designedObject={designedObject}
+                onSaveChanges={ () => { this.treeGridState.refreshFocusedRow(); }}
+            >
+
+            </ObjectDesigner>;
+
+        let openParam: OpenWindowParams = {
+            title: "редактирование",
+            top: 50,
+            left: 50,
+            parentWindowId: this.getParentWindowId()
+        };
+
+        this.getParentDesktop().openWindow(win, openParam);
 
     }
 
@@ -219,6 +237,15 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         return buttons;
     }
 
+    private treeGridState: TreeGridState<BaseControl>;
+
+    handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
+        this.treeGridState = state;
+        //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
+        //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
+
+    }
+
     render() {
         let dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
         let dataSource = new TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
@@ -246,6 +273,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                             editable={true}
                                             denyInsert={true}
                                             dragDropNodes={true}
+                                            onChangeFocusedRow={ this.handleTreeGridChangeFocusedRow }
                                         >
                                             <TreeGridColumns>
                                                 <TreeGridColumn caption="Control" propertyName="$$controlName"

@@ -20,32 +20,33 @@ export class BaseControl extends DesignedObject {
         throw  "fake";
     }
 
-    getComponent(): Function {
-        throwAbstractError();
-        throw  "fake";
+    getComponent(): Function | undefined {
+        return undefined;
     }
 
     beforeRender() {
     }
 
-    render(): JSX.Element {
+    render(): JSX.Element | undefined {
         this.beforeRender();
         let children = this.children.map((child: BaseControl) => {
             // if (_.isString(child))
             //     return child;
             // else
-                return child.render();
+            return child.render();
         });
-        return React.createElement(this.getComponent() as any, this.getProps(), children);
+        let comp = this.getComponent();
+        if (comp !== undefined)
+            return React.createElement(this.getComponent() as any, this.getProps(), children);
+        else
+            return undefined;
     }
 
     get $$controlName() {
         return "<baseControl>";
     }
 
-    get $$controlMainProps() {
-        return (
-            <span>text="1111"<br/>color="red"</span>
-        );
+    get $$controlMainProps(): JSX.Element {
+        return <div></div>;
     }
 }

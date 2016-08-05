@@ -28,8 +28,8 @@ var TreeGridColumn_1 = require("../../buhta-core/Components/TreeGrid/TreeGridCol
 var TreeGridComponentChildrenDataSource_1 = require("./TreeGridComponentChildrenDataSource");
 var isDeepEqual_1 = require("../../buhta-core/isDeepEqual");
 var Auth_1 = require("../../buhta-core/Auth");
-var App_1 = require("../../buhta-core/Components/App/App");
 var getObjectConstructorName_1 = require("../../buhta-core/getObjectConstructorName");
+var ObjectDesigner_1 = require("../ObjectDesigner/ObjectDesigner");
 var SchemaComponentDesigner = (function (_super) {
     __extends(SchemaComponentDesigner, _super);
     function SchemaComponentDesigner(props, context) {
@@ -118,15 +118,28 @@ var SchemaComponentDesigner = (function (_super) {
                 top: 350,
                 left: 350
             };
-            App_1.appInstance.desktop.openSchemaForm(_this.clonedDesignedObject, openParam);
+            _this.getParentDesktop().openSchemaForm(_this.clonedDesignedObject, openParam);
         };
         this.handleUpdateButtonClick = function () {
-            //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+            var designedObject = _this.treeGridState.getFocusedRow();
+            var win = React.createElement(ObjectDesigner_1.ObjectDesigner, {designedObject: designedObject, onSaveChanges: function () { _this.treeGridState.refreshFocusedRow(); }});
+            var openParam = {
+                title: "редактирование",
+                top: 50,
+                left: 50,
+                parentWindowId: _this.getParentWindowId()
+            };
+            _this.getParentDesktop().openWindow(win, openParam);
         };
         this.handleInsertButtonClick = function () {
             //this.openInsertForm();
         };
         this.handleDeleteButtonClick = function () {
+            //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
+        };
+        this.handleTreeGridChangeFocusedRow = function (state) {
+            _this.treeGridState = state;
+            //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
             //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
         };
         this.props = props;
@@ -177,7 +190,7 @@ var SchemaComponentDesigner = (function (_super) {
                         React.createElement(Tabs_1.Tab, {key: "1", title: "Основная"}, 
                             React.createElement(Layout_1.Layout, {type: "column", sizeTo: "parent"}, 
                                 React.createElement(Flex_1.Flex, null, 
-                                    React.createElement(TreeGrid_1.TreeGrid, {dataSource: dataSource, treeMode: "childrenList", autoExpandNodesToLevel: 100, editable: true, denyInsert: true, dragDropNodes: true}, 
+                                    React.createElement(TreeGrid_1.TreeGrid, {dataSource: dataSource, treeMode: "childrenList", autoExpandNodesToLevel: 100, editable: true, denyInsert: true, dragDropNodes: true, onChangeFocusedRow: this.handleTreeGridChangeFocusedRow}, 
                                         React.createElement(TreeGridColumns_1.TreeGridColumns, null, 
                                             React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Control", propertyName: "$$controlName", showHierarchyTree: true, width: 200}), 
                                             React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Свойства", propertyName: "$$controlMainProps", width: 300}), 

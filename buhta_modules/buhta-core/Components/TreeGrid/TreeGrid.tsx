@@ -22,6 +22,8 @@ import {throwError} from "../../Error";
 
 export type TreeMode = "flat" | "parentKey" | "delimiterChar" | "childrenList";
 
+export type TreeGreedEvent<T> =  (state: TreeGridState<T>) => any;
+
 export interface TreeGridProps<T> extends ComponentProps<TreeGridState<T>> {
     dataSource: TreeGridDataSource<T>;
     rowHeight?: number;
@@ -40,10 +42,15 @@ export interface TreeGridProps<T> extends ComponentProps<TreeGridState<T>> {
     dragDropNodes?: boolean;
 
     onCreateNewRecord?: () => any;
+    onChangeFocusedRow?: TreeGreedEvent<T>;
 
 }
 
 export class TreeGridState<T> extends ComponentState<TreeGridProps<T>> {
+    constructor(private treeGrid: TreeGrid) {
+        super(treeGrid);
+    }
+
     columns: InternalColumn[];
     pageLength: number;
     rows: InternalRow<T>[];
@@ -65,6 +72,18 @@ export class TreeGridState<T> extends ComponentState<TreeGridProps<T>> {
     isCellDragging: boolean;
     draggingRowSourceIndex: number;
     draggingMode: "move" | "copy";
+
+    getFocusedRow(): T {
+        return this.dataSource.getRow(this.focusedRowIndex);
+    }
+
+    refreshRow(rowIndex: number) {
+        this.treeGrid.refreshRow(rowIndex);
+    }
+
+    refreshFocusedRow() {
+        this.treeGrid.refreshRow(this.focusedRowIndex);
+    }
 }
 
 export class InternalColumn {
@@ -707,7 +726,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     private handleDrop = (e: DragEvent) => {
 
-       // console.log("handleDrop");
+        // console.log("handleDrop");
 
         let $tr = $(e.target).parents("tr").first();
         let $tr_prev = $tr.prev();
@@ -972,7 +991,8 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             }
         }
 
-
+        if (this.props.onChangeFocusedRow !== undefined)
+            this.props.onChangeFocusedRow(this.state);
     }
 
     private    getFocusedCellElement(): HTMLElement {

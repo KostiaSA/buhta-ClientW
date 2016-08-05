@@ -17,7 +17,7 @@ export class PanelControl extends BaseControl {
         return {sizeTo: this.sizeTo};
     }
 
-    getComponent(): Function {
+    getComponent(): Function | undefined {
         return Panel;
     }
 

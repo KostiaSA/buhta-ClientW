@@ -4,6 +4,7 @@ import {SchemaTableColumn} from "../buhta-schema/SchemaTable/SchemaTableColumn";
 import {SchemaForm} from "../buhta-schema/SchemaForm/SchemaForm";
 import {ButtonControl} from "../buhta-ui/ButtonControl";
 import {PanelControl} from "../buhta-ui/PanelControl";
+import {LocalVariableControl} from "../buhta-ui/LocalVariableControl";
 
 export let buhta: any = {};
 
@@ -15,5 +16,6 @@ buhta.SchemaForm = SchemaForm;
 
 buhta.ButtonControl = ButtonControl;
 buhta.PanelControl = PanelControl;
+buhta.LocalVariableControl = LocalVariableControl;
 
 (window as any).buhta = buhta;

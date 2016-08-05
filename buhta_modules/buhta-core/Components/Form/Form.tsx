@@ -78,7 +78,20 @@ export class Form extends Component<FormProps, any> {
             if (this.props.sizeTo === "parent")
                 this.addStyles({height: "100%"});
 
-            return <div {...this.getRenderProps()}>{this.props.children}</div>;
+            // let controlProps: any = (this.props.children as any)[0].props;
+            //
+            // if (controlProps && controlProps.inputCaption ) {
+            //     return (
+            //         <div {...this.getRenderProps()}>
+            //             <span
+            //                 className="caption">{controlProps.inputCaption ? controlProps.inputCaption : controlProps.bindPropName}
+            //             </span>
+            //             {this.props.children}
+            //         </div>
+            //     );
+            // }
+            // else
+                return <div {...this.getRenderProps()}>{this.props.children}</div>;
         }
         else {
 
