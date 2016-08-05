@@ -49,6 +49,7 @@ export interface SqlAnswerRow {
 
 export interface AuthSocketAnswer {
     error?: string;
+    userId?: string;
 }
 
 export interface ExecuteSqlSocketAnswer {

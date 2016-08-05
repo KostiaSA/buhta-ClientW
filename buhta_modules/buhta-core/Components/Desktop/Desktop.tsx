@@ -131,7 +131,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         let winContent = form.render();
         this.openWindow(winContent, openParams);
     }
-    
+
     openSchemaComponentDesigner(component: SchemaComponent, openParams?: OpenWindowParams) {
         let winContent = component.getDesigner();
         this.openWindow(winContent, openParams);
@@ -224,6 +224,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         if (openParams.okButtonContent) {
             let buttonClassName = "is-outlined";
             if (openParams.style === "danger")
+                buttonClassName += " is-danger";
+            if (openParams.style === "error")
                 buttonClassName += " is-danger";
             okButton =
                 <Button

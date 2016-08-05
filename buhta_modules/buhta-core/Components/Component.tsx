@@ -306,6 +306,16 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         return ret;
     }
 
+    showErrorWindow(messageContent: React.ReactNode) {
+        let params: OpenMessageWindowParams = {
+            style: "error",
+            parentWindowId: this.getParentWindowId(),
+            okButtonContent: "Закрыть",
+            //cancelButtonContent: cancelButtonText || "Нет",
+            //resultCallback: resultCallback
+        };
+        this.getParentDesktop()!.openMessageWindow(messageContent, params);
+    }
 
     showConfirmationWindow(messageContent: React.ReactNode, resultCallback: (resultOk: boolean) => void, okButtonText?: string, cancelButtonText?: string) {
         let params: OpenMessageWindowParams = {

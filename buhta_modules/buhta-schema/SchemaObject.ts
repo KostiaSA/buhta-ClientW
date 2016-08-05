@@ -48,7 +48,11 @@ export class SchemaObject extends DesignedObject {
         throwAbstractError();
         throw  "fake";
     }
-    
+
+    save(): Promise<void|string> {
+        return this.schema.saveObject(this);
+    }
+
 
 }
 

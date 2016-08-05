@@ -26,7 +26,8 @@ var TreeGrid_1 = require("../../buhta-core/Components/TreeGrid/TreeGrid");
 var TreeGridColumns_1 = require("../../buhta-core/Components/TreeGrid/TreeGridColumns");
 var TreeGridColumn_1 = require("../../buhta-core/Components/TreeGrid/TreeGridColumn");
 var TreeGridComponentChildrenDataSource_1 = require("./TreeGridComponentChildrenDataSource");
-var DeepCompare_1 = require("../../buhta-core/DeepCompare");
+var isDeepEqual_1 = require("../../buhta-core/isDeepEqual");
+var Auth_1 = require("../../buhta-core/Auth");
 var SchemaComponentDesigner = (function (_super) {
     __extends(SchemaComponentDesigner, _super);
     function SchemaComponentDesigner(props, context) {
@@ -66,7 +67,21 @@ var SchemaComponentDesigner = (function (_super) {
         this.handleSaveButtonClick = function (sender, e) {
             if (_this.props.onSaveChanges)
                 _this.props.onSaveChanges();
-            _this.getParentWindow().close();
+            if (_this.clonedDesignedObject.createDate === null) {
+                _this.clonedDesignedObject.createDate = new Date();
+            }
+            if (_this.clonedDesignedObject.createUserID === null) {
+                _this.clonedDesignedObject.createUserID = Auth_1.getUserId();
+            }
+            _this.clonedDesignedObject.changeDate = new Date();
+            _this.clonedDesignedObject.changeUserID = Auth_1.getUserId();
+            _this.clonedDesignedObject.save()
+                .then(function () {
+                _this.getParentWindow().close();
+            })
+                .catch(function (error) {
+                _this.showErrorWindow(error);
+            });
             e.stopPropagation();
         };
         this.handleCancelButtonClick = function (sender, e) {
@@ -87,7 +102,7 @@ var SchemaComponentDesigner = (function (_super) {
         var _this = this;
         this.compareInterval = setInterval(function () {
             console.log("deepCompare");
-            if (!DeepCompare_1.isDeepEqual(_this.clonedDesignedObject, _this.props.designedObject)) {
+            if (!isDeepEqual_1.isDeepEqual(_this.clonedDesignedObject, _this.props.designedObject)) {
                 clearInterval(_this.compareInterval);
                 _this.needToSave = true;
                 _this.forceUpdate();

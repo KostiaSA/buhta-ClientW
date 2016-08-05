@@ -38,6 +38,7 @@ import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {ButtonControl} from "../../buhta-ui/ButtonControl";
 import {PanelControl} from "../../buhta-ui/PanelControl";
+import {checkAuth} from "../../buhta-core/Auth";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -707,45 +708,68 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testSchemaFormDesigner() {
 
-        let form = new SchemaForm(getSchema());
+        checkAuth().then(() => {
 
-        let but1 = new ButtonControl();
-        but1.text = "Буттон 1222";
-        form.children.push(but1);
+            let form = new SchemaForm(getSchema());
+            form.id = "1F2D95A0-5AF4-11E6-91EA-8FBA7805DE8D";
 
-        let but2 = new ButtonControl();
-        but2.text = "Буттон 2222";
-        form.children.push(but2);
+            let but1 = new ButtonControl();
+            but1.text = "Буттон 1222";
+            form.children.push(but1);
 
-        let panel = new PanelControl();
-        form.children.push(panel);
+            let but2 = new ButtonControl();
+            but2.text = "Буттон 2222";
+            form.children.push(but2);
 
-        let but3 = new ButtonControl();
-        but3.text = "Буттон3";
-        panel.children.push(but3);
+            let panel = new PanelControl();
+            form.children.push(panel);
 
-        let but4 = new ButtonControl();
-        but4.text = "Буттон4";
-        panel.children.push(but4);
+            let but3 = new ButtonControl();
+            but3.text = "Буттон3";
+            panel.children.push(but3);
 
-        let panel1 = new PanelControl();
-        form.children.push(panel1);
+            let but4 = new ButtonControl();
+            but4.text = "Буттон4";
+            panel.children.push(but4);
 
-        let but5 = new ButtonControl();
-        but5.text = "Буттон5";
-        panel1.children.push(but5);
+            let panel1 = new PanelControl();
+            form.children.push(panel1);
 
-        let but6 = new ButtonControl();
-        but6.text = "Буттон6";
-        panel1.children.push(but6);
+            let but5 = new ButtonControl();
+            but5.text = "Буттон5";
+            panel1.children.push(but5);
 
-        let openParam: OpenWindowParams = {
-            title: "дизайнер компонента",
-            top: 50,
-            left: 50
-        };
+            let but6 = new ButtonControl();
+            but6.text = "Буттон6";
+            panel1.children.push(but6);
 
-        appInstance.desktop.openSchemaComponentDesigner(form, openParam);
+            let openParam: OpenWindowParams = {
+                title: "дизайнер компонента",
+                top: 50,
+                left: 50
+            };
+
+            appInstance.desktop.openSchemaComponentDesigner(form, openParam);
+
+        });
+
+
+    };
+
+    testOpenSchemaFormDesigner() {
+
+
+        getSchema().getObject<SchemaForm>("1F2D95A0-5AF4-11E6-91EA-8FBA7805DE8D").then((form: SchemaForm) => {
+            let openParam: OpenWindowParams = {
+                title: "дизайнер компонента",
+                top: 50,
+                left: 50
+            };
+
+            appInstance.desktop.openSchemaComponentDesigner(form, openParam);
+
+        });
+
 
     };
 
@@ -786,8 +810,13 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { this.testOpenSchemaForm(); }}>test SchemaForm</button>
                                 <br/>
+                                <button onClick={() => { this.testSchemaFormDesigner(); }}>test SchemaFormDesigner
+                                </button>
                                 <br/>
-                                <button onClick={() => { this.testSchemaFormDesigner(); }}>test SchemaFormDesigner</button>
+                                <br/>
+                                <button onClick={() => { this.testOpenSchemaFormDesigner(); }}>
+                                    test OpenSchemaFormDesigner
+                                </button>
                             </Fixed>
                             <Flex className="XXXcontent">
                                 <Desktop>

@@ -9,7 +9,7 @@ import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
 //import {Observable} from "../../buhta-core/Observable";
 import {DeepClone} from "../../buhta-core/DeepClone";
-import {isDeepEqual} from "../../buhta-core/DeepCompare";
+import {isDeepEqual} from "../../buhta-core/isDeepEqual";
 
 
 export interface ObjectDesignerProps extends ComponentProps<any> {
@@ -109,10 +109,6 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
             this.props.onCancelChanges();
         //console.log(this.props.designedObject);
     }
-
-    // handleGetNeedToSave = (): boolean => {
-    //     return this.needToSave;
-    // }
 
     render() {
         this.addClassName("object-designer");

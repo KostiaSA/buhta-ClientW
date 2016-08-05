@@ -23,7 +23,8 @@ import {
     TreeGridComponentChildrenDataSourceParams
 } from "./TreeGridComponentChildrenDataSource";
 import {BaseControl} from "../../buhta-ui/BaseControl";
-import {isDeepEqual} from "../../buhta-core/DeepCompare";
+import {isDeepEqual} from "../../buhta-core/isDeepEqual";
+import {getUserId} from "../../buhta-core/Auth";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -114,7 +115,25 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     handleSaveButtonClick = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
-        this.getParentWindow()!.close();
+
+        if (this.clonedDesignedObject.createDate === null) {
+            this.clonedDesignedObject.createDate = new Date();
+        }
+        if (this.clonedDesignedObject.createUserID === null) {
+            this.clonedDesignedObject.createUserID = getUserId();
+        }
+
+        this.clonedDesignedObject.changeDate = new Date();
+        this.clonedDesignedObject.changeUserID = getUserId();
+
+        this.clonedDesignedObject.save()
+            .then(() => {
+                this.getParentWindow()!.close();
+            })
+            .catch((error) => {
+                this.showErrorWindow(error);
+            });
+
         e.stopPropagation();
 
     }

@@ -2,8 +2,11 @@ import * as _ from "lodash";
 
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {throwError} from "./Error";
+import {getRandomString} from "./getRandomString";
 
-export function DeepClone<T>(obj: any): T  {
+export function DeepClone<T>(obj: any): T {
+    // todo clone ArrayBuffer
+
     if (!obj)
         throwError("DeepClone(): obj === null");
 
@@ -16,16 +19,19 @@ export function DeepClone<T>(obj: any): T  {
 }
 
 function cloneObject(obj: any, refsClones: any): any {
-    if (!obj)
+    if (obj === undefined)
         return undefined;
 
-    if (obj.$$uniqueObjectId && refsClones[obj.$$uniqueObjectId])
+    if (obj === null)
+        return null;
+
+    if (obj.$$uniqueObjectId !== undefined && refsClones[obj.$$uniqueObjectId] !== undefined)
         return refsClones[obj.$$uniqueObjectId];
 
     let cloned: any = new obj.constructor();
     cloned.$$isClone = true;
 
-    obj.$$uniqueObjectId = Math.random().toString(36).slice(2, 16);
+    obj.$$uniqueObjectId = getRandomString();
     refsClones[obj.$$uniqueObjectId] = cloned;
 
     for (let propName in obj) {
@@ -33,7 +39,10 @@ function cloneObject(obj: any, refsClones: any): any {
             let propValue: any = obj[propName];
 
             if (propName.substring(0, 2) !== "$$") {
-                if (_.isArray(propValue)) {
+                if (_.isDate(propValue)) {
+                    cloned[propName] = new Date(obj[propName].getTime());
+                }
+                else if (_.isArray(propValue)) {
                     cloned[propName] = cloneArray(propValue, refsClones);
                 }
                 else if (_.isObject(propValue)) {
@@ -52,8 +61,11 @@ function cloneObject(obj: any, refsClones: any): any {
 }
 
 function cloneObject$$(obj: any, refsClones: any): any {
-    if (!obj)
+    if (obj === undefined)
         return undefined;
+
+    if (obj === null)
+        return null;
 
     if (obj.$$uniqueObjectId && refsClones[obj.$$uniqueObjectId])
         return refsClones[obj.$$uniqueObjectId];
@@ -62,8 +74,11 @@ function cloneObject$$(obj: any, refsClones: any): any {
 }
 
 function cloneArray(obj: any, refsClones: any): any {
-    if (!obj)
+    if (obj === undefined)
         return undefined;
+
+    if (obj === null)
+        return null;
 
     if (obj.$$uniqueObjectId && refsClones[obj.$$uniqueObjectId])
         return refsClones[obj.$$uniqueObjectId];
@@ -75,7 +90,10 @@ function cloneArray(obj: any, refsClones: any): any {
     refsClones[obj.$$uniqueObjectId] = cloned;
 
     obj.forEach((arrayItem: any) => {
-        if (_.isArray(arrayItem)) {
+        if (_.isDate(arrayItem)) {
+            cloned.push(new Date(arrayItem.getTime()));
+        }
+        else if (_.isArray(arrayItem)) {
             cloned.push(cloneArray(arrayItem, refsClones));
         }
         else if (_.isObject(arrayItem)) {

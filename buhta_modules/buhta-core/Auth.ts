@@ -1,8 +1,19 @@
 import {AuthSocketRequest, AuthSocketAnswer} from "../buhta-sql/SqlDb";
 import {getConnectionId} from "./getConnectionId";
 import {socket} from "./Socket";
+import {throwError} from "./Error";
 
 let authOk: boolean;
+let userId: string | null = null;
+
+export function getUserId(): string {
+    if (userId !== null)
+        return userId;
+    else {
+        throwError("userId is null");
+        throw "fake";
+    }
+}
 
 export function auth(login: string, password: string): Promise<string> {
     let promise: Promise<string> = new Promise(
@@ -27,10 +38,12 @@ export function auth(login: string, password: string): Promise<string> {
 
                 if (response.error) {
                     authOk = false;
+                    userId = null;
                     reject(response.error);
                 }
                 else {
                     authOk = true;
+                    userId = response.userId!;
                     resolve("ok");
                 }
 
@@ -47,7 +60,7 @@ export function auth(login: string, password: string): Promise<string> {
 export function checkAuth(): Promise<string> {
     //console.log("checkAuth");
     if (authOk) {
-      //  console.log("checkAuthOk");
+        //  console.log("checkAuthOk");
         return new Promise(
             (resolve: (okStr: "ok") => void, reject: (error: string) => void) => {
                 resolve("ok");

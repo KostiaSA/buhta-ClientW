@@ -51,15 +51,20 @@ export class Schema {
                         .then((jsCode) => {
                             objConstructor = eval("(function(){return " + jsCode + "})");
                             this.objects_cache[id] = objConstructor;
-                            resolve(objConstructor() as T);
+                            let obj: any = objConstructor();
+                            obj.$$schema = this;
+                            resolve(obj as T);
                         })
                         .catch((error) => {
                             reject(error);
                         });
 
                 }
-                else
-                    resolve(objConstructor() as T);
+                else {
+                    let obj: any = objConstructor();
+                    obj.$$schema = this;
+                    resolve(obj as T);
+                }
 
             });
 
@@ -70,8 +75,8 @@ export class Schema {
         if (!objectToSave.id)
             objectToSave.id = getNewGuid();
 
-        if (!objectToSave.createDate)
-            objectToSave.createDate = new Date();
+        //if (!objectToSave.createDate)
+        //  objectToSave.createDate = new Date();
 
         let sql = new UpsertStmt("SchemaObject")
             .column("id", new SqlGuidValue(objectToSave.id))
@@ -89,6 +94,7 @@ export class Schema {
             .where("id", "=", new SqlGuidValue(objectToSave.id));
 
         return this.db.executeSQL(sql).then(() => {
+            //console.log("resetObjectCache " + objectToSave.id);
             this.resetObjectCache(objectToSave.id!);
 
         });
