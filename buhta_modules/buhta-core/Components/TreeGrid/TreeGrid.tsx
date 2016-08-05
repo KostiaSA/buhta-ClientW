@@ -91,7 +91,7 @@ export class InternalRow<T> {
     node: InternalTreeNode<T>;
 
     getSourceObject(): any {
-        return this.gridState.dataSource.getDataRow(this.node.sourceIndex);
+        return this.gridState.dataSource.getRow(this.node.sourceIndex);
         //
         // if (this.node.sourceRow === undefined)
         //     return this.gridState.dataSource.getDataRows()[this.node.sourceIndex];
@@ -235,7 +235,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
                 this.state.dataSource.deleteRow(rowToDelete.node.sourceIndex);
 
-                if (this.state.dataSource.getDataRows().length === 0)
+                if (this.state.dataSource.getRows().length === 0)
                     this.refreshDataSource();
                 else {
                     let newFocusedIndex = this.state.rows.indexOf(rowToDelete);
@@ -258,7 +258,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
                     designedObject={designedObject}
                     onSaveChanges={ () => {
                        let index = this.state.dataSource.addRow(designedObject);
-                       if (this.state.dataSource.getDataRows().length === 1)
+                       if (this.state.dataSource.getRows().length === 1)
                          this.refreshDataSource();
                        else
                          this.refreshRow(index);
@@ -280,7 +280,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     openEditForm(row: InternalRow<any>) {
 
-        let designedObject = this.state.dataSource.getDataRows()[row.node.sourceIndex];
+        let designedObject = this.state.dataSource.getRows()[row.node.sourceIndex];
 
         let win =
             <ObjectDesigner
@@ -377,7 +377,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
         this.state.nodes = [];
 
-        this.state.dataSource.getDataRows().forEach((dataRow: any, index: number) => {
+        this.state.dataSource.getRows().forEach((dataRow: any, index: number) => {
             let node = new InternalTreeNode(this.state);
             node.sourceIndex = index;
             //node.sourceRow = dataRow;
@@ -402,7 +402,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             toArray.push(node);
 
 
-            let children = dataRow[this.props.hierarchyFieldName!];
+            let children = this.state.dataSource.getRowChildren(node.sourceIndex); //dataRow[this.props.hierarchyFieldName!];
             if (!children)
                 throwError("TreeGrid: dataRow has no children list property '" + this.props.hierarchyFieldName + "'");
             if (!_.isArray(children))
@@ -413,7 +413,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             });
         };
 
-        this.state.dataSource.getDataRows().forEach((dataRow: any, index: number) => {
+        this.state.dataSource.getRows().forEach((dataRow: any, index: number) => {
             addChildren(this.state.nodes, dataRow, 0);
         }, this);
 
@@ -437,7 +437,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             objIndex: number;
         }
 
-        let sorted: ISorted[] = this.state.dataSource.getDataRows().map((obj: any, index: number) => {
+        let sorted: ISorted[] = this.state.dataSource.getRows().map((obj: any, index: number) => {
             return {
                 hierarchyStr: obj[this.props.hierarchyFieldName || ""].toString(),  // todo this.props.hierarchyFieldName || ""  ???
                 objIndex: index
@@ -532,7 +532,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         //}
 
         if (this.state.columns && this.state.columns.length > 0 && this.state.dataSource)
-            this.state.columns[0].footer = this.state.dataSource.getDataRows().length + " поз.";
+            this.state.columns[0].footer = this.state.dataSource.getRows().length + " поз.";
     }
 
     private filterData() {
@@ -1079,7 +1079,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
     };
 
     renderColumnHeaders(): React.ReactNode {
-        if (this.state.dataSource.getDataRows().length === 0)
+        if (this.state.dataSource.getRows().length === 0)
             return [];
 
         let colWidths: JSX.Element[] = [];
@@ -1143,7 +1143,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     renderColumnFooters(): React.ReactNode {
 
-        if (this.state.dataSource.getDataRows().length === 0)
+        if (this.state.dataSource.getRows().length === 0)
             return [];
 
         let colWidths: JSX.Element[] = [];
@@ -1193,7 +1193,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
     }
 
     renderEmptyDataSourceMessage(): React.ReactNode {
-        if (this.state.dataSource.getDataRows().length > 0)
+        if (this.state.dataSource.getRows().length > 0)
             return [];
 
         let message: React.ReactNode = this.state.dataSource.getEmptyDataSourceMessage();
@@ -1203,7 +1203,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     renderGridBody(): React.ReactNode {
 
-        if (this.state.dataSource.getDataRows().length === 0)
+        if (this.state.dataSource.getRows().length === 0)
             return [];
 
         let colWidths: React.ReactNode[] = [];

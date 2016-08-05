@@ -24,8 +24,6 @@ var ButtonState = (function (_super) {
     return ButtonState;
 }(Component_1.ComponentState));
 exports.ButtonState = ButtonState;
-//@VisiblePlugin
-//@OnClickPlugin
 var Button = (function (_super) {
     __extends(Button, _super);
     function Button(props, context) {
@@ -37,7 +35,9 @@ var Button = (function (_super) {
     }
     Button.prototype.render = function () {
         this.addClassName("button");
-        return (React.createElement("a", __assign({}, this.getRenderProps()), this.props.children));
+        return (React.createElement("a", __assign({}, this.getRenderProps()), 
+            this.props.text, 
+            this.props.children));
     };
     return Button;
 }(Component_1.Component));

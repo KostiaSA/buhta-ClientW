@@ -8,7 +8,7 @@ import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
 //import {Observable} from "../../buhta-core/Observable";
-import {DeepClone} from "../../buhta-core/DeepClone";
+import {deepClone} from "../../buhta-core/deepClone";
 import {isDeepEqual} from "../../buhta-core/isDeepEqual";
 
 
@@ -34,7 +34,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     protected willMount() {
         super.willMount();
         this.needToSave = false;
-        this.clonedDesignedObject = DeepClone<DesignedObject>(this.props.designedObject);
+        this.clonedDesignedObject = deepClone<DesignedObject>(this.props.designedObject);
     }
 
     private compareInterval: number;

@@ -2,7 +2,7 @@ import * as React from "react";
 import {ComponentPlugin} from "./Plugin";
 import {Component} from "../Components/Component";
 
-export type onClickEvent = (sender: Component<any,any>, event: React.MouseEvent)=> void;
+export type onClickEvent = (sender: Component<any, any>, event: React.MouseEvent) => void;
 
 export interface OnClickPluginProps {
     onClick?: onClickEvent;
@@ -14,6 +14,7 @@ export class OnClickPlugin extends ComponentPlugin<OnClickPluginProps, any> {
         if (this.props.onClick) {
             this.props.onClick(this.owner, event);
         }
+        event.stopPropagation();
     }
 
     willMount() {

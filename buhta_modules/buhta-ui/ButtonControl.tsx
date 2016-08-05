@@ -9,18 +9,17 @@ export class ButtonControl extends BaseControl {
         inputCaption: "Текст"
     })
     text: string;
+    
     visible: boolean;
 
     handleOnClick: Function;
 
     beforeRender() {
         super.beforeRender();
-//        this.children.length = 0;
-        //      this.children.push(this.text);
     }
 
     getProps(): ButtonProps {
-        return {};
+        return {text: this.text};
     }
 
     getComponent(): Function {

@@ -4,11 +4,11 @@ import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {throwError} from "./Error";
 import {getRandomString} from "./getRandomString";
 
-export function DeepClone<T>(obj: any): T {
+export function deepClone<T>(obj: any): T {
     // todo clone ArrayBuffer
 
     if (!obj)
-        throwError("DeepClone(): obj === null");
+        throwError("deepClone(): obj === null");
 
     let refsClones: any = {};
 

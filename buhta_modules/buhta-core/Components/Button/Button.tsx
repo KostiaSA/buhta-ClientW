@@ -11,8 +11,6 @@ export class ButtonState extends ComponentState<ButtonProps> implements VisibleP
     visible: boolean;
 }
 
-//@VisiblePlugin
-//@OnClickPlugin
 export class Button extends Component<ButtonProps, ButtonState> {
     constructor(props: ButtonProps, context: any) {
         super(props, context);
@@ -28,6 +26,7 @@ export class Button extends Component<ButtonProps, ButtonState> {
 
         return (
             <a {...this.getRenderProps()}>
+                {this.props.text}
                 {this.props.children}
             </a>
         );

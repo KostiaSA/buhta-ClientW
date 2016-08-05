@@ -69,11 +69,11 @@ export class TreeGridComponentChildrenDataSource implements TreeGridDataSource<B
 
     }
 
-    getDataRows(): BaseControl[] {
+    getRows(): BaseControl[] {
         return this.componentChildren;
     }
 
-    getDataRow(rowIndex: number): BaseControl {
+    getRow(rowIndex: number): BaseControl {
         return this.flat[rowIndex];
     }
 

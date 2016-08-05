@@ -46,11 +46,11 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
 
     }
 
-    getDataRows(): T[] {
+    getRows(): T[] {
         return this.arrayObj;
     }
 
-    getDataRow(index: number): T {
+    getRow(index: number): T {
         return this.arrayObj[index];
     }
 
@@ -88,6 +88,10 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
             return "Удалить запись!";
     }
 
+    getRowChildren(rowIndex: number): T[] {
+        return [];
+    }
+
     canDragRow(rowIndex: number, mode: "move" | "copy"): boolean {
         return true;
     }
@@ -107,9 +111,9 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
         return true;
     }
-    
+
     refresh(){
-        
+
     }
 
 }

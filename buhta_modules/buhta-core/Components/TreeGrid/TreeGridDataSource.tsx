@@ -4,9 +4,10 @@ import {TreeGridColumnProps} from "./TreeGridColumn";
 export interface TreeGridDataSource<T> {
     isTreeGridDataSource: boolean;
     getTreeGridColumns(): TreeGridColumnProps[];
-    getDataRows(): T[];
+    getRows(): T[];
 
-    getDataRow(rowIndex: number): T;
+    getRow(rowIndex: number): T;
+    getRowChildren(rowIndex: number): T[];
 
     getNewRow(): T;
     addRow(row: T): number;
@@ -24,7 +25,7 @@ export interface TreeGridDataSource<T> {
     dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;
 
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;
-    
+
     refresh(): void;
 }
 

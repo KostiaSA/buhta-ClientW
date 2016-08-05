@@ -8,7 +8,7 @@ import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
 //import {Observable} from "../../buhta-core/Observable";
-import {DeepClone} from "../../buhta-core/DeepClone";
+import {deepClone} from "../../buhta-core/deepClone";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
@@ -25,6 +25,10 @@ import {
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {isDeepEqual} from "../../buhta-core/isDeepEqual";
 import {getUserId} from "../../buhta-core/Auth";
+import {OpenWindowParams} from "../../buhta-core/Components/Desktop/Desktop";
+import {appInstance} from "../../buhta-core/Components/App/App";
+import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
+import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorName";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -51,7 +55,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         super.willMount();
         this.needToSave = false;
 
-        this.clonedDesignedObject = DeepClone<SchemaComponent>(this.props.designedObject);
+        this.clonedDesignedObject = deepClone<SchemaComponent>(this.props.designedObject);
 
     }
 
@@ -166,12 +170,62 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     //     return this.needToSave;
     // }
 
+    handleTestButtonClick = () => {
+        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+        let openParam: OpenWindowParams = {
+            title: `тест '${ getObjectConstructorName(this.clonedDesignedObject)}'`,
+            top: 350,
+            left: 350
+        };
+
+        appInstance.desktop.openSchemaForm(this.clonedDesignedObject as SchemaForm, openParam);
+    }
+
+    handleUpdateButtonClick = () => {
+        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+
+    }
+
+    handleInsertButtonClick = () => {
+        //this.openInsertForm();
+    }
+
+    handleDeleteButtonClick = () => {
+        //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
+
+    }
+
+    renderEditableButtons(): JSX.Element[] {
+        let buttons: JSX.Element[] = [];
+
+        buttons.push(
+            <Button key="insert" className="is-outlined is-success" onClick={this.handleInsertButtonClick}>
+                Добавить
+            </Button>
+        );
+
+        buttons.push(
+            <Button key="update" className="is-outlined is-info" onClick={this.handleUpdateButtonClick}>
+                Изменить
+            </Button>
+        );
+
+        buttons.push(
+            <Button key="delete" className="is-outlined is-danger" onClick={this.handleDeleteButtonClick}>
+                Удалить
+            </Button>
+        );
+
+        return buttons;
+    }
+
     render() {
         let dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
         let dataSource = new TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
 
         this.addClassName("object-designer");
         this.addProps({onChange: this.props.onChange});
+        this.addStyles({height: "100%"});
 
         return (
             <div {...this.getRenderProps()}>
@@ -183,28 +237,36 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                             onChangeActiveTab={ (state, tab) => { console.log("setActiveTab");console.log(tab);}}
                         >
                             <Tab key="1" title="Основная">
-                                <TreeGrid
-                                    dataSource={ dataSource }
-                                    treeMode="childrenList"
-                                    hierarchyFieldName="children"
-                                    autoExpandNodesToLevel={100}
-                                    editable={true}
-                                    denyDelete={true}
-                                    dragDropNodes={true}
-                                >
-                                    <TreeGridColumns>
-                                        <TreeGridColumn caption="Control" propertyName="$$controlName"
-                                                        showHierarchyTree={true}
-                                                        width={200}>
-                                        </TreeGridColumn>
-                                        <TreeGridColumn caption="Свойства" propertyName="$$controlMainProps"
-                                                        width={300}>
-                                        </TreeGridColumn>
-                                        <TreeGridColumn caption="События" propertyName="$$controlEvents"
-                                                        width={300}>
-                                        </TreeGridColumn>
-                                    </TreeGridColumns>
-                                </TreeGrid>
+                                <Layout type="column" sizeTo="parent">
+                                    <Flex>
+                                        <TreeGrid
+                                            dataSource={ dataSource }
+                                            treeMode="childrenList"
+                                            autoExpandNodesToLevel={100}
+                                            editable={true}
+                                            denyInsert={true}
+                                            dragDropNodes={true}
+                                        >
+                                            <TreeGridColumns>
+                                                <TreeGridColumn caption="Control" propertyName="$$controlName"
+                                                                showHierarchyTree={true}
+                                                                width={200}>
+                                                </TreeGridColumn>
+                                                <TreeGridColumn caption="Свойства" propertyName="$$controlMainProps"
+                                                                width={300}>
+                                                </TreeGridColumn>
+                                                <TreeGridColumn caption="События" propertyName="$$controlEvents"
+                                                                width={300}>
+                                                </TreeGridColumn>
+                                            </TreeGridColumns>
+                                        </TreeGrid>
+                                    </Flex>
+                                    <Fixed>
+                                        {this.renderEditableButtons()}
+
+                                    </Fixed>
+                                </Layout>
+
                             </Tab>
                             <Tab key="2" title="Кто-когда">
 
@@ -214,7 +276,9 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                     <Fixed>
                         <Layout className="auto-form-footer" type="row" sizeTo="content">
                             <Flex>
-
+                                <Button onClick={ this.handleTestButtonClick }>
+                                    Тест
+                                </Button>
                             </Flex>
                             <Fixed>
                                 <Button visible={ this.needToSave } className="is-success is-outlined"

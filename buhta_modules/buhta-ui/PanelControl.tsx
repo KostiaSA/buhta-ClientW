@@ -5,14 +5,16 @@ import {Component} from "../buhta-core/Components/Component";
 import {Panel, PanelProps} from "../buhta-core/Components/Panel/Panel";
 
 export class PanelControl extends BaseControl {
+
     visible: boolean;
+    sizeTo: "parent" | "content";
 
     beforeRender() {
         super.beforeRender();
     }
 
     getProps(): PanelProps {
-        return {sizeTo: "parent"};
+        return {sizeTo: this.sizeTo};
     }
 
     getComponent(): Function {
