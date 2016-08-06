@@ -5,9 +5,10 @@ import {BasePropertyEditor, PropertyEditorInfo} from "./BasePropertyEditor";
 import {registerPropertyEditor} from "./registerPropertyEditor";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
+import {OneWayBinderInput} from "../../buhta-core/Components/OneWayBinderInput/OneWayBinderInput";
 
 
-export class StringPropertyEditor extends BasePropertyEditor {
+export class OneWayBinderPropertyEditor extends BasePropertyEditor {
 
     handleChange(event: React.SyntheticEvent) {
         // this.props.designedObject[this.props.propertyName] = (event.target as any).value;
@@ -26,8 +27,7 @@ export class StringPropertyEditor extends BasePropertyEditor {
         this.addProps(autoFormControlProps);
 
         return (
-            <Input
-                type={InputType.Text}
+            <OneWayBinderInput
                 bindObject={this.props.designedObject}
                 bindPropName={this.props.propertyName}
                 onChange={this.props.onChange}
@@ -38,24 +38,23 @@ export class StringPropertyEditor extends BasePropertyEditor {
 
 }
 
-export interface StringEditorParams extends AutoFormControlProps {
-
+export interface OneWayBinderEditorParams extends AutoFormControlProps {
+//    OneWayBinderValues: OneWayBinderValuesDataSource<any> | any[];
 }
 
-export function StringEditor(params: StringEditorParams = {}): Function {
+export function OneWayBinderEditor(params: OneWayBinderEditorParams): Function {
     return function (target: any, propertyName: string) {
         //  console.log({target, propertyName, constr:target.constructor});
 
         let propertyEditorInfo: PropertyEditorInfo = {
             propertyName: propertyName,
             objectType: target.constructor,
-            editorType: StringPropertyEditor,
-            propertyType: String
+            editorType: OneWayBinderPropertyEditor,
+            propertyType: null
         };
 
         _.assign(propertyEditorInfo, params);
         registerPropertyEditor(propertyEditorInfo);
-
 
 
         // registerPropertyEditor({
@@ -66,8 +65,8 @@ export function StringEditor(params: StringEditorParams = {}): Function {
         //     propertyName: propertyName,
         //
         //     objectType: target.constructor,
-        //     editorType: StringPropertyEditor,
-        //     propertyType: String
+        //     editorType: OneWayBinderPropertyEditor,
+        //     propertyType: OneWayBinder
         // });
     };
 }

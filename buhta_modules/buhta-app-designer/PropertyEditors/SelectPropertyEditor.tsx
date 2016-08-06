@@ -5,9 +5,11 @@ import {BasePropertyEditor, PropertyEditorInfo} from "./BasePropertyEditor";
 import {registerPropertyEditor} from "./registerPropertyEditor";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
+import {SelectValuesDataSource} from "../../buhta-core/Components/Select/SelectValuesDataSource";
+import {Select} from "../../buhta-core/Components/Select/Select";
 
 
-export class StringPropertyEditor extends BasePropertyEditor {
+export class SelectPropertyEditor extends BasePropertyEditor {
 
     handleChange(event: React.SyntheticEvent) {
         // this.props.designedObject[this.props.propertyName] = (event.target as any).value;
@@ -26,10 +28,10 @@ export class StringPropertyEditor extends BasePropertyEditor {
         this.addProps(autoFormControlProps);
 
         return (
-            <Input
-                type={InputType.Text}
+            <Select
                 bindObject={this.props.designedObject}
                 bindPropName={this.props.propertyName}
+                valuesDataSource={(this.props as any as SelectEditorParams).selectValues}
                 onChange={this.props.onChange}
                 {...this.getRenderProps()}
             />
@@ -38,24 +40,23 @@ export class StringPropertyEditor extends BasePropertyEditor {
 
 }
 
-export interface StringEditorParams extends AutoFormControlProps {
-
+export interface SelectEditorParams extends AutoFormControlProps {
+    selectValues: SelectValuesDataSource<any> | any[];
 }
 
-export function StringEditor(params: StringEditorParams = {}): Function {
+export function SelectEditor(params: SelectEditorParams): Function {
     return function (target: any, propertyName: string) {
         //  console.log({target, propertyName, constr:target.constructor});
 
         let propertyEditorInfo: PropertyEditorInfo = {
             propertyName: propertyName,
             objectType: target.constructor,
-            editorType: StringPropertyEditor,
-            propertyType: String
+            editorType: SelectPropertyEditor,
+            propertyType: null
         };
 
         _.assign(propertyEditorInfo, params);
         registerPropertyEditor(propertyEditorInfo);
-
 
 
         // registerPropertyEditor({
@@ -66,8 +67,8 @@ export function StringEditor(params: StringEditorParams = {}): Function {
         //     propertyName: propertyName,
         //
         //     objectType: target.constructor,
-        //     editorType: StringPropertyEditor,
-        //     propertyType: String
+        //     editorType: SelectPropertyEditor,
+        //     propertyType: Select
         // });
     };
 }

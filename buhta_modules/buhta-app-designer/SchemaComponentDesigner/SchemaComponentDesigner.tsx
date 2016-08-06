@@ -195,8 +195,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
         let openParam: OpenWindowParams = {
             title: "редактирование",
-            top: 50,
-            left: 50,
+            autoPosition:"parent-center",
             parentWindowId: this.getParentWindowId()
         };
 

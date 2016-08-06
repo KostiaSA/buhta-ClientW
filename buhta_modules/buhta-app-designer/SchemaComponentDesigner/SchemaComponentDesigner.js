@@ -125,8 +125,7 @@ var SchemaComponentDesigner = (function (_super) {
             var win = React.createElement(ObjectDesigner_1.ObjectDesigner, {designedObject: designedObject, onSaveChanges: function () { _this.treeGridState.refreshFocusedRow(); }});
             var openParam = {
                 title: "редактирование",
-                top: 50,
-                left: 50,
+                autoPosition: "parent-center",
                 parentWindowId: _this.getParentWindowId()
             };
             _this.getParentDesktop().openWindow(win, openParam);

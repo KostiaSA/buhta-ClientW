@@ -40,6 +40,8 @@ import {ButtonControl} from "../../buhta-ui/ButtonControl";
 import {PanelControl} from "../../buhta-ui/PanelControl";
 import {checkAuth} from "../../buhta-core/Auth";
 import {LocalVariableControl} from "../../buhta-ui/LocalVariableControl";
+import {showTestSelectControlForm} from "../../buhta-test-ui/TestSelectControlForm";
+import {OneWayBinder} from "../../buhta-schema/OneWayBinder";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -827,6 +829,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { this.testOpenSchemaFormDesigner(); }}>
                                     test OpenSchemaFormDesigner
+                                </button>
+                                <br/>
+                                <button onClick={() => { showTestSelectControlForm(); }}>
+                                    showTestSelectControlForm
                                 </button>
                             </Fixed>
                             <Flex className="XXXcontent">
