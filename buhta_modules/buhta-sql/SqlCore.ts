@@ -39,7 +39,7 @@ export class SqlValue {
 }
 
 export function getNewGuid(): string {
-    return uuid.v1().toString();
+    return (uuid as any).v1().toString();
 }
 
 

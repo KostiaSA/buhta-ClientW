@@ -3,7 +3,7 @@ import {suite, test, slow, timeout, skip, only} from "mocha-typescript";
 import {assert} from "chai";
 import {
     SqlDialect, SqlStringValue, SqlDateTimeValue, SqlDateValue, SqlNumberValue,
-    SqlGuidValue
+    SqlGuidValue, getNewGuid
 } from "../../buhta-sql/SqlCore";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
 import * as moment from "moment";
@@ -67,7 +67,7 @@ function select_one_row(dialect: SqlDialect, done: () => void) {
     let testNumber = 1.79E+308;
     let testNumber2 = 9007199254740991;
     let testNumber3 = 9.0071992547402233224;
-    let testGuid = uuid.v1().toString();
+    let testGuid = getNewGuid();
 
     let select = new SelectStmt();
     select.columnAs(new SqlStringValue(testStr), "testStr");

@@ -5,7 +5,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var uuid = require("UUID");
 var mocha_typescript_1 = require("mocha-typescript");
 var chai_1 = require("chai");
 var SqlCore_1 = require("../../buhta-sql/SqlCore");
@@ -56,7 +55,7 @@ function select_one_row(dialect, done) {
     var testNumber = 1.79E+308;
     var testNumber2 = 9007199254740991;
     var testNumber3 = 9.0071992547402233224;
-    var testGuid = uuid.v1().toString();
+    var testGuid = SqlCore_1.getNewGuid();
     var select = new SelectStmt_1.SelectStmt();
     select.columnAs(new SqlCore_1.SqlStringValue(testStr), "testStr");
     //  select.addColumnAs(new SqlStringValue(testLongStr, dialect), "testLongStr");

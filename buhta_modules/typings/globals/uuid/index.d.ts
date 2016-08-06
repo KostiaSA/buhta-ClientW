@@ -46,7 +46,7 @@ declare module "UUID" {
      * @returns {UUID} A version 4 {@link UUID} object.
      * @since 3.0
      */
-    export function v4(): UUID; // buhta
+    export function genV4(): UUID;
 
 
     /**
@@ -54,7 +54,7 @@ declare module "UUID" {
      * @returns {UUID} A version 1 {@link UUID} object.
      * @since 3.0
      */
-    export function v1(): UUID; //buhta
+    export function genV1(): UUID;
 
     /**
      * Converts hexadecimal UUID string to an {@link UUID} object.
