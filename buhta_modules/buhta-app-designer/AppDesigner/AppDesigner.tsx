@@ -731,7 +731,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             form.children.push(but1);
 
             let but2 = new ButtonControl();
-            but2.text = "Буттон 2222";
+            but2.text = new OneWayBinder("Буттон 2222-222");
             form.children.push(but2);
 
             let panel = new PanelControl();

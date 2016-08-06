@@ -1,11 +1,11 @@
 "use strict";
 var _ = require("lodash");
 var Error_1 = require("../../Error");
-var SelectValuesDataSourceFromArray = (function () {
-    function SelectValuesDataSourceFromArray(arr) {
+var SelectInputDataSourceFromArray = (function () {
+    function SelectInputDataSourceFromArray(arr) {
         this.arr = arr;
     }
-    SelectValuesDataSourceFromArray.prototype.getItems = function () {
+    SelectInputDataSourceFromArray.prototype.getItems = function () {
         return this.arr.map(function (item, index) {
             if (_.isString(item) || _.isNumber(item) || _.isDate(item))
                 return { label: item.toString(), value: item, disabled: false };
@@ -26,12 +26,12 @@ var SelectValuesDataSourceFromArray = (function () {
                 return { label: label, value: value, disabled: disabled };
             }
             else {
-                Error_1.throwError("SelectValuesDataSourceFromArray: invalid select item type");
+                Error_1.throwError("SelectInputDataSourceFromArray: invalid select item type");
                 throw "fake";
             }
         });
     };
-    return SelectValuesDataSourceFromArray;
+    return SelectInputDataSourceFromArray;
 }());
-exports.SelectValuesDataSourceFromArray = SelectValuesDataSourceFromArray;
-//# sourceMappingURL=SelectValuesDataSourceFromArray.js.map
+exports.SelectInputDataSourceFromArray = SelectInputDataSourceFromArray;
+//# sourceMappingURL=SelectInputDataSourceFromArray.js.map

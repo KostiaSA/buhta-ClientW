@@ -5,8 +5,8 @@ import {BasePropertyEditor, PropertyEditorInfo} from "./BasePropertyEditor";
 import {registerPropertyEditor} from "./registerPropertyEditor";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
-import {SelectValuesDataSource} from "../../buhta-core/Components/Select/SelectValuesDataSource";
-import {Select} from "../../buhta-core/Components/Select/Select";
+import {SelectInputDataSource} from "../../buhta-core/Components/SelectInput/SelectInputDataSource";
+import {SelectInput} from "../../buhta-core/Components/SelectInput/SelectInput";
 
 
 export class SelectPropertyEditor extends BasePropertyEditor {
@@ -28,7 +28,7 @@ export class SelectPropertyEditor extends BasePropertyEditor {
         this.addProps(autoFormControlProps);
 
         return (
-            <Select
+            <SelectInput
                 bindObject={this.props.designedObject}
                 bindPropName={this.props.propertyName}
                 valuesDataSource={(this.props as any as SelectEditorParams).selectValues}
@@ -41,7 +41,7 @@ export class SelectPropertyEditor extends BasePropertyEditor {
 }
 
 export interface SelectEditorParams extends AutoFormControlProps {
-    selectValues: SelectValuesDataSource<any> | any[];
+    selectValues: SelectInputDataSource<any> | any[];
 }
 
 export function SelectEditor(params: SelectEditorParams): Function {
@@ -68,7 +68,7 @@ export function SelectEditor(params: SelectEditorParams): Function {
         //
         //     objectType: target.constructor,
         //     editorType: SelectPropertyEditor,
-        //     propertyType: Select
+        //     propertyType: SelectInput
         // });
     };
 }

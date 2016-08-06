@@ -1,7 +1,8 @@
 import * as React from "react";
 import {ComponentProps, Component, ComponentState} from "../Component";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
-import {OneWayBinderType, OneWayBinder} from "../../../buhta-schema/OneWayBinder";
+import {OneWayBinderType, OneWayBinder, getOneWayBinderTypesDataSource} from "../../../buhta-schema/OneWayBinder";
+import {SelectInput} from "../SelectInput/SelectInput";
 
 export interface OneWayBinderInputProps extends ComponentProps<any>, AutoFormControlProps {
     bindObject: any;
@@ -68,16 +69,23 @@ export class OneWayBinderInput extends Component<OneWayBinderInputProps, any> {
     }
 
     render(): JSX.Element {
+
+        let editedBinder: OneWayBinder<any>;
+        if (!(this.props.bindObject[this.props.bindPropName] instanceof OneWayBinder))
+            this.props.bindObject[this.props.bindPropName] = new OneWayBinder<any>(this.props.bindObject[this.props.bindPropName]);
+
+        editedBinder = this.props.bindObject[this.props.bindPropName];
+
+
         return (
             <p className="control has-addons">
-              <span className="select">
-                <select>
-                  <option>$</option>
-                  <option>£</option>
-                  <option>€</option>
-                </select>
-              </span>
-              <input className="input" type="text" placeholder="Amount of money"/>
+                <SelectInput
+                    bindObject={editedBinder}
+                    bindPropName="binderType"
+                    valuesDataSource={getOneWayBinderTypesDataSource()}
+                >
+                </SelectInput>
+                <input className="input" type="text" placeholder="Amount of money"/>
             </p>
         );
 

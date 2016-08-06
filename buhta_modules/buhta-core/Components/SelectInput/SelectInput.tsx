@@ -2,14 +2,14 @@ import * as React from "react";
 import * as _ from "lodash";
 import {ComponentProps, Component} from "../Component";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
-import {SelectValuesDataSource, SelectValuesItem} from "./SelectValuesDataSource";
-import {SelectValuesDataSourceFromArray} from "./SelectValuesDataSourceFromArray";
+import {SelectInputDataSource, SelectInputItem} from "./SelectInputDataSource";
+import {SelectInputDataSourceFromArray} from "./SelectInputDataSourceFromArray";
 
 
-export interface SelectProps<T> extends ComponentProps<any>, AutoFormControlProps {
+export interface SelectInputProps<T> extends ComponentProps<any>, AutoFormControlProps {
     bindObject: any;
     bindPropName: string;
-    valuesDataSource: SelectValuesDataSource<T> | any[];
+    valuesDataSource: SelectInputDataSource<T> | any[];
     maxWidth?: number;
     //onClick?: React.ReactEventHandler;
     placeHolder?: string;
@@ -17,8 +17,8 @@ export interface SelectProps<T> extends ComponentProps<any>, AutoFormControlProp
 }
 
 
-export class Select extends Component<SelectProps<any>, any> {
-    constructor(props: SelectProps<any>, context: any) {
+export class SelectInput extends Component<SelectInputProps<any>, any> {
+    constructor(props: SelectInputProps<any>, context: any) {
         super(props, context);
         this.props = props;
     }
@@ -49,13 +49,13 @@ export class Select extends Component<SelectProps<any>, any> {
 
 
     renderOptions(): JSX.Element[] {
-        let ds: SelectValuesDataSource<any>;
+        let ds: SelectInputDataSource<any>;
         if (_.isArray(this.props.valuesDataSource))
-            ds = new SelectValuesDataSourceFromArray(this.props.valuesDataSource)
+            ds = new SelectInputDataSourceFromArray(this.props.valuesDataSource)
         else
-            ds = this.props.valuesDataSource as SelectValuesDataSource<any>;
+            ds = this.props.valuesDataSource as SelectInputDataSource<any>;
 
-        return ds.getItems().map((item: SelectValuesItem<any>, index: number) => {
+        return ds.getItems().map((item: SelectInputItem<any>, index: number) => {
             return (
                 <option value={item.value} key={index} disabled={item.disabled}>
                     {item.label}
@@ -73,14 +73,15 @@ export class Select extends Component<SelectProps<any>, any> {
 
 
         return (
-            <select
-                type="text"
-                value={this.getValue()}
-                onChange={this.handleOnChange}
-                {...this.getRenderProps()}
-            >
-                {this.renderOptions()}
-            </select>
+            <span {...this.getRenderProps()}>
+                <select
+                    type="text"
+                    value={this.getValue()}
+                    onChange={this.handleOnChange}
+                >
+                    {this.renderOptions()}
+                </select>
+            </span>
         );
     }
 

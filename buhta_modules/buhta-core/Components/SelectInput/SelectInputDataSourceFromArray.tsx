@@ -1,16 +1,16 @@
 import * as React from "react";
 import * as _ from "lodash";
-import {SelectValuesDataSource, SelectValuesItem} from "./SelectValuesDataSource";
+import {SelectInputDataSource, SelectInputItem} from "./SelectInputDataSource";
 import {throwError} from "../../Error";
 
 
-export class SelectValuesDataSourceFromArray<T> implements SelectValuesDataSource<T> {
+export class SelectInputDataSourceFromArray<T> implements SelectInputDataSource<T> {
     constructor(private arr: any[]) {
 
     }
 
-    getItems(): SelectValuesItem<T>[] {
-        return this.arr.map<SelectValuesItem<T>>((item: any, index: number)=> {
+    getItems(): SelectInputItem<T>[] {
+        return this.arr.map<SelectInputItem<T>>((item: any, index: number)=> {
             if (_.isString(item) || _.isNumber(item) || _.isDate(item))
                 return {label: item.toString(), value: item, disabled: false};
             else if (_.isArray(item))
@@ -30,7 +30,7 @@ export class SelectValuesDataSourceFromArray<T> implements SelectValuesDataSourc
                 return {label, value, disabled};
             }
             else {
-                throwError("SelectValuesDataSourceFromArray: invalid select item type");
+                throwError("SelectInputDataSourceFromArray: invalid select item type");
                 throw "fake";
             }
 

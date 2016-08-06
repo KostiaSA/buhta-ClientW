@@ -5,13 +5,14 @@ import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringProperty
 import {Component} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
 import {OneWayBinder} from "../buhta-schema/OneWayBinder";
+import {OneWayBinderEditor} from "../buhta-app-designer/PropertyEditors/OneWayBinderPropertyEditor";
 
 export class ButtonControl extends BaseControl {
-    @StringEditor({
+    @OneWayBinderEditor({
         inputCaption: "Текст"
     })
     text: string | OneWayBinder<string>;
-    
+
     @StringEditor({
         inputCaption: "Текст2"
     })
@@ -43,7 +44,7 @@ export class ButtonControl extends BaseControl {
 
     get $$controlMainProps() {
         return (
-            <span>text="{this.text}"</span>
+            <span>text="{this.text.toString()}"</span>
         );
     }
 
