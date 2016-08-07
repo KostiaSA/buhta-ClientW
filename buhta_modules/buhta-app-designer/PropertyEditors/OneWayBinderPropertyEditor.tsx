@@ -66,7 +66,7 @@ export function OneWayBinderEditor(params: OneWayBinderEditorParams): Function {
         //
         //     objectType: target.constructor,
         //     editorType: OneWayBinderPropertyEditor,
-        //     propertyType: OneWayBinder
+        //     propertyType: OneWayBinder_base
         // });
     };
 }

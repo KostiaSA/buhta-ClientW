@@ -3,7 +3,7 @@ import {BaseControl} from "./BaseControl";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {Component} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
-import {OneWayBinder} from "../buhta-schema/OneWayBinder";
+import {OneWayBinder_base} from "../buhta-schema/OneWayBinder/OneWayBinder";
 import {SelectEditor} from "../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
 
 export type LocalVariableType = "number" | "string" | "date" | "guid";
@@ -23,7 +23,7 @@ export class LocalVariableControl extends BaseControl {
     @StringEditor({
         inputCaption: "значение"
     })
-    initValue: OneWayBinder<any>;
+    initValue: OneWayBinder_base<any>;
 
     get $$controlName() {
         return "var " + this.variableName;

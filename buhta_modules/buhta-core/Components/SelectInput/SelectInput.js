@@ -33,7 +33,7 @@ var SelectInput = (function (_super) {
         };
         this.handleOnChange = function (event) {
             if (_this.props.bindObject && _this.props.bindPropName)
-                _this.props.bindObject[_this.props.bindPropName] = event.target.value;
+                _this.props.bindObject[_this.props.bindPropName] = _this.ds.getItems()[event.target.value].value;
             _this.forceUpdate();
             if (_this.props.onChange)
                 _this.props.onChange();
@@ -44,13 +44,12 @@ var SelectInput = (function (_super) {
         _super.prototype.willMount.call(this);
     };
     SelectInput.prototype.renderOptions = function () {
-        var ds;
         if (_.isArray(this.props.valuesDataSource))
-            ds = new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(this.props.valuesDataSource);
+            this.ds = new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(this.props.valuesDataSource);
         else
-            ds = this.props.valuesDataSource;
-        return ds.getItems().map(function (item, index) {
-            return (React.createElement("option", {value: item.value, key: index, disabled: item.disabled}, item.label));
+            this.ds = this.props.valuesDataSource;
+        return this.ds.getItems().map(function (item, index) {
+            return (React.createElement("option", {value: index, key: index, disabled: item.disabled}, item.label));
         });
     };
     SelectInput.prototype.render = function () {

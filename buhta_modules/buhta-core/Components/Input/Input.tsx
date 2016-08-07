@@ -29,6 +29,8 @@ export class Input extends Component<InputProps, any> {
         switch (this.props.type) {
             case InputType.Text:
                 return this.renderText();
+            case InputType.Number:
+                return this.renderNumber();
             default:
                 throw  "Input.render():=> unknown InputType '" + this.props.type + "'";
         }
@@ -45,7 +47,27 @@ export class Input extends Component<InputProps, any> {
             return "<unbinded>";
     };
 
-    handleOnChange = (event: React.SyntheticEvent) => {
+    getNumber = (): string => {
+        if (this.props.bindObject && this.props.bindPropName) {
+            if (this.props.bindObject[this.props.bindPropName])
+                return this.props.bindObject[this.props.bindPropName].toString();
+            else
+                return "";
+        }
+        else
+            return "<unbinded>";
+    };
+
+    handleOnChangeText = (event: React.SyntheticEvent) => {
+        if (this.props.bindObject && this.props.bindPropName)
+            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
+        this.forceUpdate();
+        if (this.props.onChange)
+            this.props.onChange();
+
+    };
+
+    handleOnChangeNumber = (event: React.SyntheticEvent) => {
         if (this.props.bindObject && this.props.bindPropName)
             this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
         this.forceUpdate();
@@ -58,16 +80,33 @@ export class Input extends Component<InputProps, any> {
 
         this.clearStyles();
         this.addClassName("input");
-        this.addStyles(this.props.style);
+        this.addStyles({width: 300});
+
+        //   this.addStyles(this.props.style);
 
         return (
             <input
                 type="text"
                 value={this.getText()}
-                onChange={this.handleOnChange}
+                onChange={this.handleOnChangeText}
                 {...this.getRenderProps()}
             />
         );
     }
 
+    renderNumber(): JSX.Element {
+
+        this.clearStyles();
+        this.addClassName("input");
+        this.addStyles({width: 150});
+
+        return (
+            <input
+                type="number"
+                value={this.getNumber()}
+                onChange={this.handleOnChangeNumber}
+                {...this.getRenderProps()}
+            />
+        );
+    }
 }

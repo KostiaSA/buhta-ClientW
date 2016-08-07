@@ -40,24 +40,24 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
 
     handleOnChange = (event: React.SyntheticEvent) => {
         if (this.props.bindObject && this.props.bindPropName)
-            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
+            this.props.bindObject[this.props.bindPropName] = this.ds.getItems()[(event.target as any).value].value;
         this.forceUpdate();
         if (this.props.onChange)
             this.props.onChange();
 
     };
 
+    private ds: SelectInputDataSource<any>;
 
     renderOptions(): JSX.Element[] {
-        let ds: SelectInputDataSource<any>;
         if (_.isArray(this.props.valuesDataSource))
-            ds = new SelectInputDataSourceFromArray(this.props.valuesDataSource)
+            this.ds = new SelectInputDataSourceFromArray(this.props.valuesDataSource)
         else
-            ds = this.props.valuesDataSource as SelectInputDataSource<any>;
+            this.ds = this.props.valuesDataSource as SelectInputDataSource<any>;
 
-        return ds.getItems().map((item: SelectInputItem<any>, index: number) => {
+        return this.ds.getItems().map((item: SelectInputItem<any>, index: number) => {
             return (
-                <option value={item.value} key={index} disabled={item.disabled}>
+                <option value={index} key={index} disabled={item.disabled}>
                     {item.label}
                 </option>
             )
@@ -70,7 +70,6 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
         this.clearStyles();
         this.addClassName("select");
         this.addStyles(this.props.style);
-
 
         return (
             <span {...this.getRenderProps()}>
