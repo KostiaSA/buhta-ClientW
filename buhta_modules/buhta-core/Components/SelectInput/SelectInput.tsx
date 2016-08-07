@@ -5,7 +5,6 @@ import {AutoFormControlProps} from "../AutoForm/AutoForm";
 import {SelectInputDataSource, SelectInputItem} from "./SelectInputDataSource";
 import {SelectInputDataSourceFromArray} from "./SelectInputDataSourceFromArray";
 
-
 export interface SelectInputProps<T> extends ComponentProps<any>, AutoFormControlProps {
     bindObject: any;
     bindPropName: string;

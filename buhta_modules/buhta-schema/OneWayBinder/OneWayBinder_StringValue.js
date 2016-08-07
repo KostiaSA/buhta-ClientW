@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var React = require("react");
 var OneWayBinder_1 = require("./OneWayBinder");
 var Input_1 = require("../../buhta-core/Components/Input/Input");
+OneWayBinder_1.registerOneWayBinder("Строка", function () { return new OneWayBinder_StringValue(); });
 var OneWayBinder_StringValue = (function (_super) {
     __extends(OneWayBinder_StringValue, _super);
     function OneWayBinder_StringValue(value) {
@@ -25,7 +26,6 @@ var OneWayBinder_StringValue = (function (_super) {
             onChangeCallback(); }}));
     };
     return OneWayBinder_StringValue;
-}(OneWayBinder_1.OneWayBinder_base));
+}(OneWayBinder_1.OneWayBinder));
 exports.OneWayBinder_StringValue = OneWayBinder_StringValue;
-OneWayBinder_1.registerOneWayBinder("Строка", function () { return new OneWayBinder_StringValue(); });
 //# sourceMappingURL=OneWayBinder_StringValue.js.map

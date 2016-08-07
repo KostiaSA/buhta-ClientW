@@ -5,17 +5,24 @@ import {SchemaForm} from "../buhta-schema/SchemaForm/SchemaForm";
 import {ButtonControl} from "../buhta-ui/ButtonControl";
 import {PanelControl} from "../buhta-ui/PanelControl";
 import {LocalVariableControl} from "../buhta-ui/LocalVariableControl";
+import {OneWayBinder_NumberValue} from "../buhta-schema/OneWayBinder/OneWayBinder_NumberValue";
+import {OneWayBinder_StringValue} from "../buhta-schema/OneWayBinder/OneWayBinder_StringValue";
 
-export let buhta: any = {};
+export let buhtaHost: any = {};
 
-buhta.SchemaObject = SchemaObject;
-buhta.SchemaTable = SchemaTable;
-buhta.SchemaTableColumn = SchemaTableColumn;
+buhtaHost.SchemaObject = SchemaObject;
+buhtaHost.SchemaTable = SchemaTable;
+buhtaHost.SchemaTableColumn = SchemaTableColumn;
 
-buhta.SchemaForm = SchemaForm;
+buhtaHost.SchemaForm = SchemaForm;
 
-buhta.ButtonControl = ButtonControl;
-buhta.PanelControl = PanelControl;
-buhta.LocalVariableControl = LocalVariableControl;
+buhtaHost.ButtonControl = ButtonControl;
 
-(window as any).buhta = buhta;
+buhtaHost.PanelControl = PanelControl;
+buhtaHost.LocalVariableControl = LocalVariableControl;
+
+buhtaHost.OneWayBinder_NumberValue = OneWayBinder_NumberValue;
+buhtaHost.OneWayBinder_StringValue = OneWayBinder_StringValue;
+
+
+(window as any).buhta = buhtaHost;

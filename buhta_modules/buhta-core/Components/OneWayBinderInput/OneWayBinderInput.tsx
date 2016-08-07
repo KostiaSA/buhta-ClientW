@@ -1,7 +1,7 @@
 import * as React from "react";
 import {ComponentProps, Component, ComponentState} from "../Component";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
-import {OneWayBinder_base, getOneWayBinderTypesDataSource} from "../../../buhta-schema/OneWayBinder/OneWayBinder";
+import {OneWayBinder, getOneWayBinderTypesDataSource} from "../../../buhta-schema/OneWayBinder/OneWayBinder";
 import {SelectInput} from "../SelectInput/SelectInput";
 import {SelectInputDataSource} from "../SelectInput/SelectInputDataSource";
 
@@ -19,7 +19,7 @@ export interface OneWayBinderInputProps extends ComponentProps<any>, AutoFormCon
 //     constructor(private input: OneWayBinderInput) {
 //         super(input);
 //     }
-//     editedValue: OneWayBinder_base<any>;
+//     editedValue: OneWayBinder<any>;
 // }
 
 export class OneWayBinderInput extends Component<OneWayBinderInputProps, any> {
@@ -71,17 +71,13 @@ export class OneWayBinderInput extends Component<OneWayBinderInputProps, any> {
 
     };
 
-    private selectDataSource: SelectInputDataSource<OneWayBinder_base<any>>;
-    private activeBinder: OneWayBinder_base<any>;
+    private selectDataSource: SelectInputDataSource<OneWayBinder<any>>;
+    private activeBinder: OneWayBinder<any>;
 
     render(): JSX.Element {
 
-        // let editedBinder: OneWayBinder_base<any>;
-        // if (!(this.props.bindObject[this.props.bindPropName] instanceof OneWayBinder_base))
-        //     this.props.bindObject[this.props.bindPropName] = new OneWayBinder_base<any>(this.props.bindObject[this.props.bindPropName]);
-
         if (!this.activeBinder)
-            this.activeBinder = this.props.bindObject[this.props.bindPropName] as OneWayBinder_base<any>;
+            this.activeBinder = this.props.bindObject[this.props.bindPropName] as OneWayBinder<any>;
 
         if (!this.selectDataSource)
             this.selectDataSource = getOneWayBinderTypesDataSource(this.activeBinder);

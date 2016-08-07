@@ -6,14 +6,8 @@ import {SelectInputDataSourceFromArray} from "../../buhta-core/Components/Select
 import {OneWayBinder_NumberValue} from "./OneWayBinder_NumberValue";
 import {OneWayBinder_StringValue} from "./OneWayBinder_StringValue";
 
-//export type OneWayBinderType = "value" | "variable" | "string" | "number";
-
-let fake1: OneWayBinder_NumberValue;
-let fake2: OneWayBinder_StringValue;
-
-
-export function getOneWayBinderTypesDataSource(activeBinder?: OneWayBinder_base<any>): SelectInputDataSource<OneWayBinder_base<any>> {
-    return new SelectInputDataSourceFromArray<OneWayBinder_base<any>>(
+export function getOneWayBinderTypesDataSource(activeBinder?: OneWayBinder<any>): SelectInputDataSource<OneWayBinder<any>> {
+    return new SelectInputDataSourceFromArray<OneWayBinder<any>>(
         registeredOneWayBinders.map((binderInfo: OneWayBinderInfo)=> {
 
             let retDataSourceItem = {
@@ -26,22 +20,16 @@ export function getOneWayBinderTypesDataSource(activeBinder?: OneWayBinder_base<
             return retDataSourceItem;
 
         }));
-    // [
-    // ["value", "Значение?"],
-    // [new OneWayBinderType_StringValue(), "Строка"],
-    // ["number", "Число"],
-    // ["date", "Дата"],
-    // ["variable", "Переменная"]
 }
 
 interface OneWayBinderInfo {
     binderName: string;
-    createBinderCallback: ()=>OneWayBinder_base<any>;
+    createBinderCallback: ()=>OneWayBinder<any>;
 }
 
 let registeredOneWayBinders: OneWayBinderInfo[] = [];
 
-export function registerOneWayBinder(binderName: string, createBinderCallback: ()=>OneWayBinder_base<any>) {
+export function registerOneWayBinder(binderName: string, createBinderCallback: ()=>OneWayBinder<any>) {
     let info: OneWayBinderInfo = {
         binderName: binderName,
         createBinderCallback: createBinderCallback
@@ -49,31 +37,11 @@ export function registerOneWayBinder(binderName: string, createBinderCallback: (
     registeredOneWayBinders.push(info);
 }
 
-export class OneWayBinder_base<T> extends DesignedObject {
-//    binderType: OneWayBinderType;
-//    value: T | undefined;
-//    localVariable: any;
-
-    // constructor(value?: T) {
-    //     super();
-    //     this.value = value;
-    //     if (_.isString(value))
-    //         this.binderType = "string";
-    //     else if (_.isNumber(value))
-    //         this.binderType = "number";
-    //     else if (value !== undefined)
-    //         this.binderType = "value";
-    // }
+export class OneWayBinder<T> extends DesignedObject {
 
     getValue(): T {
         throwAbstractError();
         throw  "fake";
-        // if (this.binderType === "value")
-        //     return this.value!;
-        // else {
-        //     throwAbstractError();
-        //     throw  "fake";
-        // }
     }
 
     renderValueEditor(onChangeCallback?: ()=>void): JSX.Element {

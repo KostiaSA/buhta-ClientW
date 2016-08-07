@@ -2,16 +2,15 @@ import * as React from "react";
 import * as _ from "lodash";
 import {BaseControl} from "./BaseControl";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
-import {Component} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
-import {OneWayBinder_base} from "../buhta-schema/OneWayBinder/OneWayBinder";
+import {OneWayBinder} from "../buhta-schema/OneWayBinder/OneWayBinder";
 import {OneWayBinderEditor} from "../buhta-app-designer/PropertyEditors/OneWayBinderPropertyEditor";
 
 export class ButtonControl extends BaseControl {
     @OneWayBinderEditor({
         inputCaption: "Текст"
     })
-    text: string | OneWayBinder_base<string>;
+    text: string | OneWayBinder<string>;
 
     @StringEditor({
         inputCaption: "Текст2"
@@ -30,7 +29,7 @@ export class ButtonControl extends BaseControl {
         if (_.isString(this.text))
             return {text: this.text};
         else
-            return {text: (this.text as OneWayBinder_base<string>).getValue()};
+            return {text: (this.text as OneWayBinder<string>).getValue()};
 
     }
 

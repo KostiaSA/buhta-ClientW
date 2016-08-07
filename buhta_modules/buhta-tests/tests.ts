@@ -1,5 +1,5 @@
-import {buhta} from "../buhta-core/BuhtaHost";  // не удалять
-let fakeBuhtaHost = buhta; // не удалять
+import {buhtaHost} from "../buhta-core/BuhtaHost";  // не удалять
+let fakeBuhtaHost = buhtaHost; // не удалять
 
 
 export * from "./sql/CheckDataTypes.test";

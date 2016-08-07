@@ -1,8 +1,11 @@
 import * as React from "react";
-import {OneWayBinder_base, registerOneWayBinder} from "./OneWayBinder";
+import {OneWayBinder, registerOneWayBinder} from "./OneWayBinder";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 
-export class OneWayBinder_NumberValue extends OneWayBinder_base<number> {
+
+registerOneWayBinder("Число", ()=>new OneWayBinder_NumberValue());
+
+export class OneWayBinder_NumberValue extends OneWayBinder<number> {
     value: number | undefined;
 
     constructor(value?: number) {
@@ -32,4 +35,3 @@ export class OneWayBinder_NumberValue extends OneWayBinder_base<number> {
 
 }
 
-registerOneWayBinder("Число", ()=>new OneWayBinder_NumberValue());

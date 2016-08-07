@@ -41,7 +41,7 @@ import {PanelControl} from "../../buhta-ui/PanelControl";
 import {checkAuth} from "../../buhta-core/Auth";
 import {LocalVariableControl} from "../../buhta-ui/LocalVariableControl";
 import {showTestSelectControlForm} from "../../buhta-test-ui/TestSelectControlForm";
-import {OneWayBinder_base} from "../../buhta-schema/OneWayBinder/OneWayBinder";
+import {OneWayBinder} from "../../buhta-schema/OneWayBinder/OneWayBinder";
 import {OneWayBinder_StringValue} from "../../buhta-schema/OneWayBinder/OneWayBinder_StringValue";
 import {OneWayBinder_NumberValue} from "../../buhta-schema/OneWayBinder/OneWayBinder_NumberValue";
 
@@ -734,7 +734,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let but2 = new ButtonControl();
             but2.text = new OneWayBinder_StringValue("Буттон 2222-222");
-            let x=new OneWayBinder_NumberValue(100);
+            //let x=new OneWayBinder_NumberValue(100);
             form.children.push(but2);
 
             let panel = new PanelControl();

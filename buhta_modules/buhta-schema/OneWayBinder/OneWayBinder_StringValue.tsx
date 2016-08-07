@@ -1,8 +1,10 @@
 import * as React from "react";
-import {OneWayBinder_base, registerOneWayBinder} from "./OneWayBinder";
+import {OneWayBinder, registerOneWayBinder} from "./OneWayBinder";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 
-export class OneWayBinder_StringValue extends OneWayBinder_base<string> {
+registerOneWayBinder("Строка", ()=>new OneWayBinder_StringValue());
+
+export class OneWayBinder_StringValue extends OneWayBinder<string> {
     value: string | undefined;
 
     constructor(value?: string) {
@@ -32,5 +34,4 @@ export class OneWayBinder_StringValue extends OneWayBinder_base<string> {
 }
 
 
-registerOneWayBinder("Строка", ()=>new OneWayBinder_StringValue());
 
