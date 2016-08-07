@@ -22,18 +22,17 @@ var SelectInput = (function (_super) {
         var _this = this;
         _super.call(this, props, context);
         this.getValue = function () {
-            if (_this.props.bindObject && _this.props.bindPropName) {
-                if (_this.props.bindObject[_this.props.bindPropName])
-                    return _this.props.bindObject[_this.props.bindPropName].toString();
-                else
-                    return "";
+            for (var i = 0; i < _this.ds.getItems().length; i++) {
+                if (_this.ds.getItems()[i].value === _this.props.bindObject[_this.props.bindPropName])
+                    return i.toString();
             }
-            else
-                return "<unbinded>";
+            return "-1";
         };
         this.handleOnChange = function (event) {
             if (_this.props.bindObject && _this.props.bindPropName)
                 _this.props.bindObject[_this.props.bindPropName] = _this.ds.getItems()[event.target.value].value;
+            //  console.log("select");
+            //  console.log(this.ds.getItems()[(event.target as any).value].value);
             _this.forceUpdate();
             if (_this.props.onChange)
                 _this.props.onChange();
@@ -44,15 +43,15 @@ var SelectInput = (function (_super) {
         _super.prototype.willMount.call(this);
     };
     SelectInput.prototype.renderOptions = function () {
-        if (_.isArray(this.props.valuesDataSource))
-            this.ds = new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(this.props.valuesDataSource);
-        else
-            this.ds = this.props.valuesDataSource;
         return this.ds.getItems().map(function (item, index) {
             return (React.createElement("option", {value: index, key: index, disabled: item.disabled}, item.label));
         });
     };
     SelectInput.prototype.render = function () {
+        if (_.isArray(this.props.valuesDataSource))
+            this.ds = new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(this.props.valuesDataSource);
+        else
+            this.ds = this.props.valuesDataSource;
         this.clearStyles();
         this.addClassName("select");
         this.addStyles(this.props.style);

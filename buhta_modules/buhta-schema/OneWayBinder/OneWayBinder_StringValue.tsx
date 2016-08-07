@@ -17,7 +17,7 @@ export class OneWayBinder_StringValue extends OneWayBinder_base<string> {
             return this.value;
     }
 
-    renderValueEditor(): JSX.Element {
+    renderValueEditor(onChangeCallback?: ()=>void): JSX.Element {
 
         //onChange={this.handleOnChange}
         return (
@@ -25,6 +25,7 @@ export class OneWayBinder_StringValue extends OneWayBinder_base<string> {
                 type={InputType.Text}
                 bindObject={this}
                 bindPropName="value"
+                onChange={()=>{ if (onChangeCallback) onChangeCallback() }}
             />
         );
     }

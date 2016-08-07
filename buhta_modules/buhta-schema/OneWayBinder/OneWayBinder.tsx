@@ -12,13 +12,19 @@ let fake1: OneWayBinder_NumberValue;
 let fake2: OneWayBinder_StringValue;
 
 
-export function getOneWayBinderTypesDataSource(): SelectInputDataSource<OneWayBinder_base<any>> {
+export function getOneWayBinderTypesDataSource(activeBinder?: OneWayBinder_base<any>): SelectInputDataSource<OneWayBinder_base<any>> {
     return new SelectInputDataSourceFromArray<OneWayBinder_base<any>>(
         registeredOneWayBinders.map((binderInfo: OneWayBinderInfo)=> {
-            return {
+
+            let retDataSourceItem = {
                 label: binderInfo.binderName,
                 value: binderInfo.createBinderCallback()
             }
+
+            if (activeBinder !== undefined && activeBinder.constructor === retDataSourceItem.value.constructor)
+                retDataSourceItem.value = activeBinder;
+            return retDataSourceItem;
+
         }));
     // [
     // ["value", "Значение?"],
@@ -70,7 +76,7 @@ export class OneWayBinder_base<T> extends DesignedObject {
         // }
     }
 
-    renderValueEditor(): JSX.Element {
+    renderValueEditor(onChangeCallback?: ()=>void): JSX.Element {
         throwAbstractError();
         throw  "fake";
     }

@@ -17,7 +17,7 @@ export class OneWayBinder_NumberValue extends OneWayBinder_base<number> {
             return this.value;
     }
 
-    renderValueEditor(): JSX.Element {
+    renderValueEditor(onChangeCallback?: ()=>void): JSX.Element {
 
         //onChange={this.handleOnChange}
         return (
@@ -25,6 +25,7 @@ export class OneWayBinder_NumberValue extends OneWayBinder_base<number> {
                 type={InputType.Number}
                 bindObject={this}
                 bindPropName="value"
+                onChange={()=>{ if (onChangeCallback) onChangeCallback() }}
             />
         );
     }

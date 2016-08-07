@@ -53,24 +53,18 @@ export class OneWayBinderInput extends Component<OneWayBinderInputProps, any> {
 
     };
 
-    // renderEditor(): JSX.Element {
-    //
-    //     let editedBinder = this.props.bindObject[this.props.bindPropName] as OneWayBinder_base<any>;
-    //     if (editedBinder)
-    //
-    //         return (
-    //             <input
-    //                 type="text"
-    //                 value={this.getText()}
-    //                 onChange={this.handleOnChange}
-    //                 {...this.getRenderProps()}
-    //             />
-    //         );
-    // }
-
     handleSelectChange = () => {
         if (this.props.bindObject && this.props.bindPropName)
-            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
+            this.props.bindObject[this.props.bindPropName] = this.activeBinder;
+        //console.log("this.activeBinder");
+        //console.log(this.activeBinder);
+        this.forceUpdate();
+        if (this.props.onChange)
+            this.props.onChange();
+
+    };
+
+    handleValueChange = () => {
         this.forceUpdate();
         if (this.props.onChange)
             this.props.onChange();
@@ -90,7 +84,7 @@ export class OneWayBinderInput extends Component<OneWayBinderInputProps, any> {
             this.activeBinder = this.props.bindObject[this.props.bindPropName] as OneWayBinder_base<any>;
 
         if (!this.selectDataSource)
-            this.selectDataSource = getOneWayBinderTypesDataSource();
+            this.selectDataSource = getOneWayBinderTypesDataSource(this.activeBinder);
 
         return (
             <p className="control has-addons">
@@ -98,10 +92,12 @@ export class OneWayBinderInput extends Component<OneWayBinderInputProps, any> {
                     bindObject={this}
                     bindPropName="activeBinder"
                     valuesDataSource={this.selectDataSource}
-                    onChange={ ()=>{ this.forceUpdate(); console.log(this.activeBinder)} }
+                    onChange={ this.handleSelectChange }
                 >
                 </SelectInput>
-                {this.activeBinder.renderValueEditor()}
+                {this.activeBinder.renderValueEditor(()=> {
+                    this.handleValueChange();
+                })}
             </p>
         );
 

@@ -28,19 +28,19 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
     }
 
     getValue = (): string => {
-        if (this.props.bindObject && this.props.bindPropName) {
-            if (this.props.bindObject[this.props.bindPropName])
-                return this.props.bindObject[this.props.bindPropName].toString();
-            else
-                return "";
+        for (let i=0; i<this.ds.getItems().length;i++){
+            if (this.ds.getItems()[i].value===this.props.bindObject[this.props.bindPropName])
+                return i.toString();
         }
-        else
-            return "<unbinded>";
+        return "-1";
     };
 
     handleOnChange = (event: React.SyntheticEvent) => {
+
         if (this.props.bindObject && this.props.bindPropName)
             this.props.bindObject[this.props.bindPropName] = this.ds.getItems()[(event.target as any).value].value;
+      //  console.log("select");
+      //  console.log(this.ds.getItems()[(event.target as any).value].value);
         this.forceUpdate();
         if (this.props.onChange)
             this.props.onChange();
@@ -49,11 +49,9 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
 
     private ds: SelectInputDataSource<any>;
 
+
+
     renderOptions(): JSX.Element[] {
-        if (_.isArray(this.props.valuesDataSource))
-            this.ds = new SelectInputDataSourceFromArray(this.props.valuesDataSource)
-        else
-            this.ds = this.props.valuesDataSource as SelectInputDataSource<any>;
 
         return this.ds.getItems().map((item: SelectInputItem<any>, index: number) => {
             return (
@@ -66,6 +64,10 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
 
 
     render(): JSX.Element {
+        if (_.isArray(this.props.valuesDataSource))
+            this.ds = new SelectInputDataSourceFromArray(this.props.valuesDataSource)
+        else
+            this.ds = this.props.valuesDataSource as SelectInputDataSource<any>;
 
         this.clearStyles();
         this.addClassName("select");

@@ -19,9 +19,10 @@ var OneWayBinder_StringValue = (function (_super) {
         else
             return this.value;
     };
-    OneWayBinder_StringValue.prototype.renderValueEditor = function () {
+    OneWayBinder_StringValue.prototype.renderValueEditor = function (onChangeCallback) {
         //onChange={this.handleOnChange}
-        return (React.createElement(Input_1.Input, {type: Input_1.InputType.Text, bindObject: this, bindPropName: "value"}));
+        return (React.createElement(Input_1.Input, {type: Input_1.InputType.Text, bindObject: this, bindPropName: "value", onChange: function () { if (onChangeCallback)
+            onChangeCallback(); }}));
     };
     return OneWayBinder_StringValue;
 }(OneWayBinder_1.OneWayBinder_base));

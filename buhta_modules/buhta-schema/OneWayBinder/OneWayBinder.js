@@ -10,12 +10,15 @@ var SelectInputDataSourceFromArray_1 = require("../../buhta-core/Components/Sele
 //export type OneWayBinderType = "value" | "variable" | "string" | "number";
 var fake1;
 var fake2;
-function getOneWayBinderTypesDataSource() {
+function getOneWayBinderTypesDataSource(activeBinder) {
     return new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(registeredOneWayBinders.map(function (binderInfo) {
-        return {
+        var retDataSourceItem = {
             label: binderInfo.binderName,
             value: binderInfo.createBinderCallback()
         };
+        if (activeBinder !== undefined && activeBinder.constructor === retDataSourceItem.value.constructor)
+            retDataSourceItem.value = activeBinder;
+        return retDataSourceItem;
     }));
     // [
     // ["value", "Значение?"],
@@ -62,7 +65,7 @@ var OneWayBinder_base = (function (_super) {
         //     throw  "fake";
         // }
     };
-    OneWayBinder_base.prototype.renderValueEditor = function () {
+    OneWayBinder_base.prototype.renderValueEditor = function (onChangeCallback) {
         Error_1.throwAbstractError();
         throw "fake";
     };
