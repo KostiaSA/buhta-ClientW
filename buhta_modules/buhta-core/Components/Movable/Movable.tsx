@@ -123,7 +123,7 @@ export class Movable extends Component<MovableProps, any> {
                 deltaY: e.clientY - this.startClientY
             });
 
-        event.preventDefault();
+        e.preventDefault();
     }
 
     render() {
