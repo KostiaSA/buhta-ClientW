@@ -7,6 +7,9 @@ import {PanelControl} from "../buhta-ui/PanelControl";
 import {LocalVariableControl} from "../buhta-ui/LocalVariableControl";
 import {OneWayBinder_NumberValue} from "../buhta-schema/OneWayBinder/OneWayBinder_NumberValue";
 import {OneWayBinder_StringValue} from "../buhta-schema/OneWayBinder/OneWayBinder_StringValue";
+import {OneWayBinder_Variable} from "../buhta-schema/OneWayBinder/OneWayBinder_Variable";
+import {OneWayBinder_undefined} from "../buhta-schema/OneWayBinder/OneWayBinder_undefined";
+import {OneWayBinder_EventHandler} from "../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
 
 export let buhtaHost: any = {};
 
@@ -23,6 +26,9 @@ buhtaHost.LocalVariableControl = LocalVariableControl;
 
 buhtaHost.OneWayBinder_NumberValue = OneWayBinder_NumberValue;
 buhtaHost.OneWayBinder_StringValue = OneWayBinder_StringValue;
+buhtaHost.OneWayBinder_Variable = OneWayBinder_Variable;
+buhtaHost.OneWayBinder_undefined = OneWayBinder_undefined;
+buhtaHost.OneWayBinder_EventHandler = OneWayBinder_EventHandler;
 
 
 (window as any).buhta = buhtaHost;

@@ -31,6 +31,13 @@ export class OneWayBinder_StringValue extends OneWayBinder<string> {
             />
         );
     }
+
+    toString() {
+        if (this.value === undefined)
+            return "{undefined}";
+        else
+            return `"${this.value}"`;
+    }
 }
 
 

@@ -21,8 +21,13 @@ export class PanelControl extends BaseControl {
         return Panel;
     }
 
-    get $$controlName(){
-        return "<Panel>";
+    get $$controlName(): JSX.Element | string {
+        let tag = "<Panel>";
+        return (
+            <span className="html-tag">
+              {tag}
+            </span>
+        );
     }
 
 }

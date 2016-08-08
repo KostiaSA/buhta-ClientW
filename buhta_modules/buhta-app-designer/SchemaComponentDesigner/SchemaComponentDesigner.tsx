@@ -195,7 +195,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
         let openParam: OpenWindowParams = {
             title: "редактирование",
-            autoPosition:"parent-center",
+            autoPosition: "parent-center",
             parentWindowId: this.getParentWindowId()
         };
 
@@ -249,7 +249,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         let dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
         let dataSource = new TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
 
-        this.addClassName("object-designer");
+        this.addClassName("component-designer");
         this.addProps({onChange: this.props.onChange});
         this.addStyles({height: "100%"});
 
@@ -266,6 +266,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                 <Layout type="column" sizeTo="parent">
                                     <Flex>
                                         <TreeGrid
+                                            className="children-tree-grid"
                                             dataSource={ dataSource }
                                             treeMode="childrenList"
                                             autoExpandNodesToLevel={100}

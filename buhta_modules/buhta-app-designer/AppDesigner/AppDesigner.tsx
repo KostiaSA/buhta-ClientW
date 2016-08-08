@@ -730,10 +730,12 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let but1 = new ButtonControl();
             but1.text = "Буттон 1222";
+            but1.text = "Буттон 1222++++++++++";
             form.children.push(but1);
 
             let but2 = new ButtonControl();
             but2.text = new OneWayBinder_StringValue("Буттон 2222-222");
+            but2.text2 = new OneWayBinder_StringValue("текст 2");
             //let x=new OneWayBinder_NumberValue(100);
             form.children.push(but2);
 

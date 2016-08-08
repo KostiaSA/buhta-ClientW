@@ -1,5 +1,5 @@
 import * as React from "react";
-import {BaseControl} from "./BaseControl";
+import {BaseControl, ShowInDesignerGrid} from "./BaseControl";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {Component} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
@@ -16,8 +16,9 @@ export class LocalVariableControl extends BaseControl {
 
     @SelectEditor({
         inputCaption: "Тип переменной",
-        selectValues: ["number", ["string","Строка"], "date", "guid"]
+        selectValues: ["number", ["string", "Строка"], "date", "guid"]
     })
+    @ShowInDesignerGrid({column: "main-properties"})
     variableType: LocalVariableType;
 
     @StringEditor({
@@ -25,8 +26,17 @@ export class LocalVariableControl extends BaseControl {
     })
     initValue: OneWayBinder<any>;
 
-    get $$controlName() {
-        return "var " + this.variableName;
+    // get $$controlName() {
+    //     return "var " + this.variableName;
+    // }
+
+    get $$controlName(): JSX.Element | string {
+        return (
+            <span className="keyword">
+                var
+               <span className="variable">{" " + this.variableName}</span>
+            </span>
+        );
     }
 
 

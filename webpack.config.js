@@ -40,6 +40,7 @@ module.exports = {
          "lodash": "_",
          "jquery":"$",
          "socket.io-client":"io",
-         "moment": "moment"
+         "moment": "moment",
+         "codemirror": "CodeMirror",
      },
 };

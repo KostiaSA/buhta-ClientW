@@ -179,7 +179,7 @@ var SchemaComponentDesigner = (function (_super) {
     SchemaComponentDesigner.prototype.render = function () {
         var dataSourceParam = {};
         var dataSource = new TreeGridComponentChildrenDataSource_1.TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
-        this.addClassName("object-designer");
+        this.addClassName("component-designer");
         this.addProps({ onChange: this.props.onChange });
         this.addStyles({ height: "100%" });
         return (React.createElement("div", __assign({}, this.getRenderProps()), 
@@ -189,7 +189,7 @@ var SchemaComponentDesigner = (function (_super) {
                         React.createElement(Tabs_1.Tab, {key: "1", title: "Основная"}, 
                             React.createElement(Layout_1.Layout, {type: "column", sizeTo: "parent"}, 
                                 React.createElement(Flex_1.Flex, null, 
-                                    React.createElement(TreeGrid_1.TreeGrid, {dataSource: dataSource, treeMode: "childrenList", autoExpandNodesToLevel: 100, editable: true, denyInsert: true, dragDropNodes: true, onChangeFocusedRow: this.handleTreeGridChangeFocusedRow}, 
+                                    React.createElement(TreeGrid_1.TreeGrid, {className: "children-tree-grid", dataSource: dataSource, treeMode: "childrenList", autoExpandNodesToLevel: 100, editable: true, denyInsert: true, dragDropNodes: true, onChangeFocusedRow: this.handleTreeGridChangeFocusedRow}, 
                                         React.createElement(TreeGridColumns_1.TreeGridColumns, null, 
                                             React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Control", propertyName: "$$controlName", showHierarchyTree: true, width: 200}), 
                                             React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Свойства", propertyName: "$$controlMainProps", width: 300}), 

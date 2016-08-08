@@ -33,5 +33,12 @@ export class OneWayBinder_NumberValue extends OneWayBinder<number> {
         );
     }
 
+    toString() {
+        if (this.value === undefined)
+            return "{undefined}";
+        else
+            return this.value.toString();
+    }
+    
 }
 

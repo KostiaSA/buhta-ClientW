@@ -7,8 +7,11 @@ var __extends = (this && this.__extends) || function (d, b) {
 var DesignedObject_1 = require("../../buhta-app-designer/DesignedObject");
 var Error_1 = require("../../buhta-core/Error");
 var SelectInputDataSourceFromArray_1 = require("../../buhta-core/Components/SelectInput/SelectInputDataSourceFromArray");
+var stringCompare_1 = require("../../buhta-core/stringCompare");
 function getOneWayBinderTypesDataSource(activeBinder) {
-    return new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(registeredOneWayBinders.map(function (binderInfo) {
+    return new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(registeredOneWayBinders
+        .sort(function (a, b) { return stringCompare_1.stringCompare(a.binderName, b.binderName); })
+        .map(function (binderInfo) {
         var retDataSourceItem = {
             label: binderInfo.binderName,
             value: binderInfo.createBinderCallback()

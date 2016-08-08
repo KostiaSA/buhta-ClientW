@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
-import {BaseControl} from "./BaseControl";
+import {BaseControl, ShowInDesignerGrid} from "./BaseControl";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
 import {OneWayBinder} from "../buhta-schema/OneWayBinder/OneWayBinder";
@@ -10,12 +10,14 @@ export class ButtonControl extends BaseControl {
     @OneWayBinderEditor({
         inputCaption: "Текст"
     })
+    @ShowInDesignerGrid({column: "main-properties"})
     text: string | OneWayBinder<string>;
 
-    @StringEditor({
+    @OneWayBinderEditor({
         inputCaption: "Текст2"
     })
-    text2: string;
+    @ShowInDesignerGrid({column: "main-properties"})
+    text2: string | OneWayBinder<string>;
 
     visible: boolean;
 
@@ -37,15 +39,20 @@ export class ButtonControl extends BaseControl {
         return Button;
     }
 
-    get $$controlName() {
-        return "<Button>";
-    }
-
-    get $$controlMainProps() {
+    get $$controlName(): JSX.Element | string {
+        let tag = "<Button>";
         return (
-            <span>text="{this.text.toString()}"</span>
+            <span className="html-tag">
+              {tag}
+            </span>
         );
     }
+
+    // get $$controlMainProps() {
+    //     return (
+    //         <span>text="{this.text.toString()}"</span>
+    //     );
+    // }
 
 // getComponent(): React.ReactElement<any> {
     //

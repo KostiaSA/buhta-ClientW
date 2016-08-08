@@ -8,6 +8,7 @@ import {SelectInputDataSource} from "../SelectInput/SelectInputDataSource";
 import {OneWayBinder_StringValue} from "../../../buhta-schema/OneWayBinder/OneWayBinder_StringValue";
 import {OneWayBinder_NumberValue} from "../../../buhta-schema/OneWayBinder/OneWayBinder_NumberValue";
 import {throwError} from "../../Error";
+import {OneWayBinder_undefined} from "../../../buhta-schema/OneWayBinder/OneWayBinder_undefined";
 
 export interface OneWayBinderInputProps extends ComponentProps<any>, AutoFormControlProps {
     bindObject: any;
@@ -80,13 +81,18 @@ export class OneWayBinderInput extends Component<OneWayBinderInputProps, any> {
 
     render(): JSX.Element {
         let binder = this.props.bindObject[this.props.bindPropName];
-        if (_.isString(binder)) {
+        
+        if (binder === undefined || binder === null) {
+            binder = new OneWayBinder_undefined();
+            this.props.bindObject[this.props.bindPropName] = binder;
+        }
+        else if (_.isString(binder)) {
             binder = new OneWayBinder_StringValue(binder);
-            this.props.bindObject[this.props.bindPropName]=binder;
+            this.props.bindObject[this.props.bindPropName] = binder;
         }
         else if (_.isNumber(binder)) {
             binder = new OneWayBinder_NumberValue(binder);
-            this.props.bindObject[this.props.bindPropName]=binder;
+            this.props.bindObject[this.props.bindPropName] = binder;
         }
         else if (!(binder instanceof OneWayBinder))
             throwError("OneWayBinderInput.render(): invalid edited value type");
