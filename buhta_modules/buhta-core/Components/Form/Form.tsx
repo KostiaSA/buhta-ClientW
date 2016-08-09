@@ -35,7 +35,7 @@ export class Form extends Component<FormProps, any> {
 
                     let node =
                         <tr className="control" key={index}>
-                            <td style={{textAlign: "right", verticalAlign: "middle"}}>
+                            <td style={{textAlign: "right", verticalAlign: "top"}}>
                                 <span
                                     className="caption">{controlProps.inputCaption ? controlProps.inputCaption : controlProps.bindPropName}
                                 </span>

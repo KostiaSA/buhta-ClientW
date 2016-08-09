@@ -59,6 +59,10 @@ export class BaseControl extends DesignedObject {
         return this.$$controlPropsByColumnName("main-properties");
     }
 
+    get $$controlEvents(): JSX.Element {
+        return this.$$controlPropsByColumnName("events");
+    }
+
     $$controlPropsByColumnName(column: string): JSX.Element {
 
         let props: any[] = [];

@@ -44,6 +44,7 @@ import {showTestSelectControlForm} from "../../buhta-test-ui/TestSelectControlFo
 import {OneWayBinder} from "../../buhta-schema/OneWayBinder/OneWayBinder";
 import {OneWayBinder_StringValue} from "../../buhta-schema/OneWayBinder/OneWayBinder_StringValue";
 import {OneWayBinder_NumberValue} from "../../buhta-schema/OneWayBinder/OneWayBinder_NumberValue";
+import {OneWayBinder_EventHandler} from "../../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -729,8 +730,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             form.children.push(v1);
 
             let but1 = new ButtonControl();
-            but1.text = "Буттон 1222";
-            but1.text = "Буттон 1222++++++++++";
+            but1.text = "Буттон 1222 с обработчиком Опа!";
+            but1.onClick = new OneWayBinder_EventHandler("function onClick(context) {\n  alert('Опа!');\n}");
             form.children.push(but1);
 
             let but2 = new ButtonControl();

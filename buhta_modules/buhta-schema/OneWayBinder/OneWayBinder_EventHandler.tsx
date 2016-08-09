@@ -1,42 +1,45 @@
 import * as React from "react";
 import {OneWayBinder, registerOneWayBinder} from "./OneWayBinder";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
+import {CodeMirrorInput} from "../../buhta-core/Components/CodeMirrorInput/CodeMirrorInput";
+import {replaceAll} from "../../buhta-core/replaceAll";
 
 registerOneWayBinder("Обработчик", () => new OneWayBinder_EventHandler());
 
 export class OneWayBinder_EventHandler extends OneWayBinder<string> {
-    EventHandlerName: string | undefined;
+    jsCode: string;
 
-    constructor(value?: string) {
+    constructor(jsCode?: string) {
         super();
-        this.EventHandlerName = value;
+        this.jsCode = jsCode || "";
     }
 
-    getValue(): string {
-        if (this.EventHandlerName === undefined)
-            return "<имя не определено>";
-        else
-            return this.EventHandlerName;
-    }
+    // getValue(): string {
+    //     if (this.jsCode === undefined)
+    //         return "<имя не определено>";
+    //     else
+    //         return eval(this.jsCode);
+    // }
 
     renderValueEditor(onChangeCallback?: () => void): JSX.Element {
 
         //onChange={this.handleOnChange}
+
         return (
-            <Input
-                type={InputType.Text}
+            <CodeMirrorInput
+                mode="javascript"
                 bindObject={this}
-                bindPropName="EventHandlerName"
+                bindPropName="jsCode"
                 onChange={() => { if (onChangeCallback) onChangeCallback(); }}
             />
         );
     }
 
     toString() {
-        if (this.EventHandlerName === undefined)
+        if (this.jsCode === undefined)
             return "{undefined}";
         else
-            return "{" + this.EventHandlerName + "}";
+            return "{" + replaceAll(this.jsCode.substr(0,50),"\n"," ") + "}";
     }
 }
 
