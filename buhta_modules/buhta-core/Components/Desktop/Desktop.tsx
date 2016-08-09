@@ -111,13 +111,14 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.state = new DesktopState(this);
     }
 
-    static childContextTypes  = {
-        parentDesktop: React.PropTypes.any
-    };
-
-    getChildContext() {
-        return {parentDesktop: this};
-    }
+    // static childContextTypes  = {
+    //     schemaComponent: React.PropTypes.any,
+    //     parentDesktop: React.PropTypes.any
+    // };
+    //
+    // getChildContext() {
+    //     return {parentDesktop: this};
+    // }
 
     protected willMount() {
         super.willMount();

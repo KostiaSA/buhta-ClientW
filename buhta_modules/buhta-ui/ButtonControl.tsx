@@ -7,6 +7,7 @@ import {OneWayBinder} from "../buhta-schema/OneWayBinder/OneWayBinder";
 import {OneWayBinderEditor} from "../buhta-app-designer/PropertyEditors/OneWayBinderPropertyEditor";
 import {onClickEvent} from "../buhta-core/Plugins/OnClickPlugin";
 import {OneWayBinder_EventHandler} from "../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
+import {ControlEvent} from "./ControlEvent";
 
 export class ButtonControl extends BaseControl {
     @OneWayBinderEditor({
@@ -34,27 +35,32 @@ export class ButtonControl extends BaseControl {
     }
 
     getProps(): ButtonProps {
+
+        let props: ButtonProps = {};
+
         let text: string;
 
         if (_.isString(this.text))
-            text = this.text;
+            props.text = this.text;
         else
-            text = (this.text as OneWayBinder<string>).getValue();
+            props.text = (this.text as OneWayBinder<string>).getValue();
 
-        let onClick: onClickEvent | undefined = undefined;
+        //let onClick: ((event: ControlEvent) => void) | undefined = undefined;
+
         if (this.onClick !== undefined) {
             let handlerJsCode: string;
             if (_.isString(this.onClick))
                 handlerJsCode = this.onClick;
             else
                 handlerJsCode = (this.onClick as OneWayBinder_EventHandler).jsCode;
-            onClick = eval("(" + handlerJsCode + ")");
+            let onClick = eval("(" + handlerJsCode + ")");
+            props.onClick = () => {
+                let event = this.createEvent();
+                onClick(event);
+            };
         }
 
-        return {
-            text: text,
-            onClick: onClick
-        };
+        return props;
 
     }
 

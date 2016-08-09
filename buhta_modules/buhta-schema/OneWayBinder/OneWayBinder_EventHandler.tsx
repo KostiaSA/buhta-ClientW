@@ -39,7 +39,7 @@ export class OneWayBinder_EventHandler extends OneWayBinder<string> {
         if (this.jsCode === undefined)
             return "{undefined}";
         else
-            return "{" + replaceAll(this.jsCode.substr(0,50),"\n"," ") + "}";
+            return "{" + replaceAll(this.jsCode.substr(0, 50), "\n", " ") + "}";
     }
 }
 

@@ -17,6 +17,8 @@ export class SchemaComponent extends SchemaObject {
     //     return (this.reactElement as any).context;
     // }
 
+    $$runtimeContext: SchemaComponentRuntimeContext;
+
     getProps(): ComponentProps<any> {
         throwAbstractError();
         throw  "fake";
@@ -34,13 +36,20 @@ export class SchemaComponent extends SchemaObject {
             else
                 return child.render();
         });
-        return React.createElement(this.getComponent() as any, this.getProps(), children);
+
+        let props: ComponentProps<any> = this.getProps();
+        props.$$schemaComponent = this;
+
+        if (this.$$runtimeContext === undefined)
+            this.$$runtimeContext = new SchemaComponentRuntimeContext(this);
+
+        return React.createElement(this.getComponent() as any, props, children);
     }
 
     getDesigner(): JSX.Element {
         return (
             <SchemaComponentDesigner
-                designedObject = {this}
+                designedObject={this}
             >
             </SchemaComponentDesigner>
         );
@@ -73,4 +82,20 @@ export class SchemaComponent extends SchemaObject {
     // }
 
 
+}
+
+export class SchemaComponentRuntimeContext {
+    constructor(public component: SchemaComponent) {
+
+    }
+
+    $$vars: any = {};
+
+    setVar(varName: string, value: any) {
+        this.$$vars[varName] = value;
+    }
+
+    getVar(varName: string): any {
+        return this.$$vars[varName];
+    }
 }

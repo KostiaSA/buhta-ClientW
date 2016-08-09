@@ -7,6 +7,7 @@ import {throwAbstractError} from "../buhta-core/Error";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {PropertyEditorInfo} from "../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 import {OneWayBinder_undefined} from "../buhta-schema/OneWayBinder/OneWayBinder_undefined";
+import {ControlEvent} from "./ControlEvent";
 
 export class BaseControl extends DesignedObject {
 //    name: string;
@@ -36,6 +37,8 @@ export class BaseControl extends DesignedObject {
     beforeRender() {
     }
 
+    $$renderedComponent: Component<ComponentProps<any>, any>;
+
     render(): JSX.Element | undefined {
         this.beforeRender();
         let children = this.children.map((child: BaseControl) => {
@@ -45,8 +48,13 @@ export class BaseControl extends DesignedObject {
             return child.render();
         });
         let comp = this.getComponent();
+
+        let props: ComponentProps<any> = this.getProps();
+
+        props.$$control = this;
+
         if (comp !== undefined)
-            return React.createElement(this.getComponent() as any, this.getProps(), children);
+            return React.createElement(this.getComponent() as any, props, children);
         else
             return undefined;
     }
@@ -107,6 +115,16 @@ export class BaseControl extends DesignedObject {
                 {props}
             </div>
         );
+    }
+
+    protected createEvent(): ControlEvent {
+        let event: ControlEvent = {
+            target: this,
+            component: this.$$renderedComponent,
+            schemaComponent: this.$$renderedComponent.context.schemaComponent.$$runtimeContext
+        };
+
+        return event;
     }
 }
 

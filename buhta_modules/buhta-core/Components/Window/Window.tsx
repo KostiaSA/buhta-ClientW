@@ -60,13 +60,13 @@ export class Window extends Component<WindowProps, WindowState> {
         //this.state.disabled = nextProps.disabled;
     }
 
-    static childContextTypes  = {
-        parentWindow: React.PropTypes.any
-    };
-
-    getChildContext() {
-        return {parentWindow: this};
-    }
+    // static childContextTypes  = {
+    //     parentWindow: React.PropTypes.any
+    // };
+    //
+    // getChildContext() {
+    //     return {parentWindow: this};
+    // }
 
     getParentDesktopElement(): HTMLElement {
         let parent = ReactDOM.findDOMNode(this);

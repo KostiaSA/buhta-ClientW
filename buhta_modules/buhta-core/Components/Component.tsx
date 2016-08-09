@@ -7,6 +7,7 @@ import {Window} from "./Window/Window";
 import {Desktop, OpenMessageWindowParams} from "./Desktop/Desktop";
 import {throwError} from "../Error";
 import {BaseControl} from "../../buhta-ui/BaseControl";
+import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
 
 
 export interface XOnClickProps {
@@ -18,8 +19,10 @@ export interface ComponentProps<S> extends React.ClassAttributes<Element> {
     style?: React.CSSProperties;
     className?: string;
     children?: React.ReactNode;
-    buhtaControl?: BaseControl;
+//    buhtaControl?: BaseControl;
     onWillMount?: (state: S) => void;
+    $$control?: BaseControl;
+    $$schemaComponent?: SchemaComponent;
 }
 
 
@@ -37,8 +40,9 @@ export class ComponentState<P> {
 }
 
 export interface ComponentContext {
-    parentWindow?: Window;
-    parentDesktop?: Desktop;
+    //parentWindow?: Window;
+    //parentDesktop?: Desktop;
+    schemaComponent: SchemaComponent;
 }
 
 export class Component<P extends ComponentProps<S>, S extends ComponentState<P>> extends React.Component<P, S> {
@@ -50,6 +54,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     constructor(props: P, context: any /*stateClass?: Function*/) {
         super(props, context);
         this.props = props;
+        this.context = context;
         // this.plugins.forEach((plug) => {
         //     let plugInstance: any = new plug(this);
         //     this.plugins.push(plugInstance);
@@ -57,9 +62,18 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     }
 
     static contextTypes = {
-        parentDesktop: React.PropTypes.any,
-        parentWindow: React.PropTypes.any
+        //     //parentDesktop: React.PropTypes.any,
+        //     //parentWindow: React.PropTypes.any,
+        schemaComponent: React.PropTypes.any
     };
+    //
+    static childContextTypes = {
+        schemaComponent: React.PropTypes.any
+    };
+
+    getChildContext() {
+        return {schemaComponent: this.props.$$schemaComponent};
+    }
 
     nativeElement: HTMLElement;
 
@@ -121,12 +135,14 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     }
 
     removeStyles(styles: string[]) {
-        styles.forEach((style)=> {
+        styles.forEach((style) => {
             delete this.renderStyles[style];
         });
     }
 
     protected didMount() {
+        if (this.props.$$control !== undefined)
+            this.props.$$control.$$renderedComponent = this;
         this.plugins.forEach((plug) => {
             plug.didMount();
         });

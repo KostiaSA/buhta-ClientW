@@ -731,7 +731,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let but1 = new ButtonControl();
             but1.text = "Буттон 1222 с обработчиком Опа!";
-            but1.onClick = new OneWayBinder_EventHandler("function onClick(context) {\n  alert('Опа!');\n}");
+            but1.onClick = new OneWayBinder_EventHandler("function onClick(context) {\n  console.log(context);\n}");
             form.children.push(but1);
 
             let but2 = new ButtonControl();

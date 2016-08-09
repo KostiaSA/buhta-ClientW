@@ -1,7 +1,7 @@
 import * as React from "react";
 import {BaseControl, ShowInDesignerGrid} from "./BaseControl";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
-import {Component} from "../buhta-core/Components/Component";
+import {Component, ComponentProps} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
 import {OneWayBinder} from "../buhta-schema/OneWayBinder/OneWayBinder";
 import {SelectEditor} from "../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
@@ -25,6 +25,10 @@ export class LocalVariableControl extends BaseControl {
         inputCaption: "значение"
     })
     initValue: OneWayBinder<any>;
+
+    getProps(): ComponentProps<any> {
+        return {};
+    }
 
     // get $$controlName() {
     //     return "var " + this.variableName;
