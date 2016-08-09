@@ -14,7 +14,7 @@ var OneWayBinder_StringValue = (function (_super) {
         _super.call(this);
         this.value = value;
     }
-    OneWayBinder_StringValue.prototype.getValue = function () {
+    OneWayBinder_StringValue.prototype.getValue = function (control) {
         if (this.value === undefined)
             return "<не определено>";
         else

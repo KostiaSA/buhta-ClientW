@@ -6,6 +6,7 @@ import {SelectInputDataSourceFromArray} from "../../buhta-core/Components/Select
 import {OneWayBinder_NumberValue} from "./OneWayBinder_NumberValue";
 import {OneWayBinder_StringValue} from "./OneWayBinder_StringValue";
 import {stringCompare} from "../../buhta-core/stringCompare";
+import {BaseControl} from "../../buhta-ui/BaseControl";
 
 export function getOneWayBinderTypesDataSource(activeBinder?: OneWayBinder<any>): SelectInputDataSource<OneWayBinder<any>> {
     return new SelectInputDataSourceFromArray<OneWayBinder<any>>(
@@ -42,7 +43,7 @@ export function registerOneWayBinder(binderName: string, createBinderCallback: (
 
 export class OneWayBinder<T> extends DesignedObject {
 
-    getValue(): T {
+    getValue(control: BaseControl): T {
         throwAbstractError();
         throw  "fake";
     }

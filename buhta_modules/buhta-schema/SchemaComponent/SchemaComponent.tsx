@@ -6,7 +6,7 @@ import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyE
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {throwAbstractError} from "../../buhta-core/Error";
-import {ComponentContext, ComponentProps} from "../../buhta-core/Components/Component";
+import {ComponentContext, ComponentProps, Component} from "../../buhta-core/Components/Component";
 import {SchemaComponentDesigner} from "../../buhta-app-designer/SchemaComponentDesigner/SchemaComponentDesigner";
 
 export class SchemaComponent extends SchemaObject {
@@ -18,6 +18,7 @@ export class SchemaComponent extends SchemaObject {
     // }
 
     $$runtimeContext: SchemaComponentRuntimeContext;
+    $$renderedComponent: Component<any, any>;
 
     getProps(): ComponentProps<any> {
         throwAbstractError();
@@ -29,22 +30,28 @@ export class SchemaComponent extends SchemaObject {
         throw  "fake";
     }
 
-    render(): JSX.Element {
-        let children = this.children.map((child: BaseControl| string) => {
-            if (_.isString(child))
-                return child;
-            else
-                return child.render();
-        });
+    xxx: any;
 
-        let props: ComponentProps<any> = this.getProps();
-        props.$$schemaComponent = this;
 
-        if (this.$$runtimeContext === undefined)
-            this.$$runtimeContext = new SchemaComponentRuntimeContext(this);
-
-        return React.createElement(this.getComponent() as any, props, children);
-    }
+    // render(): JSX.Element {
+    //     let props: ComponentProps<any> = this.getProps();
+    //     props.$$schemaComponent = this;
+    //
+    //     if (this.$$runtimeContext === undefined)
+    //         this.$$runtimeContext = new SchemaComponentRuntimeContext(this);
+    //
+    //     let children = this.children.map((child: BaseControl| string) => {
+    //         if (_.isString(child))
+    //             return child;
+    //         else
+    //             return child.render(this, null);
+    //     });
+    //
+    //     let xxx = React.createElement(this.getComponent() as any, props, children);
+    //     //console.log("xxx");
+    //     //console.log(xxx);
+    //     return xxx;
+    // }
 
     getDesigner(): JSX.Element {
         return (
@@ -89,10 +96,18 @@ export class SchemaComponentRuntimeContext {
 
     }
 
-    $$vars: any = {};
+    forceUpdate() {
+        if (this.component.$$renderedComponent !== undefined)
+            this.component.$$renderedComponent.forceUpdate();
+    }
 
-    setVar(varName: string, value: any) {
+    $$vars: any = {};
+    $$varsForceUpdate: any = {};
+
+    setVar(varName: string, value: any, forceUpdate?: boolean) {
         this.$$vars[varName] = value;
+        if (forceUpdate === true || this.$$varsForceUpdate[varName] === true)
+            this.forceUpdate();
     }
 
     getVar(varName: string): any {

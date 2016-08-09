@@ -1,6 +1,7 @@
 import * as React from "react";
 import {OneWayBinder, registerOneWayBinder} from "./OneWayBinder";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
+import {BaseControl} from "../../buhta-ui/BaseControl";
 
 registerOneWayBinder("Строка", ()=>new OneWayBinder_StringValue());
 
@@ -12,7 +13,7 @@ export class OneWayBinder_StringValue extends OneWayBinder<string> {
         this.value = value;
     }
 
-    getValue(): string {
+    getValue(control: BaseControl): string {
         if (this.value === undefined)
             return "<не определено>";
         else

@@ -24,7 +24,20 @@ export class LocalVariableControl extends BaseControl {
     @StringEditor({
         inputCaption: "значение"
     })
+    @ShowInDesignerGrid({column: "main-properties"})
     initValue: OneWayBinder<any>;
+
+    @StringEditor({
+        inputCaption: "отрисовка"
+    })
+    @ShowInDesignerGrid({column: "main-properties"})
+    forceUpdate: boolean;
+
+    beforeRender() {
+        super.beforeRender();
+        if (this.initValue !== undefined && this.$$ownerComponent.$$runtimeContext.$$vars[this.variableName] === undefined)
+           this.$$ownerComponent.$$runtimeContext.$$vars[this.variableName] = this.initValue.getValue(this);
+    }
 
     getProps(): ComponentProps<any> {
         return {};

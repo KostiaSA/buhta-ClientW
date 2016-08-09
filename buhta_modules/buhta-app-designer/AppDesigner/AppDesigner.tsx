@@ -45,6 +45,7 @@ import {OneWayBinder} from "../../buhta-schema/OneWayBinder/OneWayBinder";
 import {OneWayBinder_StringValue} from "../../buhta-schema/OneWayBinder/OneWayBinder_StringValue";
 import {OneWayBinder_NumberValue} from "../../buhta-schema/OneWayBinder/OneWayBinder_NumberValue";
 import {OneWayBinder_EventHandler} from "../../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
+import {OneWayBinder_JsCode} from "../../buhta-schema/OneWayBinder/OneWayBinder_JsCode";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -722,6 +723,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             let v = new LocalVariableControl();
             v.variableName = "ИмяКнопки";
             v.variableType = "string";
+            v.initValue = new OneWayBinder_StringValue("привет уроды из кнопки");
             form.children.push(v);
 
             let v1 = new LocalVariableControl();
@@ -731,11 +733,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let but1 = new ButtonControl();
             but1.text = "Буттон 1222 с обработчиком Опа!";
-            but1.onClick = new OneWayBinder_EventHandler("function onClick(context) {\n  console.log(context);\n}");
+            but1.onClick = new OneWayBinder_EventHandler("function onClick(context) {\n  console.log(context); context.schemaComponent.setVar('ИмяКнопки','Пиздец',true);\n}");
             form.children.push(but1);
 
             let but2 = new ButtonControl();
-            but2.text = new OneWayBinder_StringValue("Буттон 2222-222");
+            but2.text = new OneWayBinder_JsCode("function text(context) {\n  return context.schemaComponent.getVar('ИмяКнопки');\n}");
             but2.text2 = new OneWayBinder_StringValue("текст 2");
             //let x=new OneWayBinder_NumberValue(100);
             form.children.push(but2);
@@ -764,8 +766,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let openParam: OpenWindowParams = {
                 title: "дизайнер компонента",
-                top: 50,
-                left: 50
+                top: 10,
+                left: 10,
+                width: 800,
+                height: 600
+
             };
 
             appInstance.desktop.openSchemaComponentDesigner(form, openParam);

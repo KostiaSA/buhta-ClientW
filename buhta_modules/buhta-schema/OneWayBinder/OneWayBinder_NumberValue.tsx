@@ -1,6 +1,7 @@
 import * as React from "react";
 import {OneWayBinder, registerOneWayBinder} from "./OneWayBinder";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
+import {BaseControl} from "../../buhta-ui/BaseControl";
 
 
 registerOneWayBinder("Число", ()=>new OneWayBinder_NumberValue());
@@ -13,7 +14,7 @@ export class OneWayBinder_NumberValue extends OneWayBinder<number> {
         this.value = value;
     }
 
-    getValue(): number {
+    getValue(control: BaseControl): number {
         if (this.value === undefined)
             return NaN;
         else

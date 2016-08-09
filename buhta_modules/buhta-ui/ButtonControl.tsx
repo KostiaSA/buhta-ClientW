@@ -43,7 +43,7 @@ export class ButtonControl extends BaseControl {
         if (_.isString(this.text))
             props.text = this.text;
         else
-            props.text = (this.text as OneWayBinder<string>).getValue();
+            props.text = (this.text as OneWayBinder<string>).getValue(this);
 
         //let onClick: ((event: ControlEvent) => void) | undefined = undefined;
 

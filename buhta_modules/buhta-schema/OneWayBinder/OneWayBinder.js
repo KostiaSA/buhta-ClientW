@@ -36,7 +36,7 @@ var OneWayBinder = (function (_super) {
     function OneWayBinder() {
         _super.apply(this, arguments);
     }
-    OneWayBinder.prototype.getValue = function () {
+    OneWayBinder.prototype.getValue = function (control) {
         Error_1.throwAbstractError();
         throw "fake";
     };

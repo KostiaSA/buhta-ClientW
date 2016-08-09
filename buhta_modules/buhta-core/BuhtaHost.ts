@@ -10,6 +10,7 @@ import {OneWayBinder_StringValue} from "../buhta-schema/OneWayBinder/OneWayBinde
 import {OneWayBinder_Variable} from "../buhta-schema/OneWayBinder/OneWayBinder_Variable";
 import {OneWayBinder_undefined} from "../buhta-schema/OneWayBinder/OneWayBinder_undefined";
 import {OneWayBinder_EventHandler} from "../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
+import {OneWayBinder_JsCode} from "../buhta-schema/OneWayBinder/OneWayBinder_JsCode";
 
 export let buhtaHost: any = {};
 
@@ -29,6 +30,7 @@ buhtaHost.OneWayBinder_StringValue = OneWayBinder_StringValue;
 buhtaHost.OneWayBinder_Variable = OneWayBinder_Variable;
 buhtaHost.OneWayBinder_undefined = OneWayBinder_undefined;
 buhtaHost.OneWayBinder_EventHandler = OneWayBinder_EventHandler;
+buhtaHost.OneWayBinder_JsCode = OneWayBinder_JsCode;
 
 
 (window as any).buhta = buhtaHost;

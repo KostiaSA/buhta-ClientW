@@ -64,16 +64,9 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     static contextTypes = {
         //     //parentDesktop: React.PropTypes.any,
         //     //parentWindow: React.PropTypes.any,
-        schemaComponent: React.PropTypes.any
+        uiComponent: React.PropTypes.any
     };
     //
-    static childContextTypes = {
-        schemaComponent: React.PropTypes.any
-    };
-
-    getChildContext() {
-        return {schemaComponent: this.props.$$schemaComponent};
-    }
 
     nativeElement: HTMLElement;
 
@@ -86,6 +79,16 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         while (parent) {
             if ((parent as any).$$window)
                 return (parent as any).$$window as Window;
+            parent = parent.parentElement;
+        }
+        return null;
+    }
+    
+    getParentUIComponent(): SchemaComponent | null {
+        let parent = ReactDOM.findDOMNode(this);
+        while (parent) {
+            if ((parent as any).$$uiComponent)
+                return (parent as any).$$uiComponent as SchemaComponent;
             parent = parent.parentElement;
         }
         return null;
@@ -143,6 +146,8 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     protected didMount() {
         if (this.props.$$control !== undefined)
             this.props.$$control.$$renderedComponent = this;
+        if (this.props.$$schemaComponent !== undefined)
+            this.props.$$schemaComponent.$$renderedComponent = this;
         this.plugins.forEach((plug) => {
             plug.didMount();
         });

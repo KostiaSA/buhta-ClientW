@@ -1,6 +1,7 @@
 import * as React from "react";
 import {OneWayBinder, registerOneWayBinder} from "./OneWayBinder";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
+import {BaseControl} from "../../buhta-ui/BaseControl";
 
 registerOneWayBinder("<нет значения>", () => new OneWayBinder_undefined());
 
@@ -10,7 +11,7 @@ export class OneWayBinder_undefined extends OneWayBinder<any> {
         super();
     }
 
-    getValue(): undefined {
+    getValue(control: BaseControl): undefined {
         return undefined;
     }
 

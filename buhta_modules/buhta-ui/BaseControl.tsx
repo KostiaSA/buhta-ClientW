@@ -8,6 +8,8 @@ import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringProperty
 import {PropertyEditorInfo} from "../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 import {OneWayBinder_undefined} from "../buhta-schema/OneWayBinder/OneWayBinder_undefined";
 import {ControlEvent} from "./ControlEvent";
+import {SchemaComponent} from "../buhta-schema/SchemaComponent/SchemaComponent";
+import {UIComponent} from "../buhta-core/Components/UIComponent/UIComponent";
 
 export class BaseControl extends DesignedObject {
 //    name: string;
@@ -38,14 +40,19 @@ export class BaseControl extends DesignedObject {
     }
 
     $$renderedComponent: Component<ComponentProps<any>, any>;
+    $$ownerComponent: UIComponent<any>;
+    $$parentControl: BaseControl | null;
 
-    render(): JSX.Element | undefined {
+    render(ownerComponent: UIComponent<any>, parentControl: BaseControl | null): JSX.Element | undefined {
+        this.$$ownerComponent = ownerComponent;
+        this.$$parentControl = parentControl;
+
         this.beforeRender();
         let children = this.children.map((child: BaseControl) => {
             // if (_.isString(child))
             //     return child;
             // else
-            return child.render();
+            return child.render(ownerComponent, this);
         });
         let comp = this.getComponent();
 
@@ -117,11 +124,11 @@ export class BaseControl extends DesignedObject {
         );
     }
 
-    protected createEvent(): ControlEvent {
+    createEvent(): ControlEvent {
         let event: ControlEvent = {
             target: this,
             component: this.$$renderedComponent,
-            schemaComponent: this.$$renderedComponent.context.schemaComponent.$$runtimeContext
+            schemaComponent: this.$$ownerComponent.$$runtimeContext
         };
 
         return event;
