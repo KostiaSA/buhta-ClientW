@@ -53,6 +53,7 @@ export class Schema {
                             this.objects_cache[id] = objConstructor;
                             let obj: any = objConstructor();
                             obj.$$schema = this;
+
                             resolve(obj as T);
                         })
                         .catch((error) => {
@@ -63,6 +64,7 @@ export class Schema {
                 else {
                     let obj: any = objConstructor();
                     obj.$$schema = this;
+
                     resolve(obj as T);
                 }
 

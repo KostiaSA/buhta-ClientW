@@ -32,6 +32,11 @@ export class BaseControl extends DesignedObject {
         throw  "fake";
     }
 
+    getPropsAsync(): Promise<ComponentProps<any>> {
+        throwAbstractError();
+        throw  "fake";
+    }
+
     getComponent(): Function | undefined {
         return undefined;
     }
@@ -66,6 +71,58 @@ export class BaseControl extends DesignedObject {
             return React.createElement(this.getComponent() as any, props, children);
         else
             return undefined;
+    }
+
+    renderAsync(ownerComponent: UIComponent<any>, index: number, parentControl: BaseControl | null): Promise<JSX.Element | undefined> {
+        this.$$ownerComponent = ownerComponent;
+        this.$$parentControl = parentControl;
+        
+        this.beforeRender();
+
+        return Promise
+            .map(
+                this.children,
+                (child: BaseControl, index: number, length: number) => {
+                    // if (_.isString(child))
+                    //     return child;
+                    // else
+                    return child.renderAsync(ownerComponent, index, this);
+                }
+            )
+            .then((children: JSX.Element[]) => {
+                return this.getPropsAsync()
+                    .then((props: ComponentProps<any>) => {
+                        if (props.key === undefined)
+                            props.key = index;
+                        let comp = this.getComponent();
+                        props.$$control = this;
+
+                        if (comp !== undefined)
+                            return React.createElement(this.getComponent() as any, props, children);
+                        else
+                            return undefined;
+
+                    });
+            });
+
+        // let children = this.children.map((child: BaseControl, index: number) => {
+        //     // if (_.isString(child))
+        //     //     return child;
+        //     // else
+        //     return child.render(ownerComponent, index, this);
+        // });
+        // let comp = this.getComponent();
+        //
+        // let props: ComponentProps<any> = this.getProps();
+        // if (props.key === undefined)
+        //     props.key = index;
+        //
+        // props.$$control = this;
+        //
+        // if (comp !== undefined)
+        //     return React.createElement(this.getComponent() as any, props, children);
+        // else
+        //     return undefined;
     }
 
     get $$controlName(): JSX.Element | string {

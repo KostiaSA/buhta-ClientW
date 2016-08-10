@@ -7,7 +7,12 @@ import {SchemaComponent} from "../../../buhta-schema/SchemaComponent/SchemaCompo
 import {UIForm} from "../UIForm/UIForm";
 import {getRandomString} from "../../getRandomString";
 
-export class UIComponent<T extends SchemaComponent> extends Component<T, any> {
+
+export interface UIComponentProps extends ComponentProps<any> {
+    schemaComponent: SchemaComponent;
+}
+
+export class UIComponent<T extends UIComponentProps> extends Component<T, any> {
     $$runtimeContext: UIComponentRuntimeContext;
 
     protected didMount() {
@@ -31,25 +36,34 @@ export class UIComponent<T extends SchemaComponent> extends Component<T, any> {
         return {uiComponent: this};
     }
 
+
+    asyncChildren: JSX.Element[];
+
     render(): JSX.Element {
+
+        if (this.asyncChildren === undefined) {
+            this.asyncChildren = [];
+
+            Promise
+                .map(this.props.schemaComponent.children, (child: BaseControl, index: number, length: number) => {
+                    return child.renderAsync(this, index, null);
+                })
+                .then((children: JSX.Element[]) => {
+                    this.asyncChildren = children;
+                    this.forceUpdate();
+                });
+
+            // let children = this.props.schemaComponent.children.map((child: BaseControl, index: number) => {
+            //     return child.render(this, index, null);
+            // });
+
+        }
 
         this.clearStyles();
 
-        //this.addClassName("Layout");
-        //this.addStyles({display: "flex", position: "relative", flexDirection: this.props.type});
-        //this.addProps({onClick: this.props.onClick});
-
-        let children = this.props.children.map((child: BaseControl| string, index:number) => {
-            if (_.isString(child))
-                return child;
-            else
-                return child.render(this, index, null);
-        });
-
-
         return (
             <div {...this.getRenderProps()} ref={ (e) => { this.nativeElement = e; }}>
-                {children}
+                {this.asyncChildren}
             </div>
         );
     }
@@ -63,6 +77,7 @@ export class UIComponentRuntimeContext {
         this.component.forceUpdate();
     }
 
+    $$props: any = {};
     $$vars: any = {};
     $$varsForceUpdate: any = {};
 
@@ -75,4 +90,9 @@ export class UIComponentRuntimeContext {
     getVar(varName: string): any {
         return this.$$vars[varName];
     }
+
+    getProp(propName: string): any {
+        return this.$$props[propName];
+    }
+
 }

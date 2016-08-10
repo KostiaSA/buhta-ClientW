@@ -23,13 +23,10 @@ var UIForm = (function (_super) {
     UIForm.prototype.render = function () {
         var _this = this;
         this.clearStyles();
-        //this.addClassName("Layout");
-        //this.addStyles({display: "flex", position: "relative", flexDirection: this.props.type});
-        if (this.props.sizeTo === "parent") {
-            this.addStyles({ height: "100%" });
-        }
-        //      this.addProps({onClick: this.props.onClick});
-        var children = this.props.children.map(function (child, index) {
+        // if (this.props.sizeTo === "parent") {// && this.props.type==="column") {
+        //     this.addStyles({height: "100%"});
+        // }
+        var children = this.props.schemaComponent.children.map(function (child, index) {
             if (_.isString(child))
                 return child;
             else

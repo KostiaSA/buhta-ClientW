@@ -181,7 +181,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
             left: 350
         };
 
-        this.getParentDesktop().openSchemaForm(designedObject as SchemaForm, openParam);
+        this.getParentDesktop().openSchemaComponent(designedObject as SchemaForm, openParam);
     }
 
     handleUpdateButtonClick = () => {

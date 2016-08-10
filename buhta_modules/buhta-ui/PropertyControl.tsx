@@ -6,26 +6,26 @@ import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
 import {OneWayBinder} from "../buhta-schema/OneWayBinder/OneWayBinder";
 import {SelectEditor} from "../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
 
-export type LocalVariableType = "number" | "string" | "date" | "guid";
+export type PropertyType = "number" | "string" | "date" | "guid";
 
-export class LocalVariableControl extends BaseControl {
+export class PropertyControl extends BaseControl {
     @StringEditor({
-        inputCaption: "Имя переменной"
+        inputCaption: "Имя свойства"
     })
-    variableName: string;
+    propertyName: string;
 
     @SelectEditor({
-        inputCaption: "Тип переменной",
+        inputCaption: "Тип свойства",
         selectValues: ["number", ["string", "Строка"], "date", "guid"]
     })
     @ShowInDesignerGrid({column: "main-properties"})
-    variableType: LocalVariableType;
+    propertyType: PropertyType;
 
     @StringEditor({
-        inputCaption: "значение"
+        inputCaption: "значение по умолчанию"
     })
     @ShowInDesignerGrid({column: "main-properties"})
-    initValue: OneWayBinder<any>;
+    defaultValue: OneWayBinder<any>;
 
     @StringEditor({
         inputCaption: "отрисовка"
@@ -35,15 +35,19 @@ export class LocalVariableControl extends BaseControl {
 
     beforeRender() {
         super.beforeRender();
-        let vars = this.$$ownerComponent.$$runtimeContext.$$vars;
-        if (this.initValue !== undefined && vars[this.variableName] === undefined) {
-            if (this.initValue.getValue !== undefined)
-                vars[this.variableName] = this.initValue.getValue(this);
+        let props: any = this.$$ownerComponent.$$runtimeContext.$$props;
+        if (this.defaultValue !== undefined && props[this.propertyName] === undefined) {
+            if (this.defaultValue.getValue !== undefined)
+                props[this.propertyName] = this.defaultValue.getValue(this);
             else
-                vars[this.variableName] = this.initValue;
+                props[this.propertyName] = this.defaultValue;
         }
     }
 
+    getProps(): ComponentProps<any> {
+        return {};
+    }
+    
     getPropsAsync(): Promise<ComponentProps<any>> {
         return new Promise(
             (resolve: (obj: ComponentProps<any>) => void, reject: (error: string) => void) => {
@@ -58,8 +62,8 @@ export class LocalVariableControl extends BaseControl {
     get $$controlName(): JSX.Element | string {
         return (
             <span className="keyword">
-                var
-               <span className="variable">{" " + this.variableName}</span>
+                prop
+               <span className="property">{" " + this.propertyName}</span>
             </span>
         );
     }

@@ -11,6 +11,9 @@ import {OneWayBinder_Variable} from "../buhta-schema/OneWayBinder/OneWayBinder_V
 import {OneWayBinder_undefined} from "../buhta-schema/OneWayBinder/OneWayBinder_undefined";
 import {OneWayBinder_EventHandler} from "../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
 import {OneWayBinder_JsCode} from "../buhta-schema/OneWayBinder/OneWayBinder_JsCode";
+import {PropertyControl} from "../buhta-ui/PropertyControl";
+import {SchemaComponent} from "../buhta-schema/SchemaComponent/SchemaComponent";
+import {ComponentControl} from "../buhta-ui/ComponentControl";
 
 export let buhtaHost: any = {};
 
@@ -19,11 +22,13 @@ buhtaHost.SchemaTable = SchemaTable;
 buhtaHost.SchemaTableColumn = SchemaTableColumn;
 
 buhtaHost.SchemaForm = SchemaForm;
+buhtaHost.SchemaComponent = SchemaComponent;
 
 buhtaHost.ButtonControl = ButtonControl;
-
 buhtaHost.PanelControl = PanelControl;
 buhtaHost.LocalVariableControl = LocalVariableControl;
+buhtaHost.PropertyControl = PropertyControl;
+buhtaHost.ComponentControl = ComponentControl;
 
 buhtaHost.OneWayBinder_NumberValue = OneWayBinder_NumberValue;
 buhtaHost.OneWayBinder_StringValue = OneWayBinder_StringValue;

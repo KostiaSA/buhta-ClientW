@@ -13,7 +13,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 var React = require("react");
-var _ = require("lodash");
 var Component_1 = require("../Component");
 var UIComponent = (function (_super) {
     __extends(UIComponent, _super);
@@ -36,17 +35,19 @@ var UIComponent = (function (_super) {
     };
     UIComponent.prototype.render = function () {
         var _this = this;
+        if (this.asyncChildren === undefined) {
+            this.asyncChildren = [];
+            Promise
+                .map(this.props.schemaComponent.children, function (child, index, length) {
+                return child.renderAsync(_this, index, null);
+            })
+                .then(function (children) {
+                _this.asyncChildren = children;
+                _this.forceUpdate();
+            });
+        }
         this.clearStyles();
-        //this.addClassName("Layout");
-        //this.addStyles({display: "flex", position: "relative", flexDirection: this.props.type});
-        //this.addProps({onClick: this.props.onClick});
-        var children = this.props.children.map(function (child, index) {
-            if (_.isString(child))
-                return child;
-            else
-                return child.render(_this, index, null);
-        });
-        return (React.createElement("div", __assign({}, this.getRenderProps(), {ref: function (e) { _this.nativeElement = e; }}), children));
+        return (React.createElement("div", __assign({}, this.getRenderProps(), {ref: function (e) { _this.nativeElement = e; }}), this.asyncChildren));
     };
     UIComponent.childContextTypes = {
         uiComponent: React.PropTypes.any
@@ -57,6 +58,7 @@ exports.UIComponent = UIComponent;
 var UIComponentRuntimeContext = (function () {
     function UIComponentRuntimeContext(component) {
         this.component = component;
+        this.$$props = {};
         this.$$vars = {};
         this.$$varsForceUpdate = {};
     }
@@ -70,6 +72,9 @@ var UIComponentRuntimeContext = (function () {
     };
     UIComponentRuntimeContext.prototype.getVar = function (varName) {
         return this.$$vars[varName];
+    };
+    UIComponentRuntimeContext.prototype.getProp = function (propName) {
+        return this.$$props[propName];
     };
     return UIComponentRuntimeContext;
 }());

@@ -119,7 +119,7 @@ var SchemaComponentDesigner = (function (_super) {
                 top: 350,
                 left: 350
             };
-            _this.getParentDesktop().openSchemaForm(designedObject, openParam);
+            _this.getParentDesktop().openSchemaComponent(designedObject, openParam);
         };
         this.handleUpdateButtonClick = function () {
             var designedObject = _this.treeGridState.getFocusedRow();

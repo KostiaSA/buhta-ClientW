@@ -3,23 +3,26 @@ import * as _ from "lodash";
 import {Component, ComponentProps} from "../Component";
 import {SchemaForm} from "../../../buhta-schema/SchemaForm/SchemaForm";
 import {BaseControl} from "../../../buhta-ui/BaseControl";
-import {UIComponent} from "../UIComponent/UIComponent";
+import {UIComponent, UIComponentProps} from "../UIComponent/UIComponent";
+import {SchemaComponent} from "../../../buhta-schema/SchemaComponent/SchemaComponent";
 
-export class UIForm extends UIComponent<SchemaForm> {
+export interface UIFormProps extends UIComponentProps {
+    schemaComponent: SchemaComponent;
+}
+
+
+export class UIForm extends UIComponent<UIFormProps> {
 
     render(): JSX.Element {
         this.clearStyles();
 
-        //this.addClassName("Layout");
-        //this.addStyles({display: "flex", position: "relative", flexDirection: this.props.type});
 
-        if (this.props.sizeTo === "parent") {// && this.props.type==="column") {
-            this.addStyles({height: "100%"});
-        }
+        // if (this.props.sizeTo === "parent") {// && this.props.type==="column") {
+        //     this.addStyles({height: "100%"});
+        // }
 
-        //      this.addProps({onClick: this.props.onClick});
 
-        let children = this.props.children.map((child: BaseControl| string, index: number) => {
+        let children = this.props.schemaComponent.children.map((child: BaseControl| string, index: number) => {
             if (_.isString(child))
                 return child;
             else

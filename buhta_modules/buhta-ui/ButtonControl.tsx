@@ -34,6 +34,36 @@ export class ButtonControl extends BaseControl {
         super.beforeRender();
     }
 
+    getPropsAsync(): Promise<ButtonProps> {
+        return new Promise(
+            (resolve: (obj: ButtonProps) => void, reject: (error: string) => void) => {
+                let props: ButtonProps = {};
+
+                let text: string;
+
+                if (_.isString(this.text))
+                    props.text = this.text;
+                else
+                    props.text = (this.text as OneWayBinder<string>).getValue(this);
+
+                //let onClick: ((event: ControlEvent) => void) | undefined = undefined;
+
+                if (this.onClick !== undefined) {
+                    let handlerJsCode: string;
+                    if (_.isString(this.onClick))
+                        handlerJsCode = this.onClick;
+                    else
+                        handlerJsCode = (this.onClick as OneWayBinder_EventHandler).jsCode;
+                    let onClick = eval("(" + handlerJsCode + ")");
+                    props.onClick = () => {
+                        let event = this.createEvent();
+                        onClick(event);
+                    };
+                }
+                resolve(props);
+            });
+    }
+
     getProps(): ButtonProps {
 
         let props: ButtonProps = {};

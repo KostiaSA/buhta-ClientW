@@ -17,6 +17,13 @@ export class PanelControl extends BaseControl {
         return {sizeTo: this.sizeTo};
     }
 
+    getPropsAsync(): Promise<PanelProps> {
+        return new Promise(
+            (resolve: (obj: PanelProps) => void, reject: (error: string) => void) => {
+                resolve({sizeTo: this.sizeTo});
+            });
+    }
+
     getComponent(): Function | undefined {
         return Panel;
     }

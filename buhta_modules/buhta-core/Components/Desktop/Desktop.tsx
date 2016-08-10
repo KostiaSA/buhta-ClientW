@@ -11,6 +11,7 @@ import {Schema} from "../../../buhta-schema/Schema";
 import {SchemaForm} from "../../../buhta-schema/SchemaForm/SchemaForm";
 import {SchemaComponent} from "../../../buhta-schema/SchemaComponent/SchemaComponent";
 import {UIForm} from "../UIForm/UIForm";
+import {UIComponent} from "../UIComponent/UIComponent";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -130,7 +131,12 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 //    private windows: WindowInfo[] = [];
 
     openSchemaForm(form: SchemaForm, openParams?: OpenWindowParams) {
-        let winContent = <UIForm {...form}/>;
+        let winContent = <UIForm schemaComponent={form}/>;
+        this.openWindow(winContent, openParams);
+    }
+
+    openSchemaComponent(component: SchemaComponent, openParams?: OpenWindowParams) {
+        let winContent = <UIComponent schemaComponent={component}/>;
         this.openWindow(winContent, openParams);
     }
 

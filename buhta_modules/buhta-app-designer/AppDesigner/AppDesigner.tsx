@@ -46,6 +46,10 @@ import {OneWayBinder_StringValue} from "../../buhta-schema/OneWayBinder/OneWayBi
 import {OneWayBinder_NumberValue} from "../../buhta-schema/OneWayBinder/OneWayBinder_NumberValue";
 import {OneWayBinder_EventHandler} from "../../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
 import {OneWayBinder_JsCode} from "../../buhta-schema/OneWayBinder/OneWayBinder_JsCode";
+import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
+import {PropertyControl} from "../../buhta-ui/PropertyControl";
+import {ComponentControl} from "../../buhta-ui/ComponentControl";
+import enumerate = Reflect.enumerate;
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -77,27 +81,53 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     sideWidth: number = 300;
 
+
+    pro9(): Promise<number> {
+        return new Promise(
+            (resolve: (obj: number) => void, reject: (error: string) => void) => {
+                setTimeout(() => {
+                    resolve(9);
+                    console.log("resolve(9)");
+                }, 500);
+            });
+    }
+
     testOpenWindow() {
 
-        // let obj = {
-        //     Фамилия: "Савченков",
-        //     Имя: "Константин",
-        //     Отчество: "Владимирович"
-        // };
-        //
-        // let win =
-        //     <Tabs>
-        //         <Tab title="закладка 1">
-        //             <Form>
-        //                 <Input caption="Фамилия" type={InputType.Text} bindObject={obj} bindPropName="Фамилия"/>
-        //                 <Input caption="Имя" type={InputType.Text} bindObject={obj} bindPropName="Имя"/>
-        //                 <InputDivider title="а теперь отчество"></InputDivider>
-        //                 <Input type={InputType.Text} bindObject={obj} bindPropName="Отчество"/>
-        //             </Form>
-        //         </Tab>
-        //         <Tab title="закладка 2"> 22222 </Tab>
-        //     </Tabs>;
-        // appInstance.desktop.openWindow(win);
+
+        let a = [100, 200, 300];
+
+
+        Promise.map(a, (item: number, index: number, length: number) => {
+            console.log(item);
+            //return item + 8;
+
+            return this.pro9()
+                .then((x9) => {
+                    return item + x9;
+                });
+
+        })
+            .then((x) => {
+                console.log(x);
+            });
+
+        /*
+         var aa = [100, 200, 300];
+
+         Promise
+         .each(aa, (item, index, length) => {
+         console.log(item);
+         })
+         .then((x,y,z)=>{
+         console.log('x');
+         console.log(x);
+         console.log(y);
+         console.log(x);
+         });
+
+
+         */
     };
 
 
@@ -764,6 +794,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             but6.text = "Буттон6";
             panel1.children.push(but6);
 
+            let comp = new ComponentControl();
+            comp.id = "333395A0-5AF4-11E6-3333-8FBA78053333";
+            panel1.children.push(comp);
+
             let openParam: OpenWindowParams = {
                 title: "дизайнер компонента",
                 top: 10,
@@ -785,12 +819,85 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         getSchema().getObject<SchemaForm>("1F2D95A0-5AF4-11E6-91EA-8FBA7805DE8D").then((form: SchemaForm) => {
             let openParam: OpenWindowParams = {
-                title: "дизайнер компонента",
+                title: "дизайнер формы",
                 top: 50,
                 left: 50
             };
 
             appInstance.desktop.openSchemaComponentDesigner(form, openParam);
+
+        });
+
+
+    };
+
+    testSchemaComponent3ButtonsDesigner() {
+
+        checkAuth().then(() => {
+
+            let form = new SchemaComponent(getSchema());
+            form.id = "333395A0-5AF4-11E6-3333-8FBA78053333";
+
+            let p = new PropertyControl();
+            p.propertyName = "ИмяКнопкиДобавить";
+            p.propertyType = "string";
+            p.defaultValue = new OneWayBinder_StringValue("Добавить ли?");
+            form.children.push(p);
+
+            p = new PropertyControl();
+            p.propertyName = "ИмяКнопкиИзменить";
+            p.propertyType = "string";
+            p.defaultValue = new OneWayBinder_StringValue("Изменить ли?");
+            form.children.push(p);
+
+            let v = new LocalVariableControl();
+            v.variableName = "ИмяКнопкиУдалить";
+            v.variableType = "string";
+            v.initValue = new OneWayBinder_StringValue("Удалить ли?");
+            form.children.push(v);
+
+
+            let but2 = new ButtonControl();
+            but2.text = new OneWayBinder_JsCode("function text(context) {\n  return context.schemaComponent.getProp('ИмяКнопкиДобавить');\n}");
+            form.children.push(but2);
+
+            but2 = new ButtonControl();
+            but2.text = new OneWayBinder_JsCode("function text(context) {\n  return context.schemaComponent.getProp('ИмяКнопкиИзменить');\n}");
+            form.children.push(but2);
+
+            but2 = new ButtonControl();
+            but2.text = new OneWayBinder_JsCode("function text(context) {\n  return context.schemaComponent.getVar('ИмяКнопкиУдалить');\n}");
+            form.children.push(but2);
+
+            let openParam: OpenWindowParams = {
+                title: "дизайнер компонента",
+                top: 10,
+                left: 10,
+                width: 800,
+                height: 600
+
+            };
+
+            appInstance.desktop.openSchemaComponentDesigner(form, openParam);
+
+        });
+
+
+    };
+
+    testOpenSchemaComponent3ButtonsDesigner() {
+
+
+        getSchema().getObject<SchemaComponent>("333395A0-5AF4-11E6-3333-8FBA78053333").then((component: SchemaComponent) => {
+            let openParam: OpenWindowParams = {
+                title: "дизайнер компонента",
+                top: 10,
+                left: 10,
+                width: 800,
+                height: 600
+            };
+
+            appInstance.desktop.openSchemaComponentDesigner(component, openParam);
 
         });
 
@@ -810,7 +917,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                         <Layout type="row" sizeTo="parent">
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
                                 Fixed Sidebar 123<br/>
-                                <button onClick={() => { this.testOpenWindow(); }}> test open window</button>
+                                <button onClick={() => { this.testOpenWindow(); }}> test Promise-Each</button>
                                 <br/>
                                 <button onClick={() => { this.testOpenObjectDesigner(); }}>open designer</button>
                                 <br/>
@@ -837,9 +944,17 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <button onClick={() => { this.testSchemaFormDesigner(); }}>test SchemaFormDesigner
                                 </button>
                                 <br/>
+                                <button onClick={() => { this.testSchemaComponent3ButtonsDesigner(); }}>
+                                    test SchemaComponent3ButDesigner
+                                </button>
+                                <br/>
                                 <br/>
                                 <button onClick={() => { this.testOpenSchemaFormDesigner(); }}>
                                     test OpenSchemaFormDesigner
+                                </button>
+                                <br/>
+                                <button onClick={() => { this.testOpenSchemaComponent3ButtonsDesigner(); }}>
+                                    test OpenSchemaComponent3ButtonsDesigner
                                 </button>
                                 <br/>
                                 <button onClick={() => { showTestSelectControlForm(); }}>
