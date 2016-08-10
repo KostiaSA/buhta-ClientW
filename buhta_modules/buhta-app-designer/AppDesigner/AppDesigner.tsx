@@ -17,7 +17,6 @@ import {Form} from "../../buhta-core/Components/Form/Form";
 import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
 import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
-import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
 import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";

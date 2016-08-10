@@ -3,11 +3,14 @@ import * as ReactDom from "react-dom";
 import * as _ from "lodash";
 import {SchemaObject} from "../SchemaObject";
 import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyEditor";
-import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
+import {StringEditor, StringPropertyEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {throwAbstractError} from "../../buhta-core/Error";
 import {ComponentContext, ComponentProps, Component} from "../../buhta-core/Components/Component";
 import {SchemaComponentDesigner} from "../../buhta-app-designer/SchemaComponentDesigner/SchemaComponentDesigner";
+import {PropertyEditorInfo} from "../../buhta-app-designer/PropertyEditors/BasePropertyEditor";
+import {PropertyControl} from "../../buhta-ui/PropertyControl";
+import {ComponentControl} from "../../buhta-ui/ComponentControl";
 
 export class SchemaComponent extends SchemaObject {
     children: (BaseControl)[] = [];
@@ -29,6 +32,38 @@ export class SchemaComponent extends SchemaObject {
         throwAbstractError();
         throw  "fake";
     }
+
+
+    private collectPropertyControlsRecursive(control: BaseControl, props: PropertyControl[]) {
+        if (control instanceof PropertyControl)
+            props.push(control as PropertyControl);
+
+        control.children.forEach((child: BaseControl, index: number) => {
+            this.collectPropertyControlsRecursive(child, props);
+        }, this);
+    }
+
+    $$getPropertyEditors(): Promise<PropertyEditorInfo[]> {
+        return new Promise(
+            (resolve: (obj: PropertyEditorInfo[]) => void, reject: (error: string) => void) => {
+                let props: PropertyControl[] = [];
+                this.children.forEach((child: BaseControl, index: number) => {
+                    this.collectPropertyControlsRecursive(child, props);
+                }, this);
+
+                let editors: PropertyEditorInfo[] = props.map<PropertyEditorInfo>((control: PropertyControl) => {
+                    return {
+                        propertyName: control.propertyName,
+                        objectType: ComponentControl,
+                        editorType: StringPropertyEditor,
+                        propertyType: String
+                    };
+                });
+
+                resolve(editors);
+            });
+    }
+
 
     xxx: any;
 

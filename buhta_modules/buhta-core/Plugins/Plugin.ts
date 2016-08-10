@@ -15,6 +15,9 @@ export class ComponentPlugin<P,S extends ComponentState<P>> {
     willUnmount() {
     }
 
+    willUpdate() {
+    }
+
     willReceiveProps(nextProps: P) {
     }
 

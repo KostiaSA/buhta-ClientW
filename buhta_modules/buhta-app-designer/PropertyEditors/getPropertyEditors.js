@@ -1,10 +1,16 @@
-"use strict";
-function getPropertyEditors(obj) {
-    var editors = obj.constructor.$$propertyEditors;
-    editors = editors.filter(function (edt) { return obj instanceof edt.objectType; });
-    //console.log("getPropertyEditors") ;
-    //console.log(editors);
-    return editors;
-}
-exports.getPropertyEditors = getPropertyEditors;
+// import {PropertyEditorInfo} from "./BasePropertyEditor";
+// import {DesignedObject} from "../DesignedObject";
+//
+// export function getPropertyEditors(obj: DesignedObject): PropertyEditorInfo[] {
+//
+//     let editors = (obj.constructor as any).$$propertyEditors as PropertyEditorInfo[];
+//
+//     editors = editors.filter((edt) => obj instanceof edt.objectType);
+//
+//     //console.log("getPropertyEditors") ;
+//     //console.log(editors);
+//     return editors;
+//
+// }
+//
 //# sourceMappingURL=getPropertyEditors.js.map

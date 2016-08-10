@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {ComponentProps, Component} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
 import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from "../PropertyEditors/BasePropertyEditor";
-import {getPropertyEditors} from "../PropertyEditors/getPropertyEditors";
+
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
@@ -55,6 +55,10 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         clearInterval(this.compareInterval);
     }
 
+    protected willUpdate() {
+        super.willUpdate();
+//        delete this.propertyDesigners;
+    }
 
     protected didMount() {
         super.didMount();
@@ -62,35 +66,43 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         //this.snapshot.saveObject(this.props.designedObject, "root");
     }
 
+
+    propertyDesigners: JSX.Element[];
+
     renderPropertyDesigners(): JSX.Element[] {
-        let ret: JSX.Element[] = [];
+        if (this.propertyDesigners === undefined) {
+            this.propertyDesigners = [];
+            this.clonedDesignedObject.$$getPropertyEditors()
+                .then((propInfos: PropertyEditorInfo[]) => {
+                    propInfos.forEach((propInfo: PropertyEditorInfo, index: number) => {
+                        //console.log(propInfo);
+                        let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
+                            designedObject: this.clonedDesignedObject,
+                            //propertyEditorInfo: propInfo,
+                            index: index,
+                            key: index,
+                            onChange: this.props.onChange,
 
-        getPropertyEditors(this.clonedDesignedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
-            //console.log(propInfo);
-            let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
-                designedObject: this.clonedDesignedObject,
-                //propertyEditorInfo: propInfo,
-                index: index,
-                key: index,
-                onChange: this.props.onChange,
+                            // это из propInfo: PropertyEditorInfo, заполяется далее через _.assign
+                            propertyName: "",
+                            objectType: DesignedObject,
+                            editorType: BasePropertyEditor,
+                            propertyType: null
+                        };
 
-                // это из propInfo: PropertyEditorInfo, заполяется далее через _.assign
-                propertyName: "",
-                objectType: DesignedObject,
-                editorType: BasePropertyEditor,
-                propertyType: null
-            };
+                        _.assign(editorProps, propInfo);
 
-            _.assign(editorProps, propInfo);
+                        if (!editorProps.inputCaption)
+                            editorProps.inputCaption = editorProps.propertyName;
+                        console.log(editorProps);
 
-            if (!editorProps.inputCaption)
-                editorProps.inputCaption = editorProps.propertyName;
-            //console.log(editorProps);
+                        this.propertyDesigners.push(React.createElement(propInfo.editorType, editorProps, {}));
+                    });
+                    this.forceUpdate();
+                });
+        }
 
-            ret.push(React.createElement(propInfo.editorType, editorProps, {}));
-        });
-
-        return ret;
+        return this.propertyDesigners;
     }
 
     handleSaveChanges = () => {

@@ -9,6 +9,8 @@ var ComponentPlugin = (function () {
     };
     ComponentPlugin.prototype.willUnmount = function () {
     };
+    ComponentPlugin.prototype.willUpdate = function () {
+    };
     ComponentPlugin.prototype.willReceiveProps = function (nextProps) {
     };
     ComponentPlugin.prototype.didUpdate = function (prevProps, prevState, prevContext) {

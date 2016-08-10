@@ -259,6 +259,16 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         this.willUnmount();
     };
 
+    protected willUpdate() {
+        this.plugins.forEach((plug) => {
+            plug.willUpdate();
+        });
+    }
+
+    private componentWillUpdate = () => {
+        this.willUpdate();
+    };
+    
     addClassName(classNames: string | undefined) {
         if (classNames)
             classNames.split(" ").forEach((name) => {

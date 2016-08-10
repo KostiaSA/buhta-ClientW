@@ -13,6 +13,7 @@ import {SchemaComponent} from "../buhta-schema/SchemaComponent/SchemaComponent";
 import {ComponentProps} from "../buhta-core/Components/Component";
 import {throwAbstractError} from "../buhta-core/Error";
 import {getSchema} from "../buhta-schema/Schema";
+import {PropertyEditorInfo} from "../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 
 export class ComponentControl extends BaseControl {
     @StringEditor({
@@ -26,6 +27,43 @@ export class ComponentControl extends BaseControl {
     beforeRender() {
         super.beforeRender();
     }
+
+    $$getPropertyEditors(): Promise<PropertyEditorInfo[]> {
+        let schema = getSchema();
+
+        return schema
+            .getObject<SchemaComponent>(this.id)
+            .then((component: SchemaComponent) => {
+                return component.$$getPropertyEditors();
+            })
+            .then((infos: PropertyEditorInfo[]) => {
+
+                return super.$$getPropertyEditors()
+                    .then((superInfos: PropertyEditorInfo[]) => {
+                        return superInfos.concat(infos);
+                    });
+
+            });
+
+        // return new Promise(
+        //     (resolve: (obj: PropertyEditorInfo[]) => void, reject: (error: string) => void) => {
+        //         let editors = (this.constructor as any).$$propertyEditors as PropertyEditorInfo[];
+        //         editors = editors.filter((edt) => this instanceof edt.objectType);
+        //         //console.log("getPropertyEditors") ;
+        //         //console.log(editors);
+        //         //return editors;
+        //         resolve(editors);
+        //     });
+        //
+
+
+    }
+
+    // $$getPropertyEditors(): PropertyEditorInfo[] {
+    //     let propEditors = super().$$getPropertyEditors();
+    //
+    //     return propEditors;
+    // }
 
     getPropsAsync(): Promise<UIComponentProps> {
         let schema = getSchema();
