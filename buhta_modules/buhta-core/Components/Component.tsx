@@ -23,6 +23,7 @@ export interface ComponentProps<S> extends React.ClassAttributes<Element> {
     onWillMount?: (state: S) => void;
     $$control?: BaseControl;
     $$schemaComponent?: SchemaComponent;
+    key?:any;
 }
 
 

@@ -43,20 +43,22 @@ export class BaseControl extends DesignedObject {
     $$ownerComponent: UIComponent<any>;
     $$parentControl: BaseControl | null;
 
-    render(ownerComponent: UIComponent<any>, parentControl: BaseControl | null): JSX.Element | undefined {
+    render(ownerComponent: UIComponent<any>, index: number, parentControl: BaseControl | null): JSX.Element | undefined {
         this.$$ownerComponent = ownerComponent;
         this.$$parentControl = parentControl;
 
         this.beforeRender();
-        let children = this.children.map((child: BaseControl) => {
+        let children = this.children.map((child: BaseControl, index: number) => {
             // if (_.isString(child))
             //     return child;
             // else
-            return child.render(ownerComponent, this);
+            return child.render(ownerComponent, index, this);
         });
         let comp = this.getComponent();
 
         let props: ComponentProps<any> = this.getProps();
+        if (props.key === undefined)
+            props.key = index;
 
         props.$$control = this;
 

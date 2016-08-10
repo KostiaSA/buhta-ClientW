@@ -26,8 +26,10 @@ var UIComponent = (function (_super) {
     };
     UIComponent.prototype.willMount = function () {
         _super.prototype.willMount.call(this);
-        if (this.$$runtimeContext === undefined)
+        if (this.$$runtimeContext === undefined) {
             this.$$runtimeContext = new UIComponentRuntimeContext(this);
+            console.log("UIComponent-willMount");
+        }
     };
     UIComponent.prototype.getChildContext = function () {
         return { uiComponent: this };
@@ -38,11 +40,11 @@ var UIComponent = (function (_super) {
         //this.addClassName("Layout");
         //this.addStyles({display: "flex", position: "relative", flexDirection: this.props.type});
         //this.addProps({onClick: this.props.onClick});
-        var children = this.props.children.map(function (child) {
+        var children = this.props.children.map(function (child, index) {
             if (_.isString(child))
                 return child;
             else
-                return child.render(_this, null);
+                return child.render(_this, index, null);
         });
         return (React.createElement("div", __assign({}, this.getRenderProps(), {ref: function (e) { _this.nativeElement = e; }}), children));
     };

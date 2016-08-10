@@ -733,11 +733,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let but1 = new ButtonControl();
             but1.text = "Буттон 1222 с обработчиком Опа!";
-            but1.onClick = new OneWayBinder_EventHandler("function onClick(context) {\n  console.log(context); context.schemaComponent.setVar('ИмяКнопки','Пиздец',true);\n}");
+            but1.onClick = new OneWayBinder_EventHandler("function onClick(context) {\n  context.schemaComponent.setVar('ИмяКнопки','Пиздец',true);\n}");
             form.children.push(but1);
 
             let but2 = new ButtonControl();
-            but2.text = new OneWayBinder_JsCode("function text(context) {\n  return context.schemaComponent.getVar('ИмяКнопки');\n}");
+            but2.text = new OneWayBinder_JsCode("function text(context) {\n  console.log('context777'); console.log(context);   return context.schemaComponent.getVar('ИмяКнопки');\n}");
             but2.text2 = new OneWayBinder_StringValue("текст 2");
             //let x=new OneWayBinder_NumberValue(100);
             form.children.push(but2);

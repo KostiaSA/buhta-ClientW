@@ -19,11 +19,11 @@ export class UIForm extends UIComponent<SchemaForm> {
 
         //      this.addProps({onClick: this.props.onClick});
 
-        let children = this.props.children.map((child: BaseControl| string) => {
+        let children = this.props.children.map((child: BaseControl| string, index: number) => {
             if (_.isString(child))
                 return child;
             else
-                return child.render(this, null);
+                return child.render(this, index, null);
         });
 
 

@@ -173,13 +173,15 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
     handleTestButtonClick = () => {
         //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+        let designedObject = deepClone(this.clonedDesignedObject);
+
         let openParam: OpenWindowParams = {
-            title: `тест '${ getObjectConstructorName(this.clonedDesignedObject)}'`,
+            title: `тест '${ getObjectConstructorName(designedObject)}'`,
             top: 350,
             left: 350
         };
 
-        this.getParentDesktop().openSchemaForm(this.clonedDesignedObject as SchemaForm, openParam);
+        this.getParentDesktop().openSchemaForm(designedObject as SchemaForm, openParam);
     }
 
     handleUpdateButtonClick = () => {

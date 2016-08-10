@@ -5,6 +5,7 @@ import {SchemaForm} from "../../../buhta-schema/SchemaForm/SchemaForm";
 import {BaseControl} from "../../../buhta-ui/BaseControl";
 import {SchemaComponent} from "../../../buhta-schema/SchemaComponent/SchemaComponent";
 import {UIForm} from "../UIForm/UIForm";
+import {getRandomString} from "../../getRandomString";
 
 export class UIComponent<T extends SchemaComponent> extends Component<T, any> {
     $$runtimeContext: UIComponentRuntimeContext;
@@ -16,8 +17,10 @@ export class UIComponent<T extends SchemaComponent> extends Component<T, any> {
 
     protected willMount() {
         super.willMount();
-        if (this.$$runtimeContext === undefined)
+        if (this.$$runtimeContext === undefined) {
             this.$$runtimeContext = new UIComponentRuntimeContext(this);
+            console.log("UIComponent-willMount");
+        }
     }
 
     static childContextTypes = {
@@ -36,11 +39,11 @@ export class UIComponent<T extends SchemaComponent> extends Component<T, any> {
         //this.addStyles({display: "flex", position: "relative", flexDirection: this.props.type});
         //this.addProps({onClick: this.props.onClick});
 
-        let children = this.props.children.map((child: BaseControl| string) => {
+        let children = this.props.children.map((child: BaseControl| string, index:number) => {
             if (_.isString(child))
                 return child;
             else
-                return child.render(this, null);
+                return child.render(this, index, null);
         });
 
 
@@ -54,7 +57,6 @@ export class UIComponent<T extends SchemaComponent> extends Component<T, any> {
 
 export class UIComponentRuntimeContext {
     constructor(public component: UIComponent<any>) {
-
     }
 
     forceUpdate() {

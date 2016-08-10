@@ -21,18 +21,16 @@ export class OneWayBinder_JsCode extends OneWayBinder<any> {
     private cachedJsCode: string;
 
     getValue(control: BaseControl): any {
-        return undefined;
-        // if (this.jsCode === undefined)
-        //     return undefined;
-        // else {
-        //     if (!this.cachedJsGetValue || this.cachedJsCode !== this.jsCode) {
-        //         this.cachedJsCode = this.jsCode;
-        //         this.cachedJsGetValue = eval("(" + this.jsCode + ")");
-        //         let event = control.createEvent();
-        //         return this.cachedJsGetValue(event);
-        //     }
-        //
-        // }
+        if (this.jsCode === undefined)
+            return undefined;
+        else {
+            if (!this.cachedJsGetValue || this.cachedJsCode !== this.jsCode) {
+                this.cachedJsCode = this.jsCode;
+                this.cachedJsGetValue = eval("(" + this.jsCode + ")");
+            }
+            let event = control.createEvent();
+            return this.cachedJsGetValue(event);
+        }
     }
 
     renderValueEditor(onChangeCallback?: () => void): JSX.Element {

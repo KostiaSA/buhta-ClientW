@@ -29,11 +29,11 @@ var UIForm = (function (_super) {
             this.addStyles({ height: "100%" });
         }
         //      this.addProps({onClick: this.props.onClick});
-        var children = this.props.children.map(function (child) {
+        var children = this.props.children.map(function (child, index) {
             if (_.isString(child))
                 return child;
             else
-                return child.render(_this, null);
+                return child.render(_this, index, null);
         });
         return (React.createElement("div", __assign({}, this.getRenderProps(), {ref: function (e) { _this.nativeElement = e; }}), children));
     };

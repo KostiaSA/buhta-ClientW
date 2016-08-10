@@ -113,12 +113,13 @@ var SchemaComponentDesigner = (function (_super) {
         // }
         this.handleTestButtonClick = function () {
             //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
+            var designedObject = deepClone_1.deepClone(_this.clonedDesignedObject);
             var openParam = {
-                title: "\u0442\u0435\u0441\u0442 '" + getObjectConstructorName_1.getObjectConstructorName(_this.clonedDesignedObject) + "'",
+                title: "\u0442\u0435\u0441\u0442 '" + getObjectConstructorName_1.getObjectConstructorName(designedObject) + "'",
                 top: 350,
                 left: 350
             };
-            _this.getParentDesktop().openSchemaForm(_this.clonedDesignedObject, openParam);
+            _this.getParentDesktop().openSchemaForm(designedObject, openParam);
         };
         this.handleUpdateButtonClick = function () {
             var designedObject = _this.treeGridState.getFocusedRow();
