@@ -21,6 +21,8 @@ export class ComponentControl extends BaseControl {
     @ShowInDesignerGrid({column: "main-properties"})
     id: string;
 
+    name: string;
+
     beforeRender() {
         super.beforeRender();
     }
@@ -65,7 +67,7 @@ export class ComponentControl extends BaseControl {
     }
 
     get $$controlName(): JSX.Element | string {
-        let tag = "<UIComponent>";
+        let tag = "<" + this.name + ">";
         return (
             <span className="html-tag">
               {tag}

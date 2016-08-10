@@ -796,6 +796,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let comp = new ComponentControl();
             comp.id = "333395A0-5AF4-11E6-3333-8FBA78053333";
+            comp.name = "Buttons3Stuck";
             panel1.children.push(comp);
 
             let openParam: OpenWindowParams = {
@@ -837,6 +838,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let form = new SchemaComponent(getSchema());
             form.id = "333395A0-5AF4-11E6-3333-8FBA78053333";
+            form.name = "Buttons3Stuck";
 
             let p = new PropertyControl();
             p.propertyName = "ИмяКнопкиДобавить";
