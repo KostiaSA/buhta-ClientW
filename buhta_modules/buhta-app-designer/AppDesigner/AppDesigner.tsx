@@ -49,6 +49,8 @@ import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponen
 import {PropertyControl} from "../../buhta-ui/PropertyControl";
 import {ComponentControl} from "../../buhta-ui/ComponentControl";
 import enumerate = Reflect.enumerate;
+import {SchemaComponentDesigner} from "../SchemaComponentDesigner/SchemaComponentDesigner";
+import {SchemaDesigner} from "../SchemaDesigner/SchemaDesigner";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -885,8 +887,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     };
 
-    testOpenSchemaComponent3ButtonsDesigner() {
 
+    testOpenSchemaComponent3ButtonsDesigner() {
 
         getSchema().getObject<SchemaComponent>("333395A0-5AF4-11E6-3333-8FBA78053333").then((component: SchemaComponent) => {
             let openParam: OpenWindowParams = {
@@ -901,6 +903,25 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         });
 
+
+    };
+
+    testOpenSchemaDesigner() {
+
+        let openParam: OpenWindowParams = {
+            title: "дизайнер схемы",
+            top: 10,
+            left: 10,
+            width: 800,
+            height: 600
+        };
+
+        let winContent = (
+            <SchemaDesigner
+                schema={getSchema()}
+            >
+            </SchemaDesigner>);
+        appInstance.desktop.openWindow(winContent, openParam);
 
     };
 
@@ -948,7 +969,6 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                     test SchemaComponent3ButDesigner
                                 </button>
                                 <br/>
-                                <br/>
                                 <button onClick={() => { this.testOpenSchemaFormDesigner(); }}>
                                     test OpenSchemaFormDesigner
                                 </button>
@@ -959,6 +979,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { showTestSelectControlForm(); }}>
                                     showTestSelectControlForm
+                                </button>
+                                <br/>
+                                <button onClick={() => { this.testOpenSchemaDesigner(); }}>
+                                    test OpenSchemDesigner +++++++++++++
                                 </button>
                             </Fixed>
                             <Flex className="XXXcontent">

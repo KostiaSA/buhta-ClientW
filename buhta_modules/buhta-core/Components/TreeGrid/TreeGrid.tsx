@@ -128,6 +128,8 @@ export class InternalTreeNode<T> {
     element: HTMLElement;
     //sourceObject: any;
     sourceIndex: number;
+    key: string;
+    parentKey: string;
     //sourceRow: any;
     //sourceRowContainer: any;  // массив children, в котором сидит sourceRow, используется в DragDrop
     cellElements: HTMLElement[] = [];
@@ -438,16 +440,70 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     }
 
+    private createNodesFromParentKey() {
+
+        if (this.state.dataSource === undefined)
+            return;
+
+        if (this.props.keyFieldName === undefined)
+            throwError("TreeGrid: property 'keyFieldName' is undefined");
+
+        if (this.props.hierarchyFieldName === undefined)
+            throwError("TreeGrid: property 'hierarchyFieldName' (as parentKey) is undefined");
+
+        let nodeList: any = {};
+
+        this.state.dataSource.getRows().forEach((dataSourceItem: any, index: number) => {
+            let node = new InternalTreeNode<any>(this.state);
+            node.sourceIndex = index;
+            node.key = dataSourceItem[this.props.keyFieldName!];
+            if (node.key)
+                node.key = node.key.toString();
+
+            node.parentKey = dataSourceItem[this.props.hierarchyFieldName!];
+            if (node.parentKey)
+                node.parentKey = node.parentKey.toString();
+
+            nodeList[node.key] = node;
+            //node.level = -1;
+            //node.expanded = node.level < this.props.autoExpandNodesToLevel;
+
+        }, this);
+
+        for (let key in nodeList) {
+            let node = nodeList[key];
+            if (node.parentKey !== undefined) {
+                let parentNode = nodeList[node.parentKey];
+                if (parentNode !== undefined) {
+                    if ((node  as InternalTreeNode<any>).parent !== undefined)
+                        throwError("TreeGrid.createNodesFromParentKey(): internal error");
+                    (node  as InternalTreeNode<any>).parent = parentNode;
+                    (parentNode as InternalTreeNode<any>).children.push(node);
+                }
+            }
+        }
+
+        for (let key in nodeList) {
+            let node = nodeList[key];
+            if (node.parentKey === undefined) {
+                this.state.nodes.push(node);
+            }
+        }
+        
+        // todo сортировка children
+
+    }
+
 
     private createNodesFromHierarchyField() {
 
-        if (!this.state.dataSource)
+        if (this.state.dataSource === undefined)
             return;
 
-        if (!this.props.hierarchyFieldName)
-            throwError("TreeGrid: property 'hierarchyFieldName' is undefined");
+        if (this.props.hierarchyFieldName === undefined)
+            throwError("TreeGrid: property 'hierarchyFieldName' (as parentKey) is undefined");
 
-        if (!this.props.hierarchyDelimiters) {
+        if (this.props.hierarchyDelimiters === undefined) {
             throwError("TreeGrid: property 'hierarchyDelimiters' is undefined");
         }
 

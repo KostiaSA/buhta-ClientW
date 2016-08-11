@@ -28,7 +28,6 @@ var UIComponent = (function (_super) {
         _super.prototype.willMount.call(this);
         if (this.$$runtimeContext === undefined) {
             this.$$runtimeContext = new UIComponentRuntimeContext(this);
-            console.log("UIComponent-willMount");
         }
     };
     UIComponent.prototype.getChildContext = function () {

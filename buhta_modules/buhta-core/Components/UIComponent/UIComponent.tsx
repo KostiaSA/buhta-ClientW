@@ -25,7 +25,6 @@ export class UIComponent<T extends UIComponentProps> extends Component<T, any> {
         super.willMount();
         if (this.$$runtimeContext === undefined) {
             this.$$runtimeContext = new UIComponentRuntimeContext(this);
-            console.log("UIComponent-willMount");
         }
     }
 
