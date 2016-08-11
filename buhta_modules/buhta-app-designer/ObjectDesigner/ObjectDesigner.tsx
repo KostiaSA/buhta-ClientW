@@ -10,6 +10,9 @@ import {Snapshot} from "../../buhta-core/Snapshot";
 //import {Observable} from "../../buhta-core/Observable";
 import {deepClone} from "../../buhta-core/deepClone";
 import {isDeepEqual} from "../../buhta-core/isDeepEqual";
+import {ComponentControl} from "../../buhta-ui/ComponentControl";
+import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
+import {throwError} from "../../buhta-core/Error";
 
 
 export interface ObjectDesignerProps extends ComponentProps<any> {
@@ -76,6 +79,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                 .then((propInfos: PropertyEditorInfo[]) => {
                     propInfos.forEach((propInfo: PropertyEditorInfo, index: number) => {
                         //console.log(propInfo);
+
                         let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
                             designedObject: this.clonedDesignedObject,
                             //propertyEditorInfo: propInfo,
@@ -97,7 +101,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                         console.log(editorProps);
 
                         this.propertyDesigners.push(React.createElement(propInfo.editorType, editorProps, {}));
-                    });
+                    }, this);
                     this.forceUpdate();
                 });
         }

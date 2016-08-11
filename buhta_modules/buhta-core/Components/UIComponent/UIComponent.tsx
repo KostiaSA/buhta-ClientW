@@ -10,6 +10,7 @@ import {getRandomString} from "../../getRandomString";
 
 export interface UIComponentProps extends ComponentProps<any> {
     schemaComponent: SchemaComponent;
+    userProps?: any;
 }
 
 export class UIComponent<T extends UIComponentProps> extends Component<T, any> {
@@ -43,6 +44,8 @@ export class UIComponent<T extends UIComponentProps> extends Component<T, any> {
 
         if (this.asyncChildren === undefined) {
             this.asyncChildren = [];
+
+            _.assign(this.$$runtimeContext.$$props, this.props.userProps);
 
             Promise
                 .map(this.props.schemaComponent.children, (child: BaseControl, index: number, length: number) => {

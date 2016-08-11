@@ -14,6 +14,7 @@ import {ComponentControl} from "../../buhta-ui/ComponentControl";
 
 export class SchemaComponent extends SchemaObject {
     children: (BaseControl)[] = [];
+    props: any = {};
     //reactElement: React.ReactElement<any>;
 
     // get context(): ComponentContext {
@@ -56,7 +57,8 @@ export class SchemaComponent extends SchemaObject {
                         propertyName: control.propertyName,
                         objectType: ComponentControl,
                         editorType: StringPropertyEditor,
-                        propertyType: String
+                        propertyType: String,
+                        isComponentProperty: true
                     };
                 });
 
@@ -64,6 +66,18 @@ export class SchemaComponent extends SchemaObject {
             });
     }
 
+
+    $$getPropNames(): string[] {
+        let props: PropertyControl[] = [];
+        this.children.forEach((child: BaseControl, index: number) => {
+            this.collectPropertyControlsRecursive(child, props);
+        }, this);
+
+        return props.map((prop: PropertyControl) => {
+            return prop.propertyName;
+        });
+
+    }
 
     xxx: any;
 

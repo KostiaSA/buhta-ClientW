@@ -16,6 +16,7 @@ import {getSchema} from "../buhta-schema/Schema";
 import {PropertyEditorInfo} from "../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 
 export class ComponentControl extends BaseControl {
+    // todo сделать, чтобы при добавлении нового property в дизайнере компонента не добавлялись property c именами "id", "name"
     @StringEditor({
         inputCaption: "id"
     })
@@ -45,25 +46,8 @@ export class ComponentControl extends BaseControl {
 
             });
 
-        // return new Promise(
-        //     (resolve: (obj: PropertyEditorInfo[]) => void, reject: (error: string) => void) => {
-        //         let editors = (this.constructor as any).$$propertyEditors as PropertyEditorInfo[];
-        //         editors = editors.filter((edt) => this instanceof edt.objectType);
-        //         //console.log("getPropertyEditors") ;
-        //         //console.log(editors);
-        //         //return editors;
-        //         resolve(editors);
-        //     });
-        //
-
-
     }
 
-    // $$getPropertyEditors(): PropertyEditorInfo[] {
-    //     let propEditors = super().$$getPropertyEditors();
-    //
-    //     return propEditors;
-    // }
 
     getPropsAsync(): Promise<UIComponentProps> {
         let schema = getSchema();
@@ -71,34 +55,18 @@ export class ComponentControl extends BaseControl {
         return schema
             .getObject<SchemaComponent>(this.id)
             .then((component: SchemaComponent) => {
-                return {schemaComponent: component};
+
+                let userProps: any = {};
+                // копируем свойства
+                component.$$getPropNames().forEach((propName: string) => {
+                    if (this[propName] !== undefined)
+                        userProps[propName] = this[propName];
+                }, this);
+
+                return {schemaComponent: component, userProps: userProps};
             });
 
-        // return new Promise(
-        //     (resolve: (obj: UIComponentProps) => void, reject: (error: string) => void) => {
-        //
-        //
-        //         resolve({});
-        //     });
     }
-
-
-    // getProps(): SchemaComponent {
-    //
-    //     let props: SchemaComponent = {};
-    //
-    //     let text: string;
-    //
-    //     if (_.isString(this.text))
-    //         props.text = this.text;
-    //     else
-    //         props.text = (this.text as OneWayBinder<string>).getValue(this);
-    //
-    //     //let onClick: ((event: ControlEvent) => void) | undefined = undefined;
-    //
-    //     return props;
-    //
-    // }
 
     getComponent(): Function | undefined {
         return UIComponent;
@@ -119,17 +87,5 @@ export class ComponentControl extends BaseControl {
     //     );
     // }
 
-// getComponent(): React.ReactElement<any> {
-    //
-    //     return (
-    //         <Button buhtaControl={this}>
-    //             {this.text}
-    //         </Button>
-    //     );
-    //     // ButtonControl.prototype.getComponent = function () {
-    //     //     return (React.createElement(Button_1.Button, {buhtaControl: this}, this.text));
-    //     // };
-    //
-    // }
 
 }

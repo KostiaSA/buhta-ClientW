@@ -13,6 +13,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 var React = require("react");
+var _ = require("lodash");
 var Component_1 = require("../Component");
 var UIComponent = (function (_super) {
     __extends(UIComponent, _super);
@@ -37,6 +38,7 @@ var UIComponent = (function (_super) {
         var _this = this;
         if (this.asyncChildren === undefined) {
             this.asyncChildren = [];
+            _.assign(this.$$runtimeContext.$$props, this.props.userProps);
             Promise
                 .map(this.props.schemaComponent.children, function (child, index, length) {
                 return child.renderAsync(_this, index, null);
