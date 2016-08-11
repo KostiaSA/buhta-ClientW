@@ -127,7 +127,8 @@ export class BaseControl extends DesignedObject {
     }
 
     get $$controlName(): JSX.Element | string {
-        return "<baseControl>";
+        throwAbstractError();
+        throw  "fake";
     }
 
     get $$controlMainProps(): JSX.Element {
@@ -179,9 +180,9 @@ export class BaseControl extends DesignedObject {
 
         return (
             <ControlPropsForDesignerGrid
-                control = {this}
-                gridColumnName = {column}
-                >
+                control={this}
+                gridColumnName={column}
+            >
             </ControlPropsForDesignerGrid>
         );
     }

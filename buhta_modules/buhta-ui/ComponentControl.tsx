@@ -14,16 +14,15 @@ import {ComponentProps} from "../buhta-core/Components/Component";
 import {throwAbstractError} from "../buhta-core/Error";
 import {getSchema} from "../buhta-schema/Schema";
 import {PropertyEditorInfo} from "../buhta-app-designer/PropertyEditors/BasePropertyEditor";
+import {ControlNameForDesignerGrid} from "../buhta-app-designer/ObjectDesigner/ControlNameForDesignerGrid";
 
 export class ComponentControl extends BaseControl {
-    // todo сделать, чтобы при добавлении нового property в дизайнере компонента не добавлялись property c именами "id", "name"
+    // todo сделать, чтобы при добавлении нового property в дизайнере компонента не добавлялись property c именами "schemaComponentId", "schemaComponentName"
     @StringEditor({
-        inputCaption: "id"
+        inputCaption: "schemaComponentId"
     })
     @ShowInDesignerGrid({column: "main-properties"})
-    id: string;
-
-    name: string;
+    schemaComponentId: string;
 
     beforeRender() {
         super.beforeRender();
@@ -33,7 +32,7 @@ export class ComponentControl extends BaseControl {
         let schema = getSchema();
 
         return schema
-            .getObject<SchemaComponent>(this.id)
+            .getObject<SchemaComponent>(this.schemaComponentId)
             .then((component: SchemaComponent) => {
                 return component.$$getPropertyEditors();
             })
@@ -53,7 +52,7 @@ export class ComponentControl extends BaseControl {
         let schema = getSchema();
 
         return schema
-            .getObject<SchemaComponent>(this.id)
+            .getObject<SchemaComponent>(this.schemaComponentId)
             .then((component: SchemaComponent) => {
 
                 let userProps: any = {};
@@ -113,14 +112,24 @@ export class ComponentControl extends BaseControl {
     //     );
     // }
     //
+
     get $$controlName(): JSX.Element | string {
-        let tag = "<" + this.name + ">";
         return (
-            <span className="html-tag">
-              {tag}
-            </span>
+            <ControlNameForDesignerGrid
+                control = {this}
+            >
+            </ControlNameForDesignerGrid>
         );
     }
+
+    // get $$controlName(): JSX.Element | string {
+    //     let tag = "<" + this.schemaComponentName + ">";
+    //     return (
+    //         <span className="html-tag">
+    //           {tag}
+    //         </span>
+    //     );
+    // }
 
     // get $$controlMainProps() {
     //     return (

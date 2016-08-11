@@ -64,11 +64,11 @@ export class ControlPropsForDesignerGrid extends Component<ControlPropsForDesign
                 this.propDesigners.push(prop);
             }, this);
 
-        if (this.props.control.id !== undefined) {
+        if (this.props.control.schemaComponentId !== undefined) {
             let begIndex = this.propDesigners.length;
             let schema = getSchema();
             schema
-                .getObject<SchemaComponent>(this.props.control.id)
+                .getObject<SchemaComponent>(this.props.control.schemaComponentId)
                 .then((component: SchemaComponent) => {
 
                     let userProps: any = {};

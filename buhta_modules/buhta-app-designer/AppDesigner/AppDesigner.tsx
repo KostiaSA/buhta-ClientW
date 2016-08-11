@@ -794,8 +794,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             panel1.children.push(but6);
 
             let comp = new ComponentControl();
-            comp.id = "333395A0-5AF4-11E6-3333-8FBA78053333";
-            comp.name = "Buttons3Stuck";
+            comp.schemaComponentId = "333395A0-5AF4-11E6-3333-8FBA78053333";
             panel1.children.push(comp);
 
             let openParam: OpenWindowParams = {
