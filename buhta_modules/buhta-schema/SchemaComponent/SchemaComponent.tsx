@@ -14,7 +14,7 @@ import {ComponentControl} from "../../buhta-ui/ComponentControl";
 
 export class SchemaComponent extends SchemaObject {
     children: (BaseControl)[] = [];
-    props: any = {};
+    //props: any = {};
     //reactElement: React.ReactElement<any>;
 
     // get context(): ComponentContext {

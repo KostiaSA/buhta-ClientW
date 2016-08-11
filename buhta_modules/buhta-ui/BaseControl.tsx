@@ -10,6 +10,7 @@ import {OneWayBinder_undefined} from "../buhta-schema/OneWayBinder/OneWayBinder_
 import {ControlEvent} from "./ControlEvent";
 import {SchemaComponent} from "../buhta-schema/SchemaComponent/SchemaComponent";
 import {UIComponent} from "../buhta-core/Components/UIComponent/UIComponent";
+import {ControlPropsForDesignerGrid} from "../buhta-app-designer/ObjectDesigner/ControlPropsForDesignerGrid";
 
 export class BaseControl extends DesignedObject {
 //    name: string;
@@ -76,7 +77,7 @@ export class BaseControl extends DesignedObject {
     renderAsync(ownerComponent: UIComponent<any>, index: number, parentControl: BaseControl | null): Promise<JSX.Element | undefined> {
         this.$$ownerComponent = ownerComponent;
         this.$$parentControl = parentControl;
-        
+
         this.beforeRender();
 
         return Promise
@@ -139,47 +140,49 @@ export class BaseControl extends DesignedObject {
 
     $$controlPropsByColumnName(column: string): JSX.Element {
 
-        let props: any[] = [];
-
-        getShowInDesignerInfos(this)
-            .filter((info) => {
-                return (
-                    info.column === column &&
-                    this[info.propertyName] !== undefined &&
-                    this[info.propertyName] !== null &&
-                    (!(this[info.propertyName] instanceof OneWayBinder_undefined))
-                );
-            })
-            .forEach((info, index) => {
-
-                let propValue = this[info.propertyName];
-                let propValueAsString = "";
-
-                // if (propValue === undefined)
-                //     propValueAsString = "undefined";
-                // else if (propValue === null)
-                //     propValueAsString = "null";
-                //else
-                if (propValue.toString !== undefined)
-                    propValueAsString = propValue.toString();
-                else
-                    propValueAsString = "error: toString() is undefined";
-
-
-                let prop = (
-                    <div key={index}>
-                        <span className="property">{info.propertyName }</span>
-                        <span className="string">={propValueAsString}</span>
-                    </div>
-                );
-                props.push(prop);
-            });
-
+        // let props: any[] = [];
+        //
+        // getShowInDesignerInfos(this)
+        //     .filter((info) => {
+        //         return (
+        //             info.column === column &&
+        //             this[info.propertyName] !== undefined &&
+        //             this[info.propertyName] !== null &&
+        //             (!(this[info.propertyName] instanceof OneWayBinder_undefined))
+        //         );
+        //     })
+        //     .forEach((info, index) => {
+        //
+        //         let propValue = this[info.propertyName];
+        //         let propValueAsString = "";
+        //
+        //         // if (propValue === undefined)
+        //         //     propValueAsString = "undefined";
+        //         // else if (propValue === null)
+        //         //     propValueAsString = "null";
+        //         //else
+        //         if (propValue.toString !== undefined)
+        //             propValueAsString = propValue.toString();
+        //         else
+        //             propValueAsString = "error: toString() is undefined";
+        //
+        //
+        //         let prop = (
+        //             <div key={index}>
+        //                 <span className="property">{info.propertyName }</span>
+        //                 <span className="string">={propValueAsString}</span>
+        //             </div>
+        //         );
+        //         props.push(prop);
+        //     });
+        //
 
         return (
-            <div>
-                {props}
-            </div>
+            <ControlPropsForDesignerGrid
+                control = {this}
+                gridColumnName = {column}
+                >
+            </ControlPropsForDesignerGrid>
         );
     }
 

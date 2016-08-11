@@ -72,6 +72,47 @@ export class ComponentControl extends BaseControl {
         return UIComponent;
     }
 
+    // $$controlPropsByColumnName(column: string): JSX.Element {
+    //
+    //     let props: any[] = super.$$controlPropsByColumnName(column);
+    //
+    //     getShowInDesignerInfos(this)
+    //         .filter((info) => {
+    //             return (
+    //                 info.column === column &&
+    //                 this[info.propertyName] !== undefined &&
+    //                 this[info.propertyName] !== null &&
+    //                 (!(this[info.propertyName] instanceof OneWayBinder_undefined))
+    //             );
+    //         })
+    //         .forEach((info, index) => {
+    //
+    //             let propValue = this[info.propertyName];
+    //             let propValueAsString = "";
+    //
+    //             if (propValue.toString !== undefined)
+    //                 propValueAsString = propValue.toString();
+    //             else
+    //                 propValueAsString = "error: toString() is undefined";
+    //
+    //
+    //             let prop = (
+    //                 <div key={index}>
+    //                     <span className="property">{info.propertyName }</span>
+    //                     <span className="string">={propValueAsString}</span>
+    //                 </div>
+    //             );
+    //             props.push(prop);
+    //         });
+    //
+    //
+    //     return (
+    //         <div>
+    //             {props}
+    //         </div>
+    //     );
+    // }
+    //
     get $$controlName(): JSX.Element | string {
         let tag = "<" + this.name + ">";
         return (
