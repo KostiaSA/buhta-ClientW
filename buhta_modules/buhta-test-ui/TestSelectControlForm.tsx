@@ -3,6 +3,8 @@ import * as React from "react";
 //import Select22 =  require("react-select");
 import * as _ from "lodash";
 
+import * as ReactVirtualized from "react-virtualized";
+
 import {OpenWindowParams} from "../buhta-core/Components/Desktop/Desktop";
 import {appInstance} from "../buhta-core/Components/App/App";
 import {SelectInput} from "../buhta-core/Components/SelectInput/SelectInput";
@@ -29,24 +31,32 @@ export function showTestSelectControlForm() {
     code.js = "let values = new SelectInputDataSourceFromArray([100, 200, 300]);";
 
 
+    let cellRenderer = (param: any): JSX.Element => {
+       // console.log(param);
+        return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
+    }
+
     let win = (
         <div>
-            <CodeMirrorInput
-                mode="javascript"
-                bindObject={code}
-                bindPropName="js"
-            >
-
-            </CodeMirrorInput>
-
+            <ReactVirtualized.Grid
+                cellRenderer={cellRenderer}
+                height={300}
+                rowHeight={40}
+                columnCount={6}
+                columnWidth={200}
+                rowCount={100}
+                overscanColumnCount={5}
+                overscanRowCount={5}
+                width={600}
+            />
         </div>);
 
     let openParam: OpenWindowParams = {
         title: "showTestSelectControlForm",
         top: 10,
         left: 10,
-        height: 600,
-        width: 600
+        height: 700,
+        width: 700
     };
 
     appInstance.desktop.openWindow(win, openParam);

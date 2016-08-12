@@ -24,6 +24,7 @@
     "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^15.2.1",
     "react-select": "^1.0.0-beta14",
+    "react-virtualized": "^7.19.0",
     "socket.io-client": "^1.4.8",
     "tern": "^0.19.0",
     "ts-dependency-injection": "^1.2.2",
