@@ -32,23 +32,28 @@ export function showTestSelectControlForm() {
 
 
     let cellRenderer = (param: any): JSX.Element => {
-       // console.log(param);
+        // console.log(param);
         return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
     }
 
     let win = (
-        <div>
-            <ReactVirtualized.Grid
-                cellRenderer={cellRenderer}
-                height={300}
-                rowHeight={40}
-                columnCount={6}
-                columnWidth={200}
-                rowCount={100}
-                overscanColumnCount={5}
-                overscanRowCount={5}
-                width={600}
-            />
+        <div style={{border:"1px solid blue", height:400, width:400}}>
+            <ReactVirtualized.AutoSizer>
+                {(param: any) => (
+                    <ReactVirtualized.Grid
+                        style={{border:"1px solid red"}}
+                        cellRenderer={cellRenderer}
+                        height={param.height}
+                        rowHeight={40}
+                        columnCount={6}
+                        columnWidth={200}
+                        rowCount={100}
+                        overscanColumnCount={5}
+                        overscanRowCount={5}
+                        width={param.width}
+                    />
+                )}
+            </ReactVirtualized.AutoSizer>
         </div>);
 
     let openParam: OpenWindowParams = {

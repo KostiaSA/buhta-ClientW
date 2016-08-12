@@ -523,7 +523,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         }
 
 
-        getSchema().db.executeSQL("select TOP 1500 * from TestParentKey order by Name")
+        getSchema().db.executeSQL("select * from TestParentKey order by Name")
             .then((table: DataTable[]) => {
 
                 // let vids = table[0].rows.map<Vid>((r) => {
@@ -574,7 +574,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                     title: "test grid 2",
                     top: 20,
                     left: 20,
-                    height: 500
+                    width: 700,
+                    height: 800,
                 };
 
                 appInstance.desktop.openWindow(win2, openParam);

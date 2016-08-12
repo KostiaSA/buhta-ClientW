@@ -1,5 +1,7 @@
 import * as React from "react";
+import * as ReactVirtualized from "react-virtualized";
 import * as _ from "lodash";
+
 import shallowCompare = require("react-addons-shallow-compare");
 
 //import {executeSQL} from "../buhta-core/SQL";
@@ -7,7 +9,7 @@ import {ComponentProps, Component, ComponentState} from "../Component";
 import {TreeGridColumns} from "./TreeGridColumns";
 import {TreeGridColumnProps, TreeGridColumn} from "./TreeGridColumn";
 import {Keycode} from "../../Keycode";
-import {Movable, MoveStartEvent} from "../Movable/Movable";
+import {Movable, MoveStartEvent, MoveEndEvent} from "../Movable/Movable";
 import {getScrollbarWidth} from "../../getScrollBarWidth";
 import {Button} from "../Button/Button";
 import {Layout} from "../LayoutPane/Layout";
@@ -73,6 +75,10 @@ export class TreeGridState<T> extends ComponentState<TreeGridProps<T>> {
 
     headerTableElement: HTMLElement;
     bodyTableElement: HTMLElement;
+
+    gridElement: HTMLElement;
+    gridReactComponent: React.Component<any,any>;
+
     footerTableElement: HTMLElement;
 
     isCellDragging: boolean;
@@ -659,7 +665,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         //if (this.props.treeMode !== "flat") {
         if (this.state.nodes) {
             this.state.nodes.forEach((node: InternalTreeNode<any>) => {
-                node.pushRowRecursive(this.state.rows, this.state.pageLength);
+                node.pushRowRecursive(this.state.rows, this.state.pageLength + 1000000);
             });
         }
         //}
@@ -705,22 +711,22 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
     lastBodyWrapperWidth = 0;
 
     handleBodyWrapperElementResize = () => {
-        let newHeight = this.state.bodyWrapperElement.offsetHeight;
-        if (newHeight !== this.lastBodyWrapperHeight) {
-            this.lastBodyWrapperHeight = newHeight;
-            this.handleScroll();
-        }
-        let newWidth = this.state.bodyWrapperElement.offsetWidth;
-        if (newWidth !== this.lastBodyWrapperWidth) {
-            this.lastBodyWrapperWidth = newWidth;
-            this.handleScroll();
-        }
+        // let newHeight = this.state.bodyWrapperElement.offsetHeight;
+        // if (newHeight !== this.lastBodyWrapperHeight) {
+        //     this.lastBodyWrapperHeight = newHeight;
+        //     this.handleScroll();
+        // }
+        // let newWidth = this.state.bodyWrapperElement.offsetWidth;
+        // if (newWidth !== this.lastBodyWrapperWidth) {
+        //     this.lastBodyWrapperWidth = newWidth;
+        //     this.handleScroll();
+        // }
     }
 
     protected didMount() {
         this.handleChangeFocused();
         this.handleScroll();
-        this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
+        //    this.bodyWrapperElementInterval = setInterval(this.handleBodyWrapperElementResize, 10);
     }
 
     protected willUnmount() {
@@ -937,6 +943,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     private renderCell(row: InternalRow < any >, rowIndex: number, col: InternalColumn, colIndex: number): JSX.Element {
 
+
         let sourceObject = row.getSourceObject();
         let cellContent: any = "";
         if (col.props.propertyName === undefined)
@@ -1042,8 +1049,11 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             );
         }
 
+//        console.log("Жопа11");
+
+
         return (
-            <td
+            <div
                 key={colIndex}
                 style={tdStyle}
                 ref={ (e) => row.cellElements[colIndex] = e}
@@ -1070,7 +1080,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
                         {strSpan}
                     </div>
                 </div>
-            </td>
+            </div>
         );
     }
 
@@ -1092,13 +1102,13 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
     }
 
     private    handleScroll() {
-        $(this.state.headerWrapperElement).css({top: this.state.bodyWrapperElement.scrollTop});
-
-        let pos = this.state.bodyWrapperElement.scrollTop + this.state.bodyWrapperElement.clientHeight - $(this.state.footerWrapperElement).outerHeight() - 0;
-        $(this.state.footerWrapperElement).css({top: pos});
-
-        $(this.state.headerFakeRow).css({height: $(this.state.headerWrapperElement).outerHeight()});
-        $(this.state.footerFakeRow).css({height: $(this.state.footerWrapperElement).outerHeight()});
+        // $(this.state.headerWrapperElement).css({top: this.state.bodyWrapperElement.scrollTop});
+        //
+        // let pos = this.state.bodyWrapperElement.scrollTop + this.state.bodyWrapperElement.clientHeight - $(this.state.footerWrapperElement).outerHeight() - 0;
+        // $(this.state.footerWrapperElement).css({top: pos});
+        //
+        // $(this.state.headerFakeRow).css({height: $(this.state.headerWrapperElement).outerHeight()});
+        // $(this.state.footerFakeRow).css({height: $(this.state.footerWrapperElement).outerHeight()});
     }
 
 
@@ -1227,12 +1237,18 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             let tableWidth = this.calcTotalColumnsWidth();
             $(this.state.headerTableElement).css("width", tableWidth);
             $(this.state.bodyTableElement).css("width", tableWidth);
+
             $(this.state.footerTableElement).css("width", tableWidth);
             $(this.state.bodyWrapperElement).css("max-width", tableWidth + getScrollbarWidth() + 1);
 
         });
         // this.handleOnClick(null);
     };
+
+    columnResizeEnd = (event: MoveEndEvent, col: InternalColumn): void => {
+        (this.state.gridElement as any).recomputeGridSize();
+        this.forceUpdate();
+    }
 
     renderColumnHeaders(): React.ReactNode {
         if (this.state.dataSource.getRows().length === 0)
@@ -1260,6 +1276,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
                     <Movable
                         style={{position:"absolute", top:0, width:5, right:0, bottom:0, cursor:"col-resize"}}
                         onMoveStart={ (event: MoveStartEvent) => { this.columnResizeStart(event, col); console.log("MoveStart"); }}
+                        onMoveEnd={ (event: MoveEndEvent) => { this.columnResizeEnd(event, col); console.log("MoveEnd"); }}
                     >
                     </Movable>
                     <Movable
@@ -1277,7 +1294,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         return (
             <div
                 ref={ (e) => this.state.headerWrapperElement = e}
-                style={{ position:"absolute" }}>
+                style={{ position:"absolutexx" }}>
                 <table
                     className="tree-grid-header"
                     style={{tableLayout: "fixed",borderCollapse: "collapse", width:this.calcTotalColumnsWidth()}}
@@ -1324,7 +1341,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             return (
                 <div
                     ref={ (e) => this.state.footerWrapperElement = e}
-                    style={{ position:"absolute"}}
+                    style={{ position:"absolutexx"}}
                 >
                     <table
                         className="tree-grid-footer"
@@ -1359,6 +1376,8 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     renderGridBody(): React.ReactNode {
 
+        console.log("renderGridBody");
+
         if (this.state.dataSource.getRows().length === 0)
             return [];
 
@@ -1372,27 +1391,81 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
                 />);
         });
 
+        // return (
+        //     <table
+        //         className="tree-grid-body"
+        //         tabIndex={0}
+        //         onKeyDown={ (e) => {  this.handleBodyKeyDown(e); } }
+        //         style={{ tableLayout: "fixed", borderCollapse: "collapse", position: "relative", width:this.calcTotalColumnsWidth()}}
+        //         ref={ (e) => this.state.bodyTableElement = e}
+        //     >
+        //         <colgroup>
+        //             {colWidths}
+        //         </colgroup>
+        //         <tbody>
+        //         <tr>
+        //             <td ref={ (e) => this.state.headerFakeRow = e}></td>
+        //         </tr>
+        //         {this.renderRows()}
+        //         <tr>
+        //             <td style={{ border:"none" }} ref={ (e) => this.state.footerFakeRow = e}></td>
+        //         </tr>
+        //         </tbody>
+        //     </table>
+        // );
+
+        let cellRenderer = (param: any): JSX.Element => {
+            //console.log("cellRenderer");
+            //console.log(param);
+            let row = this.state.rows[param.rowIndex];
+            let col = this.state.columns[param.columnIndex];
+            return this.renderCell(row, param.rowIndex, col, param.columnIndex);
+            //return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
+        };
+
+        let cellClassName = (param: any): string => {
+            return "cell-col-" + param.columnIndex;//this.renderCell(row, param.rowIndex, col, param.columnIndex);
+            //return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
+        };
+
+        let getColumnWidth = (param: any): number => {
+            //console.log("getColumnWidth "+colIndex);
+            //console.log(colIndex);
+            if (this.state.columns[param.index] !== undefined) {
+              //  console.log(this.state.columns[param.index].width);
+                return this.state.columns[param.index].width;
+
+            }
+            else
+                return 0;
+        };
+
+        // this.state.columns.forEach((col: InternalColumn, colIndex: number) => {
+        //     ret.push(this.renderCell(row, rowIndex, col, colIndex));
+        // });
+
+
         return (
-            <table
-                className="tree-grid-body"
-                tabIndex={0}
-                onKeyDown={ (e) => {  this.handleBodyKeyDown(e); } }
-                style={{ tableLayout: "fixed", borderCollapse: "collapse", position: "relative", width:this.calcTotalColumnsWidth()}}
-                ref={ (e) => this.state.bodyTableElement = e}
-            >
-                <colgroup>
-                    {colWidths}
-                </colgroup>
-                <tbody>
-                <tr>
-                    <td ref={ (e) => this.state.headerFakeRow = e}></td>
-                </tr>
-                {this.renderRows()}
-                <tr>
-                    <td style={{ border:"none" }} ref={ (e) => this.state.footerFakeRow = e}></td>
-                </tr>
-                </tbody>
-            </table>
+            <div style={{height:"100%"}}>
+                <ReactVirtualized.AutoSizer>
+                    {(param: any) => (
+                        <ReactVirtualized.Grid
+                            ref={ (e:any) => {this.state.gridElement = e; /*console.log(e.recomputeGridSize)*/;}}
+                            style={{border:"1px solid red"}}
+                            cellRenderer={cellRenderer}
+                            cellClassName={cellClassName}
+                            height={param.height}
+                            rowHeight={30}
+                            columnCount={this.state.columns.length}
+                            columnWidth={getColumnWidth}
+                            rowCount={this.state.rows.length}
+                            overscanColumnCount={0}
+                            overscanRowCount={0}
+                            width={param.width}
+                        />
+                    )}
+                </ReactVirtualized.AutoSizer>
+            </div>
         );
     }
 
@@ -1468,17 +1541,24 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
                     </button>
                     заголовок и т.д.
                 </Fixed>
-                <div
+                <Flex
                     className="tree-grid-body-wrapper"
-                    style={{ position:"relative", overflow:"auto", flex:"1", maxWidth: maxBodyWrapperWidth }}
-                    onScroll={ this.handleScroll.bind(this)}
+                    style={{ position:"relative", overflow:"none", flex:"1", maxWidth: maxBodyWrapperWidth }}
                     ref={ (e:any) => {this.state.bodyWrapperElement = e;}}
                 >
-                    {this.renderEmptyDataSourceMessage()}
-                    {this.renderGridBody()}
-                    {this.renderColumnHeaders()}
-                    {this.renderColumnFooters()}
-                </div>
+                    <Layout type="column" sizeTo="parent">
+                        <Fixed>
+                            {this.renderColumnHeaders()}
+                        </Fixed>
+                        <Flex>
+                            {this.renderGridBody()}
+                            {this.renderEmptyDataSourceMessage()}
+                        </Flex>
+                        <Fixed>
+                            {this.renderColumnFooters()}
+                        </Fixed>
+                    </Layout>
+                </Flex>
                 <Fixed className="tree-grid-footer-wrapper">
 
                     <Layout type="row" sizeTo="content">

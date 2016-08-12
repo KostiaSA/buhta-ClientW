@@ -14,7 +14,7 @@ export class Flex extends Component<FlexProps,any> {
         this.clearStyles();
         let style = {
             flex: "1",
-            position: 'relative',
+            position: "relative",
             overflow: "auto"
         };
         this.addStyles(style);
