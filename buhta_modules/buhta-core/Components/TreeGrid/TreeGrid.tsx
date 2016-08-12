@@ -19,6 +19,7 @@ import {appInstance} from "../App/App";
 import {TreeGridDataSource} from "./TreeGridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError} from "../../Error";
+import {numberCompare} from "../../numberCompare";
 
 export type TreeMode = "flat" | "parentKey" | "delimiterChar" | "childrenList";
 
@@ -27,11 +28,16 @@ export type TreeGreedEvent<T> =  (state: TreeGridState<T>) => any;
 export interface TreeGridProps<T> extends ComponentProps<TreeGridState<T>> {
     dataSource: TreeGridDataSource<T>;
     rowHeight?: number;
-    keyFieldName?: string;
-    //parentKeyFieldName?: string;
-    hierarchyFieldName?: string;  // для "parentKey" | "delimiterChar" | "childrenList"
-    hierarchyDelimiters?: string;
+
     treeMode?: TreeMode;
+
+    keyFieldName?: string; // key для treeMode parentKey
+    parentKeyFieldName?: string; // parentKey для treeMode parentKey
+    positionFieldName?: string;  // sort для treeMode parentKey
+
+    hierarchyFieldName?: string;  // для "delimiterChar"
+    hierarchyDelimiters?: string;
+
     autoExpandNodesToLevel?: number;
 
     editable?: boolean;
@@ -390,6 +396,9 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
         else if (this.props.treeMode === "childrenList") {
             this.createNodesFromChildrenList();
         }
+        else if (this.props.treeMode === "parentKey") {
+            this.createNodesFromParentKey();
+        }
         else
             throwError("TreeGrid.createNodes(): unknown treeMode '" + this.props.treeMode + "'");
     }
@@ -442,14 +451,16 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
     private createNodesFromParentKey() {
 
+        this.state.nodes = [];
+
         if (this.state.dataSource === undefined)
             return;
 
         if (this.props.keyFieldName === undefined)
             throwError("TreeGrid: property 'keyFieldName' is undefined");
 
-        if (this.props.hierarchyFieldName === undefined)
-            throwError("TreeGrid: property 'hierarchyFieldName' (as parentKey) is undefined");
+        if (this.props.parentKeyFieldName === undefined)
+            throwError("TreeGrid: property 'parentKeyFieldName' is undefined");
 
         let nodeList: any = {};
 
@@ -457,11 +468,18 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
             let node = new InternalTreeNode<any>(this.state);
             node.sourceIndex = index;
             node.key = dataSourceItem[this.props.keyFieldName!];
-            if (node.key)
+
+            if (node.key === undefined)
+                throwError("TreeGrid: key column '" + this.props.keyFieldName + "' not found");
+
+            if (node.key !== null && node.key.toString)
                 node.key = node.key.toString();
 
-            node.parentKey = dataSourceItem[this.props.hierarchyFieldName!];
-            if (node.parentKey)
+            node.parentKey = dataSourceItem[this.props.parentKeyFieldName!];
+            if (node.parentKey === undefined)
+                throwError("TreeGrid: parent key column '" + this.props.parentKeyFieldName + "' not found");
+
+            if (node.parentKey !== null && node.parentKey.toString)
                 node.parentKey = node.parentKey.toString();
 
             nodeList[node.key] = node;
@@ -485,12 +503,74 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
         for (let key in nodeList) {
             let node = nodeList[key];
-            if (node.parentKey === undefined) {
+            if (node.parentKey === null) {
                 this.state.nodes.push(node);
             }
         }
-        
-        // todo сортировка children
+
+        // сортировка children и проставление level
+        let sortNodes = (nodes: InternalTreeNode<any>[]): InternalTreeNode<any>[] => {
+            if (this.props.positionFieldName !== undefined) {
+                return nodes.sort((a: InternalTreeNode<any>, b: InternalTreeNode<any>) => {
+
+                    let aa = a.gridState.dataSource.getRow(a.sourceIndex)[this.props.positionFieldName!];
+                    if (aa === undefined)
+                        throwError("TreeGrid: position column '" + this.props.positionFieldName + "' not found");
+                    if (!_.isNumber(aa))
+                        throwError("TreeGrid: position column '" + this.props.positionFieldName + "' must be a number");
+
+                    let bb = b.gridState.dataSource.getRow(b.sourceIndex)[this.props.positionFieldName!];
+                    if (bb === undefined)
+                        throwError("TreeGrid: position column '" + this.props.positionFieldName + "' not found");
+                    if (!_.isNumber(bb))
+                        throwError("TreeGrid: position column '" + this.props.positionFieldName + "' must be a number");
+
+                    return numberCompare(aa, bb);
+                });
+            }
+            else {
+                return nodes.sort((a: InternalTreeNode<any>, b: InternalTreeNode<any>) => numberCompare(a.sourceIndex, b.sourceIndex));
+            }
+        }
+
+
+        let processNode = (node: InternalTreeNode<any>, level: number) => {
+            node.level = level;
+            node.expanded = node.level < this.props.autoExpandNodesToLevel;
+            node.children = sortNodes(node.children);
+            // if (this.props.positionFieldName !== undefined) {
+            //     node.children = node.children.sort((a, b) => {
+            //
+            //         let aa = node.gridState.dataSource.getRow(a.sourceIndex)[this.props.positionFieldName!];
+            //         if (aa === undefined)
+            //             throwError("TreeGrid: position column '" + this.props.positionFieldName + "' not found");
+            //         if (!_.isNumber(aa))
+            //             throwError("TreeGrid: position column '" + this.props.positionFieldName + "' must be a number");
+            //
+            //         let bb = node.gridState.dataSource.getRow(b.sourceIndex)[this.props.positionFieldName!];
+            //         if (bb === undefined)
+            //             throwError("TreeGrid: position column '" + this.props.positionFieldName + "' not found");
+            //         if (!_.isNumber(bb))
+            //             throwError("TreeGrid: position column '" + this.props.positionFieldName + "' must be a number");
+            //
+            //         return numberCompare(aa, bb);
+            //     });
+            //
+            // }
+            // else {
+            //     node.children = node.children.sort((a, b) => numberCompare(a.sourceIndex, b.sourceIndex));
+            // }
+            node.children.forEach((node: InternalTreeNode<any>) => {
+                processNode(node, level + 1);
+            }, this);
+        };
+
+        this.state.nodes.forEach((node: InternalTreeNode<any>) => {
+            processNode(node, 0);
+        }, this);
+
+        this.state.nodes = sortNodes(this.state.nodes);
+        //this.state.nodes = this.state.nodes.sort((a, b) => numberCompare(a.sourceIndex, b.sourceIndex));
 
     }
 

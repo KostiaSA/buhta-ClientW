@@ -8,6 +8,7 @@ import {SqlDialect, SqlStmt} from "./SqlCore";
 import {getConnectionId} from "../buhta-core/getConnectionId";
 import {checkAuth} from "../buhta-core/Auth";
 import {socket} from "../buhta-core/Socket";
+import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 
 
 // общее с client и server ------------------
@@ -92,9 +93,10 @@ export class DataColumn {
 }
 
 
-export class DataRow {
+export class DataRow extends DesignedObject {
     [index: string]: any;
     constructor(public $$table: DataTable) {
+        super();
     }
 
     $$getValue(columnIndex: number): any {
