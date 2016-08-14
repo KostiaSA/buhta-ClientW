@@ -2,7 +2,7 @@ import * as React from "react";
 //import * as AgGrid from "ag-grid";
 
 import {ComponentProps, ComponentState, Component} from "../Component";
-import {GridOptions as AgGridOptions, ColDef as AgColDef, Grid as AgGrid} from "ag-grid/main";
+import {GridOptions as AgGridOptions, ColDef as AgColDef, Grid as AgGrid} from "ag-grid";
 
 
 export interface GridProps extends ComponentProps<GridState> {
@@ -82,7 +82,7 @@ export class GridState extends ComponentState<GridProps> {
 
 export default class Grid extends Component<GridProps,GridState> {
     constructor(props: GridProps, context: any) {
-        super(props, context)
+        super(props, context);
 
         this.state = new GridState(this);
 
