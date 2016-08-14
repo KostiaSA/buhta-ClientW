@@ -6,6 +6,8 @@ declare namespace __ReactV {
     }
     class AutoSizer extends React.Component<any, any> {
     }
+    class ScrollSync extends React.Component<any, any> {
+    }
 
 }
 

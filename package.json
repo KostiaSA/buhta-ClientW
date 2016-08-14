@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ag-grid": "^5.1.2",
+    "ag-grid-react": "^5.1.0",
     "bluebird": "^3.4.1",
     "bulma": "0.0.28",
     "codemirror": "^5.17.0",

@@ -1,0 +1,48 @@
+@import "../../node_modules/bulma/bulma"
+
+.grid-row
+  position: relative
+  display: flex
+  flex-direction: row
+
+.grid-column
+  display: flex
+  flex-direction: column
+  flex: 1 1 auto
+
+.left-side-grid-container
+  flex: 0 0 75px
+  z-index: 10
+
+.left-side-grid
+  overflow: -moz-scrollbars-none
+
+.left-side-grid::-webkit-scrollbar
+  display: none
+  //overflow-x: hidden !important
+  //overflow-y: scroll !important
+
+
+.header-grid
+  width: 100%
+  overflow: hidden !important
+
+.body-grid
+  width: 100%
+
+
+.cell,
+.header-cell,
+.left-cell
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  text-align: center
+  padding: 0 .5em
+
+.header-cell,
+.left-cell
+  font-weight: bold

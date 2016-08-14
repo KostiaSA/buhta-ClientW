@@ -11,6 +11,7 @@ import {SelectInput} from "../buhta-core/Components/SelectInput/SelectInput";
 import {SelectInputDataSourceFromArray} from "../buhta-core/Components/SelectInput/SelectInputDataSourceFromArray";
 import {OneWayBinderInput} from "../buhta-core/Components/OneWayBinderInput/OneWayBinderInput";
 import {CodeMirrorInput} from "../buhta-core/Components/CodeMirrorInput/CodeMirrorInput";
+import Grid from "../buhta-core/Components/Grid/Grid";
 /**
  * Created by Kostia on 06.08.2016.
  */
@@ -36,24 +37,30 @@ export function showTestSelectControlForm() {
         return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
     }
 
+    // let win = (
+    //     <div style={{border:"1px solid blue", height:400, width:400}}>
+    //         <ReactVirtualized.AutoSizer>
+    //             {(param: any) => (
+    //                 <ReactVirtualized.Grid
+    //                     style={{border:"1px solid red"}}
+    //                     cellRenderer={cellRenderer}
+    //                     height={param.height}
+    //                     rowHeight={40}
+    //                     columnCount={6}
+    //                     columnWidth={200}
+    //                     rowCount={100}
+    //                     overscanColumnCount={5}
+    //                     overscanRowCount={5}
+    //                     width={param.width}
+    //                 />
+    //             )}
+    //         </ReactVirtualized.AutoSizer>
+    //     </div>);
+
     let win = (
-        <div style={{border:"1px solid blue", height:400, width:400}}>
-            <ReactVirtualized.AutoSizer>
-                {(param: any) => (
-                    <ReactVirtualized.Grid
-                        style={{border:"1px solid red"}}
-                        cellRenderer={cellRenderer}
-                        height={param.height}
-                        rowHeight={40}
-                        columnCount={6}
-                        columnWidth={200}
-                        rowCount={100}
-                        overscanColumnCount={5}
-                        overscanRowCount={5}
-                        width={param.width}
-                    />
-                )}
-            </ReactVirtualized.AutoSizer>
+        <div style={{border:"1px solid blue", height:"100%"}}>
+            <Grid>
+            </Grid>
         </div>);
 
     let openParam: OpenWindowParams = {

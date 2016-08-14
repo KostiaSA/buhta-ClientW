@@ -1240,6 +1240,7 @@ export class TreeGrid extends Component<TreeGridProps<any>, TreeGridState<any>> 
 
             $(this.state.footerTableElement).css("width", tableWidth);
             $(this.state.bodyWrapperElement).css("max-width", tableWidth + getScrollbarWidth() + 1);
+           
 
         });
         // this.handleOnClick(null);
