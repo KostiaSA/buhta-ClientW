@@ -1,9 +1,7 @@
 import * as React from "react";
-//import * as AgGrid from "ag-grid";
+import * as AgGrid from "ag-grid";
 
 import {ComponentProps, ComponentState, Component} from "../Component";
-import {GridOptions as AgGridOptions, ColDef as AgColDef, Grid as AgGrid} from "ag-grid";
-
 
 export interface GridProps extends ComponentProps<GridState> {
 
@@ -39,7 +37,7 @@ export class GridState extends ComponentState<GridProps> {
         super(grid);
     }
 
-    agGrid: AgGridOptions = {};
+    agGrid: AgGrid.GridOptions = {};
 
     // columns: InternalColumn[];
     // pageLength: number;
@@ -86,8 +84,8 @@ export default class Grid extends Component<GridProps,GridState> {
 
         this.state = new GridState(this);
 
-        let col1: AgColDef = {headerName: "колонка1", field: "f2", width: 150};
-        let col2: AgColDef = {headerName: "колонка2", field: "f1", width: 150};
+        let col1: AgGrid.ColDef = {headerName: "колонка1", field: "f2", width: 150};
+        let col2: AgGrid.ColDef = {headerName: "колонка2", field: "f1", width: 150};
 
         this.state.agGrid.columnDefs = [col1, col2, col1, col2];
         //this.state.agGrid.rowData = [{f1: "жопа1", f2: "------"}, {f1: "жопа2", f2: "--2---"}];
@@ -109,8 +107,8 @@ export default class Grid extends Component<GridProps,GridState> {
 
 //        var domNode = ReactDOM.findDOMNode(this);
         //this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
-        new AgGrid(this.nativeElement, this.state.agGrid);
-        this.state.agGrid.api!.refreshView();
+        new AgGrid.Grid(this.nativeElement, this.state.agGrid);
+        //this.state.agGrid.api!.refreshView();
 
         //this.api = this.gridOptions.api;
         //this.columnApi = this.gridOptions.columnApi;

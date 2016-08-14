@@ -42,6 +42,7 @@ module.exports = {
         "socket.io-client": "io",
         "moment": "moment",
         "codemirror": "CodeMirror",
-        "react-virtualized": "ReactVirtualized"
+        "react-virtualized": "ReactVirtualized",
+        "ag-grid": "agGrid"
     },
 };
