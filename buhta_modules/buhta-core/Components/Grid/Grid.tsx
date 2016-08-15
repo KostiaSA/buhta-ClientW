@@ -110,10 +110,21 @@ interface CellRendererParams {
     api: AgGrid.GridApi;
     columnApi: AgGrid.ColumnApi;
     data: any;
+    column: AgGrid.Column;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
     node: AgGrid.RowNode;
     addRenderedRowListener: Function;
+    context: any;
+    value: any;
+    rowIndex: number;
+}
+
+// это взято из исходников ag-grid
+interface GetRowHeightParams {
+    api: AgGrid.GridApi;
+    data: any;
+    node: AgGrid.RowNode;
     context: any;
 }
 
@@ -145,8 +156,10 @@ export default class Grid extends Component<GridProps, GridState> {
             data.push({f1: "жопа" + i, f2: "---" + i + "---"});
         }
         this.state.agGrid.rowData = data;
-        this.state.agGrid.rowHeight = 40;
+        this.state.agGrid.rowHeight = undefined;
         this.state.dataSource = data;
+
+        this.state.agGrid.getRowHeight = this.handleGetRowHeight.bind(this);
 
 
         //(this.state.agGrid as any).groupHeaders = true;
@@ -154,51 +167,72 @@ export default class Grid extends Component<GridProps, GridState> {
 
     }
 
+    private handleGetRowHeight(param: GetRowHeightParams): number {
+        //console.log("handleGetRowHeight");
+        //console.log(param);
+
+        return 30;
+    }
+
+
+    private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: any): JSX.Element {
+
+        let cell = <div>жопа+див {data.f2}</div>;
+        return cell;
+
+    };
+
+
     private cellRenderer(params: CellRendererParams): any {
         //console.log(params);
 
-        let dnd = "";
-        if (this.state.dragRow.isDragging)
-            dnd = "+dnd+";
+        //let dnd = "";
+        //if (this.state.dragRow.isDragging)
+        //  dnd = "+dnd+";
 
-        let cellElement: Element;
+        //let cellElement: Element;
 
-        let cell = <div ref={ (e) => { cellElement = e; } }>{dnd} жопа див {params.data.f2}</div>;
+        let cell = this.renderCell(params.column, params.node, params.data);
 
         let dragOver = (e: MouseEvent) => {
             if (!this.state.dragRow.isDragging)
                 return;
 
-            if (e.target !== params.eParentOfValue)
-                return;
+            let $row = $(e.target).parents(".ag-row").first();
 
-            let $row = $(cellElement).parents(".ag-row").first();
-
-            let $tbody = $(this.nativeElement).find(".ag-pinned-left-cols-container").first();
+            let $container = $(this.nativeElement).find(".ag-pinned-left-cols-container").first();
             let $viewport = $(this.nativeElement).find(".ag-pinned-left-cols-viewport").first();
             let $viewportScrollLeft: number = 0;
 
             if ($viewport.css("display") === "none") {
-                $tbody = $(this.nativeElement).find(".ag-body-container").first();
+                $container = $(this.nativeElement).find(".ag-body-container").first();
                 $viewport = $(this.nativeElement).find(".ag-body-viewport").first();
                 $viewportScrollLeft = $viewport.scrollLeft();
             }
 
-            let $arrow = $tbody.find(".drag-drop-arrow");
+            let $arrow = $container.find(".drag-drop-arrow");
 
             if ($arrow.length === 0) {
                 $(
-                    `<div class='drag-drop-arrow' style='position:absolute; z-index: 1000; width:20px; height:20px; border:0px solid red'>
-                       <i class="fa fa-arrow-right" style='verticalAlign:middle; color:green'></i>
-                    </div>`).appendTo($tbody);
+                    `<div class='drag-drop-arrow' style='position:absolute; z-index: 1000; width:20px; height:20px'>
+                       <i class="fa fa-arrow-right" style='vertical-align:middle; color:green'></i>
+                    </div>`).appendTo($container);
 
-                $arrow = $tbody.find(".drag-drop-arrow");
+                $arrow = $container.find(".drag-drop-arrow");
             }
 
             let arrowTop: number;
             let arrowLeft: number;
+            let relativeY: number;
 
-            let relativeY = e.offsetY / $(e.target).outerHeight();
+            let $cell = $(e.target).parents(".ag-cell").first();
+            if ($cell.length > 0) {
+                let parentOffset = $cell.offset();
+                let Y = e.pageY - $cell.offset().top;
+                relativeY = Y / $row.outerHeight();
+            }
+            else
+                relativeY = e.offsetY / $row.outerHeight();
 
             if (relativeY < 0.33) {
                 this.state.dragRow.dragOverRowData = params.data;
@@ -211,14 +245,14 @@ export default class Grid extends Component<GridProps, GridState> {
                 this.state.dragRow.dragOverRowData = params.data;
                 this.state.dragRow.dropPlace = "insertInto";
                 this.state.dragRow.dropAllowed = true;
-                arrowTop = $row.position().top + $(e.target).outerHeight() / 2 - 10;
+                arrowTop = $row.position().top + $row.outerHeight() / 2 - 10;
                 arrowLeft = $viewportScrollLeft;
             }
             else {
                 this.state.dragRow.dragOverRowData = params.data;
                 this.state.dragRow.dropPlace = "insertAfter";
                 this.state.dragRow.dropAllowed = true;
-                arrowTop = $row.position().top + $(e.target).outerHeight() - 10;
+                arrowTop = $row.position().top + $row.outerHeight() - 10;
                 arrowLeft = $viewportScrollLeft + 5;
             }
 
@@ -256,6 +290,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
             this.state.dragRow.isDragging = false;
             this.state.agGrid.api!.refreshView();
+            this.state.agGrid.api!.refreshInMemoryRowModel(); // перезапрашивает RowHeight
         }
     }
 
