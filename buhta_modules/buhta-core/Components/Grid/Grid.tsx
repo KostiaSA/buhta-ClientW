@@ -130,7 +130,12 @@ export default class Grid extends Component<GridProps, GridState> {
             width: 150,
             cellRenderer: this.cellRenderer.bind(this)
         };
-        let col2: AgGrid.ColDef = {headerName: "колонка2", field: "f1", width: 150};
+        let col2: AgGrid.ColDef = {
+            headerName: "колонка2",
+            field: "f1",
+            width: 150,
+            cellRenderer: this.cellRenderer.bind(this)
+        };
 
         this.state.agGrid.columnDefs = [col1, col2, col1, col2];
         //this.state.agGrid.rowData = [{f1: "жопа1", f2: "------"}, {f1: "жопа2", f2: "--2---"}];
@@ -140,6 +145,7 @@ export default class Grid extends Component<GridProps, GridState> {
             data.push({f1: "жопа" + i, f2: "---" + i + "---"});
         }
         this.state.agGrid.rowData = data;
+        this.state.agGrid.rowHeight = 40;
         this.state.dataSource = data;
 
 
@@ -159,35 +165,63 @@ export default class Grid extends Component<GridProps, GridState> {
 
         let cell = <div ref={ (e) => { cellElement = e; } }>{dnd} жопа див {params.data.f2}</div>;
 
-        let dragOver = () => {
+        let dragOver = (e: MouseEvent) => {
+            if (!this.state.dragRow.isDragging)
+                return;
+
+            if (e.target !== params.eParentOfValue)
+                return;
 
             let $row = $(cellElement).parents(".ag-row").first();
             let $tbody = $(cellElement).parents(".ag-body-container").first();
+            let $viewport = $(cellElement).parents(".ag-body-viewport").first();
 
             let $arrow = $tbody.find(".drag-drop-arrow");
+
             if ($arrow.length === 0) {
-                $("<div class='drag-drop-arrow' style='position:absolute; width:10px; height:10px; border:2px solid red'></div>").appendTo($tbody);
+                $(
+                    `<div class='drag-drop-arrow' style='position:absolute; z-index: 1000; width:20px; height:20px; border:0px solid red'>
+                       <i class="fa fa-arrow-right" style='verticalAlign:middle; color:green'></i>
+                    </div>`).appendTo($tbody);
+
                 $arrow = $tbody.find(".drag-drop-arrow");
-                console.log("CREATE ----------- drag-drop-arrow");
-                console.log($arrow);
             }
 
+            let arrowTop: number;
+            let arrowLeft: number;
 
-            // $tbody.find(".drop-allow-after-cell").removeClass("drop-allow-after-cell");
-            // $tbody.find(".drop-deny-after-cell").removeClass("drop-deny-after-cell");
-            // $tbody
-            //     .find(".drop-arrow")
-            //     .addClass("is-hidden")
-            //     .removeClass("drop-deny-into-cell")
-            //     .removeClass("drop-allow-into-cell");
-            //
-            //
-            //     console.log("dragover1");
-            // console.log(params.data);
+//            let relativeY = e.offsetY / parseInt($row.css("height"));
+            let relativeY = e.offsetY / $(e.target).outerHeight();
+
+            if (relativeY < 0.33) {
+                this.state.dragRow.dragOverRowData = params.data;
+                this.state.dragRow.dropPlace = "insertBefore";
+                this.state.dragRow.dropAllowed = true;
+                arrowTop = $row.position().top - 10;
+                arrowLeft = $viewport.scrollLeft() + 5;
+            }
+            else if (relativeY < 0.66) {
+                this.state.dragRow.dragOverRowData = params.data;
+                this.state.dragRow.dropPlace = "insertInto";
+                this.state.dragRow.dropAllowed = true;
+                arrowTop = $row.position().top + $(e.target).outerHeight() / 2 - 10;
+                arrowLeft = $viewport.scrollLeft();
+            }
+            else {
+                this.state.dragRow.dragOverRowData = params.data;
+                this.state.dragRow.dropPlace = "insertAfter";
+                this.state.dragRow.dropAllowed = true;
+                arrowTop = $row.position().top + $(e.target).outerHeight() - 10;
+                arrowLeft = $viewport.scrollLeft() + 5;
+            }
+
+            $arrow.css("top", arrowTop);
+            $arrow.css("left", arrowLeft);
+
         };
 
         if (this.state.dragRow.isDragging)
-            $(params.eParentOfValue).on("mousemove", dragOver);
+            $(params.eParentOfValue).on("mousemove", dragOver as any);
 
         params.addRenderedRowListener("renderedRowRemoved", () => {
             ReactDOM.unmountComponentAtNode(params.eParentOfValue);
@@ -204,18 +238,22 @@ export default class Grid extends Component<GridProps, GridState> {
         this.state.dragRow.isMouseDown = true;
     }
 
-    private handleDragMouseUpViewPort(e: any) {
+    private handleDragMouseUpViewPort(e: MouseEvent) {
         console.log("handleDragMouseUp");
         this.state.dragRow.isMouseDown = false;
         if (this.state.dragRow.isDragging) {
             console.log("STOP-DRAG");
+
+            let viewPort = $(this.nativeElement).find(".ag-body-viewport").first();
+            viewPort.find(".drag-drop-arrow").remove();
+
             this.state.dragRow.isDragging = false;
             this.state.agGrid.api!.refreshView();
         }
     }
 
     private handleDragMouseMoveViewPort(e: any) {
-      //  console.log("handleDragMouseMove");
+        //  console.log("handleDragMouseMove");
 
         if (!this.state.dragRow.isDragging && this.state.dragRow.isMouseDown) {
 
