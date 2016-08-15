@@ -173,8 +173,16 @@ export default class Grid extends Component<GridProps, GridState> {
                 return;
 
             let $row = $(cellElement).parents(".ag-row").first();
-            let $tbody = $(cellElement).parents(".ag-body-container").first();
-            let $viewport = $(cellElement).parents(".ag-body-viewport").first();
+
+            let $tbody = $(this.nativeElement).find(".ag-pinned-left-cols-container").first();
+            let $viewport = $(this.nativeElement).find(".ag-pinned-left-cols-viewport").first();
+            let $viewportScrollLeft: number = 0;
+
+            if ($viewport.css("display") === "none") {
+                $tbody = $(this.nativeElement).find(".ag-body-container").first();
+                $viewport = $(this.nativeElement).find(".ag-body-viewport").first();
+                $viewportScrollLeft = $viewport.scrollLeft();
+            }
 
             let $arrow = $tbody.find(".drag-drop-arrow");
 
@@ -190,7 +198,6 @@ export default class Grid extends Component<GridProps, GridState> {
             let arrowTop: number;
             let arrowLeft: number;
 
-//            let relativeY = e.offsetY / parseInt($row.css("height"));
             let relativeY = e.offsetY / $(e.target).outerHeight();
 
             if (relativeY < 0.33) {
@@ -198,21 +205,21 @@ export default class Grid extends Component<GridProps, GridState> {
                 this.state.dragRow.dropPlace = "insertBefore";
                 this.state.dragRow.dropAllowed = true;
                 arrowTop = $row.position().top - 10;
-                arrowLeft = $viewport.scrollLeft() + 5;
+                arrowLeft = $viewportScrollLeft + 5;
             }
             else if (relativeY < 0.66) {
                 this.state.dragRow.dragOverRowData = params.data;
                 this.state.dragRow.dropPlace = "insertInto";
                 this.state.dragRow.dropAllowed = true;
                 arrowTop = $row.position().top + $(e.target).outerHeight() / 2 - 10;
-                arrowLeft = $viewport.scrollLeft();
+                arrowLeft = $viewportScrollLeft;
             }
             else {
                 this.state.dragRow.dragOverRowData = params.data;
                 this.state.dragRow.dropPlace = "insertAfter";
                 this.state.dragRow.dropAllowed = true;
                 arrowTop = $row.position().top + $(e.target).outerHeight() - 10;
-                arrowLeft = $viewport.scrollLeft() + 5;
+                arrowLeft = $viewportScrollLeft + 5;
             }
 
             $arrow.css("top", arrowTop);
@@ -244,7 +251,7 @@ export default class Grid extends Component<GridProps, GridState> {
         if (this.state.dragRow.isDragging) {
             console.log("STOP-DRAG");
 
-            let viewPort = $(this.nativeElement).find(".ag-body-viewport").first();
+            let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
             viewPort.find(".drag-drop-arrow").remove();
 
             this.state.dragRow.isDragging = false;
@@ -276,8 +283,7 @@ export default class Grid extends Component<GridProps, GridState> {
         //this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
         new AgGrid.Grid(this.nativeElement, this.state.agGrid);
 
-        let viewPort = $(this.nativeElement).find(".ag-body-viewport").first();
-//        $(viewPort).on("mousedown", "drag", this.handleDragMouseDownViewPort);
+        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
         $(viewPort).on("mousedown", this.handleDragMouseDownViewPort.bind(this));
         $(viewPort).on("mouseup", this.handleDragMouseUpViewPort.bind(this));
         $(viewPort).on("mousemove", this.handleDragMouseMoveViewPort.bind(this));
@@ -292,7 +298,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
     protected willUnmount() {
         super.willUnmount();
-        let viewPort = $(this.nativeElement).find(".ag-body-viewport").first();
+        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport").first();
         $(viewPort).off("mousedown");
         $(viewPort).off("mouseup");
         $(viewPort).off("mousemove");
