@@ -35,7 +35,7 @@ export function showTestSelectControlForm() {
     let cellRenderer = (param: any): JSX.Element => {
         // console.log(param);
         return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
-    }
+    };
 
     // let win = (
     //     <div style={{border:"1px solid blue", height:400, width:400}}>
@@ -58,8 +58,8 @@ export function showTestSelectControlForm() {
     //     </div>);
 
     let win = (
-        <div style={{border:"1px solid blue", height:"100%"}}>
-            <Grid>
+        <div style={{border:"0px solid blue", height:"100%"}}>
+            <Grid dataSource={[]}>
             </Grid>
         </div>);
 
