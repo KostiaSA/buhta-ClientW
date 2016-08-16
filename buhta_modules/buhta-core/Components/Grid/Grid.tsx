@@ -142,6 +142,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
         this.state.agGrid.rowHeight = undefined;
         this.state.dataSource = props.dataSource;
+        this.state.agGrid.getNodeChildDetails = props.dataSource.getNodeChildDetails.bind(props.dataSource);
 
         this.state.agGrid.rowData = this.state.dataSource.getRows();
 
@@ -396,9 +397,24 @@ export default class Grid extends Component<GridProps, GridState> {
             $(params.eParentOfValue).off("mousemove");
         });
 
-        ReactDOM.render(cell, params.eParentOfValue);
+        let renderContainer = params.eParentOfValue;
+        console.log(params);
+        console.log($(renderContainer).find("span"));
+        // if (params.node.group) {
+        //     //let treeColumnRenderContainer = $(renderContainer).find(".ag-group-value");
+        //     let treeColumnRenderContainer = $(renderContainer).find("*");
+        //     if (treeColumnRenderContainer.length > 0) {
+        //         console.log("treeColumnRenderContainer");
+        //         console.log(treeColumnRenderContainer);
+        //         ReactDOM.render(cell, treeColumnRenderContainer[0]);
+        //     }
+        //     else
+        //         ReactDOM.render(cell, renderContainer);
+        // }
+        // else
+        //     ReactDOM.render(cell, renderContainer);
 
-        return null;
+        return "null";
     }
 
     private handleDragMouseDownViewPort(e: any) {

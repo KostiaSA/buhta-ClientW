@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as AgGrid from "ag-grid";
 import {GridColumnProps} from "./GridColumn";
 
 export interface GridDataSource<T> {
@@ -27,6 +28,8 @@ export interface GridDataSource<T> {
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;
 
     refresh(): void;
+
+    getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails | null;
 }
 
 

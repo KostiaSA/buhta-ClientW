@@ -33,6 +33,13 @@ export class GridColumnDef extends Component<GridColumnProps, any> {
             width: this.props.width,
             cellRenderer: grid.cellRenderer.bind(grid)
         };
+
+        if (this.props.showHierarchyTree === true) {
+            col.cellRenderer = "group";
+            col.cellRendererParams = {
+                innerRenderer: grid.cellRenderer.bind(grid)
+            };
+        }
         //console.log(col);
         return col;
     }

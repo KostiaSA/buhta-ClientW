@@ -15,9 +15,13 @@ import Grid from "../buhta-core/Components/Grid/Grid";
 import {GridColumnDef} from "../buhta-core/Components/Grid/GridColumn";
 import {GridColumnGroup} from "../buhta-core/Components/Grid/GridColumnGroup";
 import {getSchema} from "../buhta-schema/Schema";
-import {GridArrayDataSource} from "../buhta-core/Components/Grid/GridArrayDataSource";
+import {GridFlatDataSourceFromArray} from "../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
 import {DataTable} from "../buhta-sql/SqlDb";
 import {throwError} from "../buhta-core/Error";
+import {
+    GridTreeDataSourceFromArrayParams,
+    GridTreeDataSourceFromArray
+} from "../buhta-core/Components/Grid/GridTreeDataSourceFromArray";
 /**
  * Created by Kostia on 06.08.2016.
  */
@@ -63,38 +67,45 @@ export function showTestSelectControlForm() {
     //         </ReactVirtualized.AutoSizer>
     //     </div>);
 
-    getSchema().db.executeSQL("select TOP 500 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+    //select TOP 500 Ключ,Номер,Название from [Вид ТМЦ] order by Номер
+    getSchema().db.executeSQL("SELECT [id],[parentId],[num],[name],[position] FROM [TestParentKey] order by num")
+
         .then((tables: DataTable[]) => {
 
 
-            let ds = new GridArrayDataSource(tables[0].rows);
+            let params: GridTreeDataSourceFromArrayParams<any> = {
+                keyFieldName: "id",
+                parentKeyFieldName: "parentId",
+                autoExpandNodesToLevel: 1
+            };
+            let ds = new GridTreeDataSourceFromArray(tables[0].rows, params);
             //console.log("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер =>" + table.rows[0].getValue(1));
 
             let win = (
                 <div style={{border:"0px solid blue", height:"100%"}}>
                     <Grid dataSource={ds}>
-                        <GridColumnDef caption="Колонка1" propertyName="Номер" showHierarchyTree={false} width={150}>
+                        <GridColumnDef caption="Колонка1" propertyName="num" showHierarchyTree={true} width={150}>
                         </GridColumnDef>
-                        <GridColumnDef caption="Колонка2" propertyName="Название" showHierarchyTree={false} width={150}>
-                        </GridColumnDef>
-                        <GridColumnGroup caption="Группа1">
-                            <GridColumnDef caption="Колонка3" propertyName="Номер" showHierarchyTree={false}
-                                           width={150}>
-                            </GridColumnDef>
-                            <GridColumnDef caption="Колонка4" propertyName="Название" showHierarchyTree={false}
-                                           width={150}>
-                            </GridColumnDef>
-                            <GridColumnGroup caption="Группа-1-2">
-                                <GridColumnDef caption="Колонка5" propertyName="Номер" showHierarchyTree={false}
-                                               width={150}>
-                                </GridColumnDef>
-                                <GridColumnDef caption="Колонка6" propertyName="Название" showHierarchyTree={false}
-                                               width={150}>
-                                </GridColumnDef>
-                            </GridColumnGroup>
-                        </GridColumnGroup>
                     </Grid>
                 </div>);
+            // <GridColumnDef caption="Колонка2" propertyName="name" showHierarchyTree={false} width={150}>
+            // </GridColumnDef>
+            // <GridColumnGroup caption="Группа1">
+            //     <GridColumnDef caption="Колонка3" propertyName="num" showHierarchyTree={false}
+            //                    width={150}>
+            //     </GridColumnDef>
+            //     <GridColumnDef caption="Колонка4" propertyName="name" showHierarchyTree={false}
+            // width={150}>
+            //     </GridColumnDef>
+            //     <GridColumnGroup caption="Группа-1-2">
+            //         <GridColumnDef caption="Колонка5" propertyName="num" showHierarchyTree={false}
+            //                        width={150}>
+            //         </GridColumnDef>
+            //         <GridColumnDef caption="Колонка6" propertyName="name" showHierarchyTree={false}
+            //                        width={150}>
+            //         </GridColumnDef>
+            //     </GridColumnGroup>
+            //     </GridColumnGroup>
 
             let openParam: OpenWindowParams = {
                 title: "showTestSelectControlForm",

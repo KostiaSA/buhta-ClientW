@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
+import * as AgGrid from "ag-grid";
 
 import {GridColumnProps} from "./GridColumn";
 import {GridDataSource} from "./GridDataSource";
@@ -7,7 +8,7 @@ import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 
-export interface GridArrayDataSourceParams<T> {
+export interface GridFlatDataSourceFromArrayParams<T> {
 
     getNewRow?: () => T;
     getEmptyDataSourceMessage?: () => React.ReactNode;
@@ -15,8 +16,8 @@ export interface GridArrayDataSourceParams<T> {
 
 }
 
-export class GridArrayDataSource<T extends DesignedObject> implements GridDataSource<T> {
-    constructor(public arrayObj: T[], public params: GridArrayDataSourceParams<T> = {}) {
+export class GridFlatDataSourceFromArray<T extends DesignedObject> implements GridDataSource<T> {
+    constructor(public arrayObj: T[], public params: GridFlatDataSourceFromArrayParams<T> = {}) {
 
     }
 
@@ -112,8 +113,11 @@ export class GridArrayDataSource<T extends DesignedObject> implements GridDataSo
         return true;
     }
 
-    refresh(){
+    refresh() {
 
     }
 
+    getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails {
+        return {group: false};
+    }
 }
