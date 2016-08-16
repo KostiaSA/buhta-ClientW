@@ -4,6 +4,9 @@ import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
 import {ComponentProps, ComponentState, Component} from "../Component";
+import {GridColumn, GridColumnDef} from "./GridColumn";
+import {TreeGridColumn} from "../TreeGrid/TreeGridColumn";
+import {GridColumnGroup} from "./GridColumnGroup";
 
 export interface GridProps extends ComponentProps<GridState> {
 
@@ -334,7 +337,7 @@ export default class Grid extends Component<GridProps, GridState> {
         return cell;
     };
 
-    private cellRenderer(params: CellRendererParams): any {
+    cellRenderer(params: CellRendererParams): any {
 
         let cell = this.renderCell(params.column, params.node, params.data);
 
@@ -460,6 +463,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
 //        var domNode = ReactDOM.findDOMNode(this);
         //this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
+        this.createColumns();
         new AgGrid.Grid(this.nativeElement, this.state.agGrid);
 
         let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
@@ -484,6 +488,77 @@ export default class Grid extends Component<GridProps, GridState> {
         this.state.agGrid.api!.destroy();
     }
 
+
+    private createColumnFromReactElement(agColContainer: any[], gridChild: JSX.Element) {
+
+    }
+
+    private createColumns() {
+        this.state.agGrid.columnDefs = [];
+        // сначала колонки заполняем из тегов <TreeGridColumn>
+        this.getChildren().forEach((tag: JSX.Element) => {
+            if (tag.type === GridColumnDef) {
+                this.state.agGrid.columnDefs!.push(new GridColumnDef(tag.props, null).getAgGridColDef(this));
+            }
+            if (tag.type === GridColumnGroup) {
+                this.state.agGrid.columnDefs!.push(new GridColumnGroup(tag.props, null).getAgGridColGroupDef(this));
+            }
+
+        });
+
+
+        // // this.state.columns = [];
+        // this.state.agGrid.columnDefs = [col1, col2, col1, col2];
+        //
+        // // сначала колонки заполняем из тегов <TreeGridColumn>
+        // let columnsTag = this.getChildren(TreeGridColumns);
+        // columnsTag.forEach((tag: JSX.Element) => {
+        //     let columnTagList = this.getChildrenOfProps(tag.props, TreeGridColumn);
+        //
+        //     columnTagList = columnTagList.sort((a: JSX.Element, b: JSX.Element) => {
+        //         let A = a.props as TreeGridColumnProps;
+        //         let B = b.props as TreeGridColumnProps;
+        //         return A.order - B.order;
+        //     });
+        //
+        //     columnTagList.forEach((propCol: JSX.Element) => {
+        //
+        //         let col = new InternalColumn();
+        //         col.props = propCol.props;
+        //         col.width = propCol.props.width || 150;
+        //         col.caption = propCol.props.caption;
+        //         col.fieldName = propCol.props.propertyName;
+        //         col.caption = propCol.props.caption || col.fieldName;
+        //         this.state.columns.push(col);
+        //     });
+        // });
+        //
+        // // если тегов <TreeGridColumn> нет, то заполняем из DataSource
+        // if (this.state.columns.length === 0) {
+        //     if (this.state.dataSource.isTreeGridDataSource) {
+        //         let ds = this.state.dataSource as TreeGridDataSource<any>;
+        //
+        //         let columns = ds.getTreeGridColumns().sort((a: TreeGridColumnProps, b: TreeGridColumnProps) => {
+        //             return a.order - b.order;
+        //         });
+        //
+        //         columns.forEach((propCol: TreeGridColumnProps) => {
+        //
+        //             let col = new InternalColumn();
+        //             col.props = propCol;
+        //             col.width = propCol.width || 150;
+        //             col.caption = propCol.caption || "";
+        //             col.fieldName = propCol.propertyName || "";
+        //             col.caption = propCol.caption || col.fieldName;
+        //             this.state.columns.push(col);
+        //         });
+        //     }
+        // }
+        //
+        // if (this.state.columns.length === 0)
+        //     throwError("TreeGrid: список колонок не определен.");
+
+    }
 
     render() {
         return (

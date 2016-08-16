@@ -1,5 +1,5 @@
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
-import {TreeGridColumnProps} from "./TreeGridColumn";
+import {TreeGridColumnProps} from "../TreeGrid/TreeGridColumn";
 
 export interface GridColumnInfo extends TreeGridColumnProps {
     //propertyName: string;

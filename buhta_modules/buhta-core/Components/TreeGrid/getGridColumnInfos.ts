@@ -1,5 +1,5 @@
 
-import {GridColumnInfo} from "./registerGridColumn";
+import {GridColumnInfo} from "../Grid/registerGridColumn";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 
 export function getGridColumnInfos(obj: DesignedObject): GridColumnInfo[] {

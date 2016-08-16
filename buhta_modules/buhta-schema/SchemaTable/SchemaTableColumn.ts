@@ -3,8 +3,8 @@
 import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
 import {SchemaTable} from "./SchemaTable";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
-import {GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {SqlDataType} from "../../buhta-sql/SqlCore";
+import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 
 export class SchemaTableColumn extends DesignedObject {
     constructor(public table: SchemaTable) {

@@ -1,7 +1,8 @@
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {ListEditor} from "../buhta-app-designer/PropertyEditors/ListPropertyEditor";
-import {GridColumn} from "../buhta-core/Components/TreeGrid/TreeGridColumn";
+import {GridColumn} from "../buhta-core/Components/Grid/GridColumn";
+
 
 export class SqlTable extends DesignedObject {
 

@@ -19,7 +19,7 @@ import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivide
 import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
-import {TreeGridColumn, GridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {Button} from "../../buhta-core/Components/Button/Button";
 import {SqlTable} from "../../components/SqlTable";
@@ -51,6 +51,7 @@ import {ComponentControl} from "../../buhta-ui/ComponentControl";
 import enumerate = Reflect.enumerate;
 import {SchemaComponentDesigner} from "../SchemaComponentDesigner/SchemaComponentDesigner";
 import {SchemaDesigner} from "../SchemaDesigner/SchemaDesigner";
+import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {

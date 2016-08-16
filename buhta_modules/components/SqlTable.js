@@ -13,7 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var DesignedObject_1 = require("../buhta-app-designer/DesignedObject");
 var StringPropertyEditor_1 = require("../buhta-app-designer/PropertyEditors/StringPropertyEditor");
 var ListPropertyEditor_1 = require("../buhta-app-designer/PropertyEditors/ListPropertyEditor");
-var TreeGridColumn_1 = require("../buhta-core/Components/TreeGrid/TreeGridColumn");
+var GridColumn_1 = require("../buhta-core/Components/Grid/GridColumn");
 var SqlTable = (function (_super) {
     __extends(SqlTable, _super);
     function SqlTable() {
@@ -94,7 +94,7 @@ var SqlTableColumn = (function (_super) {
             inputGroup: "Основная",
             inputDescription: "Имя колонки"
         }),
-        TreeGridColumn_1.GridColumn({ caption: "Имя колонки" })
+        GridColumn_1.GridColumn({ caption: "Имя колонки" })
     ], SqlTableColumn.prototype, "name", void 0);
     __decorate([
         StringPropertyEditor_1.StringEditor({
@@ -103,10 +103,10 @@ var SqlTableColumn = (function (_super) {
             inputGroup: "Основная",
             inputDescription: "sql тип колонки"
         }),
-        TreeGridColumn_1.GridColumn({ caption: "Тип" })
+        GridColumn_1.GridColumn({ caption: "Тип" })
     ], SqlTableColumn.prototype, "dataType", void 0);
     __decorate([
-        TreeGridColumn_1.GridColumn({ caption: "test", order: -1 })
+        GridColumn_1.GridColumn({ caption: "test", order: -1 })
     ], SqlTableColumn.prototype, "testColumn", null);
     return SqlTableColumn;
 }(DesignedObject_1.DesignedObject));

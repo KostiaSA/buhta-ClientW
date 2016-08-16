@@ -12,6 +12,8 @@ import {SelectInputDataSourceFromArray} from "../buhta-core/Components/SelectInp
 import {OneWayBinderInput} from "../buhta-core/Components/OneWayBinderInput/OneWayBinderInput";
 import {CodeMirrorInput} from "../buhta-core/Components/CodeMirrorInput/CodeMirrorInput";
 import Grid from "../buhta-core/Components/Grid/Grid";
+import {GridColumnDef} from "../buhta-core/Components/Grid/GridColumn";
+import {GridColumnGroup} from "../buhta-core/Components/Grid/GridColumnGroup";
 /**
  * Created by Kostia on 06.08.2016.
  */
@@ -60,6 +62,22 @@ export function showTestSelectControlForm() {
     let win = (
         <div style={{border:"0px solid blue", height:"100%"}}>
             <Grid dataSource={[]}>
+                <GridColumnDef caption="Колонка1" propertyName="Номер" showHierarchyTree={false} width={150}>
+                </GridColumnDef>
+                <GridColumnDef caption="Колонка2" propertyName="Название" showHierarchyTree={false} width={150}>
+                </GridColumnDef>
+                <GridColumnGroup caption="Группа1">
+                    <GridColumnDef caption="Колонка3" propertyName="Номер" showHierarchyTree={false} width={150}>
+                    </GridColumnDef>
+                    <GridColumnDef caption="Колонка4" propertyName="Название" showHierarchyTree={false} width={150}>
+                    </GridColumnDef>
+                    <GridColumnGroup caption="Группа-1-2">
+                        <GridColumnDef caption="Колонка5" propertyName="Номер" showHierarchyTree={false} width={150}>
+                        </GridColumnDef>
+                        <GridColumnDef caption="Колонка6" propertyName="Название" showHierarchyTree={false} width={150}>
+                        </GridColumnDef>
+                    </GridColumnGroup>
+                </GridColumnGroup>
             </Grid>
         </div>);
 

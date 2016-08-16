@@ -2,7 +2,7 @@
 import * as _ from "lodash";
 
 import {ComponentProps, Component} from "../Component";
-import {registerGridColumn, GridColumnInfo} from "./registerGridColumn";
+import {registerGridColumn, GridColumnInfo} from "../Grid/registerGridColumn";
 //import * as ReactDOM from "react-dom";
 
 
@@ -30,32 +30,32 @@ export interface GridColumnParams extends TreeGridColumnProps {
 
 }
 
-export function GridColumn(params: GridColumnParams): Function {
-    return function (target: any, propertyName: string) {
-        //  console.log({target, propertyName, constr:target.constructor});
-
-        let regColumn: GridColumnInfo = {
-            propertyName: propertyName,
-            objectType: target.constructor
-        };
-
-        _.assign(regColumn, params);
-        registerGridColumn(regColumn);
-
-
-        // registerGridColumn({
-        //     caption: params.caption,
-        //     width: params.width,
-        //     showHierarchyTree: params.showHierarchyTree,
-        //     showHierarchyPadding: params.showHierarchyPadding,
-        //     order: params.order || 0,
-        //     propertyName: propertyName,
-        //     objectType: target.constructor,
-        // });
-    };
-}
-
-
-
+// export function GridColumn(params: GridColumnParams): Function {
+//     return function (target: any, propertyName: string) {
+//         //  console.log({target, propertyName, constr:target.constructor});
+//
+//         let regColumn: GridColumnInfo = {
+//             propertyName: propertyName,
+//             objectType: target.constructor
+//         };
+//
+//         _.assign(regColumn, params);
+//         registerGridColumn(regColumn);
+//
+//
+//         // registerGridColumn({
+//         //     caption: params.caption,
+//         //     width: params.width,
+//         //     showHierarchyTree: params.showHierarchyTree,
+//         //     showHierarchyPadding: params.showHierarchyPadding,
+//         //     order: params.order || 0,
+//         //     propertyName: propertyName,
+//         //     objectType: target.constructor,
+//         // });
+//     };
+// }
+//
+//
+//
 
 

@@ -23,7 +23,7 @@ export interface ComponentProps<S> extends React.ClassAttributes<Element> {
     onWillMount?: (state: S) => void;
     $$control?: BaseControl;
     $$schemaComponent?: SchemaComponent;
-    key?:any;
+    key?: any;
 }
 
 
@@ -84,7 +84,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         }
         return null;
     }
-    
+
     getParentUIComponent(): SchemaComponent | null {
         let parent = ReactDOM.findDOMNode(this);
         while (parent) {
@@ -268,7 +268,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     private componentWillUpdate = () => {
         this.willUpdate();
     };
-    
+
     addClassName(classNames: string | undefined) {
         if (classNames)
             classNames.split(" ").forEach((name) => {
@@ -320,19 +320,19 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     //     return element && element.type ? element.type.toString().split("(")[0].split(" ")[1] : "";
     // }
 
-    getChildren(childType: Function): JSX.Element[] {
+    getChildren(childType?: Function): JSX.Element[] {
         let ret: JSX.Element[] = [];
         React.Children.toArray(this.props.children as React.ReactNode).forEach((child: any) => {
-            if (childType === child.type)
+            if (childType === undefined || childType === child.type)
                 ret.push(child);
         });
         return ret;
     }
 
-    getChildrenOfProps(props: any, childType: Function): JSX.Element[] {
+    getChildrenOfProps(props: any, childType?: Function): JSX.Element[] {
         let ret: JSX.Element[] = [];
         React.Children.toArray(props.children).forEach((child: any) => {
-            if (childType === child.type)
+            if (childType===undefined || childType === child.type)
                 ret.push(child);
         });
         return ret;
