@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
 import {ComponentProps, ComponentState, Component} from "../Component";
@@ -152,7 +153,7 @@ export default class Grid extends Component<GridProps, GridState> {
         //this.state.agGrid.rowData = [{f1: "жопа1", f2: "------"}, {f1: "жопа2", f2: "--2---"}];
 
         let data: any[] = [];
-        for (let i = 0; i < 400; i++) {
+        for (let i = 0; i < 1000; i++) {
             data.push({f1: "жопа" + i, f2: "---" + i + "---"});
         }
         this.state.agGrid.rowData = data;
@@ -169,37 +170,98 @@ export default class Grid extends Component<GridProps, GridState> {
 
 
     private rowHeightCache: { [id: string]: number };
+    private avgRowHeight = 0;
 
-    private calculateRowHeights(rowsLimit: number = 10000) {
+    // private calculateRowHeights(rowsLimit: number = 10000) {
+    //
+    //     let cells: JSX.Element[] = [];
+    //
+    //     let handleRef = (e: HTMLElement, node: AgGrid.RowNode) => {
+    //         if (e) {
+    //             let oldHeight = this.rowHeightCache[node.id];
+    //             if (oldHeight === undefined || e.clientHeight > oldHeight)
+    //                 this.rowHeightCache[node.id] = e.clientHeight;
+    //         }
+    //     };
+    //
+    //
+    //     this.state.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
+    //         if (rowsLimit > 0 && this.rowHeightCache[node.id] === undefined) {
+    //             this.state.agGrid.columnApi!.getAllColumns().forEach((col: AgGrid.Column, colIndex: number) => {
+    //                 let cell = (
+    //                     <div
+    //                         key={node.id + ":" + colIndex}
+    //                         ref={(e:HTMLElement) => {handleRef(e, node); }}
+    //                         style={{display: "inline-block", position: "absolute", visibility: "hidden", zIndex: -1, width: col.getActualWidth()}}
+    //                     >
+    //                         {this.renderCell(col, node, node.data)}
+    //                     </div>
+    //                 );
+    //                 cells.push(cell);
+    //             }, this);
+    //             rowsLimit--;
+    //         }
+    //     });
+    //
+    //
+    //     let div = document.createElement("div");
+    //     document.body.appendChild(div);
+    //     ReactDOM.render(<div>{cells}</div>, div);
+    //     ReactDOM.unmountComponentAtNode(div);
+    //     document.body.removeChild(div);
+    //
+    // }
 
-        this.rowHeightCache = {};
+    private calculateRowHeights(nodes: AgGrid.RowNode[]) {
+
+        const avgOf100 = 100; // для рачета средней высоты row берутся первые 100 rows
+
+        if (!this.state.agGrid.columnApi)  // окно с гридой было закрыто
+            return;
+
         let cells: JSX.Element[] = [];
 
         let handleRef = (e: HTMLElement, node: AgGrid.RowNode) => {
             if (e) {
                 let oldHeight = this.rowHeightCache[node.id];
-                if (oldHeight === undefined || e.clientHeight > oldHeight)
+                if (oldHeight === undefined || e.clientHeight > oldHeight) {
                     this.rowHeightCache[node.id] = e.clientHeight;
+
+                    if (this.avgRowHeight === 0 && Object.keys(this.rowHeightCache).length === avgOf100) {
+                        // вычисляем среднюю высоту
+                        let sum = 0;
+                        let count = 0;
+                        for (let property in this.rowHeightCache) {
+                            let value = this.rowHeightCache[property];
+                            if (_.isNumber(value)) {
+                                sum += value;
+                                count++;
+                            }
+                        }
+                        this.avgRowHeight = Math.round(sum / count);
+                    }
+
+                }
             }
         };
 
-        this.state.agGrid.columnApi!.getAllColumns().forEach((col: AgGrid.Column, colIndex: number) => {
 
-            this.state.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
-
-                let cell = (
-                    <div
-                        key={node.id + ":" + colIndex}
-                        ref={(e:HTMLElement) => {handleRef(e, node); }}
-                        style={{display: "inline-block", position: "absolute", visibility: "hidden", zIndex: -1, width: col.getActualWidth()}}
-                    >
-                        {this.renderCell(col, node, node.data)}
-                    </div>
-                );
-                cells.push(cell);
-            });
-
-        }, this);
+        nodes.forEach((node: AgGrid.RowNode) => {
+            if (this.rowHeightCache[node.id] === undefined) {
+                this.state.agGrid.columnApi!.getAllColumns().forEach((col: AgGrid.Column, colIndex: number) => {
+                    let cell = (
+                        <div
+                            key={node.id + ":" + colIndex}
+                            ref={(e:HTMLElement) => {handleRef(e, node); }}
+                            style={{display: "inline-block", position: "absolute", visibility: "hidden", zIndex: -1, width: col.getActualWidth()}}
+                        >
+                            {this.renderCell(col, node, node.data)}
+                        </div>
+                    );
+                    cells.push(cell);
+                }, this);
+            }
+        });
 
         let div = document.createElement("div");
         document.body.appendChild(div);
@@ -210,10 +272,59 @@ export default class Grid extends Component<GridProps, GridState> {
     }
 
     private handleGetRowHeight(param: GetRowHeightParams): number {
+        const delay200ms = 200; // 1 раз в секунд запускается цикл расчета высот rows, чаще нельзя, браузер замирает
+        const max2000 = 2000; // для первых 2000 строк делаем расчет, для остальных берем средний
+        const first100 = 100; // после первых 100 рассчитанных строк, показываем гриду юзеру
+        const refresh1000 = 1000; // раз в секунду запускаем refreshInMemoryRowModel()
+
         if (this.rowHeightCache === undefined) {
-            this.calculateRowHeights();
+            this.rowHeightCache = {};
+            this.avgRowHeight = 0;
+
+            let delay = delay200ms;
+
+            let nodes: AgGrid.RowNode[] = [];
+            let nodeCount = 0;
+            this.state.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
+                if (nodeCount < max2000) {
+                    nodes.push(node);
+                    nodeCount++;
+                    if (nodes.length === first100) {
+                        let nodesClone = nodes.slice(0);
+                        if (nodeCount === first100) {
+                            this.calculateRowHeights(nodesClone);
+                        }
+                        else {
+                            setTimeout(() => {
+                                this.calculateRowHeights(nodesClone);
+                            }, delay);
+                            if (delay % refresh1000 === 0) {
+                                setTimeout(() => {
+                                    if (this.state.agGrid.api)
+                                        this.state.agGrid.api.refreshInMemoryRowModel();
+                                    //console.log("refreshInMemoryRowModel");
+                                }, delay);
+                            }
+                        }
+                        delay += delay200ms;
+                        nodes = [];
+                    }
+                }
+            });
+
+            setTimeout(() => {
+                this.calculateRowHeights(nodes.slice(0));
+                if (this.state.agGrid.api)
+                    this.state.agGrid.api.refreshInMemoryRowModel();
+            }, delay);
         }
-        return this.rowHeightCache[param.node.id];
+
+        if (this.rowHeightCache[param.node.id] !== undefined)
+            return this.rowHeightCache[param.node.id];
+        else if (this.avgRowHeight > 0)
+            return this.avgRowHeight;
+        else
+            return 25;
     }
 
     private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: any): JSX.Element {
@@ -224,13 +335,6 @@ export default class Grid extends Component<GridProps, GridState> {
     };
 
     private cellRenderer(params: CellRendererParams): any {
-        //console.log(params);
-
-        //let dnd = "";
-        //if (this.state.dragRow.isDragging)
-        //  dnd = "+dnd+";
-
-        //let cellElement: Element;
 
         let cell = this.renderCell(params.column, params.node, params.data);
 
