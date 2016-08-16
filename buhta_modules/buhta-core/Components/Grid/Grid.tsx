@@ -7,11 +7,12 @@ import {ComponentProps, ComponentState, Component} from "../Component";
 import {GridColumn, GridColumnDef} from "./GridColumn";
 import {TreeGridColumn} from "../TreeGrid/TreeGridColumn";
 import {GridColumnGroup} from "./GridColumnGroup";
+import {GridDataSource} from "./GridDataSource";
 
 export interface GridProps extends ComponentProps<GridState> {
 
     dragDropNodes?: boolean;
-    dataSource: any[];
+    dataSource: GridDataSource<any>;
 
 
     // dataSource: TreeGridDataSource<T>;
@@ -57,16 +58,16 @@ export class GridState extends ComponentState<GridProps> {
     }
 
     agGrid: AgGrid.GridOptions = {};
-    dataSource: any[];
+    dataSource: GridDataSource<any>;
     dragRow: DragRowState = new DragRowState();
 
-    getFocusedRowData(): any {
-        let focusedCell = this.agGrid.api!.getFocusedCell();
-        if (focusedCell)
-            return this.dataSource[focusedCell.rowIndex];
-        else
-            return undefined;
-    }
+    // getFocusedRowData(): any {
+    //     let focusedCell = this.agGrid.api!.getFocusedCell();
+    //     if (focusedCell)
+    //         return this.dataSource [focusedCell.rowIndex];
+    //     else
+    //         return undefined;
+    // }
 
 
     // columns: InternalColumn[];
@@ -139,29 +140,30 @@ export default class Grid extends Component<GridProps, GridState> {
 
         this.state = new GridState(this);
 
-        let col1: AgGrid.ColDef = {
-            headerName: "колонка1",
-            field: "f2",
-            width: 150,
-            cellRenderer: this.cellRenderer.bind(this)
-        };
-        let col2: AgGrid.ColDef = {
-            headerName: "колонка2",
-            field: "f1",
-            width: 150,
-            cellRenderer: this.cellRenderer.bind(this)
-        };
-
-        this.state.agGrid.columnDefs = [col1, col2, col1, col2];
-        //this.state.agGrid.rowData = [{f1: "жопа1", f2: "------"}, {f1: "жопа2", f2: "--2---"}];
-
-        let data: any[] = [];
-        for (let i = 0; i < 1000; i++) {
-            data.push({f1: "жопа" + i, f2: "---" + i + "---"});
-        }
-        this.state.agGrid.rowData = data;
+        // let col1: AgGrid.ColDef = {
+        //     headerName: "колонка1",
+        //     field: "f2",
+        //     width: 150,
+        //     cellRenderer: this.cellRenderer.bind(this)
+        // };
+        // let col2: AgGrid.ColDef = {
+        //     headerName: "колонка2",
+        //     field: "f1",
+        //     width: 150,
+        //     cellRenderer: this.cellRenderer.bind(this)
+        // };
+        //
+        // this.state.agGrid.columnDefs = [col1, col2, col1, col2];
+        // //this.state.agGrid.rowData = [{f1: "жопа1", f2: "------"}, {f1: "жопа2", f2: "--2---"}];
+        //
+        // let data: any[] = [];
+        // for (let i = 0; i < 1000; i++) {
+        //     data.push({f1: "жопа" + i, f2: "---" + i + "---"});
+        // }
         this.state.agGrid.rowHeight = undefined;
-        this.state.dataSource = data;
+        this.state.dataSource = props.dataSource;
+
+        this.state.agGrid.rowData = this.state.dataSource.getRows();
 
         this.state.agGrid.getRowHeight = this.handleGetRowHeight.bind(this);
 
@@ -331,9 +333,7 @@ export default class Grid extends Component<GridProps, GridState> {
     }
 
     private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: any): JSX.Element {
-        let cell = <div>жопа+див<br/> {data.f2}</div>;
-        if (column.getColDef().field === "f1")
-            cell = <div>просто<br/> нет <br/> {data.f1}</div>;
+        let cell = <div>{data[column.getColDef().field!]}</div>;
         return cell;
     };
 

@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {TreeGridDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridDataSource";
 import {TreeGridColumnProps} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
-import {getGridColumnInfos} from "../../buhta-core/Components/TreeGrid/getGridColumnInfos";
+import {getGridColumnInfos} from "../../buhta-core/Components/Grid/getGridColumnInfos";
 import {throwError} from "../../buhta-core/Error";
 
 export interface TreeGridComponentChildrenDataSourceParams {

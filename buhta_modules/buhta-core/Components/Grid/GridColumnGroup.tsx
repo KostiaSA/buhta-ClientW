@@ -35,7 +35,7 @@ export class GridColumnGroup extends Component<GridColumnGroupProps, any> {
 
         });
 
-        console.log(col);
+        //console.log(col);
         return col;
     }
 

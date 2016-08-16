@@ -14,30 +14,34 @@ import {CodeMirrorInput} from "../buhta-core/Components/CodeMirrorInput/CodeMirr
 import Grid from "../buhta-core/Components/Grid/Grid";
 import {GridColumnDef} from "../buhta-core/Components/Grid/GridColumn";
 import {GridColumnGroup} from "../buhta-core/Components/Grid/GridColumnGroup";
+import {getSchema} from "../buhta-schema/Schema";
+import {GridArrayDataSource} from "../buhta-core/Components/Grid/GridArrayDataSource";
+import {DataTable} from "../buhta-sql/SqlDb";
+import {throwError} from "../buhta-core/Error";
 /**
  * Created by Kostia on 06.08.2016.
  */
 
 export function showTestSelectControlForm() {
-    let opts: ReactSelect.Option[] = [];
-
-    opts.push({label: "один", value: 1});
-    opts.push({label: "два", value: 2});
-    opts.push({label: "три", value: 3});
-
-
-    let testObj = {value: 300};
-    let values = new SelectInputDataSourceFromArray([100, 200, 300]);
-
-    let code: any = {};
-
-    code.js = "let values = new SelectInputDataSourceFromArray([100, 200, 300]);";
-
-
-    let cellRenderer = (param: any): JSX.Element => {
-        // console.log(param);
-        return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
-    };
+    // let opts: ReactSelect.Option[] = [];
+    //
+    // opts.push({label: "один", value: 1});
+    // opts.push({label: "два", value: 2});
+    // opts.push({label: "три", value: 3});
+    //
+    //
+    // let testObj = {value: 300};
+    // let values = new SelectInputDataSourceFromArray([100, 200, 300]);
+    //
+    // let code: any = {};
+    //
+    // code.js = "let values = new SelectInputDataSourceFromArray([100, 200, 300]);";
+    //
+    //
+    // let cellRenderer = (param: any): JSX.Element => {
+    //     // console.log(param);
+    //     return <span>Жопа {param.rowIndex}:{param.columnIndex}</span>;
+    // };
 
     // let win = (
     //     <div style={{border:"1px solid blue", height:400, width:400}}>
@@ -59,36 +63,54 @@ export function showTestSelectControlForm() {
     //         </ReactVirtualized.AutoSizer>
     //     </div>);
 
-    let win = (
-        <div style={{border:"0px solid blue", height:"100%"}}>
-            <Grid dataSource={[]}>
-                <GridColumnDef caption="Колонка1" propertyName="Номер" showHierarchyTree={false} width={150}>
-                </GridColumnDef>
-                <GridColumnDef caption="Колонка2" propertyName="Название" showHierarchyTree={false} width={150}>
-                </GridColumnDef>
-                <GridColumnGroup caption="Группа1">
-                    <GridColumnDef caption="Колонка3" propertyName="Номер" showHierarchyTree={false} width={150}>
-                    </GridColumnDef>
-                    <GridColumnDef caption="Колонка4" propertyName="Название" showHierarchyTree={false} width={150}>
-                    </GridColumnDef>
-                    <GridColumnGroup caption="Группа-1-2">
-                        <GridColumnDef caption="Колонка5" propertyName="Номер" showHierarchyTree={false} width={150}>
-                        </GridColumnDef>
-                        <GridColumnDef caption="Колонка6" propertyName="Название" showHierarchyTree={false} width={150}>
-                        </GridColumnDef>
-                    </GridColumnGroup>
-                </GridColumnGroup>
-            </Grid>
-        </div>);
+    getSchema().db.executeSQL("select TOP 500 Ключ,Номер,Название from [Вид ТМЦ] order by Номер")
+        .then((tables: DataTable[]) => {
 
-    let openParam: OpenWindowParams = {
-        title: "showTestSelectControlForm",
-        top: 10,
-        left: 10,
-        height: 700,
-        width: 700
-    };
 
-    appInstance.desktop.openWindow(win, openParam);
+            let ds = new GridArrayDataSource(tables[0].rows);
+            //console.log("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер =>" + table.rows[0].getValue(1));
+
+            let win = (
+                <div style={{border:"0px solid blue", height:"100%"}}>
+                    <Grid dataSource={ds}>
+                        <GridColumnDef caption="Колонка1" propertyName="Номер" showHierarchyTree={false} width={150}>
+                        </GridColumnDef>
+                        <GridColumnDef caption="Колонка2" propertyName="Название" showHierarchyTree={false} width={150}>
+                        </GridColumnDef>
+                        <GridColumnGroup caption="Группа1">
+                            <GridColumnDef caption="Колонка3" propertyName="Номер" showHierarchyTree={false}
+                                           width={150}>
+                            </GridColumnDef>
+                            <GridColumnDef caption="Колонка4" propertyName="Название" showHierarchyTree={false}
+                                           width={150}>
+                            </GridColumnDef>
+                            <GridColumnGroup caption="Группа-1-2">
+                                <GridColumnDef caption="Колонка5" propertyName="Номер" showHierarchyTree={false}
+                                               width={150}>
+                                </GridColumnDef>
+                                <GridColumnDef caption="Колонка6" propertyName="Название" showHierarchyTree={false}
+                                               width={150}>
+                                </GridColumnDef>
+                            </GridColumnGroup>
+                        </GridColumnGroup>
+                    </Grid>
+                </div>);
+
+            let openParam: OpenWindowParams = {
+                title: "showTestSelectControlForm",
+                top: 10,
+                left: 10,
+                height: 700,
+                width: 700
+            };
+
+            appInstance.desktop.openWindow(win, openParam);
+
+
+        })
+        .catch((err) => {
+            throwError(err);
+        });
+
 
 }

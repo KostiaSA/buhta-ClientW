@@ -1,13 +1,13 @@
 import * as React from "react";
 import * as _ from "lodash";
 
-import {TreeGridColumnProps} from "./TreeGridColumn";
-import {TreeGridDataSource} from "./TreeGridDataSource";
+import {GridColumnProps} from "./GridColumn";
+import {GridDataSource} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
-import {getGridColumnInfos} from "../Grid/getGridColumnInfos";
 import {throwError} from "../../Error";
+import {getGridColumnInfos} from "./getGridColumnInfos";
 
-export interface TreeGridArrayDataSourceParams<T> {
+export interface GridArrayDataSourceParams<T> {
 
     getNewRow?: () => T;
     getEmptyDataSourceMessage?: () => React.ReactNode;
@@ -15,8 +15,8 @@ export interface TreeGridArrayDataSourceParams<T> {
 
 }
 
-export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGridDataSource<T> {
-    constructor(public arrayObj: T[], public params: TreeGridArrayDataSourceParams<T> = {}) {
+export class GridArrayDataSource<T extends DesignedObject> implements GridDataSource<T> {
+    constructor(public arrayObj: T[], public params: GridArrayDataSourceParams<T> = {}) {
 
     }
 
@@ -24,11 +24,11 @@ export class TreeGridArrayDataSource<T extends DesignedObject> implements TreeGr
         return true;
     }
 
-    getTreeGridColumns(): TreeGridColumnProps[] {
+    getTreeGridColumns(): GridColumnProps[] {
         if (this.arrayObj.length === 0)
             return [];
         else
-            return getGridColumnInfos(this.arrayObj[0]).map<TreeGridColumnProps>((col) => {
+            return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
 
                 let ret: any = {};
                 _.assign(ret, col);

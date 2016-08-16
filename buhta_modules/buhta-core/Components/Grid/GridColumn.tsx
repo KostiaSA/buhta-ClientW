@@ -33,7 +33,7 @@ export class GridColumnDef extends Component<GridColumnProps, any> {
             width: this.props.width,
             cellRenderer: grid.cellRenderer.bind(grid)
         };
-        console.log(col);
+        //console.log(col);
         return col;
     }
 }
@@ -42,7 +42,7 @@ export class GridColumnDef extends Component<GridColumnProps, any> {
 export interface GridColumnParams extends GridColumnProps {
 
 }
-
+// это декоратор для дизайнера объектов
 export function GridColumn(params: GridColumnParams): Function {
     return function (target: any, propertyName: string) {
         //  console.log({target, propertyName, constr:target.constructor});
