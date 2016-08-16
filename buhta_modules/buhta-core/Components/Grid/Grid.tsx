@@ -152,7 +152,7 @@ export default class Grid extends Component<GridProps, GridState> {
         //this.state.agGrid.rowData = [{f1: "жопа1", f2: "------"}, {f1: "жопа2", f2: "--2---"}];
 
         let data: any[] = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 400; i++) {
             data.push({f1: "жопа" + i, f2: "---" + i + "---"});
         }
         this.state.agGrid.rowData = data;
@@ -167,21 +167,61 @@ export default class Grid extends Component<GridProps, GridState> {
 
     }
 
-    private handleGetRowHeight(param: GetRowHeightParams): number {
-        //console.log("handleGetRowHeight");
-        //console.log(param);
 
-        return 30;
+    private rowHeightCache: { [id: string]: number };
+
+    private calculateRowHeights(rowsLimit: number = 10000) {
+
+        this.rowHeightCache = {};
+        let cells: JSX.Element[] = [];
+
+        let handleRef = (e: HTMLElement, node: AgGrid.RowNode) => {
+            if (e) {
+                let oldHeight = this.rowHeightCache[node.id];
+                if (oldHeight === undefined || e.clientHeight > oldHeight)
+                    this.rowHeightCache[node.id] = e.clientHeight;
+            }
+        };
+
+        this.state.agGrid.columnApi!.getAllColumns().forEach((col: AgGrid.Column, colIndex: number) => {
+
+            this.state.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
+
+                let cell = (
+                    <div
+                        key={node.id + ":" + colIndex}
+                        ref={(e:HTMLElement) => {handleRef(e, node); }}
+                        style={{display: "inline-block", position: "absolute", visibility: "hidden", zIndex: -1, width: col.getActualWidth()}}
+                    >
+                        {this.renderCell(col, node, node.data)}
+                    </div>
+                );
+                cells.push(cell);
+            });
+
+        }, this);
+
+        let div = document.createElement("div");
+        document.body.appendChild(div);
+        ReactDOM.render(<div>{cells}</div>, div);
+        ReactDOM.unmountComponentAtNode(div);
+        document.body.removeChild(div);
+
     }
 
+    private handleGetRowHeight(param: GetRowHeightParams): number {
+        if (this.rowHeightCache === undefined) {
+            this.calculateRowHeights();
+        }
+        return this.rowHeightCache[param.node.id];
+    }
 
     private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: any): JSX.Element {
-
-        let cell = <div>жопа+див {data.f2}</div>;
+        let cell = <div>жопа+див<br/> {data.f2}</div>;
+        if (column.getColDef().field === "f1")
+            cell = <div>просто<br/> нет <br/> {data.f1}</div>;
         return cell;
-
     };
-
 
     private cellRenderer(params: CellRendererParams): any {
         //console.log(params);
