@@ -8,6 +8,7 @@ import {GridColumn, GridColumnDef} from "./GridColumn";
 import {TreeGridColumn} from "../TreeGrid/TreeGridColumn";
 import {GridColumnGroup} from "./GridColumnGroup";
 import {GridDataSource} from "./GridDataSource";
+import {InMemoryRowModel} from "ag-grid/main";
 
 ///////////// ВНИМАНИЕ !  //////////////////
 // ag-grid.noStyle.js был запатчен, иначе содержимое ячейки для tree-column будет вставляться перед иконками плюс/минус
@@ -50,7 +51,7 @@ export interface GridProps extends ComponentProps<GridState> {
 
 class DragRowState {
     constructor(public gridState: GridState) {
-        
+
     }
 
 
@@ -60,6 +61,7 @@ class DragRowState {
     mode: "move" | "copy";
 
     dragOverRowData: any;
+    dragOverRowNode: AgGrid.RowNode;
     dropPlace: "deny" | "insertBefore" |  "insertAfter" |  "insertInto";
     dropAllowed: boolean;
 
@@ -71,12 +73,12 @@ class DragRowState {
             }
             else if (this.dropPlace === "insertInto") {
                 this.gridState.dataSource.dropInto(this.draggingRowData, this.dragOverRowData, this.mode);
-
             }
             else if (this.dropPlace === "insertAfter") {
                 this.gridState.dataSource.dropAfter(this.draggingRowData, this.dragOverRowData, this.mode);
 
             }
+            this.gridState.refresh();
         }
     }
 
@@ -90,6 +92,10 @@ export class GridState extends ComponentState<GridProps> {
     agGrid: AgGrid.GridOptions = {};
     dataSource: GridDataSource<any>;
     dragRow: DragRowState = new DragRowState(this);
+
+    refresh() {
+       this.agGrid.api!.setRowData(this.dataSource.getRows());
+    }
 
     // getFocusedRowData(): any {
     //     let focusedCell = this.agGrid.api!.getFocusedCell();
@@ -210,6 +216,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
     handleAgRowGroupOpened(params: { node: AgGrid.RowNode}) {
         this.state.agGrid.api!.refreshRows([params.node]);
+        params.node.data.$$dataSourceTreeNode.expanded = params.node.expanded;
     }
 
     getDataByAgRowIndex(rowIndex: number): any {
@@ -435,6 +442,7 @@ export default class Grid extends Component<GridProps, GridState> {
             }
             else if (relativeY < 0.66) {
                 this.state.dragRow.dragOverRowData = params.data;
+                this.state.dragRow.dragOverRowNode = params.node;
                 this.state.dragRow.dropPlace = "insertInto";
                 this.state.dragRow.dropAllowed = this.state.dataSource.canDropInto(this.state.dragRow.draggingRowData, params.data, "move");
                 arrowTop = $row.position().top + $row.outerHeight() / 2 - 10;
@@ -495,8 +503,12 @@ export default class Grid extends Component<GridProps, GridState> {
 
 
             this.state.dragRow.isDragging = false;
-            this.state.agGrid.api!.refreshView();
+            //this.state.agGrid.api!.refreshView();
             //this.state.agGrid.api!.refreshInMemoryRowModel(); // перезапрашивает RowHeight
+            //((this.state.agGrid.api! as any).inMemoryRowModel as InMemoryRowModel).refreshModel(AgGrid.Constants.STEP_EVERYTHING);
+            //this.state.agGrid.api!.refreshGroupRows();
+            //this.state.agGrid.api!.setRowData(this.state.dataSource.getRows());
+
         }
     }
 
