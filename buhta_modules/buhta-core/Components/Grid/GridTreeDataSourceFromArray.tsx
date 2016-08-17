@@ -162,7 +162,36 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             return true;
     }
 
-    dropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+    dropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy") {
+        let dragNode = dragRowData.$$dataSourceTreeNode;
+        let targetNode = targetRowData.$$dataSourceTreeNode;
+
+        if (dragNode.parent === targetNode.parent) {
+            let arr = this.nodes;
+            if (targetNode.parent) {
+                arr = targetNode.parent.children;
+            }
+            let toPos = arr.indexOf(targetNode)-1;
+            let fromPos = arr.indexOf(dragNode);
+            if (toPos < fromPos)
+                toPos += 1;
+            moveInArray(arr, [dragNode], toPos);
+        }
+        else {
+            let dragArr = this.nodes;
+            if (dragNode.parent) {
+                dragArr = dragNode.parent.children;
+            }
+            let targetArr = this.nodes;
+            if (targetNode.parent) {
+                targetArr = targetNode.parent.children;
+            }
+
+            insertIntoArray(targetArr, dragNode, targetArr.indexOf(targetNode));
+            removeFromArray(dragArr, dragNode);
+
+            dragNode.parent = targetNode.parent;
+        }
 
     }
 
@@ -186,8 +215,6 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         let targetNode = targetRowData.$$dataSourceTreeNode;
 
         if (dragNode.parent === targetNode.parent) {
-            // let toPos: number;
-            // let fromPos: number;
             let arr = this.nodes;
             if (targetNode.parent) {
                 arr = targetNode.parent.children;
@@ -197,9 +224,6 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             if (toPos < fromPos)
                 toPos += 1;
             moveInArray(arr, [dragNode], toPos);
-            //     targetNode.parent.children.splice(toPos, 0, targetNode.parent.children.splice(fromPos, 1)[0]);
-            // else
-            //     targetNode.parent.children.splice(toPos + 1, 0, targetNode.parent.children.splice(fromPos, 1)[0]);
         }
         else {
             let dragArr = this.nodes;
@@ -212,8 +236,6 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             }
 
             insertIntoArray(targetArr, dragNode, targetArr.indexOf(targetNode) + 1);
-            //targetNode.parent.children.splice(targetNode.parent.children.indexOf(targetNode) + 1, 0, dragNode);
-
             removeFromArray(dragArr, dragNode);
 
             dragNode.parent = targetNode.parent;
