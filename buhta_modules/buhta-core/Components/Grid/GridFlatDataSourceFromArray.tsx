@@ -109,6 +109,10 @@ export class GridFlatDataSourceFromArray<T extends DesignedObject> implements Gr
         return false;
     }
 
+    dropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+
+    }
+    
     dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
         
     }

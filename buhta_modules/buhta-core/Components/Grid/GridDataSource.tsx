@@ -19,16 +19,18 @@ export interface GridDataSource<T> {
 
     canDragRow(rowIndex: number, mode: "move" | "copy"): boolean;
 
-    canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean;
+    canDropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
 
-    canDropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean;
+    canDropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
     
-    canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean;
+    canDropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
 
-    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;
+    dropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
 
-    dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;
+    dropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
 
+    dropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
+    
     refresh(): void;
 
     getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails | null;

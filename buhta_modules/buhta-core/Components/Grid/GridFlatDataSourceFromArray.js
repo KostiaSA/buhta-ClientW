@@ -83,6 +83,8 @@ var GridFlatDataSourceFromArray = (function () {
     GridFlatDataSourceFromArray.prototype.canDropBefore = function (dragRowIndex, targetRowIndex, mode) {
         return false;
     };
+    GridFlatDataSourceFromArray.prototype.dropBefore = function (dragRowIndex, targetRowIndex, mode) {
+    };
     GridFlatDataSourceFromArray.prototype.dropInto = function (dragRowIndex, targetRowIndex, mode) {
     };
     GridFlatDataSourceFromArray.prototype.dropAfter = function (dragRowIndex, targetRowIndex, mode) {

@@ -8,6 +8,7 @@ import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {numberCompare} from "../../numberCompare";
+import {removeFromArray} from "../../arrayUtils";
 
 export interface GridTreeDataSourceFromArrayParams<T> {
 
@@ -138,21 +139,43 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         return true;
     }
 
-    canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
-        return true;
+    canDropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean {
+
+        if (this.hasParent(targetRowData, dragRowData))
+            return false;
+        else
+            return true;
+    }
+
+    canDropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean {
+        if (this.hasParent(targetRowData, dragRowData) || dragRowData.$$dataSourceTreeNode.parent === targetRowData.$$dataSourceTreeNode)
+            return false;
+        else
+            return true;
     }
 
     canDropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean {
-        console.log(dragRowData.$$dataSourceTreeNode);
-        console.log(targetRowData.$$dataSourceTreeNode);
-        return true;
+
+        if (this.hasParent(targetRowData, dragRowData))
+            return false;
+        else
+            return true;
     }
 
-    canDropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
-        return true;
+    dropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+
     }
 
-    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+    dropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy") {
+        let dragNode = dragRowData.$$dataSourceTreeNode;
+        let targetNode = targetRowData.$$dataSourceTreeNode;
+
+        targetNode.children.push(dragNode);
+
+        if (dragNode.parent)
+            removeFromArray(dragNode.parent.children, targetNode);
+        else
+            removeFromArray(this.nodes, targetNode);
 
     }
 
@@ -162,6 +185,18 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
 
     refresh() {
 
+    }
+
+    private hasParent(rowData: any, parentData: any): boolean {
+        let parentNode = rowData.$$dataSourceTreeNode;
+        if (parentNode === parentData.$$dataSourceTreeNode)
+            return true;
+        while (parentNode) {
+            parentNode = parentNode.parent;
+            if (parentNode === parentData.$$dataSourceTreeNode)
+                return true;
+        }
+        return false;
     }
 
     private nodeList: any = {};
