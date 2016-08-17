@@ -21,6 +21,8 @@ export interface GridDataSource<T> {
 
     canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean;
 
+    canDropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean;
+    
     canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean;
 
     dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): void;

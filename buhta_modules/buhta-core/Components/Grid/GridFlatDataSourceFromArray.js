@@ -78,13 +78,14 @@ var GridFlatDataSourceFromArray = (function () {
         return false;
     };
     GridFlatDataSourceFromArray.prototype.canDropAfter = function (dragRowIndex, targetRowIndex, mode) {
-        return true;
-    };
-    GridFlatDataSourceFromArray.prototype.dropInto = function (dragRowIndex, targetRowIndex, mode) {
         return false;
     };
+    GridFlatDataSourceFromArray.prototype.canDropBefore = function (dragRowIndex, targetRowIndex, mode) {
+        return false;
+    };
+    GridFlatDataSourceFromArray.prototype.dropInto = function (dragRowIndex, targetRowIndex, mode) {
+    };
     GridFlatDataSourceFromArray.prototype.dropAfter = function (dragRowIndex, targetRowIndex, mode) {
-        return true;
     };
     GridFlatDataSourceFromArray.prototype.refresh = function () {
     };

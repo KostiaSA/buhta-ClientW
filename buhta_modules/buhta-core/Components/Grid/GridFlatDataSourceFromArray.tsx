@@ -102,15 +102,19 @@ export class GridFlatDataSourceFromArray<T extends DesignedObject> implements Gr
     }
 
     canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
-        return true;
-    }
-
-    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
         return false;
     }
 
+    canDropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+        return false;
+    }
+
+    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+        
+    }
+
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
-        return true;
+        
     }
 
     refresh() {

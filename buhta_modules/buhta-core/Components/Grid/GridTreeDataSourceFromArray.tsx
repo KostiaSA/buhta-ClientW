@@ -139,19 +139,25 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
     }
 
     canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
-        return false;
+        return true;
     }
 
-    canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+    canDropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean {
+        console.log(dragRowData.$$dataSourceTreeNode);
+        console.log(targetRowData.$$dataSourceTreeNode);
+        return true;
+    }
+
+    canDropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
         return true;
     }
 
     dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
-        return false;
+
     }
 
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
-        return true;
+
     }
 
     refresh() {
@@ -173,6 +179,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
 
         this.arrayObj.forEach((dataSourceItem: any, index: number) => {
             let node = new InternalTreeNode<any>();
+            dataSourceItem.$$dataSourceTreeNode = node;
             node.sourceIndex = index;
             node.key = dataSourceItem[this.params.keyFieldName!];
 
@@ -258,8 +265,8 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
     }
 
     getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails | null {
-        let dataId = dataItem[this.params.keyFieldName];
-        let node = this.nodeList[dataId];
+
+        let node = dataItem.$$dataSourceTreeNode;
 
         if (node.children.length > 0)
 
@@ -269,8 +276,8 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
                 children: node.children.map((childNode: InternalTreeNode<any>) => {
                     return this.arrayObj[childNode.sourceIndex];
                 }, this),
-                field: "name",
-                key: dataId
+                //field: "name",
+                //key: dataId
 
             };
         else
