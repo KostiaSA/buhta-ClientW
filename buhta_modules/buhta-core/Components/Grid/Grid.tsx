@@ -76,6 +76,7 @@ class DragDropState {
                 this.gridState.dataSource.dropAfter(this.dragRowData, this.dropRowData, this.mode);
             }
             this.gridState.refresh();
+            this.gridState.setFocusedRow(this.dragRowData);
         }
     }
 
@@ -93,6 +94,35 @@ export class GridState extends ComponentState<GridProps> {
     refresh() {
         this.agGrid.api!.setRowData(this.dataSource.getRows());
     }
+
+    setFocusedRow(dataItem: any) {
+
+        let col = this.agGrid.columnApi!.getAllDisplayedColumns();
+        let rowIndex = this.findAgNodeIndexOfData(dataItem);
+        if (rowIndex >= 0)
+            this.agGrid.api!.setFocusedCell(rowIndex, col[0]);
+    }
+
+    findAgRowNodeOfData(dataItem: any): AgGrid.RowNode | undefined {
+        let ret: AgGrid.RowNode| undefined = undefined;
+        this.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
+            if (node.data === dataItem)
+                ret = node;
+        });
+        return ret;
+    }
+
+    findAgNodeIndexOfData(dataItem: any): number {
+        let rowModel = this.agGrid.api!.getModel();
+
+        for (let i = 0; i < rowModel.getRowCount(); i++) {
+            if (rowModel.getRow(i).data === dataItem)
+                return i;
+        }
+
+        return -1;
+    }
+
 
     // getFocusedRowData(): any {
     //     let focusedCell = this.agGrid.api!.getFocusedCell();
