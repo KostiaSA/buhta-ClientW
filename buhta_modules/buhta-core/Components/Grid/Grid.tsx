@@ -49,34 +49,31 @@ export interface GridProps extends ComponentProps<GridState> {
 }
 
 
-class DragRowState {
+class DragDropState {
     constructor(public gridState: GridState) {
 
     }
 
-
     isDragging: boolean;
     isMouseDown: boolean;
-    draggingRowData: any;
+    mouseDownY: number;
+    dragRowData: any;
     mode: "move" | "copy";
 
-    dragOverRowData: any;
-    dragOverRowNode: AgGrid.RowNode;
-    dropPlace: "deny" | "insertBefore" |  "insertAfter" |  "insertInto";
+    dropRowData: any;
+    dropPlace: "insertBefore" |  "insertAfter" |  "insertInto";
     dropAllowed: boolean;
 
     doDrop() {
         if (this.dropAllowed) {
             if (this.dropPlace === "insertBefore") {
-                this.gridState.dataSource.dropBefore(this.draggingRowData, this.dragOverRowData, this.mode);
-
+                this.gridState.dataSource.dropBefore(this.dragRowData, this.dropRowData, this.mode);
             }
             else if (this.dropPlace === "insertInto") {
-                this.gridState.dataSource.dropInto(this.draggingRowData, this.dragOverRowData, this.mode);
+                this.gridState.dataSource.dropInto(this.dragRowData, this.dropRowData, this.mode);
             }
             else if (this.dropPlace === "insertAfter") {
-                this.gridState.dataSource.dropAfter(this.draggingRowData, this.dragOverRowData, this.mode);
-
+                this.gridState.dataSource.dropAfter(this.dragRowData, this.dropRowData, this.mode);
             }
             this.gridState.refresh();
         }
@@ -91,10 +88,10 @@ export class GridState extends ComponentState<GridProps> {
 
     agGrid: AgGrid.GridOptions = {};
     dataSource: GridDataSource<any>;
-    dragRow: DragRowState = new DragRowState(this);
+    dragDropState: DragDropState = new DragDropState(this);
 
     refresh() {
-       this.agGrid.api!.setRowData(this.dataSource.getRows());
+        this.agGrid.api!.setRowData(this.dataSource.getRows());
     }
 
     // getFocusedRowData(): any {
@@ -216,7 +213,8 @@ export default class Grid extends Component<GridProps, GridState> {
 
     handleAgRowGroupOpened(params: { node: AgGrid.RowNode}) {
         this.state.agGrid.api!.refreshRows([params.node]);
-        params.node.data.$$dataSourceTreeNode.expanded = params.node.expanded;
+        if (params.node.data.$$dataSourceTreeNode)
+            params.node.data.$$dataSourceTreeNode.expanded = params.node.expanded;
     }
 
     getDataByAgRowIndex(rowIndex: number): any {
@@ -373,8 +371,13 @@ export default class Grid extends Component<GridProps, GridState> {
             }, delay);
         }
 
-        if (this.rowHeightCache[param.node.id] !== undefined)
+        if (param.node.data.$$gridRowHeight !== undefined) {
+            return param.node.data.$$gridRowHeight;
+        }
+        else if (this.rowHeightCache[param.node.id] !== undefined) {
+            param.node.data.$$gridRowHeight = this.rowHeightCache[param.node.id];
             return this.rowHeightCache[param.node.id];
+        }
         else if (this.avgRowHeight > 0)
             return this.avgRowHeight;
         else
@@ -392,7 +395,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
         ////////////////// drag-over///////////////////
         let dragOver = (e: MouseEvent) => {
-            if (!this.state.dragRow.isDragging)
+            if (!this.state.dragDropState.isDragging)
                 return;
 
             let $row = $(e.target).parents(".ag-row").first();
@@ -434,29 +437,29 @@ export default class Grid extends Component<GridProps, GridState> {
 
 
             if (relativeY < 0.33) {
-                this.state.dragRow.dragOverRowData = params.data;
-                this.state.dragRow.dropPlace = "insertBefore";
-                this.state.dragRow.dropAllowed = this.state.dataSource.canDropBefore(this.state.dragRow.draggingRowData, params.data, "move");
+                this.state.dragDropState.dropRowData = params.data;
+                this.state.dragDropState.dropPlace = "insertBefore";
+                this.state.dragDropState.dropAllowed = this.state.dataSource.canDropBefore(this.state.dragDropState.dragRowData, params.data, "move");
                 arrowTop = $row.position().top - 10;
                 arrowLeft = $viewportScrollLeft + 5;
             }
             else if (relativeY < 0.66) {
-                this.state.dragRow.dragOverRowData = params.data;
-                this.state.dragRow.dragOverRowNode = params.node;
-                this.state.dragRow.dropPlace = "insertInto";
-                this.state.dragRow.dropAllowed = this.state.dataSource.canDropInto(this.state.dragRow.draggingRowData, params.data, "move");
+                this.state.dragDropState.dropRowData = params.data;
+                //this.state.dragDropState.dragOverRowNode = params.node;
+                this.state.dragDropState.dropPlace = "insertInto";
+                this.state.dragDropState.dropAllowed = this.state.dataSource.canDropInto(this.state.dragDropState.dragRowData, params.data, "move");
                 arrowTop = $row.position().top + $row.outerHeight() / 2 - 10;
                 arrowLeft = $viewportScrollLeft;
             }
             else {
-                this.state.dragRow.dragOverRowData = params.data;
-                this.state.dragRow.dropPlace = "insertAfter";
-                this.state.dragRow.dropAllowed = this.state.dataSource.canDropAfter(this.state.dragRow.draggingRowData, params.data, "move");
+                this.state.dragDropState.dropRowData = params.data;
+                this.state.dragDropState.dropPlace = "insertAfter";
+                this.state.dragDropState.dropAllowed = this.state.dataSource.canDropAfter(this.state.dragDropState.dragRowData, params.data, "move");
                 arrowTop = $row.position().top + $row.outerHeight() - 10;
                 arrowLeft = $viewportScrollLeft + 5;
             }
 
-            if (this.state.dragRow.dropAllowed) {
+            if (this.state.dragDropState.dropAllowed) {
                 $arrow.children(".fa-arrow-right").css("display", "initial");
                 $arrow.children(".fa-ban").css("display", "none");
             }
@@ -470,7 +473,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
         };
 
-        if (this.state.dragRow.isDragging)
+        if (this.state.dragDropState.isDragging)
             $(params.eParentOfValue).on("mousemove", dragOver as any);
 
         params.addRenderedRowListener("renderedRowRemoved", () => {
@@ -485,24 +488,26 @@ export default class Grid extends Component<GridProps, GridState> {
     }
 
 
-    private handleDragMouseDownViewPort(e: any) {
+    private handleDragMouseDownViewPort(e: MouseEvent) {
         console.log("handleDragMouseDown");
-        this.state.dragRow.isMouseDown = true;
+        this.state.dragDropState.isMouseDown = true;
+        this.state.dragDropState.mouseDownY = e.clientY;
+
     }
 
     private handleDragMouseUpViewPort(e: MouseEvent) {
         console.log("handleDragMouseUp");
-        this.state.dragRow.isMouseDown = false;
-        if (this.state.dragRow.isDragging) {
+        this.state.dragDropState.isMouseDown = false;
+        if (this.state.dragDropState.isDragging) {
             console.log("STOP-DRAG");
 
             let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
             viewPort.find(".drag-drop-arrow").remove();
 
-            this.state.dragRow.doDrop();
+            this.state.dragDropState.doDrop();
 
 
-            this.state.dragRow.isDragging = false;
+            this.state.dragDropState.isDragging = false;
             //this.state.agGrid.api!.refreshView();
             //this.state.agGrid.api!.refreshInMemoryRowModel(); // перезапрашивает RowHeight
             //((this.state.agGrid.api! as any).inMemoryRowModel as InMemoryRowModel).refreshModel(AgGrid.Constants.STEP_EVERYTHING);
@@ -515,18 +520,20 @@ export default class Grid extends Component<GridProps, GridState> {
     private handleDragMouseMoveViewPort(e: any) {
         //  console.log("handleDragMouseMove");
 
-        if (!this.state.dragRow.isDragging && this.state.dragRow.isMouseDown) {
+        if (!this.state.dragDropState.isDragging &&
+            this.state.dragDropState.isMouseDown &&
+            Math.abs(this.state.dragDropState.mouseDownY - e.clientY) > 3) {
 
             let focusedCell = this.state.agGrid.api!.getFocusedCell();
 
             if (focusedCell && focusedCell.getGridRow().isNotFloating()) {
-                this.state.dragRow.isDragging = true;
-                this.state.dragRow.mode = "move";
-                this.state.dragRow.draggingRowData = this.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
+                this.state.dragDropState.isDragging = true;
+                this.state.dragDropState.mode = "move";
+                this.state.dragDropState.dragRowData = this.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
 
                 this.state.agGrid.api!.refreshView();
                 console.log("START-DRAG");
-                //console.log(this.state.dragRow.draggingRowData);
+                //console.log(this.state.dragDropState.dragRowData);
             }
         }
     }
