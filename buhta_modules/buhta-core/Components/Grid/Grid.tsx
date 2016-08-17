@@ -118,13 +118,14 @@ export class GridState extends ComponentState<GridProps> {
 
 
 // это взято из исходников ag-grid
-interface CellRendererParams {
+export interface AgCellRendererParams {
     api: AgGrid.GridApi;
     columnApi: AgGrid.ColumnApi;
     data: any;
     column: AgGrid.Column;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
+    eTarget: HTMLElement;
     node: AgGrid.RowNode;
     addRenderedRowListener: Function;
     context: any;
@@ -133,11 +134,28 @@ interface CellRendererParams {
 }
 
 // это взято из исходников ag-grid
-interface GetRowHeightParams {
+export interface AgGetRowHeightParams {
     api: AgGrid.GridApi;
     data: any;
     node: AgGrid.RowNode;
     context: any;
+}
+
+// это взято из исходников ag-grid
+export interface AgCellClassRuleParams {
+    value: any;
+    data: any;
+    node: AgGrid.RowNode;
+    colDef: AgGrid.ColDef;
+    rowIndex: number;
+    api: AgGrid.GridApi;
+    context: any;
+}
+
+type AgCellClassRuleFunction = (params: AgCellClassRuleParams) => boolean;
+
+export interface AgCellClassRules {
+    [cssClassName: string]: AgCellClassRuleFunction;
 }
 
 
@@ -155,10 +173,16 @@ export default class Grid extends Component<GridProps, GridState> {
 
         this.state.agGrid.getRowHeight = this.handleGetRowHeight.bind(this);
 
+        this.state.agGrid.onRowGroupOpened = this.handleAgRowGroupOpened.bind(this);
+
 
         //(this.state.agGrid as any).groupHeaders = true;
         this.state.agGrid.enableColResize = true;
 
+    }
+
+    handleAgRowGroupOpened(params: { node: AgGrid.RowNode}) {
+        this.state.agGrid.api!.refreshRows([params.node]);
     }
 
 
@@ -264,7 +288,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
     }
 
-    private handleGetRowHeight(param: GetRowHeightParams): number {
+    private handleGetRowHeight(param: AgGetRowHeightParams): number {
         const delay200ms = 200; // 1 раз в секунд запускается цикл расчета высот rows, чаще нельзя, браузер замирает
         const max2000 = 2000; // для первых 2000 строк делаем расчет, для остальных берем средний
         const first100 = 100; // после первых 100 рассчитанных строк, показываем гриду юзеру
@@ -321,11 +345,11 @@ export default class Grid extends Component<GridProps, GridState> {
     }
 
     private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: any): JSX.Element {
-        let cell = <span style={{whiteSpace: "normal"}}>{data[column.getColDef().field!]}</span>;
+        let cell = <span>{data[column.getColDef().field!]}</span>;
         return cell;
     };
 
-    cellRenderer(params: CellRendererParams): any {
+    cellRenderer(params: AgCellRendererParams): any {
 
         let cell = this.renderCell(params.column, params.node, params.data);
 
@@ -404,27 +428,15 @@ export default class Grid extends Component<GridProps, GridState> {
             $(params.eParentOfValue).off("mousemove");
         });
 
-        let renderContainer =  (params as any).eTarget || params.eParentOfValue;
-        //if ($(renderContainer).children().length!==0) {
-            console.log(params);
-            console.log($(renderContainer).parent());
-        //}
-        // if (params.node.group) {
-        //     //let treeColumnRenderContainer = $(renderContainer).find(".ag-group-value");
-        //     let treeColumnRenderContainer = $(renderContainer).find("*");
-        //     if (treeColumnRenderContainer.length > 0) {
-        //         console.log("treeColumnRenderContainer");
-        //         console.log(treeColumnRenderContainer);
-        //         ReactDOM.render(cell, treeColumnRenderContainer[0]);
-        //     }
-        //     else
-        //         ReactDOM.render(cell, renderContainer);
-        // }
-        // else
-             ReactDOM.render(cell, renderContainer);
+        let renderContainer = params.eTarget || params.eParentOfValue;
+        ReactDOM.render(cell, renderContainer);
 
         return null;
     }
+
+    // getCellClassRules(): any {
+    //
+    // }
 
     private handleDragMouseDownViewPort(e: any) {
         console.log("handleDragMouseDown");

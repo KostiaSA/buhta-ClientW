@@ -4,6 +4,8 @@ import * as AgGrid from "ag-grid";
 import {ComponentProps, Component} from "../Component";
 import {registerGridColumn, GridColumnInfo} from "./registerGridColumn";
 import Grid from "./Grid";
+import {AgCellClassRules} from "./Grid";
+import {AgCellClassRuleParams} from "./Grid";
 //import * as ReactDOM from "react-dom";
 
 
@@ -31,7 +33,8 @@ export class GridColumnDef extends Component<GridColumnProps, any> {
             headerName: this.props.caption,
             field: this.props.propertyName,
             width: this.props.width,
-            cellRenderer: grid.cellRenderer.bind(grid)
+            cellRenderer: grid.cellRenderer.bind(grid),
+            cellClassRules: this.getAgCellRules()
         };
 
         if (this.props.showHierarchyTree === true) {
@@ -42,6 +45,17 @@ export class GridColumnDef extends Component<GridColumnProps, any> {
         }
         //console.log(col);
         return col;
+    }
+
+    private getAgCellRules(): AgCellClassRules {
+        let rules: AgCellClassRules = {};
+        rules["group-expanded"] = (params: AgCellClassRuleParams) => {
+            if (params.node.allChildrenCount && params.node.allChildrenCount > 0 && params.node.expanded)
+                return true;
+            else
+                return false;
+        };
+        return rules;
     }
 }
 

@@ -86,6 +86,8 @@ export function showTestSelectControlForm() {
                     <Grid dataSource={ds}>
                         <GridColumnDef caption="Колонка1" propertyName="num" showHierarchyTree={true} width={150}>
                         </GridColumnDef>
+                        <GridColumnDef caption="Колонка2" propertyName="name" showHierarchyTree={false} width={250}>
+                        </GridColumnDef>
                     </Grid>
                 </div>);
             // <GridColumnDef caption="Колонка2" propertyName="name" showHierarchyTree={false} width={150}>
