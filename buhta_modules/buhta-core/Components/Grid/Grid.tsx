@@ -9,6 +9,13 @@ import {TreeGridColumn} from "../TreeGrid/TreeGridColumn";
 import {GridColumnGroup} from "./GridColumnGroup";
 import {GridDataSource} from "./GridDataSource";
 
+///////////// ВНИМАНИЕ !  //////////////////
+// ag-grid.noStyle.js был запатчен, иначе содержимое ячейки для tree-column будет вставляться перед иконками плюс/минус
+// 1. ищем строку:   resultFromRenderer = cellRendererFunc(params);
+// 2. перед ней вставляем: params.eTarget=eTarget;
+// надо будет вставить в исходник ag-grid: ag-grid-master\src\ts\rendering\cellRendererService.ts, строка 52
+
+
 export interface GridProps extends ComponentProps<GridState> {
 
     dragDropNodes?: boolean;
@@ -397,9 +404,11 @@ export default class Grid extends Component<GridProps, GridState> {
             $(params.eParentOfValue).off("mousemove");
         });
 
-        let renderContainer = params.eParentOfValue;
-        console.log(params);
-        console.log($(renderContainer).find("span"));
+        let renderContainer =  (params as any).eTarget || params.eParentOfValue;
+        //if ($(renderContainer).children().length!==0) {
+            console.log(params);
+            console.log($(renderContainer).parent());
+        //}
         // if (params.node.group) {
         //     //let treeColumnRenderContainer = $(renderContainer).find(".ag-group-value");
         //     let treeColumnRenderContainer = $(renderContainer).find("*");
@@ -412,9 +421,9 @@ export default class Grid extends Component<GridProps, GridState> {
         //         ReactDOM.render(cell, renderContainer);
         // }
         // else
-        //     ReactDOM.render(cell, renderContainer);
+             ReactDOM.render(cell, renderContainer);
 
-        return "null";
+        return null;
     }
 
     private handleDragMouseDownViewPort(e: any) {
