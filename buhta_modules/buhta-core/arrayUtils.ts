@@ -10,11 +10,11 @@ export function insertIntoArray<T>(array: T[], object: T, toIndex: number) {
 }
 
 export function moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
-    objectsToMove.forEach( (obj)=> {
+    objectsToMove.forEach( (obj) => {
         this.removeFromArray(array, obj);
     });
-    
-    objectsToMove.slice().reverse().forEach( (obj)=> {
+
+    objectsToMove.slice().reverse().forEach( (obj) => {
         this.insertIntoArray(array, obj, toIndex);
     });
 }

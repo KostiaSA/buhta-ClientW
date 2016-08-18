@@ -22,14 +22,13 @@ var Flex_1 = require("../../buhta-core/Components/LayoutPane/Flex");
 var Tabs_1 = require("../../buhta-core/Components/Tabs/Tabs");
 var Fixed_1 = require("../../buhta-core/Components/LayoutPane/Fixed");
 var Button_1 = require("../../buhta-core/Components/Button/Button");
-var TreeGrid_1 = require("../../buhta-core/Components/TreeGrid/TreeGrid");
-var TreeGridColumns_1 = require("../../buhta-core/Components/TreeGrid/TreeGridColumns");
-var TreeGridColumn_1 = require("../../buhta-core/Components/TreeGrid/TreeGridColumn");
-var TreeGridComponentChildrenDataSource_1 = require("./TreeGridComponentChildrenDataSource");
 var isDeepEqual_1 = require("../../buhta-core/isDeepEqual");
 var Auth_1 = require("../../buhta-core/Auth");
 var getObjectConstructorName_1 = require("../../buhta-core/getObjectConstructorName");
 var ObjectDesigner_1 = require("../ObjectDesigner/ObjectDesigner");
+var GridTreeDataSourceFromComponent_1 = require("../../buhta-core/Components/Grid/GridTreeDataSourceFromComponent");
+var Grid_1 = require("../../buhta-core/Components/Grid/Grid");
+var GridColumn_1 = require("../../buhta-core/Components/Grid/GridColumn");
 var SchemaComponentDesigner = (function (_super) {
     __extends(SchemaComponentDesigner, _super);
     function SchemaComponentDesigner(props, context) {
@@ -179,7 +178,7 @@ var SchemaComponentDesigner = (function (_super) {
     };
     SchemaComponentDesigner.prototype.render = function () {
         var dataSourceParam = {};
-        var dataSource = new TreeGridComponentChildrenDataSource_1.TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
+        var dataSource = new GridTreeDataSourceFromComponent_1.GridTreeDataSourceFromComponent(this.clonedDesignedObject.children, dataSourceParam);
         this.addClassName("component-designer");
         this.addProps({ onChange: this.props.onChange });
         this.addStyles({ height: "100%" });
@@ -190,12 +189,10 @@ var SchemaComponentDesigner = (function (_super) {
                         React.createElement(Tabs_1.Tab, {key: "1", title: "Основная"}, 
                             React.createElement(Layout_1.Layout, {type: "column", sizeTo: "parent"}, 
                                 React.createElement(Flex_1.Flex, null, 
-                                    React.createElement(TreeGrid_1.TreeGrid, {className: "children-tree-grid", dataSource: dataSource, treeMode: "childrenList", autoExpandNodesToLevel: 100, editable: true, denyInsert: true, dragDropNodes: true, onChangeFocusedRow: this.handleTreeGridChangeFocusedRow}, 
-                                        React.createElement(TreeGridColumns_1.TreeGridColumns, null, 
-                                            React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Control", propertyName: "$$controlName", showHierarchyTree: true, width: 200}), 
-                                            React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "Свойства", propertyName: "$$controlMainProps", width: 300}), 
-                                            React.createElement(TreeGridColumn_1.TreeGridColumn, {caption: "События", propertyName: "$$controlEvents", width: 300}))
-                                    )
+                                    React.createElement(Grid_1.default, {className: "children-tree-grid", dataSource: dataSource, editable: true, denyInsert: true, enableDragDrop: true}, 
+                                        React.createElement(GridColumn_1.GridColumnDef, {caption: "Control", propertyName: "$$controlName", showHierarchyTree: true, width: 200}), 
+                                        React.createElement(GridColumn_1.GridColumnDef, {caption: "Свойства", propertyName: "$$controlMainProps", width: 300}), 
+                                        React.createElement(GridColumn_1.GridColumnDef, {caption: "События", propertyName: "$$controlEvents", width: 300}))
                                 ), 
                                 React.createElement(Fixed_1.Fixed, null, this.renderEditableButtons()))
                         ), 

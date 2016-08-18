@@ -30,6 +30,12 @@ import {appInstance} from "../../buhta-core/Components/App/App";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorName";
 import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
+import {
+    GridTreeDataSourceFromComponentParams,
+    GridTreeDataSourceFromComponent
+} from "../../buhta-core/Components/Grid/GridTreeDataSourceFromComponent";
+import Grid from "../../buhta-core/Components/Grid/Grid";
+import {GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -248,8 +254,8 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     }
 
     render() {
-        let dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
-        let dataSource = new TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
+        let dataSourceParam: GridTreeDataSourceFromComponentParams = {};
+        let dataSource = new GridTreeDataSourceFromComponent(this.clonedDesignedObject.children, dataSourceParam);
 
         this.addClassName("component-designer");
         this.addProps({onChange: this.props.onChange});
@@ -267,29 +273,24 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                             <Tab key="1" title="Основная">
                                 <Layout type="column" sizeTo="parent">
                                     <Flex>
-                                        <TreeGrid
+                                        <Grid
                                             className="children-tree-grid"
-                                            dataSource={ dataSource }
-                                            treeMode="childrenList"
-                                            autoExpandNodesToLevel={100}
+                                            dataSource={dataSource}
                                             editable={true}
                                             denyInsert={true}
-                                            dragDropNodes={true}
-                                            onChangeFocusedRow={ this.handleTreeGridChangeFocusedRow }
+                                            enableDragDrop={true}
                                         >
-                                            <TreeGridColumns>
-                                                <TreeGridColumn caption="Control" propertyName="$$controlName"
-                                                                showHierarchyTree={true}
-                                                                width={200}>
-                                                </TreeGridColumn>
-                                                <TreeGridColumn caption="Свойства" propertyName="$$controlMainProps"
-                                                                width={300}>
-                                                </TreeGridColumn>
-                                                <TreeGridColumn caption="События" propertyName="$$controlEvents"
-                                                                width={300}>
-                                                </TreeGridColumn>
-                                            </TreeGridColumns>
-                                        </TreeGrid>
+                                            <GridColumnDef caption="Control" propertyName="$$controlName"
+                                                           showHierarchyTree={true}
+                                                           width={200}>
+                                            </GridColumnDef>
+                                            <GridColumnDef caption="Свойства" propertyName="$$controlMainProps"
+                                                           width={300}>
+                                            </GridColumnDef>
+                                            <GridColumnDef caption="События" propertyName="$$controlEvents"
+                                                           width={300}>
+                                            </GridColumnDef>
+                                        </Grid>
                                     </Flex>
                                     <Fixed>
                                         {this.renderEditableButtons()}

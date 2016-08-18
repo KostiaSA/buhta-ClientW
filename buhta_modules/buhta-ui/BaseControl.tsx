@@ -25,6 +25,9 @@ export class BaseControl extends DesignedObject {
     $$flatIndex: number; // используется в TreeGridComponentChildrenDataSourceParams
     $$flatParent: BaseControl | null; // используется в TreeGridComponentChildrenDataSourceParams
 
+    $$parent: BaseControl | undefined; // используется в GridTreeDataSourceFromComponent
+    
+
     children: BaseControl[] = [];
 //    reactElement: Component<any, any>;
 
