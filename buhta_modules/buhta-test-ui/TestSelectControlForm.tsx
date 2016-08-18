@@ -72,10 +72,17 @@ export function showTestSelectControlForm() {
 
         .then((tables: DataTable[]) => {
 
+            if ((window as any)["xxxxx"]) {
+                tables = (window as any)["xxxxx"];
+                console.log("xxxxx");
+            }
+            else
+                (window as any)["xxxxx"] = tables;
 
             let params: GridTreeDataSourceFromArrayParams<any> = {
                 keyFieldName: "id",
                 parentKeyFieldName: "parentId",
+                positionFieldName: "position",
                 autoExpandNodesToLevel: 1
             };
             let ds = new GridTreeDataSourceFromArray(tables[0].rows, params);
@@ -87,6 +94,8 @@ export function showTestSelectControlForm() {
                         <GridColumnDef caption="Колонка1" propertyName="num" showHierarchyTree={true} width={150}>
                         </GridColumnDef>
                         <GridColumnDef caption="Колонка2" propertyName="name" showHierarchyTree={false} width={250}>
+                        </GridColumnDef>
+                        <GridColumnDef caption="Колонка2" propertyName="position" showHierarchyTree={false} width={100}>
                         </GridColumnDef>
                     </Grid>
                 </div>);

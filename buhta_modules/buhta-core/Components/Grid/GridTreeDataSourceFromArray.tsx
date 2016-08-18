@@ -176,6 +176,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             if (toPos < fromPos)
                 toPos += 1;
             moveInArray(arr, [dragNode], toPos);
+            this.recalcChildrenPositions(arr);
         }
         else {
             let dragArr = this.nodes;
@@ -192,6 +193,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
 
             dragNode.parent = targetNode.parent;
             dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
+            this.recalcChildrenPositions(targetArr);
 
         }
 
@@ -203,6 +205,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         let targetNode = targetRowData.$$dataSourceTreeNode;
 
         targetNode.children.push(dragNode);
+        this.recalcChildrenPositions(targetNode.children);
 
         if (dragNode.parent)
             removeFromArray(dragNode.parent.children, dragNode);
@@ -227,6 +230,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             if (toPos < fromPos)
                 toPos += 1;
             moveInArray(arr, [dragNode], toPos);
+            this.recalcChildrenPositions(arr);
         }
         else {
             let dragArr = this.nodes;
@@ -243,12 +247,21 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
 
             dragNode.parent = targetNode.parent;
             dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
-
+            this.recalcChildrenPositions(targetArr);
         }
     }
 
     refresh() {
 
+    }
+
+    private recalcChildrenPositions(nodes: InternalTreeNode<any>[]) {
+        if (this.params.positionFieldName !== undefined) {
+            nodes.forEach((node: InternalTreeNode<any>, index: number) => {
+                let nodeData = this.arrayObj[node.sourceIndex];
+                nodeData[this.params.positionFieldName!] = index;
+            });
+        }
     }
 
     private hasParent(rowData: any, parentData: any): boolean {
