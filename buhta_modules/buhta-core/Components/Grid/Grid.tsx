@@ -22,6 +22,7 @@ export interface GridProps extends ComponentProps<GridState> {
     dragDropNodes?: boolean;
     dataSource: GridDataSource;
 
+    enableDragDrop?: boolean;
 
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
@@ -371,6 +372,7 @@ export default class Grid extends Component<GridProps, GridState> {
         let cell = this.renderCell(params.column, params.node, params.data);
 
         ////////////////// drag-over///////////////////
+        // todo сделать сдвиг стрелки вправо, в соответствии с level
         let dragOver = (e: MouseEvent) => {
             if (!this.state.dragDropState.isDragging)
                 return;
@@ -413,22 +415,20 @@ export default class Grid extends Component<GridProps, GridState> {
                 relativeY = e.offsetY / $row.outerHeight();
 
 
+            this.state.dragDropState.dropRowData = params.data;
             if (relativeY < 0.33) {
-                this.state.dragDropState.dropRowData = params.data;
                 this.state.dragDropState.dropPlace = "insertBefore";
                 this.state.dragDropState.dropAllowed = this.state.dataSource.canDropBefore(this.state.dragDropState.dragRowData, params.data, "move");
                 arrowTop = $row.position().top - 10;
                 arrowLeft = $viewportScrollLeft + 5;
             }
             else if (relativeY < 0.66) {
-                this.state.dragDropState.dropRowData = params.data;
                 this.state.dragDropState.dropPlace = "insertInto";
                 this.state.dragDropState.dropAllowed = this.state.dataSource.canDropInto(this.state.dragDropState.dragRowData, params.data, "move");
                 arrowTop = $row.position().top + $row.outerHeight() / 2 - 10;
                 arrowLeft = $viewportScrollLeft;
             }
             else {
-                this.state.dragDropState.dropRowData = params.data;
                 this.state.dragDropState.dropPlace = "insertAfter";
                 this.state.dragDropState.dropAllowed = this.state.dataSource.canDropAfter(this.state.dragDropState.dragRowData, params.data, "move");
                 arrowTop = $row.position().top + $row.outerHeight() - 10;
@@ -476,7 +476,6 @@ export default class Grid extends Component<GridProps, GridState> {
             let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
             viewPort.find(".drag-drop-arrow").remove();
             this.state.dragDropState.doDrop();
-//            this.state.dragDropState.isDragging = false;
         }
     }
 
@@ -497,25 +496,43 @@ export default class Grid extends Component<GridProps, GridState> {
         }
     }
 
+    private enableDragDrop() {
+        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
+        $(viewPort).on("mousedown", this.handleDragMouseDownViewPort.bind(this));
+        $(viewPort).on("mouseup", this.handleDragMouseUpViewPort.bind(this));
+        $(viewPort).on("mousemove", this.handleDragMouseMoveViewPort.bind(this));
+    }
+
+    private disableDragDrop() {
+        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport").first();
+        $(viewPort).off("mousedown");
+        $(viewPort).off("mouseup");
+        $(viewPort).off("mousemove");
+    }
+
+
     protected didMount() {
         super.didMount();
 
         this.createColumns();
         new AgGrid.Grid(this.nativeElement, this.state.agGrid);
 
-        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
-        $(viewPort).on("mousedown", this.handleDragMouseDownViewPort.bind(this));
-        $(viewPort).on("mouseup", this.handleDragMouseUpViewPort.bind(this));
-        $(viewPort).on("mousemove", this.handleDragMouseMoveViewPort.bind(this));
+        if (this.props.enableDragDrop === true) {
+            this.enableDragDrop();
+        }
+    }
 
+    protected didUpdate(prevProps: GridProps, prevState: GridState, prevContext: any) {
+        super.didUpdate(prevProps, prevState, prevContext);
+        this.disableDragDrop();
+        if (this.props.enableDragDrop === true) {
+            this.enableDragDrop();
+        }
     }
 
     protected willUnmount() {
         super.willUnmount();
-        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport").first();
-        $(viewPort).off("mousedown");
-        $(viewPort).off("mouseup");
-        $(viewPort).off("mousemove");
+        this.disableDragDrop();
         this.state.agGrid.api!.destroy();
     }
 

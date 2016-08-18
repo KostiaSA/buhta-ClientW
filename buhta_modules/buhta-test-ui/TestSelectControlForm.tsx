@@ -90,7 +90,7 @@ export function showTestSelectControlForm() {
 
             let win = (
                 <div style={{border:"0px solid blue", height:"100%"}}>
-                    <Grid dataSource={ds}>
+                    <Grid dataSource={ds} enableDragDrop={true}>
                         <GridColumnDef caption="Колонка1" propertyName="num" showHierarchyTree={true} width={150}>
                         </GridColumnDef>
                         <GridColumnDef caption="Колонка2" propertyName="name" showHierarchyTree={false} width={250}>
