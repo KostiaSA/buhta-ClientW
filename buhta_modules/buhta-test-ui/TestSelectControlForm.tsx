@@ -72,12 +72,12 @@ export function showTestSelectControlForm() {
 
         .then((tables: DataTable[]) => {
 
-            if ((window as any)["xxxxx"]) {
-                tables = (window as any)["xxxxx"];
-                console.log("xxxxx");
-            }
-            else
-                (window as any)["xxxxx"] = tables;
+            // if ((window as any)["xxxxx"]) {
+            //     tables = (window as any)["xxxxx"];
+            //     console.log("xxxxx");
+            // }
+            // else
+            //     (window as any)["xxxxx"] = tables;
 
             let params: GridTreeDataSourceFromArrayParams = {
                 keyFieldName: "id",
@@ -90,7 +90,7 @@ export function showTestSelectControlForm() {
 
             let win = (
                 <div style={{border:"0px solid blue", height:"100%"}}>
-                    <Grid dataSource={ds} enableDragDrop={true}>
+                    <Grid dataSource={ds} enableDragDrop={true} editable={true}>
                         <GridColumnDef caption="Колонка1" propertyName="num" showHierarchyTree={true} width={150}>
                         </GridColumnDef>
                         <GridColumnDef caption="Колонка2" propertyName="name" showHierarchyTree={false} width={250}>

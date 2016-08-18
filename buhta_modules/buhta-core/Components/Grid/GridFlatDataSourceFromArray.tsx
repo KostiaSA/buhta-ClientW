@@ -8,10 +8,11 @@ import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {GridColumnGroupProps} from "./GridColumnGroup";
+import {removeFromArray} from "../../arrayUtils";
 
 export interface GridFlatDataSourceFromArrayParams {
 
-    positionFieldName?: string;  // sort 
+    positionFieldName?: string;  // sort
     getNewRow?: () => GridDataSourceRow;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
@@ -19,10 +20,11 @@ export interface GridFlatDataSourceFromArrayParams {
 }
 
 export class GridFlatDataSourceFromArray implements GridDataSource {
-    constructor(public arrayObj: GridDataSourceRow[], public params: GridFlatDataSourceFromArrayParams = {}) {
+    constructor(_arrayObj: GridDataSourceRow[], public params: GridFlatDataSourceFromArrayParams = {}) {
+        this.arrayObj = _arrayObj.filter((item) => item !== undefined);
 
     }
-
+    private arrayObj: GridDataSourceRow[];
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
         if (this.arrayObj.length === 0)
             return [];
@@ -50,15 +52,15 @@ export class GridFlatDataSourceFromArray implements GridDataSource {
         }
     }
 
-    addRow(row: GridDataSourceRow): number {
+    addRow(row: GridDataSourceRow) {
         this.arrayObj.push(row);
-        return this.arrayObj.length - 1;
     }
 
-    deleteRow(rowIndex: number) {
-        let deletedItems = _.pullAt(this.arrayObj, rowIndex);
-        if (deletedItems.length === 0)
-            throwError("TreeGridArrayDataSource.deleteRow(): invalid rowIndex (" + rowIndex + ")");
+    deleteRow(rowData: GridDataSourceRow) {
+        removeFromArray(this.arrayObj, rowData);
+        // let deletedItems = _.pullAt(this.arrayObj, rowIndex);
+        // if (deletedItems.length === 0)
+        //     throwError("TreeGridArrayDataSource.deleteRow(): invalid rowIndex (" + rowIndex + ")");
     }
 
     getEmptyDataSourceMessage(): React.ReactNode {
@@ -75,31 +77,31 @@ export class GridFlatDataSourceFromArray implements GridDataSource {
             return "Удалить запись!";
     }
 
-    canDragRow(rowIndex: number, mode: "move" | "copy"): boolean {
+    canDragRow(rowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean {
         return true;
     }
 
-    canDropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+    canDropInto(dragRowIndex: GridDataSourceRow, targetRowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean {
         return false;
     }
 
-    canDropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+    canDropAfter(dragRowIndex: GridDataSourceRow, targetRowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean {
         return false;
     }
 
-    canDropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy"): boolean {
+    canDropBefore(dragRowIndex: GridDataSourceRow, targetRowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean {
         return false;
     }
 
-    dropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+    dropBefore(dragRowIndex: GridDataSourceRow, targetRowIndex: GridDataSourceRow, mode: "move" | "copy") {
 
     }
 
-    dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+    dropInto(dragRowIndex: GridDataSourceRow, targetRowIndex: GridDataSourceRow, mode: "move" | "copy") {
 
     }
 
-    dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
+    dropAfter(dragRowIndex: GridDataSourceRow, targetRowIndex: GridDataSourceRow, mode: "move" | "copy") {
 
     }
 
@@ -107,7 +109,7 @@ export class GridFlatDataSourceFromArray implements GridDataSource {
 
     }
 
-    getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails {
+    getNodeChildDetails(dataItem: GridDataSourceRow): AgGrid.NodeChildDetails {
         return {group: false};
     }
 }

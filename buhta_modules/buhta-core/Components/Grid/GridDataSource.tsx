@@ -15,29 +15,29 @@ export interface GridDataSource {
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[];
     getRows(): GridDataSourceRow[];
     getNewRow(): GridDataSourceRow;
-    addRow(row: GridDataSourceRow): number;
+    addRow(rowData: GridDataSourceRow): void;
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;
 
-    deleteRow(rowIndex: number): void;
+    deleteRow(rowData: GridDataSourceRow): void;
 
-    canDragRow(rowIndex: number, mode: "move" | "copy"): boolean;
+    canDragRow(rowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean;
 
-    canDropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
+    canDropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean;
 
-    canDropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
+    canDropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean;
 
-    canDropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
+    canDropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean;
 
-    dropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
+    dropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): void;
 
-    dropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
+    dropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): void;
 
-    dropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
+    dropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): void;
 
     refresh(): void;
 
-    getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails | null;
+    getNodeChildDetails(dataItem: GridDataSourceRow): AgGrid.NodeChildDetails | null;
 }
 
 

@@ -34,7 +34,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
 
         return (
             <Grid
-                dataSource={ dataSource }
+                dataSource={dataSource}
                 editable={true}
                 enableDragDrop={customParams.enableDragDrop}
             >

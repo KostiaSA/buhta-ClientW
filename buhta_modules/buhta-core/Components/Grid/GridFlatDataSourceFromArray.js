@@ -2,11 +2,12 @@
 var _ = require("lodash");
 var Error_1 = require("../../Error");
 var getGridColumnInfos_1 = require("./getGridColumnInfos");
+var arrayUtils_1 = require("../../arrayUtils");
 var GridFlatDataSourceFromArray = (function () {
-    function GridFlatDataSourceFromArray(arrayObj, params) {
+    function GridFlatDataSourceFromArray(_arrayObj, params) {
         if (params === void 0) { params = {}; }
-        this.arrayObj = arrayObj;
         this.params = params;
+        this.arrayObj = _arrayObj.filter(function (item) { return item !== undefined; });
     }
     GridFlatDataSourceFromArray.prototype.getGridColumns = function () {
         var _this = this;
@@ -34,12 +35,12 @@ var GridFlatDataSourceFromArray = (function () {
     };
     GridFlatDataSourceFromArray.prototype.addRow = function (row) {
         this.arrayObj.push(row);
-        return this.arrayObj.length - 1;
     };
-    GridFlatDataSourceFromArray.prototype.deleteRow = function (rowIndex) {
-        var deletedItems = _.pullAt(this.arrayObj, rowIndex);
-        if (deletedItems.length === 0)
-            Error_1.throwError("TreeGridArrayDataSource.deleteRow(): invalid rowIndex (" + rowIndex + ")");
+    GridFlatDataSourceFromArray.prototype.deleteRow = function (rowData) {
+        arrayUtils_1.removeFromArray(this.arrayObj, rowData);
+        // let deletedItems = _.pullAt(this.arrayObj, rowIndex);
+        // if (deletedItems.length === 0)
+        //     throwError("TreeGridArrayDataSource.deleteRow(): invalid rowIndex (" + rowIndex + ")");
     };
     GridFlatDataSourceFromArray.prototype.getEmptyDataSourceMessage = function () {
         if (this.params.getEmptyDataSourceMessage)

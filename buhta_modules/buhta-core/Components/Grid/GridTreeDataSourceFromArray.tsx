@@ -5,7 +5,7 @@ import * as AgGrid from "ag-grid";
 import {GridColumnProps} from "./GridColumn";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
-import {throwError} from "../../Error";
+import {throwError, throwAbstractError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
@@ -55,10 +55,13 @@ export class InternalTreeNode {
 }
 
 export class GridTreeDataSourceFromArray implements GridDataSource {
-    constructor(public arrayObj: GridDataSourceRow[], public params: GridTreeDataSourceFromArrayParams) {
+    constructor(_arrayObj: GridDataSourceRow[], public params: GridTreeDataSourceFromArrayParams) {
+        this.arrayObj = _arrayObj.filter((item) => item !== undefined);
         this.createNodesFromParentKey();
     }
 
+
+    private arrayObj: GridDataSourceRow[];
     private nodes: InternalTreeNode[] = [];
 
 
@@ -78,6 +81,8 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
 
     getRows(): GridDataSourceRow[] {
         return this.nodes.map((node) => {
+            if (this.arrayObj[node.sourceIndex] === undefined)
+                throwError("getRows(): internal error");
             return this.arrayObj[node.sourceIndex];
         }, this);
     }
@@ -91,15 +96,32 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
         }
     }
 
-    addRow(row: GridDataSourceRow): number {
-        this.arrayObj.push(row);
-        return this.arrayObj.length - 1;
+    addRow(row: GridDataSourceRow) {
+        throwAbstractError();
+        // this.arrayObj.push(row);
+        // return this.arrayObj.length - 1;
     }
 
-    deleteRow(rowIndex: number) {
-        let deletedItems = _.pullAt(this.arrayObj, rowIndex);
-        if (deletedItems.length === 0)
-            throwError("TreeGridTreeDataSourceFromArray.deleteRow(): invalid rowIndex (" + rowIndex + ")");
+    deleteRow(rowData: GridDataSourceRow) {
+
+        let node = rowData.$$dataSourceTreeNode!;
+        let arr = this.nodes;
+        if (node.parent) {
+            arr = node.parent.children;
+        }
+        removeFromArray(arr, node);
+
+        let deleteData = (_node: InternalTreeNode) => {
+
+            (this.arrayObj as any)[_node.sourceIndex] = undefined;
+
+            _node.children.forEach((childNode: InternalTreeNode) => {
+                deleteData(childNode);
+            });
+        };
+
+        deleteData(node);
+
     }
 
     getEmptyDataSourceMessage(): React.ReactNode {
@@ -116,7 +138,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
             return "Удалить запись!";
     }
 
-    canDragRow(rowIndex: number, mode: "move" | "copy"): boolean {
+    canDragRow(rowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean {
         return true;
     }
 
@@ -359,6 +381,9 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
 
     getNodeChildDetails(dataItem: GridDataSourceRow): AgGrid.NodeChildDetails | null {
 
+        if (!dataItem)
+            return null;
+
         let node = dataItem.$$dataSourceTreeNode!;
 
         if (node.children.length > 0)
@@ -367,6 +392,8 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
                 group: true,
                 expanded: node.expanded,
                 children: node.children.map((childNode: InternalTreeNode) => {
+                    if (this.arrayObj[childNode.sourceIndex] === undefined)
+                        throwError("getRows(): internal error");
                     return this.arrayObj[childNode.sourceIndex];
                 }, this),
             };

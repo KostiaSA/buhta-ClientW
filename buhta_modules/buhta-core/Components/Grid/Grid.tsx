@@ -10,12 +10,19 @@ import {GridColumnGroup} from "./GridColumnGroup";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {InMemoryRowModel} from "ag-grid/main";
 import {throwError} from "../../Error";
+import {Layout} from "../LayoutPane/Layout";
+import {Fixed} from "../LayoutPane/Fixed";
+import {Flex} from "../LayoutPane/Flex";
+import {Button} from "../Button/Button";
+import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
+import {OpenWindowParams} from "../Desktop/Desktop";
+import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 
 ///////////// ВНИМАНИЕ !  //////////////////
 // ag-grid.noStyle.js был запатчен, иначе содержимое ячейки для tree-column будет вставляться перед иконками плюс/минус
 // 1. ищем строку:   resultFromRenderer = cellRendererFunc(params);
 // 2. перед ней вставляем: params.eTarget=eTarget;
-// надо будет вставить в исходник ag-grid: ag-grid-master\src\ts\rendering\cellRendererService.ts, строка 52
+// todo надо будет вставить в исходник ag-grid: ag-grid-master\src\ts\rendering\cellRendererService.ts, строка 52
 
 
 export interface GridProps extends ComponentProps<GridState> {
@@ -26,6 +33,10 @@ export interface GridProps extends ComponentProps<GridState> {
     enableDragDrop?: boolean;
 
     editable?: boolean;
+
+    denyInsert?: boolean;
+    denyUpdate?: boolean;
+    denyDelete?: boolean;
 
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
@@ -41,9 +52,6 @@ export interface GridProps extends ComponentProps<GridState> {
     //
     // autoExpandNodesToLevel?: number;
     //
-    // denyInsert?: boolean;
-    // denyUpdate?: boolean;
-    // denyDelete?: boolean;
     //
     //
     // onCreateNewRecord?: () => any;
@@ -96,6 +104,10 @@ export class GridState extends ComponentState<GridProps> {
     agGrid: AgGrid.GridOptions = {};
     dataSource: GridDataSource;
     dragDropState: DragDropState = new DragDropState(this);
+
+    isRowsToRender(): boolean {
+        return this.agGrid.api!.getModel().isRowsToRender();
+    }
 
     refresh() {
         this.agGrid.api!.setRowData(this.dataSource.getRows());
@@ -154,13 +166,15 @@ export class GridState extends ComponentState<GridProps> {
     }
 
 
-    // getFocusedRowData(): any {
-    //     let focusedCell = this.agGrid.api!.getFocusedCell();
-    //     if (focusedCell)
-    //         return this.dataSource [focusedCell.rowIndex];
-    //     else
-    //         return undefined;
-    // }
+    getFocusedRowData(): GridDataSourceRow | undefined {
+        if (!this.isRowsToRender())
+            return undefined;
+        let focusedCell = this.agGrid.api!.getFocusedCell();
+        if (focusedCell)
+            return this.grid.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
+        else
+            return undefined;
+    }
 }
 
 
@@ -241,6 +255,7 @@ export default class Grid extends Component<GridProps, GridState> {
         return this.state.agGrid.api!.getModel().getRow(rowIndex).data;
     }
 
+    private agGridNativeElement: HTMLElement;
     private rowHeightCache: { [id: string]: number };
     private avgRowHeight = 0;
 
@@ -351,10 +366,10 @@ export default class Grid extends Component<GridProps, GridState> {
             }, delay);
         }
 
-        if (param.data.$$gridRowHeight !== undefined) {
+        if (param.data && param.data.$$gridRowHeight !== undefined) {
             return param.data.$$gridRowHeight;
         }
-        else if (this.rowHeightCache[param.node.id] !== undefined) {
+        else if (param.data && this.rowHeightCache[param.node.id] !== undefined) {
             param.data.$$gridRowHeight = this.rowHeightCache[param.node.id];
             return this.rowHeightCache[param.node.id];
         }
@@ -381,13 +396,13 @@ export default class Grid extends Component<GridProps, GridState> {
 
             let $row = $(e.target).parents(".ag-row").first();
 
-            let $container = $(this.nativeElement).find(".ag-pinned-left-cols-container").first();
-            let $viewport = $(this.nativeElement).find(".ag-pinned-left-cols-viewport").first();
+            let $container = $(this.agGridNativeElement).find(".ag-pinned-left-cols-container").first();
+            let $viewport = $(this.agGridNativeElement).find(".ag-pinned-left-cols-viewport").first();
             let $viewportScrollLeft: number = 0;
 
             if ($viewport.css("display") === "none") {
-                $container = $(this.nativeElement).find(".ag-body-container").first();
-                $viewport = $(this.nativeElement).find(".ag-body-viewport").first();
+                $container = $(this.agGridNativeElement).find(".ag-body-container").first();
+                $viewport = $(this.agGridNativeElement).find(".ag-body-viewport").first();
                 $viewportScrollLeft = $viewport.scrollLeft();
             }
 
@@ -475,7 +490,7 @@ export default class Grid extends Component<GridProps, GridState> {
     private handleDragMouseUpViewPort(e: MouseEvent) {
         this.state.dragDropState.isMouseDown = false;
         if (this.state.dragDropState.isDragging) {
-            let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
+            let viewPort = $(this.agGridNativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
             viewPort.find(".drag-drop-arrow").remove();
             this.state.dragDropState.doDrop();
         }
@@ -499,14 +514,14 @@ export default class Grid extends Component<GridProps, GridState> {
     }
 
     private enableDragDrop() {
-        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
+        let viewPort = $(this.agGridNativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
         $(viewPort).on("mousedown", this.handleDragMouseDownViewPort.bind(this));
         $(viewPort).on("mouseup", this.handleDragMouseUpViewPort.bind(this));
         $(viewPort).on("mousemove", this.handleDragMouseMoveViewPort.bind(this));
     }
 
     private disableDragDrop() {
-        let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport").first();
+        let viewPort = $(this.agGridNativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport").first();
         $(viewPort).off("mousedown");
         $(viewPort).off("mouseup");
         $(viewPort).off("mousemove");
@@ -517,7 +532,7 @@ export default class Grid extends Component<GridProps, GridState> {
         super.didMount();
 
         this.createColumns();
-        new AgGrid.Grid(this.nativeElement, this.state.agGrid);
+        new AgGrid.Grid(this.agGridNativeElement, this.state.agGrid);
 
         if (this.props.enableDragDrop === true) {
             this.enableDragDrop();
@@ -572,15 +587,173 @@ export default class Grid extends Component<GridProps, GridState> {
 
     }
 
+    handleUpdateButtonClick = () => {
+        let rowData = this.state.getFocusedRowData();
+        if (rowData)
+            this.openEditForm(rowData!);
+    }
+
+    handleInsertButtonClick = () => {
+        this.openInsertForm();
+    }
+
+    handleDeleteButtonClick = () => {
+        let rowData = this.state.getFocusedRowData();
+        if (rowData)
+            this.openDeleteForm(rowData);
+
+    }
+
+    openDeleteForm(rowToDelete: GridDataSourceRow) {
+        if (!(rowToDelete instanceof DesignedObject))
+            throwError("Grid:openDeleteForm(): rowToDelete must be 'DesignedObject'");
+        let row = rowToDelete as DesignedObject;
+        let objectClassName = "запись";
+        if (row.getClassName)
+            objectClassName = row.getClassName();
+
+        let objectName = "";
+        if (row.toString)
+            objectName = row.toString();
+
+        let message = <div className="color-red">Удалить "{objectClassName}"?<br/>{ objectName }</div>;
+
+        this.showDeleteConfirmationWindow(message, (okResult) => {
+            if (okResult) {
+                this.state.dataSource.deleteRow(rowToDelete);
+                this.state.refresh();
+            }
+        });
+    }
+
+    openInsertForm() {
+
+        let designedObject = this.state.dataSource.getNewRow() as DesignedObject;
+
+        if (designedObject) {
+            let win =
+                <ObjectDesigner
+                    designedObject={designedObject}
+                    onSaveChanges={ () => {
+                       this.state.dataSource.addRow(designedObject);
+                       this.state.refresh();
+                       this.state.setFocusedRow(designedObject);
+                    }}
+                >
+
+                </ObjectDesigner>;
+
+            let openParam: OpenWindowParams = {
+                title: "добавление",
+                parentWindowId: this.getParentWindowId()
+            };
+
+            this.getParentDesktop().openWindow(win, openParam);
+        }
+    }
+
+    openEditForm(rowData: GridDataSourceRow) {
+
+        if (!(rowData instanceof DesignedObject))
+            throwError("Grid:openDeleteForm(): rowData must be 'DesignedObject'");
+
+        let designedObject = rowData as DesignedObject;
+
+        let win =
+            <ObjectDesigner
+                designedObject={designedObject}
+                onSaveChanges={ () => { this.state.refresh(); }}
+            >
+
+            </ObjectDesigner>;
+
+        let openParam: OpenWindowParams = {
+            title: "редактирование",
+            parentWindowId: this.getParentWindowId()
+        };
+
+        this.getParentDesktop().openWindow(win, openParam);
+
+    }
+
+    renderEditableButtons(): JSX.Element[] {
+        let buttons: JSX.Element[] = [];
+
+        if (this.props.editable) {
+            if (this.props.denyInsert !== true)
+                buttons.push(
+                    <Button key="insert" className="is-outlined is-success" onClick={this.handleInsertButtonClick}>
+                        Добавить
+                    </Button>
+                );
+
+            if (this.props.denyUpdate !== true)
+                buttons.push(
+                    <Button key="update" className="is-outlined is-info" onClick={this.handleUpdateButtonClick}>
+                        Изменить
+                    </Button>
+                );
+
+            if (this.props.denyDelete !== true)
+                buttons.push(
+                    <Button key="delete" className="is-outlined is-danger" onClick={this.handleDeleteButtonClick}>
+                        Удалить
+                    </Button>
+                );
+        }
+        return buttons;
+    }
+
     render() {
         return (
-            <div
-                className="ag-fresh"
-                ref={ (e) => { this.nativeElement = e; }}
-                style={{height:"100%" }}
+            <Layout className="grid???" type="column" sizeTo="parent" {...this.getRenderProps()}
             >
-            </div>
+                <Fixed className="grid-header">
+                    <button onClick={ () => {  }}>
+                        refresh 5001
+                    </button>
+                    <button onClick={ () => {  }}>
+                        filter
+                    </button>
+                    <button onClick={ () => {  }}>
+                        expand all
+                    </button>
+                    <button onClick={ () => {  }}>
+                        collapse all
+                    </button>
+                    заголовок и т.д.
+                </Fixed>
+                <Flex className="grid-body">
+                    <div
+                        className="ag-fresh"
+                        ref={ (e) => { this.agGridNativeElement = e; }}
+                        style={{height:"100%" }}
+                    >
+                    </div>
+                </Flex>
+                <Fixed className="grid-footer">
+
+                    <Layout type="row" sizeTo="content">
+                        <Fixed>
+                            {this.renderEditableButtons()}
+                        </Fixed>
+                        <Flex>
+                        </Flex>
+                        <Fixed>
+                            <Button className="is-smalln">
+                                Выбрать
+                            </Button>
+                            <Button className="is-smalln">
+                                Отмена
+                            </Button>
+
+                        </Fixed>
+                    </Layout>
+
+                </Fixed >
+            </Layout >
         )
+
     }
 
 }
