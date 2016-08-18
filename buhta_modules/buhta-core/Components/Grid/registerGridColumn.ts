@@ -1,9 +1,11 @@
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {TreeGridColumnProps} from "../TreeGrid/TreeGridColumn";
+import {GridColumnProps} from "./GridColumn";
+import {GridColumnGroupProps} from "./GridColumnGroup";
 
-export interface GridColumnInfo extends TreeGridColumnProps {
-    //propertyName: string;
+export interface GridColumnInfo extends GridColumnProps {
     objectType: typeof DesignedObject;
+    isPositionField?: boolean;
 }
 
 

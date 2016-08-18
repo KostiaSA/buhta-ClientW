@@ -4,11 +4,12 @@ import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
 import {ComponentProps, ComponentState, Component} from "../Component";
-import {GridColumn, GridColumnDef} from "./GridColumn";
+import {GridColumn, GridColumnDef, GridColumnProps} from "./GridColumn";
 import {TreeGridColumn} from "../TreeGrid/TreeGridColumn";
 import {GridColumnGroup} from "./GridColumnGroup";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {InMemoryRowModel} from "ag-grid/main";
+import {throwError} from "../../Error";
 
 ///////////// ВНИМАНИЕ !  //////////////////
 // ag-grid.noStyle.js был запатчен, иначе содержимое ячейки для tree-column будет вставляться перед иконками плюс/минус
@@ -24,6 +25,8 @@ export interface GridProps extends ComponentProps<GridState> {
 
     enableDragDrop?: boolean;
 
+    editable?: boolean;
+
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
     //
@@ -38,7 +41,6 @@ export interface GridProps extends ComponentProps<GridState> {
     //
     // autoExpandNodesToLevel?: number;
     //
-    // editable?: boolean;
     // denyInsert?: boolean;
     // denyUpdate?: boolean;
     // denyDelete?: boolean;
@@ -548,6 +550,25 @@ export default class Grid extends Component<GridProps, GridState> {
             }
 
         });
+
+        if (this.state.agGrid.columnDefs.length === 0) {
+
+            let ds = this.state.dataSource;
+
+            // let columns = ds.getTreeGridColumns().sort((a: GridColumnProps, b: GridColumnProps) => {
+            //     return a.order - b.order;
+            // });
+
+            let columns = ds.getGridColumns();
+
+            columns.forEach((propCol: GridColumnProps) => {
+                this.state.agGrid.columnDefs!.push(new GridColumnDef(propCol, null).getAgGridColDef(this));
+            });
+
+        }
+
+        if (this.state.agGrid.columnDefs.length === 0)
+            throwError("Grid: список колонок не определен.");
 
     }
 

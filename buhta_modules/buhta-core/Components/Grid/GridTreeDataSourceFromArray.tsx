@@ -9,6 +9,7 @@ import {throwError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
+import {GridColumnGroupProps} from "./GridColumnGroup";
 
 export interface GridTreeDataSourceFromArrayParams {
 
@@ -60,41 +61,25 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
 
     private nodes: InternalTreeNode[] = [];
 
-    get isTreeGridDataSource() {
-        return true;
-    }
 
-    getTreeGridColumns(): GridColumnProps[] {
-        return [];
-        //     if (this.arrayObj.length === 0)
-        //         return [];
-        //     else
-        //         return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
-        //
-        //             let ret: any = {};
-        //             _.assign(ret, col);
-        //             return ret;
-        //
-        //             // return ({
-        //             //     caption: col.caption,
-        //             //     width: col.width,
-        //             //     order: col.order,
-        //             //     propertyName: col.propertyName,
-        //             //     showHierarchyTree: col.showHierarchyTree,
-        //             //     showHierarchyPadding: col.showHierarchyPadding
-        //             // });
-        //         });
-        //
+    getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
+
+        if (this.arrayObj.length === 0)
+            return [];
+        else
+            return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
+                if (col.isPositionField === true)
+                    this.params.positionFieldName = col.propertyName;
+                let ret: any = {};
+                _.assign(ret, col);
+                return ret;
+            });
     }
 
     getRows(): GridDataSourceRow[] {
         return this.nodes.map((node) => {
             return this.arrayObj[node.sourceIndex];
         }, this);
-    }
-
-    getRow(index: number): GridDataSourceRow {
-        return this.arrayObj[index];
     }
 
     getNewRow(): GridDataSourceRow {
@@ -129,10 +114,6 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
             return this.params.getDeleteRowMessage();
         else
             return "Удалить запись!";
-    }
-
-    getRowChildren(rowIndex: number): GridDataSourceRow[] {
-        return [];
     }
 
     canDragRow(rowIndex: number, mode: "move" | "copy"): boolean {
@@ -388,9 +369,6 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
                 children: node.children.map((childNode: InternalTreeNode) => {
                     return this.arrayObj[childNode.sourceIndex];
                 }, this),
-                //field: "name",
-                //key: dataId
-
             };
         else
             return null;

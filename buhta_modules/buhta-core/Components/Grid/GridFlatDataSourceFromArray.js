@@ -1,35 +1,28 @@
 "use strict";
 var _ = require("lodash");
 var Error_1 = require("../../Error");
+var getGridColumnInfos_1 = require("./getGridColumnInfos");
 var GridFlatDataSourceFromArray = (function () {
     function GridFlatDataSourceFromArray(arrayObj, params) {
         if (params === void 0) { params = {}; }
         this.arrayObj = arrayObj;
         this.params = params;
     }
-    Object.defineProperty(GridFlatDataSourceFromArray.prototype, "isTreeGridDataSource", {
-        get: function () {
-            return true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    GridFlatDataSourceFromArray.prototype.getTreeGridColumns = function () {
-        //        if (this.arrayObj.length === 0)
-        return [];
-        // else
-        //     return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
-        //         let ret: any = {};
-        //         _.assign(ret, col);
-        //         return ret;
-        //     });
-        //
+    GridFlatDataSourceFromArray.prototype.getGridColumns = function () {
+        var _this = this;
+        if (this.arrayObj.length === 0)
+            return [];
+        else
+            return getGridColumnInfos_1.getGridColumnInfos(this.arrayObj[0]).map(function (col) {
+                if (col.isPositionField === true)
+                    _this.params.positionFieldName = col.propertyName;
+                var ret = {};
+                _.assign(ret, col);
+                return ret;
+            });
     };
     GridFlatDataSourceFromArray.prototype.getRows = function () {
         return this.arrayObj;
-    };
-    GridFlatDataSourceFromArray.prototype.getRow = function (index) {
-        return this.arrayObj[index];
     };
     GridFlatDataSourceFromArray.prototype.getNewRow = function () {
         if (this.params.getNewRow)
@@ -59,9 +52,6 @@ var GridFlatDataSourceFromArray = (function () {
             return this.params.getDeleteRowMessage();
         else
             return "Удалить запись!";
-    };
-    GridFlatDataSourceFromArray.prototype.getRowChildren = function (rowIndex) {
-        return [];
     };
     GridFlatDataSourceFromArray.prototype.canDragRow = function (rowIndex, mode) {
         return true;

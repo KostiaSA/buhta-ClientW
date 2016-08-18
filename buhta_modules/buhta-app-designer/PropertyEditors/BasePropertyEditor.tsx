@@ -2,6 +2,7 @@
 import {Component, ComponentProps} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
 import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
+import {ListEditorParams} from "./ListPropertyEditor";
 
 export interface PropertyEditorInfo extends AutoFormControlProps {
     propertyName: string;

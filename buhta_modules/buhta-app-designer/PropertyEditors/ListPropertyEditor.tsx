@@ -4,10 +4,8 @@ import {DesignedObject} from "../DesignedObject";
 import {registerPropertyEditor} from "./registerPropertyEditor";
 import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
-import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
-import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
-import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
-import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
+import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
+import Grid from "../../buhta-core/Components/Grid/Grid";
 
 
 export class ListPropertyEditor extends BasePropertyEditor {
@@ -28,41 +26,27 @@ export class ListPropertyEditor extends BasePropertyEditor {
 
         this.addProps(autoFormControlProps);
 
-        // return (
-        //     <Input
-        //         type={InputType.Text}
-        //         bindObject={this.props.designedObject}
-        //         bindPropName={this.props.propertyName}
-        //         onChange={this.props.onChange}
-        //         {...this.getRenderProps()}
-        //     />
-        // );
+        let dataSource = new GridFlatDataSourceFromArray(this.props.designedObject[this.props.propertyName]);
+        let customParams = this.props.customParams as ListEditorParams;
 
-
-        let dataSource = new TreeGridArrayDataSource(this.props.designedObject[this.props.propertyName]);
-        dataSource.params.getNewRow = () => this.props.customParams.getNewListItem(this.props.designedObject);
+        if (customParams.getNewListItem !== undefined)
+            dataSource.params.getNewRow = () => customParams.getNewListItem!(this.props.designedObject);
 
         return (
-            <TreeGrid
+            <Grid
                 dataSource={ dataSource }
-                treeMode="flat"
                 editable={true}
+                enableDragDrop={customParams.enableDragDrop}
             >
-            </TreeGrid>
+            </Grid>
         );
     }
-
-// <TreeGridColumns>
-// <TreeGridColumn caption="Имя колонки" propertyName="name" width={100}>
-//     </TreeGridColumn>
-//     <TreeGridColumn caption="Тип данных" propertyName="dataType" width={150}>
-//     </TreeGridColumn>
-//     </TreeGridColumns>
 
 }
 
 export interface ListEditorParams extends AutoFormControlProps {
     getNewListItem?: (listOwner: DesignedObject) => DesignedObject;
+    enableDragDrop?: boolean;
 }
 
 export function ListEditor(params: ListEditorParams): Function {

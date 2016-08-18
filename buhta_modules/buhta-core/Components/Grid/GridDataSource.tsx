@@ -2,6 +2,7 @@ import * as React from "react";
 import * as AgGrid from "ag-grid";
 import {GridColumnProps} from "./GridColumn";
 import {InternalTreeNode} from "./GridTreeDataSourceFromArray";
+import {GridColumnGroupProps} from "./GridColumnGroup";
 
 
 export interface GridDataSourceRow {
@@ -11,13 +12,8 @@ export interface GridDataSourceRow {
 }
 
 export interface GridDataSource {
-    isTreeGridDataSource: boolean;
-    getTreeGridColumns(): GridColumnProps[];
+    getGridColumns(): (GridColumnProps | GridColumnGroupProps)[];
     getRows(): GridDataSourceRow[];
-
-    getRow(rowIndex: number): GridDataSourceRow;
-    getRowChildren(rowIndex: number): GridDataSourceRow[];
-
     getNewRow(): GridDataSourceRow;
     addRow(row: GridDataSourceRow): number;
     getEmptyDataSourceMessage(): React.ReactNode;

@@ -1,8 +1,9 @@
 
 import {GridColumnInfo} from "./registerGridColumn";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
+import {GridDataSourceRow} from "./GridDataSource";
 
-export function getGridColumnInfos(obj: DesignedObject): GridColumnInfo[] {
+export function getGridColumnInfos(obj: GridDataSourceRow): GridColumnInfo[] {
 
     let infos = (obj.constructor as any).$$gridColumnInfos as GridColumnInfo[];
 

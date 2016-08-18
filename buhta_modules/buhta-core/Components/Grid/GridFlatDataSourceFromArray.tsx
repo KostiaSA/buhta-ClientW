@@ -7,9 +7,11 @@ import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
+import {GridColumnGroupProps} from "./GridColumnGroup";
 
 export interface GridFlatDataSourceFromArrayParams {
 
+    positionFieldName?: string;  // sort 
     getNewRow?: () => GridDataSourceRow;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
@@ -21,28 +23,22 @@ export class GridFlatDataSourceFromArray implements GridDataSource {
 
     }
 
-    get isTreeGridDataSource() {
-        return true;
-    }
-
-    getTreeGridColumns(): GridColumnProps[] {
-//        if (this.arrayObj.length === 0)
+    getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
+        if (this.arrayObj.length === 0)
             return [];
-        // else
-        //     return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
-        //         let ret: any = {};
-        //         _.assign(ret, col);
-        //         return ret;
-        //     });
-        //
+        else
+            return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
+                if (col.isPositionField === true)
+                    this.params.positionFieldName = col.propertyName;
+                let ret: any = {};
+                _.assign(ret, col);
+                return ret;
+            });
+
     }
 
     getRows(): GridDataSourceRow[] {
         return this.arrayObj;
-    }
-
-    getRow(index: number): GridDataSourceRow {
-        return this.arrayObj[index];
     }
 
     getNewRow(): GridDataSourceRow {
@@ -79,10 +75,6 @@ export class GridFlatDataSourceFromArray implements GridDataSource {
             return "Удалить запись!";
     }
 
-    getRowChildren(rowIndex: number): GridDataSourceRow[] {
-        return [];
-    }
-
     canDragRow(rowIndex: number, mode: "move" | "copy"): boolean {
         return true;
     }
@@ -102,13 +94,13 @@ export class GridFlatDataSourceFromArray implements GridDataSource {
     dropBefore(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
 
     }
-    
+
     dropInto(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
-        
+
     }
 
     dropAfter(dragRowIndex: number, targetRowIndex: number, mode: "move" | "copy") {
-        
+
     }
 
     refresh() {

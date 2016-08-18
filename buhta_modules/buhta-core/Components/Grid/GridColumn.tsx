@@ -61,7 +61,7 @@ export class GridColumnDef extends Component<GridColumnProps, any> {
 
 
 export interface GridColumnParams extends GridColumnProps {
-
+    isPositionField?: boolean;
 }
 // это декоратор для дизайнера объектов
 export function GridColumn(params: GridColumnParams): Function {
