@@ -7,7 +7,7 @@ import {ComponentProps, ComponentState, Component} from "../Component";
 import {GridColumn, GridColumnDef} from "./GridColumn";
 import {TreeGridColumn} from "../TreeGrid/TreeGridColumn";
 import {GridColumnGroup} from "./GridColumnGroup";
-import {GridDataSource} from "./GridDataSource";
+import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {InMemoryRowModel} from "ag-grid/main";
 
 ///////////// ВНИМАНИЕ !  //////////////////
@@ -20,7 +20,7 @@ import {InMemoryRowModel} from "ag-grid/main";
 export interface GridProps extends ComponentProps<GridState> {
 
     dragDropNodes?: boolean;
-    dataSource: GridDataSource<any>;
+    dataSource: GridDataSource;
 
 
     // dataSource: TreeGridDataSource<T>;
@@ -48,10 +48,6 @@ export interface GridProps extends ComponentProps<GridState> {
 
 }
 
-//1. сделать expand, если кидаем внутрь
-//2. parentKey заполнить
-//3. position перезаполнить
-
 class DragDropState {
     constructor(public gridState: GridState) {
 
@@ -60,14 +56,18 @@ class DragDropState {
     isDragging: boolean;
     isMouseDown: boolean;
     mouseDownY: number;
-    dragRowData: any;
+    dragRowData: GridDataSourceRow;
+
+    // todo "copy" не работает нигде
     mode: "move" | "copy";
 
-    dropRowData: any;
+    dropRowData: GridDataSourceRow;
     dropPlace: "insertBefore" |  "insertAfter" |  "insertInto";
     dropAllowed: boolean;
 
     doDrop() {
+        this.isDragging = false;
+
         if (this.dropAllowed) {
             if (this.dropPlace === "insertBefore") {
                 this.gridState.dataSource.dropBefore(this.dragRowData, this.dropRowData, this.mode);
@@ -91,14 +91,14 @@ export class GridState extends ComponentState<GridProps> {
     }
 
     agGrid: AgGrid.GridOptions = {};
-    dataSource: GridDataSource<any>;
+    dataSource: GridDataSource;
     dragDropState: DragDropState = new DragDropState(this);
 
     refresh() {
         this.agGrid.api!.setRowData(this.dataSource.getRows());
     }
 
-    expandRow(dataItem: any) {
+    expandRow(dataItem: GridDataSourceRow) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && !node.expanded) {
             node.expanded = true;
@@ -106,7 +106,7 @@ export class GridState extends ComponentState<GridProps> {
         }
     }
 
-    collapseRow(dataItem: any) {
+    collapseRow(dataItem: GridDataSourceRow) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && node.expanded) {
             node.expanded = false;
@@ -114,7 +114,7 @@ export class GridState extends ComponentState<GridProps> {
         }
     }
 
-    expandRowParent(dataItem: any) {
+    expandRowParent(dataItem: GridDataSourceRow) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && node.parent && !node.parent.expanded) {
             node.parent.expanded = true;
@@ -122,7 +122,7 @@ export class GridState extends ComponentState<GridProps> {
         }
     }
 
-    setFocusedRow(dataItem: any) {
+    setFocusedRow(dataItem: GridDataSourceRow) {
         this.expandRowParent(dataItem);
         let col = this.agGrid.columnApi!.getAllDisplayedColumns();
         let rowIndex = this.findAgNodeIndexOfData(dataItem);
@@ -130,7 +130,7 @@ export class GridState extends ComponentState<GridProps> {
             this.agGrid.api!.setFocusedCell(rowIndex, col[0]);
     }
 
-    findAgRowNodeOfData(dataItem: any): AgGrid.RowNode | undefined {
+    findAgRowNodeOfData(dataItem: GridDataSourceRow): AgGrid.RowNode | undefined {
         let ret: AgGrid.RowNode| undefined = undefined;
         this.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
             if (node.data === dataItem)
@@ -139,7 +139,7 @@ export class GridState extends ComponentState<GridProps> {
         return ret;
     }
 
-    findAgNodeIndexOfData(dataItem: any): number {
+    findAgNodeIndexOfData(dataItem: GridDataSourceRow): number {
         let rowModel = this.agGrid.api!.getModel();
 
         for (let i = 0; i < rowModel.getRowCount(); i++) {
@@ -158,45 +158,6 @@ export class GridState extends ComponentState<GridProps> {
     //     else
     //         return undefined;
     // }
-
-
-    // columns: InternalColumn[];
-    // pageLength: number;
-    // rows: InternalRow<T>[];
-    // nodes: InternalTreeNode<T>[];
-    // focusedRowIndex: number;
-    // focusedCellIndex: number;
-    // dataSource: TreeGridDataSource<T>;
-    //
-    // headerFakeRow: HTMLElement;
-    // footerFakeRow: HTMLElement;
-    // headerWrapperElement: HTMLElement;
-    // bodyWrapperElement: HTMLElement;
-    // footerWrapperElement: HTMLElement;
-    //
-    // headerTableElement: HTMLElement;
-    // bodyTableElement: HTMLElement;
-    //
-    // gridElement: HTMLElement;
-    // gridReactComponent: React.Component<any,any>;
-    //
-    // footerTableElement: HTMLElement;
-    //
-    // isCellDragging: boolean;
-    // draggingRowSourceIndex: number;
-    // draggingMode: "move" | "copy";
-    //
-    // getFocusedRow(): T {
-    //     return this.dataSource.getRow(this.focusedRowIndex);
-    // }
-    //
-    // refreshRow(rowIndex: number) {
-    //     this.treeGrid.refreshRow(rowIndex);
-    // }
-    //
-    // refreshFocusedRow() {
-    //     this.treeGrid.refreshRow(this.focusedRowIndex);
-    // }
 }
 
 
@@ -204,7 +165,7 @@ export class GridState extends ComponentState<GridProps> {
 export interface AgCellRendererParams {
     api: AgGrid.GridApi;
     columnApi: AgGrid.ColumnApi;
-    data: any;
+    data: GridDataSourceRow;
     column: AgGrid.Column;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
@@ -219,7 +180,7 @@ export interface AgCellRendererParams {
 // это взято из исходников ag-grid
 export interface AgGetRowHeightParams {
     api: AgGrid.GridApi;
-    data: any;
+    data: GridDataSourceRow;
     node: AgGrid.RowNode;
     context: any;
 }
@@ -227,7 +188,7 @@ export interface AgGetRowHeightParams {
 // это взято из исходников ag-grid
 export interface AgCellClassRuleParams {
     value: any;
-    data: any;
+    data: GridDataSourceRow;
     node: AgGrid.RowNode;
     colDef: AgGrid.ColDef;
     rowIndex: number;
@@ -240,7 +201,6 @@ type AgCellClassRuleFunction = (params: AgCellClassRuleParams) => boolean;
 export interface AgCellClassRules {
     [cssClassName: string]: AgCellClassRuleFunction;
 }
-
 
 export default class Grid extends Component<GridProps, GridState> {
     constructor(props: GridProps, context: any) {
@@ -274,52 +234,12 @@ export default class Grid extends Component<GridProps, GridState> {
             params.node.data.$$dataSourceTreeNode.expanded = params.node.expanded;
     }
 
-    getDataByAgRowIndex(rowIndex: number): any {
+    getDataByAgRowIndex(rowIndex: number): GridDataSourceRow {
         return this.state.agGrid.api!.getModel().getRow(rowIndex).data;
     }
 
     private rowHeightCache: { [id: string]: number };
     private avgRowHeight = 0;
-
-    // private calculateRowHeights(rowsLimit: number = 10000) {
-    //
-    //     let cells: JSX.Element[] = [];
-    //
-    //     let handleRef = (e: HTMLElement, node: AgGrid.RowNode) => {
-    //         if (e) {
-    //             let oldHeight = this.rowHeightCache[node.id];
-    //             if (oldHeight === undefined || e.clientHeight > oldHeight)
-    //                 this.rowHeightCache[node.id] = e.clientHeight;
-    //         }
-    //     };
-    //
-    //
-    //     this.state.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
-    //         if (rowsLimit > 0 && this.rowHeightCache[node.id] === undefined) {
-    //             this.state.agGrid.columnApi!.getAllColumns().forEach((col: AgGrid.Column, colIndex: number) => {
-    //                 let cell = (
-    //                     <div
-    //                         key={node.id + ":" + colIndex}
-    //                         ref={(e:HTMLElement) => {handleRef(e, node); }}
-    //                         style={{display: "inline-block", position: "absolute", visibility: "hidden", zIndex: -1, width: col.getActualWidth()}}
-    //                     >
-    //                         {this.renderCell(col, node, node.data)}
-    //                     </div>
-    //                 );
-    //                 cells.push(cell);
-    //             }, this);
-    //             rowsLimit--;
-    //         }
-    //     });
-    //
-    //
-    //     let div = document.createElement("div");
-    //     document.body.appendChild(div);
-    //     ReactDOM.render(<div>{cells}</div>, div);
-    //     ReactDOM.unmountComponentAtNode(div);
-    //     document.body.removeChild(div);
-    //
-    // }
 
     private calculateRowHeights(nodes: AgGrid.RowNode[]) {
 
@@ -428,11 +348,11 @@ export default class Grid extends Component<GridProps, GridState> {
             }, delay);
         }
 
-        if (param.node.data.$$gridRowHeight !== undefined) {
-            return param.node.data.$$gridRowHeight;
+        if (param.data.$$gridRowHeight !== undefined) {
+            return param.data.$$gridRowHeight;
         }
         else if (this.rowHeightCache[param.node.id] !== undefined) {
-            param.node.data.$$gridRowHeight = this.rowHeightCache[param.node.id];
+            param.data.$$gridRowHeight = this.rowHeightCache[param.node.id];
             return this.rowHeightCache[param.node.id];
         }
         else if (this.avgRowHeight > 0)
@@ -441,7 +361,7 @@ export default class Grid extends Component<GridProps, GridState> {
             return 25;
     }
 
-    private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: any): JSX.Element {
+    private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: GridDataSourceRow): JSX.Element {
         let cell = <span>{data[column.getColDef().field!]}</span>;
         return cell;
     };
@@ -502,7 +422,6 @@ export default class Grid extends Component<GridProps, GridState> {
             }
             else if (relativeY < 0.66) {
                 this.state.dragDropState.dropRowData = params.data;
-                //this.state.dragDropState.dragOverRowNode = params.node;
                 this.state.dragDropState.dropPlace = "insertInto";
                 this.state.dragDropState.dropAllowed = this.state.dataSource.canDropInto(this.state.dragDropState.dragRowData, params.data, "move");
                 arrowTop = $row.position().top + $row.outerHeight() / 2 - 10;
@@ -546,36 +465,22 @@ export default class Grid extends Component<GridProps, GridState> {
 
 
     private handleDragMouseDownViewPort(e: MouseEvent) {
-        console.log("handleDragMouseDown");
         this.state.dragDropState.isMouseDown = true;
         this.state.dragDropState.mouseDownY = e.clientY;
 
     }
 
     private handleDragMouseUpViewPort(e: MouseEvent) {
-        console.log("handleDragMouseUp");
         this.state.dragDropState.isMouseDown = false;
         if (this.state.dragDropState.isDragging) {
-            console.log("STOP-DRAG");
-
             let viewPort = $(this.nativeElement).find(".ag-body-viewport,.ag-pinned-left-cols-viewport");
             viewPort.find(".drag-drop-arrow").remove();
-
             this.state.dragDropState.doDrop();
-
-
-            this.state.dragDropState.isDragging = false;
-            //this.state.agGrid.api!.refreshView();
-            //this.state.agGrid.api!.refreshInMemoryRowModel(); // перезапрашивает RowHeight
-            //((this.state.agGrid.api! as any).inMemoryRowModel as InMemoryRowModel).refreshModel(AgGrid.Constants.STEP_EVERYTHING);
-            //this.state.agGrid.api!.refreshGroupRows();
-            //this.state.agGrid.api!.setRowData(this.state.dataSource.getRows());
-
+//            this.state.dragDropState.isDragging = false;
         }
     }
 
-    private handleDragMouseMoveViewPort(e: any) {
-        //  console.log("handleDragMouseMove");
+    private handleDragMouseMoveViewPort(e: MouseEvent) {
 
         if (!this.state.dragDropState.isDragging &&
             this.state.dragDropState.isMouseDown &&
@@ -587,10 +492,7 @@ export default class Grid extends Component<GridProps, GridState> {
                 this.state.dragDropState.isDragging = true;
                 this.state.dragDropState.mode = "move";
                 this.state.dragDropState.dragRowData = this.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
-
                 this.state.agGrid.api!.refreshView();
-                console.log("START-DRAG");
-                //console.log(this.state.dragDropState.dragRowData);
             }
         }
     }
@@ -598,8 +500,6 @@ export default class Grid extends Component<GridProps, GridState> {
     protected didMount() {
         super.didMount();
 
-//        var domNode = ReactDOM.findDOMNode(this);
-        //this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
         this.createColumns();
         new AgGrid.Grid(this.nativeElement, this.state.agGrid);
 
@@ -607,12 +507,6 @@ export default class Grid extends Component<GridProps, GridState> {
         $(viewPort).on("mousedown", this.handleDragMouseDownViewPort.bind(this));
         $(viewPort).on("mouseup", this.handleDragMouseUpViewPort.bind(this));
         $(viewPort).on("mousemove", this.handleDragMouseMoveViewPort.bind(this));
-        console.log(viewPort);
-
-        //this.state.agGrid.api!.refreshView();
-
-        //this.api = this.gridOptions.api;
-        //this.columnApi = this.gridOptions.columnApi;
 
     }
 
@@ -623,11 +517,6 @@ export default class Grid extends Component<GridProps, GridState> {
         $(viewPort).off("mouseup");
         $(viewPort).off("mousemove");
         this.state.agGrid.api!.destroy();
-    }
-
-
-    private createColumnFromReactElement(agColContainer: any[], gridChild: JSX.Element) {
-
     }
 
     private createColumns() {
@@ -643,58 +532,6 @@ export default class Grid extends Component<GridProps, GridState> {
 
         });
 
-
-        // // this.state.columns = [];
-        // this.state.agGrid.columnDefs = [col1, col2, col1, col2];
-        //
-        // // сначала колонки заполняем из тегов <TreeGridColumn>
-        // let columnsTag = this.getChildren(TreeGridColumns);
-        // columnsTag.forEach((tag: JSX.Element) => {
-        //     let columnTagList = this.getChildrenOfProps(tag.props, TreeGridColumn);
-        //
-        //     columnTagList = columnTagList.sort((a: JSX.Element, b: JSX.Element) => {
-        //         let A = a.props as TreeGridColumnProps;
-        //         let B = b.props as TreeGridColumnProps;
-        //         return A.order - B.order;
-        //     });
-        //
-        //     columnTagList.forEach((propCol: JSX.Element) => {
-        //
-        //         let col = new InternalColumn();
-        //         col.props = propCol.props;
-        //         col.width = propCol.props.width || 150;
-        //         col.caption = propCol.props.caption;
-        //         col.fieldName = propCol.props.propertyName;
-        //         col.caption = propCol.props.caption || col.fieldName;
-        //         this.state.columns.push(col);
-        //     });
-        // });
-        //
-        // // если тегов <TreeGridColumn> нет, то заполняем из DataSource
-        // if (this.state.columns.length === 0) {
-        //     if (this.state.dataSource.isTreeGridDataSource) {
-        //         let ds = this.state.dataSource as TreeGridDataSource<any>;
-        //
-        //         let columns = ds.getTreeGridColumns().sort((a: TreeGridColumnProps, b: TreeGridColumnProps) => {
-        //             return a.order - b.order;
-        //         });
-        //
-        //         columns.forEach((propCol: TreeGridColumnProps) => {
-        //
-        //             let col = new InternalColumn();
-        //             col.props = propCol;
-        //             col.width = propCol.width || 150;
-        //             col.caption = propCol.caption || "";
-        //             col.fieldName = propCol.propertyName || "";
-        //             col.caption = propCol.caption || col.fieldName;
-        //             this.state.columns.push(col);
-        //         });
-        //     }
-        // }
-        //
-        // if (this.state.columns.length === 0)
-        //     throwError("TreeGrid: список колонок не определен.");
-
     }
 
     render() {
@@ -704,7 +541,6 @@ export default class Grid extends Component<GridProps, GridState> {
                 ref={ (e) => { this.nativeElement = e; }}
                 style={{height:"100%" }}
             >
-
             </div>
         )
     }

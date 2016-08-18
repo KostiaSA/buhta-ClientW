@@ -3,14 +3,14 @@ import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
 import {GridColumnProps} from "./GridColumn";
-import {GridDataSource} from "./GridDataSource";
+import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
 
-export interface GridTreeDataSourceFromArrayParams<T> {
+export interface GridTreeDataSourceFromArrayParams {
 
     keyFieldName: string; // key для treeMode parentKey
     parentKeyFieldName: string; // parentKey для treeMode parentKey
@@ -18,13 +18,13 @@ export interface GridTreeDataSourceFromArrayParams<T> {
 
     autoExpandNodesToLevel?: number;
 
-    getNewRow?: () => T;
+    getNewRow?: () => GridDataSourceRow;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
 
 }
 
-class InternalTreeNode<T> {
+export class InternalTreeNode {
     constructor() {
     }
 
@@ -38,27 +38,27 @@ class InternalTreeNode<T> {
     //cellElements: HTMLElement[] = [];
 
     // для treeMode;
-    parent: InternalTreeNode<T>;
-    children: InternalTreeNode<T>[] = [];
+    parent: InternalTreeNode;
+    children: InternalTreeNode[] = [];
     expanded: boolean;
     level: number;
 
 
-    // iterateRecursive(callback: (node: InternalTreeNode<T>) => void) {
+    // iterateRecursive(callback: (node: InternalTreeNode<GridDataSourceRow>) => void) {
     //     callback(this);
-    //     this.children.forEach((child: InternalTreeNode<T>) => {
+    //     this.children.forEach((child: InternalTreeNode<GridDataSourceRow>) => {
     //         child.iterateRecursive(callback);
     //     });
     //
     // }
 }
 
-export class GridTreeDataSourceFromArray<T extends DesignedObject> implements GridDataSource<T> {
-    constructor(public arrayObj: T[], public params: GridTreeDataSourceFromArrayParams<T>) {
+export class GridTreeDataSourceFromArray implements GridDataSource {
+    constructor(public arrayObj: GridDataSourceRow[], public params: GridTreeDataSourceFromArrayParams) {
         this.createNodesFromParentKey();
     }
 
-    private nodes: InternalTreeNode<T>[] = [];
+    private nodes: InternalTreeNode[] = [];
 
     get isTreeGridDataSource() {
         return true;
@@ -87,17 +87,17 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         //
     }
 
-    getRows(): T[] {
+    getRows(): GridDataSourceRow[] {
         return this.nodes.map((node) => {
             return this.arrayObj[node.sourceIndex];
         }, this);
     }
 
-    getRow(index: number): T {
+    getRow(index: number): GridDataSourceRow {
         return this.arrayObj[index];
     }
 
-    getNewRow(): T {
+    getNewRow(): GridDataSourceRow {
         if (this.params.getNewRow)
             return this.params.getNewRow();
         else {
@@ -106,7 +106,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         }
     }
 
-    addRow(row: T): number {
+    addRow(row: GridDataSourceRow): number {
         this.arrayObj.push(row);
         return this.arrayObj.length - 1;
     }
@@ -131,7 +131,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             return "Удалить запись!";
     }
 
-    getRowChildren(rowIndex: number): T[] {
+    getRowChildren(rowIndex: number): GridDataSourceRow[] {
         return [];
     }
 
@@ -139,7 +139,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         return true;
     }
 
-    canDropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean {
+    canDropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean {
 
         if (this.hasParent(targetRowData, dragRowData))
             return false;
@@ -147,14 +147,14 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             return true;
     }
 
-    canDropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean {
-        if (this.hasParent(targetRowData, dragRowData) || dragRowData.$$dataSourceTreeNode.parent === targetRowData.$$dataSourceTreeNode)
+    canDropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean {
+        if (this.hasParent(targetRowData, dragRowData) || dragRowData.$$dataSourceTreeNode!.parent === targetRowData.$$dataSourceTreeNode)
             return false;
         else
             return true;
     }
 
-    canDropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean {
+    canDropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean {
 
         if (this.hasParent(targetRowData, dragRowData))
             return false;
@@ -162,9 +162,9 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             return true;
     }
 
-    dropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy") {
-        let dragNode = dragRowData.$$dataSourceTreeNode;
-        let targetNode = targetRowData.$$dataSourceTreeNode;
+    dropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy") {
+        let dragNode = dragRowData.$$dataSourceTreeNode!;
+        let targetNode = targetRowData.$$dataSourceTreeNode!;
 
         if (dragNode.parent === targetNode.parent) {
             let arr = this.nodes;
@@ -199,10 +199,10 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
 
     }
 
-    dropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy") {
+    dropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy") {
         console.log("dropInto+");
-        let dragNode = dragRowData.$$dataSourceTreeNode;
-        let targetNode = targetRowData.$$dataSourceTreeNode;
+        let dragNode = dragRowData.$$dataSourceTreeNode!;
+        let targetNode = targetRowData.$$dataSourceTreeNode!;
 
         targetNode.children.push(dragNode);
         this.recalcChildrenPositions(targetNode.children);
@@ -216,9 +216,9 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
     }
 
-    dropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy") {
-        let dragNode = dragRowData.$$dataSourceTreeNode;
-        let targetNode = targetRowData.$$dataSourceTreeNode;
+    dropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy") {
+        let dragNode = dragRowData.$$dataSourceTreeNode!;
+        let targetNode = targetRowData.$$dataSourceTreeNode!;
 
         if (dragNode.parent === targetNode.parent) {
             let arr = this.nodes;
@@ -255,16 +255,16 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
 
     }
 
-    private recalcChildrenPositions(nodes: InternalTreeNode<any>[]) {
+    private recalcChildrenPositions(nodes: InternalTreeNode[]) {
         if (this.params.positionFieldName !== undefined) {
-            nodes.forEach((node: InternalTreeNode<any>, index: number) => {
+            nodes.forEach((node: InternalTreeNode, index: number) => {
                 let nodeData = this.arrayObj[node.sourceIndex];
                 nodeData[this.params.positionFieldName!] = index;
             });
         }
     }
 
-    private hasParent(rowData: any, parentData: any): boolean {
+    private hasParent(rowData: GridDataSourceRow, parentData: GridDataSourceRow): boolean {
         let parentNode = rowData.$$dataSourceTreeNode;
         if (parentNode === parentData.$$dataSourceTreeNode)
             return true;
@@ -276,7 +276,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         return false;
     }
 
-    private nodeList: any = {};
+    private nodeList: {[key: string]: InternalTreeNode} = {};
 
     private createNodesFromParentKey() {
 
@@ -289,8 +289,8 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         if (this.params.parentKeyFieldName === undefined)
             throwError("GridTreeDataSourceFromArray: property 'parentKeyFieldName' is undefined");
 
-        this.arrayObj.forEach((dataSourceItem: any, index: number) => {
-            let node = new InternalTreeNode<any>();
+        this.arrayObj.forEach((dataSourceItem: GridDataSourceRow, index: number) => {
+            let node = new InternalTreeNode();
             dataSourceItem.$$dataSourceTreeNode = node;
             node.sourceIndex = index;
             node.key = dataSourceItem[this.params.keyFieldName!];
@@ -317,10 +317,10 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             if (node.parentKey !== undefined) {
                 let parentNode = this.nodeList[node.parentKey];
                 if (parentNode !== undefined) {
-                    if ((node  as InternalTreeNode<any>).parent !== undefined)
+                    if ((node  as InternalTreeNode).parent !== undefined)
                         throwError("GridTreeDataSourceFromArray: internal error");
-                    (node  as InternalTreeNode<any>).parent = parentNode;
-                    (parentNode as InternalTreeNode<any>).children.push(node);
+                    (node  as InternalTreeNode).parent = parentNode;
+                    (parentNode as InternalTreeNode).children.push(node);
                 }
             }
         }
@@ -333,9 +333,9 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
         }
 
         // сортировка children и проставление level
-        let sortNodes = (nodes: InternalTreeNode<any>[]): InternalTreeNode<any>[] => {
+        let sortNodes = (nodes: InternalTreeNode[]): InternalTreeNode[] => {
             if (this.params.positionFieldName !== undefined) {
-                return nodes.sort((a: InternalTreeNode<any>, b: InternalTreeNode<any>) => {
+                return nodes.sort((a: InternalTreeNode, b: InternalTreeNode) => {
 
                     let aa = this.arrayObj[a.sourceIndex][this.params.positionFieldName!];
                     if (aa === undefined)
@@ -353,21 +353,21 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
                 });
             }
             else {
-                return nodes.sort((a: InternalTreeNode<any>, b: InternalTreeNode<any>) => numberCompare(a.sourceIndex, b.sourceIndex));
+                return nodes.sort((a: InternalTreeNode, b: InternalTreeNode) => numberCompare(a.sourceIndex, b.sourceIndex));
             }
         };
 
 
-        let processNode = (node: InternalTreeNode<any>, level: number) => {
+        let processNode = (node: InternalTreeNode, level: number) => {
             node.level = level;
             node.expanded = this.params.autoExpandNodesToLevel !== undefined && node.level < this.params.autoExpandNodesToLevel;
             node.children = sortNodes(node.children);
-            node.children.forEach((node: InternalTreeNode<any>) => {
+            node.children.forEach((node: InternalTreeNode) => {
                 processNode(node, level + 1);
             }, this);
         };
 
-        this.nodes.forEach((node: InternalTreeNode<any>) => {
+        this.nodes.forEach((node: InternalTreeNode) => {
             processNode(node, 0);
         }, this);
 
@@ -376,16 +376,16 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
 
     }
 
-    getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails | null {
+    getNodeChildDetails(dataItem: GridDataSourceRow): AgGrid.NodeChildDetails | null {
 
-        let node = dataItem.$$dataSourceTreeNode;
+        let node = dataItem.$$dataSourceTreeNode!;
 
         if (node.children.length > 0)
 
             return {
                 group: true,
                 expanded: node.expanded,
-                children: node.children.map((childNode: InternalTreeNode<any>) => {
+                children: node.children.map((childNode: InternalTreeNode) => {
                     return this.arrayObj[childNode.sourceIndex];
                 }, this),
                 //field: "name",

@@ -1,17 +1,25 @@
 import * as React from "react";
 import * as AgGrid from "ag-grid";
 import {GridColumnProps} from "./GridColumn";
+import {InternalTreeNode} from "./GridTreeDataSourceFromArray";
 
-export interface GridDataSource<T> {
+
+export interface GridDataSourceRow {
+    [propName: string]: any;
+    $$dataSourceTreeNode?: InternalTreeNode;
+    $$gridRowHeight?: number;
+}
+
+export interface GridDataSource {
     isTreeGridDataSource: boolean;
     getTreeGridColumns(): GridColumnProps[];
-    getRows(): T[];
+    getRows(): GridDataSourceRow[];
 
-    getRow(rowIndex: number): T;
-    getRowChildren(rowIndex: number): T[];
+    getRow(rowIndex: number): GridDataSourceRow;
+    getRowChildren(rowIndex: number): GridDataSourceRow[];
 
-    getNewRow(): T;
-    addRow(row: T): number;
+    getNewRow(): GridDataSourceRow;
+    addRow(row: GridDataSourceRow): number;
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;
 
@@ -22,7 +30,7 @@ export interface GridDataSource<T> {
     canDropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
 
     canDropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
-    
+
     canDropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): boolean;
 
     dropInto(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
@@ -30,7 +38,7 @@ export interface GridDataSource<T> {
     dropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
 
     dropBefore(dragRowData: any, targetRowData: any, mode: "move" | "copy"): void;
-    
+
     refresh(): void;
 
     getNodeChildDetails(dataItem: any): AgGrid.NodeChildDetails | null;

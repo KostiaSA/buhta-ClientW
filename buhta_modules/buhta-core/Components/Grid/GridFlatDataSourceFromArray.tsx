@@ -3,21 +3,21 @@ import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
 import {GridColumnProps} from "./GridColumn";
-import {GridDataSource} from "./GridDataSource";
+import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 
-export interface GridFlatDataSourceFromArrayParams<T> {
+export interface GridFlatDataSourceFromArrayParams {
 
-    getNewRow?: () => T;
+    getNewRow?: () => GridDataSourceRow;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
 
 }
 
-export class GridFlatDataSourceFromArray<T extends DesignedObject> implements GridDataSource<T> {
-    constructor(public arrayObj: T[], public params: GridFlatDataSourceFromArrayParams<T> = {}) {
+export class GridFlatDataSourceFromArray implements GridDataSource {
+    constructor(public arrayObj: GridDataSourceRow[], public params: GridFlatDataSourceFromArrayParams = {}) {
 
     }
 
@@ -26,36 +26,26 @@ export class GridFlatDataSourceFromArray<T extends DesignedObject> implements Gr
     }
 
     getTreeGridColumns(): GridColumnProps[] {
-        if (this.arrayObj.length === 0)
+//        if (this.arrayObj.length === 0)
             return [];
-        else
-            return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
-
-                let ret: any = {};
-                _.assign(ret, col);
-                return ret;
-
-                // return ({
-                //     caption: col.caption,
-                //     width: col.width,
-                //     order: col.order,
-                //     propertyName: col.propertyName,
-                //     showHierarchyTree: col.showHierarchyTree,
-                //     showHierarchyPadding: col.showHierarchyPadding
-                // });
-            });
-
+        // else
+        //     return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
+        //         let ret: any = {};
+        //         _.assign(ret, col);
+        //         return ret;
+        //     });
+        //
     }
 
-    getRows(): T[] {
+    getRows(): GridDataSourceRow[] {
         return this.arrayObj;
     }
 
-    getRow(index: number): T {
+    getRow(index: number): GridDataSourceRow {
         return this.arrayObj[index];
     }
 
-    getNewRow(): T {
+    getNewRow(): GridDataSourceRow {
         if (this.params.getNewRow)
             return this.params.getNewRow();
         else {
@@ -64,7 +54,7 @@ export class GridFlatDataSourceFromArray<T extends DesignedObject> implements Gr
         }
     }
 
-    addRow(row: T): number {
+    addRow(row: GridDataSourceRow): number {
         this.arrayObj.push(row);
         return this.arrayObj.length - 1;
     }
@@ -89,7 +79,7 @@ export class GridFlatDataSourceFromArray<T extends DesignedObject> implements Gr
             return "Удалить запись!";
     }
 
-    getRowChildren(rowIndex: number): T[] {
+    getRowChildren(rowIndex: number): GridDataSourceRow[] {
         return [];
     }
 

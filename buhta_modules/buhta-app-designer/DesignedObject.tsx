@@ -2,9 +2,10 @@
 import * as _ from "lodash";
 //import {ObservableOnChangeHandler} from "../buhta-core/Observable";
 import {getObjectConstructorName} from "../buhta-core/getObjectConstructorName";
+import {GridDataSourceRow} from "../buhta-core/Components/Grid/GridDataSource";
 
 
-export class DesignedObject {
+export class DesignedObject implements GridDataSourceRow {
 
     [name: string]: any;
 

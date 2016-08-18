@@ -79,7 +79,7 @@ export function showTestSelectControlForm() {
             else
                 (window as any)["xxxxx"] = tables;
 
-            let params: GridTreeDataSourceFromArrayParams<any> = {
+            let params: GridTreeDataSourceFromArrayParams = {
                 keyFieldName: "id",
                 parentKeyFieldName: "parentId",
                 positionFieldName: "position",

@@ -1,7 +1,6 @@
 "use strict";
 var _ = require("lodash");
 var Error_1 = require("../../Error");
-var getGridColumnInfos_1 = require("./getGridColumnInfos");
 var GridFlatDataSourceFromArray = (function () {
     function GridFlatDataSourceFromArray(arrayObj, params) {
         if (params === void 0) { params = {}; }
@@ -16,22 +15,15 @@ var GridFlatDataSourceFromArray = (function () {
         configurable: true
     });
     GridFlatDataSourceFromArray.prototype.getTreeGridColumns = function () {
-        if (this.arrayObj.length === 0)
-            return [];
-        else
-            return getGridColumnInfos_1.getGridColumnInfos(this.arrayObj[0]).map(function (col) {
-                var ret = {};
-                _.assign(ret, col);
-                return ret;
-                // return ({
-                //     caption: col.caption,
-                //     width: col.width,
-                //     order: col.order,
-                //     propertyName: col.propertyName,
-                //     showHierarchyTree: col.showHierarchyTree,
-                //     showHierarchyPadding: col.showHierarchyPadding
-                // });
-            });
+        //        if (this.arrayObj.length === 0)
+        return [];
+        // else
+        //     return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
+        //         let ret: any = {};
+        //         _.assign(ret, col);
+        //         return ret;
+        //     });
+        //
     };
     GridFlatDataSourceFromArray.prototype.getRows = function () {
         return this.arrayObj;
