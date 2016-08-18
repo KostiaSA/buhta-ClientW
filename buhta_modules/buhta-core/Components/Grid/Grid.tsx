@@ -48,6 +48,9 @@ export interface GridProps extends ComponentProps<GridState> {
 
 }
 
+//1. сделать expand, если кидаем внутрь
+//2. parentKey заполнить
+//3. position перезаполнить
 
 class DragDropState {
     constructor(public gridState: GridState) {
@@ -95,8 +98,32 @@ export class GridState extends ComponentState<GridProps> {
         this.agGrid.api!.setRowData(this.dataSource.getRows());
     }
 
-    setFocusedRow(dataItem: any) {
+    expandRow(dataItem: any) {
+        let node = this.findAgRowNodeOfData(dataItem);
+        if (node && !node.expanded) {
+            node.expanded = true;
+            (this.agGrid.api!.getModel() as InMemoryRowModel).refreshModel(AgGrid.Constants.STEP_MAP);
+        }
+    }
 
+    collapseRow(dataItem: any) {
+        let node = this.findAgRowNodeOfData(dataItem);
+        if (node && node.expanded) {
+            node.expanded = false;
+            (this.agGrid.api!.getModel() as InMemoryRowModel).refreshModel(AgGrid.Constants.STEP_MAP);
+        }
+    }
+
+    expandRowParent(dataItem: any) {
+        let node = this.findAgRowNodeOfData(dataItem);
+        if (node && node.parent && !node.parent.expanded) {
+            node.parent.expanded = true;
+            (this.agGrid.api!.getModel() as InMemoryRowModel).refreshModel(AgGrid.Constants.STEP_MAP);
+        }
+    }
+
+    setFocusedRow(dataItem: any) {
+        this.expandRowParent(dataItem);
         let col = this.agGrid.columnApi!.getAllDisplayedColumns();
         let rowIndex = this.findAgNodeIndexOfData(dataItem);
         if (rowIndex >= 0)

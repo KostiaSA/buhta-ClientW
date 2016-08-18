@@ -171,7 +171,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             if (targetNode.parent) {
                 arr = targetNode.parent.children;
             }
-            let toPos = arr.indexOf(targetNode)-1;
+            let toPos = arr.indexOf(targetNode) - 1;
             let fromPos = arr.indexOf(dragNode);
             if (toPos < fromPos)
                 toPos += 1;
@@ -191,6 +191,8 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             removeFromArray(dragArr, dragNode);
 
             dragNode.parent = targetNode.parent;
+            dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
+
         }
 
     }
@@ -208,6 +210,7 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             removeFromArray(this.nodes, dragNode);
 
         dragNode.parent = targetNode;
+        dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
     }
 
     dropAfter(dragRowData: any, targetRowData: any, mode: "move" | "copy") {
@@ -239,6 +242,8 @@ export class GridTreeDataSourceFromArray<T extends DesignedObject> implements Gr
             removeFromArray(dragArr, dragNode);
 
             dragNode.parent = targetNode.parent;
+            dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
+
         }
     }
 
