@@ -36,6 +36,7 @@ import {
 } from "../../buhta-core/Components/Grid/GridTreeDataSourceFromComponent";
 import Grid from "../../buhta-core/Components/Grid/Grid";
 import {GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
+import {GridState} from "../../buhta-core/Components/Grid/Grid";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -191,24 +192,25 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     }
 
     handleUpdateButtonClick = () => {
-        let designedObject = this.treeGridState.getFocusedRow();
+        let designedObject = this.gridState.getFocusedRowData();
 
-        let win =
-            <ObjectDesigner
-                designedObject={designedObject}
-                onSaveChanges={ () => { this.treeGridState.refreshFocusedRow(); }}
-            >
+        if (designedObject) {
+            let win =
+                <ObjectDesigner
+                    designedObject={designedObject}
+                    onSaveChanges={ () => { this.gridState.refresh(); }}
+                >
 
-            </ObjectDesigner>;
+                </ObjectDesigner>;
 
-        let openParam: OpenWindowParams = {
-            title: "редактирование",
-            autoPosition: "parent-center",
-            parentWindowId: this.getParentWindowId()
-        };
+            let openParam: OpenWindowParams = {
+                title: "редактирование",
+                autoPosition: "parent-center",
+                parentWindowId: this.getParentWindowId()
+            };
 
-        this.getParentDesktop().openWindow(win, openParam);
-
+            this.getParentDesktop().openWindow(win, openParam);
+        }
     }
 
     handleInsertButtonClick = () => {
@@ -244,14 +246,14 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         return buttons;
     }
 
-    private treeGridState: TreeGridState<BaseControl>;
+    private gridState: GridState<BaseControl>;
 
-    handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
-        this.treeGridState = state;
-        //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
-        //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
-
-    }
+    // handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
+    //     this.gridState = state;
+    //     //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
+    //     //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
+    //
+    // }
 
     render() {
         let dataSourceParam: GridTreeDataSourceFromComponentParams = {};
@@ -277,8 +279,8 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                             className="children-tree-grid"
                                             dataSource={dataSource}
                                             editable={true}
-                                            denyInsert={true}
                                             enableDragDrop={true}
+                                            onGetState={(state:GridState<BaseControl>) => this.gridState = state}
                                         >
                                             <GridColumnDef caption="Control" propertyName="$$controlName"
                                                            showHierarchyTree={true}

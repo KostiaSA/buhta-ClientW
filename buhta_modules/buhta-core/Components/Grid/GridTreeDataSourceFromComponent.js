@@ -1,34 +1,6 @@
 "use strict";
 var Error_1 = require("../../Error");
 var arrayUtils_1 = require("../../arrayUtils");
-// export class InternalTreeNode {
-//     constructor() {
-//     }
-//
-//     //element: HTMLElement;
-//     //sourceObject: any;
-//     sourceIndex: number;
-//     key: string;
-//     parentKey: string;
-//     //sourceRow: any;
-//     //sourceRowContainer: any;  // массив children, в котором сидит sourceRow, используется в DragDrop
-//     //cellElements: HTMLElement[] = [];
-//
-//     // для treeMode;
-//     parent: InternalTreeNode;
-//     children: InternalTreeNode[] = [];
-//     expanded: boolean;
-//     level: number;
-//
-//
-//     // iterateRecursive(callback: (node: InternalTreeNode<GridDataSourceRow>) => void) {
-//     //     callback(this);
-//     //     this.children.forEach((child: InternalTreeNode<GridDataSourceRow>) => {
-//     //         child.iterateRecursive(callback);
-//     //     });
-//     //
-//     // }
-// }
 var GridTreeDataSourceFromComponent = (function () {
     function GridTreeDataSourceFromComponent(nodes, params) {
         this.nodes = nodes;
@@ -156,7 +128,6 @@ var GridTreeDataSourceFromComponent = (function () {
         }
     };
     GridTreeDataSourceFromComponent.prototype.dropInto = function (dragRowData, targetRowData, mode) {
-        console.log("dropInto+");
         var dragNode = dragRowData;
         var targetNode = targetRowData;
         targetNode.children.push(dragNode);

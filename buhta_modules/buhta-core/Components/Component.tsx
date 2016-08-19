@@ -21,6 +21,7 @@ export interface ComponentProps<S> extends React.ClassAttributes<Element> {
     children?: React.ReactNode;
 //    buhtaControl?: BaseControl;
     onWillMount?: (state: S) => void;
+    onGetState?: (state: S) => void;
     $$control?: BaseControl;
     $$schemaComponent?: SchemaComponent;
     key?: any;
@@ -168,6 +169,8 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         this.willMount();
         if (this.props.onWillMount)
             this.props.onWillMount(this.state);
+        if (this.props.onGetState)
+            this.props.onGetState(this.state);
     };
 
 

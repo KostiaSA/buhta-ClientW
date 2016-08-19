@@ -121,24 +121,21 @@ var SchemaComponentDesigner = (function (_super) {
             _this.getParentDesktop().openSchemaComponent(designedObject, openParam);
         };
         this.handleUpdateButtonClick = function () {
-            var designedObject = _this.treeGridState.getFocusedRow();
-            var win = React.createElement(ObjectDesigner_1.ObjectDesigner, {designedObject: designedObject, onSaveChanges: function () { _this.treeGridState.refreshFocusedRow(); }});
-            var openParam = {
-                title: "редактирование",
-                autoPosition: "parent-center",
-                parentWindowId: _this.getParentWindowId()
-            };
-            _this.getParentDesktop().openWindow(win, openParam);
+            var designedObject = _this.gridState.getFocusedRowData();
+            if (designedObject) {
+                var win = React.createElement(ObjectDesigner_1.ObjectDesigner, {designedObject: designedObject, onSaveChanges: function () { _this.gridState.refresh(); }});
+                var openParam = {
+                    title: "редактирование",
+                    autoPosition: "parent-center",
+                    parentWindowId: _this.getParentWindowId()
+                };
+                _this.getParentDesktop().openWindow(win, openParam);
+            }
         };
         this.handleInsertButtonClick = function () {
             //this.openInsertForm();
         };
         this.handleDeleteButtonClick = function () {
-            //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
-        };
-        this.handleTreeGridChangeFocusedRow = function (state) {
-            _this.treeGridState = state;
-            //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
             //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
         };
         this.props = props;
@@ -176,7 +173,14 @@ var SchemaComponentDesigner = (function (_super) {
         buttons.push(React.createElement(Button_1.Button, {key: "delete", className: "is-outlined is-danger", onClick: this.handleDeleteButtonClick}, "Удалить"));
         return buttons;
     };
+    // handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
+    //     this.gridState = state;
+    //     //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
+    //     //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
+    //
+    // }
     SchemaComponentDesigner.prototype.render = function () {
+        var _this = this;
         var dataSourceParam = {};
         var dataSource = new GridTreeDataSourceFromComponent_1.GridTreeDataSourceFromComponent(this.clonedDesignedObject.children, dataSourceParam);
         this.addClassName("component-designer");
@@ -189,7 +193,7 @@ var SchemaComponentDesigner = (function (_super) {
                         React.createElement(Tabs_1.Tab, {key: "1", title: "Основная"}, 
                             React.createElement(Layout_1.Layout, {type: "column", sizeTo: "parent"}, 
                                 React.createElement(Flex_1.Flex, null, 
-                                    React.createElement(Grid_1.default, {className: "children-tree-grid", dataSource: dataSource, editable: true, denyInsert: true, enableDragDrop: true}, 
+                                    React.createElement(Grid_1.default, {className: "children-tree-grid", dataSource: dataSource, editable: true, enableDragDrop: true, onGetState: function (state) { return _this.gridState = state; }}, 
                                         React.createElement(GridColumn_1.GridColumnDef, {caption: "Control", propertyName: "$$controlName", showHierarchyTree: true, width: 200}), 
                                         React.createElement(GridColumn_1.GridColumnDef, {caption: "Свойства", propertyName: "$$controlMainProps", width: 300}), 
                                         React.createElement(GridColumn_1.GridColumnDef, {caption: "События", propertyName: "$$controlEvents", width: 300}))

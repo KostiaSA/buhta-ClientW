@@ -22,34 +22,6 @@ export interface GridTreeDataSourceFromComponentParams {
 
 }
 
-// export class InternalTreeNode {
-//     constructor() {
-//     }
-//
-//     //element: HTMLElement;
-//     //sourceObject: any;
-//     sourceIndex: number;
-//     key: string;
-//     parentKey: string;
-//     //sourceRow: any;
-//     //sourceRowContainer: any;  // массив children, в котором сидит sourceRow, используется в DragDrop
-//     //cellElements: HTMLElement[] = [];
-//
-//     // для treeMode;
-//     parent: InternalTreeNode;
-//     children: InternalTreeNode[] = [];
-//     expanded: boolean;
-//     level: number;
-//
-//
-//     // iterateRecursive(callback: (node: InternalTreeNode<GridDataSourceRow>) => void) {
-//     //     callback(this);
-//     //     this.children.forEach((child: InternalTreeNode<GridDataSourceRow>) => {
-//     //         child.iterateRecursive(callback);
-//     //     });
-//     //
-//     // }
-// }
 
 export class GridTreeDataSourceFromComponent implements GridDataSource {
     constructor(private nodes: BaseControl[], public params: GridTreeDataSourceFromComponentParams) {
@@ -200,7 +172,6 @@ export class GridTreeDataSourceFromComponent implements GridDataSource {
     }
 
     dropInto(dragRowData: BaseControl, targetRowData: BaseControl, mode: "move" | "copy") {
-        console.log("dropInto+");
         let dragNode = dragRowData;
         let targetNode = targetRowData;
 

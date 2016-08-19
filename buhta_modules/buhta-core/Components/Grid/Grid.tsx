@@ -25,7 +25,7 @@ import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 // todo надо будет вставить в исходник ag-grid: ag-grid-master\src\ts\rendering\cellRendererService.ts, строка 52
 
 
-export interface GridProps extends ComponentProps<GridState> {
+export interface GridProps extends ComponentProps<GridState<GridDataSourceRow>> {
 
     dragDropNodes?: boolean;
     dataSource: GridDataSource;
@@ -60,7 +60,7 @@ export interface GridProps extends ComponentProps<GridState> {
 }
 
 class DragDropState {
-    constructor(public gridState: GridState) {
+    constructor(public gridState: GridState<GridDataSourceRow>) {
 
     }
 
@@ -96,7 +96,7 @@ class DragDropState {
 
 }
 
-export class GridState extends ComponentState<GridProps> {
+export class GridState<T extends GridDataSourceRow> extends ComponentState<GridProps> {
     constructor(private grid: Grid) {
         super(grid);
     }
@@ -113,7 +113,7 @@ export class GridState extends ComponentState<GridProps> {
         this.agGrid.api!.setRowData(this.dataSource.getRows());
     }
 
-    expandRow(dataItem: GridDataSourceRow) {
+    expandRow(dataItem: T) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && !node.expanded) {
             node.expanded = true;
@@ -121,7 +121,7 @@ export class GridState extends ComponentState<GridProps> {
         }
     }
 
-    collapseRow(dataItem: GridDataSourceRow) {
+    collapseRow(dataItem: T) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && node.expanded) {
             node.expanded = false;
@@ -129,7 +129,7 @@ export class GridState extends ComponentState<GridProps> {
         }
     }
 
-    expandRowParent(dataItem: GridDataSourceRow) {
+    expandRowParent(dataItem: T) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && node.parent && !node.parent.expanded) {
             node.parent.expanded = true;
@@ -137,7 +137,7 @@ export class GridState extends ComponentState<GridProps> {
         }
     }
 
-    setFocusedRow(dataItem: GridDataSourceRow) {
+    setFocusedRow(dataItem: T) {
         this.expandRowParent(dataItem);
         let col = this.agGrid.columnApi!.getAllDisplayedColumns();
         let rowIndex = this.findAgNodeIndexOfData(dataItem);
@@ -145,7 +145,7 @@ export class GridState extends ComponentState<GridProps> {
             this.agGrid.api!.setFocusedCell(rowIndex, col[0]);
     }
 
-    findAgRowNodeOfData(dataItem: GridDataSourceRow): AgGrid.RowNode | undefined {
+    findAgRowNodeOfData(dataItem: T): AgGrid.RowNode | undefined {
         let ret: AgGrid.RowNode| undefined = undefined;
         this.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
             if (node.data === dataItem)
@@ -154,7 +154,7 @@ export class GridState extends ComponentState<GridProps> {
         return ret;
     }
 
-    findAgNodeIndexOfData(dataItem: GridDataSourceRow): number {
+    findAgNodeIndexOfData(dataItem: T): number {
         let rowModel = this.agGrid.api!.getModel();
 
         for (let i = 0; i < rowModel.getRowCount(); i++) {
@@ -165,13 +165,16 @@ export class GridState extends ComponentState<GridProps> {
         return -1;
     }
 
+    getDataByAgRowIndex(rowIndex: number): T {
+        return this.agGrid.api!.getModel().getRow(rowIndex).data;
+    }
 
-    getFocusedRowData(): GridDataSourceRow | undefined {
+    getFocusedRowData(): T | undefined {
         if (!this.isRowsToRender())
             return undefined;
         let focusedCell = this.agGrid.api!.getFocusedCell();
         if (focusedCell)
-            return this.grid.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
+            return this.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
         else
             return undefined;
     }
@@ -219,7 +222,7 @@ export interface AgCellClassRules {
     [cssClassName: string]: AgCellClassRuleFunction;
 }
 
-export default class Grid extends Component<GridProps, GridState> {
+export default class Grid extends Component<GridProps, GridState<GridDataSourceRow>> {
     constructor(props: GridProps, context: any) {
         super(props, context);
 
@@ -251,9 +254,6 @@ export default class Grid extends Component<GridProps, GridState> {
             params.node.data.$$dataSourceTreeNode.expanded = params.node.expanded;
     }
 
-    getDataByAgRowIndex(rowIndex: number): GridDataSourceRow {
-        return this.state.agGrid.api!.getModel().getRow(rowIndex).data;
-    }
 
     private agGridNativeElement: HTMLElement;
     private rowHeightCache: { [id: string]: number };
@@ -507,7 +507,7 @@ export default class Grid extends Component<GridProps, GridState> {
             if (focusedCell && focusedCell.getGridRow().isNotFloating()) {
                 this.state.dragDropState.isDragging = true;
                 this.state.dragDropState.mode = "move";
-                this.state.dragDropState.dragRowData = this.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
+                this.state.dragDropState.dragRowData = this.state.getDataByAgRowIndex(focusedCell.getGridRow().rowIndex);
                 this.state.agGrid.api!.refreshView();
             }
         }
@@ -539,7 +539,7 @@ export default class Grid extends Component<GridProps, GridState> {
         }
     }
 
-    protected didUpdate(prevProps: GridProps, prevState: GridState, prevContext: any) {
+    protected didUpdate(prevProps: GridProps, prevState: GridState<GridDataSourceRow>, prevContext: any) {
         super.didUpdate(prevProps, prevState, prevContext);
         this.disableDragDrop();
         if (this.props.enableDragDrop === true) {
@@ -645,6 +645,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
             let openParam: OpenWindowParams = {
                 title: "добавление",
+                autoPosition: "parent-center",
                 parentWindowId: this.getParentWindowId()
             };
 
@@ -669,6 +670,7 @@ export default class Grid extends Component<GridProps, GridState> {
 
         let openParam: OpenWindowParams = {
             title: "редактирование",
+            autoPosition: "parent-center",
             parentWindowId: this.getParentWindowId()
         };
 
