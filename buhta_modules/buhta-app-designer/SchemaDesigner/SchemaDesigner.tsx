@@ -13,9 +13,9 @@ import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Fixed} from "../../buhta-core/Components/LayoutPane/Fixed";
 import {Button} from "../../buhta-core/Components/Button/Button";
-import {TreeGrid, TreeGridState} from "../../buhta-core/Components/TreeGrid/TreeGrid";
-import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
-import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+// import {TreeGrid, TreeGridState} from "../../buhta-core/Components/TreeGrid/TreeGrid";
+// import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
+// import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {isDeepEqual} from "../../buhta-core/isDeepEqual";
@@ -25,7 +25,7 @@ import {appInstance} from "../../buhta-core/Components/App/App";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorName";
 import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
-import {SqlDb} from "../../buhta-sql/SqlDb";
+import {SqlDb, DataRow} from "../../buhta-sql/SqlDb";
 import {Schema} from "../../buhta-schema/Schema";
 import Grid from "../../buhta-core/Components/Grid/Grid";
 import {GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
@@ -34,6 +34,9 @@ import {
     GridTreeDataSourceFromSqlTableParams
 } from "../../buhta-core/Components/Grid/GridTreeDataSourceFromSqlTable";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
+import {GridState} from "../../buhta-core/Components/Grid/Grid";
+import {getNewSchemaObjectDialog} from "./getNewSchemaObjectDialog";
+import {SchemaObject} from "../../buhta-schema/SchemaObject";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
@@ -57,7 +60,15 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             keyFieldName: "id",
             parentKeyFieldName: "parentObjectId",
             positionFieldName: "position",
-            autoExpandNodesToLevel: 3
+            autoExpandNodesToLevel: 3,
+        };
+
+        dsParams.getNewRow = (parentObject?: DataRow) => {
+            return getNewSchemaObjectDialog({
+                callerComponent: this.component,
+                schema: this.component.props.schema,
+                parentSchemaObjectId: parentObject === undefined ? null : parentObject["id"]
+            });
         };
 
         this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);
@@ -135,9 +146,9 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
 
     }
 
-    private treeGridState: TreeGridState<BaseControl>;
+    private treeGridState: GridState<BaseControl>;
 
-    handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
+    handleTreeGridChangeFocusedRow = (state: GridState<BaseControl>) => {
         this.treeGridState = state;
         //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
         //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);

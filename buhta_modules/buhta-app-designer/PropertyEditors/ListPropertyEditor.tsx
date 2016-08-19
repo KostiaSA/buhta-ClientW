@@ -45,7 +45,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
 }
 
 export interface ListEditorParams extends AutoFormControlProps {
-    getNewListItem?: (listOwner: DesignedObject) => DesignedObject;
+    getNewListItem?: (listOwner: DesignedObject) => Promise<DesignedObject>;
     enableDragDrop?: boolean;
 }
 

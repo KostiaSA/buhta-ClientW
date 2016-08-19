@@ -52,9 +52,6 @@ var SqlTable = (function (_super) {
     __decorate([
         ListPropertyEditor_1.ListEditor({
             inputTab: "Колонки",
-            getNewListItem: function (table) {
-                return new SqlTableColumn(table);
-            }
         })
     ], SqlTable.prototype, "columns", void 0);
     return SqlTable;

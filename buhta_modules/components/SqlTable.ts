@@ -25,9 +25,9 @@ export class SqlTable extends DesignedObject {
 
     @ListEditor({
         inputTab: "Колонки",
-        getNewListItem: (table: SqlTable) => {
-            return new SqlTableColumn(table);
-        }
+        // getNewListItem: (table: SqlTable) => {
+        //     return new SqlTableColumn(table);
+        // }
     })
     columns: SqlTableColumn[] = [];
 

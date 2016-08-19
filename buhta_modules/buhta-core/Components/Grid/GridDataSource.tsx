@@ -11,35 +11,35 @@ export interface GridDataSourceRow {
     $$gridRowHeight?: number;
 }
 
-export interface GridDataSource {
+export interface GridDataSource<T extends GridDataSourceRow> {
     getIsAsync(): boolean;
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[];
-    getRowsAsync(): Promise<GridDataSourceRow[]>;
-    getRows(): GridDataSourceRow[];
-    getNewRow(parentRowData?: GridDataSourceRow): GridDataSourceRow;
-    addRow(rowData: GridDataSourceRow): void;
+    getRowsAsync(): Promise<T[]>;
+    getRows(): T[];
+    getNewRow(parentRowData?: T): Promise<T>;
+    addRow(rowData: T): void;
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;
 
-    deleteRow(rowData: GridDataSourceRow): void;
+    deleteRow(rowData: T): void;
 
-    canDragRow(rowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean;
+    canDragRow(rowIndex: T, mode: "move" | "copy"): boolean;
 
-    canDropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean;
+    canDropInto(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean;
 
-    canDropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean;
+    canDropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean;
 
-    canDropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean;
+    canDropAfter(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean;
 
-    dropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): void;
+    dropInto(dragRowData: T, targetRowData: T, mode: "move" | "copy"): void;
 
-    dropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): void;
+    dropAfter(dragRowData: T, targetRowData: T, mode: "move" | "copy"): void;
 
-    dropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): void;
+    dropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy"): void;
 
     refresh(): void;
 
-    getNodeChildDetails(dataItem: GridDataSourceRow): AgGrid.NodeChildDetails | null;
+    getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails | null;
 }
 
 

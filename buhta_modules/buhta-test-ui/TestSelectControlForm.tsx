@@ -16,7 +16,7 @@ import {GridColumnDef} from "../buhta-core/Components/Grid/GridColumn";
 import {GridColumnGroup} from "../buhta-core/Components/Grid/GridColumnGroup";
 import {getSchema} from "../buhta-schema/Schema";
 import {GridFlatDataSourceFromArray} from "../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
-import {DataTable} from "../buhta-sql/SqlDb";
+import {DataTable, DataRow} from "../buhta-sql/SqlDb";
 import {throwError} from "../buhta-core/Error";
 import {
     GridTreeDataSourceFromArrayParams,
@@ -79,7 +79,7 @@ export function showTestSelectControlForm() {
             // else
             //     (window as any)["xxxxx"] = tables;
 
-            let params: GridTreeDataSourceFromArrayParams = {
+            let params: GridTreeDataSourceFromArrayParams<DataRow> = {
                 keyFieldName: "id",
                 parentKeyFieldName: "parentId",
                 positionFieldName: "position",

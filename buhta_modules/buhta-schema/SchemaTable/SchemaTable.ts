@@ -1,11 +1,10 @@
-
 import {SchemaObject} from "../SchemaObject";
 import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyEditor";
 import {SchemaTableColumn} from "./SchemaTableColumn";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
 
-export class SchemaTable extends SchemaObject{
+export class SchemaTable extends SchemaObject {
 
     @StringEditor({
         inputCaption: "Имя",
@@ -18,9 +17,9 @@ export class SchemaTable extends SchemaObject{
 
     @ListEditor({
         inputTab: "Колонки",
-        getNewListItem: (table: SchemaTable) => {
-            return new SchemaTableColumn(table);
-        }
+        // getNewListItem: (table: SchemaTable) => {
+        //     return new SchemaTableColumn(table);
+        //}
     })
     columns: SchemaTableColumn[] = [];
 

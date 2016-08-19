@@ -11,7 +11,7 @@ import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
 import {GridColumnGroupProps} from "./GridColumnGroup";
 
-export interface GridTreeDataSourceFromArrayParams {
+export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> {
 
     keyFieldName: string; // key для treeMode parentKey
     parentKeyFieldName: string; // parentKey для treeMode parentKey
@@ -19,7 +19,7 @@ export interface GridTreeDataSourceFromArrayParams {
 
     autoExpandNodesToLevel?: number;
 
-    getNewRow?: () => GridDataSourceRow;
+    getNewRow?: (parentRowData?: T) => Promise<T>;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
 
@@ -54,21 +54,21 @@ export class InternalTreeNode {
     // }
 }
 
-export class GridTreeDataSourceFromArray implements GridDataSource {
-    constructor(_arrayObj: GridDataSourceRow[], public params: GridTreeDataSourceFromArrayParams) {
+export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> implements GridDataSource<T> {
+    constructor(_arrayObj: T[], public params: GridTreeDataSourceFromArrayParams<T>) {
         this.arrayObj = _arrayObj.filter((item) => item !== undefined);
         this.createNodesFromParentKey();
     }
 
 
-    protected arrayObj: GridDataSourceRow[];
+    protected arrayObj: T[];
     protected nodes: InternalTreeNode[] = [];
 
     getIsAsync() {
         return false;
     };
 
-    getRowsAsync(): Promise<GridDataSourceRow[]> {
+    getRowsAsync(): Promise<T[]> {
         throwAbstractError();
         throw "fake";
     }
@@ -87,7 +87,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
             });
     }
 
-    getRows(): GridDataSourceRow[] {
+    getRows(): T[] {
         return this.nodes.map((node) => {
             if (this.arrayObj[node.sourceIndex] === undefined)
                 throwError("getRows(): internal error");
@@ -95,22 +95,22 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
         }, this);
     }
 
-    getNewRow(): GridDataSourceRow {
+    getNewRow(parentRowData?: T): Promise<T> {
         if (this.params.getNewRow)
-            return this.params.getNewRow();
+            return this.params.getNewRow(parentRowData);
         else {
-            throwError("TreeGridTreeDataSourceFromArray: method getNewRow() not defined");
+            throwError("GridTreeDataSourceFromArray: method getNewRow() not defined");
             throw  "";  // fake typescript 2
         }
     }
 
-    addRow(row: GridDataSourceRow) {
+    addRow(row: T) {
         throwAbstractError();
         // this.arrayObj.push(row);
         // return this.arrayObj.length - 1;
     }
 
-    deleteRow(rowData: GridDataSourceRow) {
+    deleteRow(rowData: T) {
 
         let node = rowData.$$dataSourceTreeNode!;
         let arr = this.nodes;
@@ -146,11 +146,11 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
             return "Удалить запись!";
     }
 
-    canDragRow(rowIndex: GridDataSourceRow, mode: "move" | "copy"): boolean {
+    canDragRow(rowIndex: T, mode: "move" | "copy"): boolean {
         return true;
     }
 
-    canDropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean {
+    canDropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean {
 
         if (this.hasParent(targetRowData, dragRowData))
             return false;
@@ -158,14 +158,14 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
             return true;
     }
 
-    canDropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean {
+    canDropInto(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean {
         if (this.hasParent(targetRowData, dragRowData) || dragRowData.$$dataSourceTreeNode!.parent === targetRowData.$$dataSourceTreeNode)
             return false;
         else
             return true;
     }
 
-    canDropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy"): boolean {
+    canDropAfter(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean {
 
         if (this.hasParent(targetRowData, dragRowData))
             return false;
@@ -173,7 +173,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
             return true;
     }
 
-    dropBefore(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy") {
+    dropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy") {
         let dragNode = dragRowData.$$dataSourceTreeNode!;
         let targetNode = targetRowData.$$dataSourceTreeNode!;
 
@@ -210,7 +210,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
 
     }
 
-    dropInto(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy") {
+    dropInto(dragRowData: T, targetRowData: T, mode: "move" | "copy") {
         console.log("dropInto+");
         let dragNode = dragRowData.$$dataSourceTreeNode!;
         let targetNode = targetRowData.$$dataSourceTreeNode!;
@@ -227,7 +227,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
         dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
     }
 
-    dropAfter(dragRowData: GridDataSourceRow, targetRowData: GridDataSourceRow, mode: "move" | "copy") {
+    dropAfter(dragRowData: T, targetRowData: T, mode: "move" | "copy") {
         let dragNode = dragRowData.$$dataSourceTreeNode!;
         let targetNode = targetRowData.$$dataSourceTreeNode!;
 
@@ -275,7 +275,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
         }
     }
 
-    protected hasParent(rowData: GridDataSourceRow, parentData: GridDataSourceRow): boolean {
+    protected hasParent(rowData: T, parentData: T): boolean {
         let parentNode = rowData.$$dataSourceTreeNode;
         if (parentNode === parentData.$$dataSourceTreeNode)
             return true;
@@ -300,7 +300,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
         if (this.params.parentKeyFieldName === undefined)
             throwError("GridTreeDataSourceFromArray: property 'parentKeyFieldName' is undefined");
 
-        this.arrayObj.forEach((dataSourceItem: GridDataSourceRow, index: number) => {
+        this.arrayObj.forEach((dataSourceItem: T, index: number) => {
             let node = new InternalTreeNode();
             dataSourceItem.$$dataSourceTreeNode = node;
             node.sourceIndex = index;
@@ -387,7 +387,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
 
     }
 
-    getNodeChildDetails(dataItem: GridDataSourceRow): AgGrid.NodeChildDetails | null {
+    getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails | null {
 
         if (!dataItem)
             return null;

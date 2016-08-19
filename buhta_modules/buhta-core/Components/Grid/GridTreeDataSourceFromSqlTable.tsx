@@ -17,13 +17,13 @@ import {
 import {SqlDb, DataRow, DataTable} from "../../../buhta-sql/SqlDb";
 import {SelectStmt} from "../../../buhta-sql/SelectStmt";
 
-export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSourceFromArrayParams {
+export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSourceFromArrayParams<DataRow> {
     db: SqlDb;
     select: SelectStmt;
     tableName: string;
 }
 
-export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray {
+export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray<DataRow> {
     constructor(public params: GridTreeDataSourceFromSqlTableParams) {
         super([], params);
     }
@@ -34,10 +34,10 @@ export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray 
 
     protected isLoaded: boolean = false;
 
-    getRowsAsync(): Promise<GridDataSourceRow[]> {
+    getRowsAsync(): Promise<DataRow[]> {
         if (this.isLoaded) {
             return new Promise(
-                (resolve: (obj: GridDataSourceRow[]) => void, reject: (error: string) => void) => {
+                (resolve: (obj: DataRow[]) => void, reject: (error: string) => void) => {
                     resolve(this.getRows());
                 });
         }

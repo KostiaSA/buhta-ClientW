@@ -29,7 +29,7 @@ import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 export interface GridProps extends ComponentProps<GridState<GridDataSourceRow>> {
 
     dragDropNodes?: boolean;
-    dataSource: GridDataSource;
+    dataSource: GridDataSource<GridDataSourceRow>;
 
     enableDragDrop?: boolean;
 
@@ -103,7 +103,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
     }
 
     agGrid: AgGrid.GridOptions = {};
-    dataSource: GridDataSource;
+    dataSource: GridDataSource<T>;
     dragDropState: DragDropState = new DragDropState(this);
 
     isRowsToRender(): boolean {
@@ -640,29 +640,34 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
     openInsertForm() {
 
-        let designedObject = this.state.dataSource.getNewRow() as DesignedObject;
-
-        if (designedObject) {
-            let win =
-                <ObjectDesigner
-                    designedObject={designedObject}
-                    onSaveChanges={ () => {
+        this.state.dataSource.getNewRow().then((designedObject: DesignedObject)=> {
+            
+            if (designedObject) {
+                let win =
+                    <ObjectDesigner
+                        designedObject={designedObject}
+                        onSaveChanges={ () => {
                        this.state.dataSource.addRow(designedObject);
                        this.state.refresh();
                        this.state.setFocusedRow(designedObject);
                     }}
-                >
+                    >
 
-                </ObjectDesigner>;
+                    </ObjectDesigner>;
 
-            let openParam: OpenWindowParams = {
-                title: "добавление",
-                autoPosition: "parent-center",
-                parentWindowId: this.getParentWindowId()
-            };
+                let openParam: OpenWindowParams = {
+                    title: "добавление",
+                    autoPosition: "parent-center",
+                    parentWindowId: this.getParentWindowId()
+                };
 
-            this.getParentDesktop().openWindow(win, openParam);
-        }
+                this.getParentDesktop().openWindow(win, openParam);
+            }
+
+        });
+
+        //let designedObject = this.state.dataSource.getNewRow() as DesignedObject;
+
     }
 
     openEditForm(rowData: GridDataSourceRow) {

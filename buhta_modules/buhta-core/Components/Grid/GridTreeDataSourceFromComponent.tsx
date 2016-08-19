@@ -16,14 +16,14 @@ export interface GridTreeDataSourceFromComponentParams {
 
     positionFieldName?: string;  // sort
 
-    getNewRow?: () => GridDataSourceRow;
+    getNewRow?: () => Promise<BaseControl>;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
 
 }
 
 
-export class GridTreeDataSourceFromComponent implements GridDataSource {
+export class GridTreeDataSourceFromComponent implements GridDataSource<BaseControl> {
     constructor(private nodes: BaseControl[], public params: GridTreeDataSourceFromComponentParams) {
         this.set$$parentForAllNodes();
     }
@@ -32,7 +32,7 @@ export class GridTreeDataSourceFromComponent implements GridDataSource {
         return false;
     };
 
-    getRowsAsync(): Promise<GridDataSourceRow[]> {
+    getRowsAsync(): Promise<BaseControl[]> {
         throwAbstractError();
         throw "fake";
     }
@@ -41,11 +41,11 @@ export class GridTreeDataSourceFromComponent implements GridDataSource {
         return [];
     }
 
-    getRows(): GridDataSourceRow[] {
+    getRows(): BaseControl[] {
         return this.nodes;
     }
 
-    getNewRow(parentNode?: BaseControl): GridDataSourceRow {
+    getNewRow(parentNode?: BaseControl): Promise<BaseControl> {
         if (this.params.getNewRow)
             return this.params.getNewRow();
         else {
