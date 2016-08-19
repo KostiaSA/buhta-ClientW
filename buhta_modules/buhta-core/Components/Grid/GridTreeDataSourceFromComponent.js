@@ -7,6 +7,14 @@ var GridTreeDataSourceFromComponent = (function () {
         this.params = params;
         this.set$$parentForAllNodes();
     }
+    GridTreeDataSourceFromComponent.prototype.getIsAsync = function () {
+        return false;
+    };
+    ;
+    GridTreeDataSourceFromComponent.prototype.getRowsAsync = function () {
+        Error_1.throwAbstractError();
+        throw "fake";
+    };
     GridTreeDataSourceFromComponent.prototype.getGridColumns = function () {
         return [];
     };

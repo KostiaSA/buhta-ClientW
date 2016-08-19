@@ -5,7 +5,7 @@ import * as AgGrid from "ag-grid";
 import {GridColumnProps} from "./GridColumn";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
-import {throwError} from "../../Error";
+import {throwError, throwAbstractError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {GridColumnGroupProps} from "./GridColumnGroup";
 import {removeFromArray} from "../../arrayUtils";
@@ -24,7 +24,18 @@ export class GridFlatDataSourceFromArray implements GridDataSource {
         this.arrayObj = _arrayObj.filter((item) => item !== undefined);
 
     }
+    
     private arrayObj: GridDataSourceRow[];
+
+    getIsAsync() {
+        return false;
+    };
+
+    getRowsAsync(): Promise<GridDataSourceRow[]> {
+        throwAbstractError();
+        throw "fake";
+    }
+    
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
         if (this.arrayObj.length === 0)
             return [];

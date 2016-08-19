@@ -61,9 +61,17 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
     }
 
 
-    private arrayObj: GridDataSourceRow[];
-    private nodes: InternalTreeNode[] = [];
+    protected arrayObj: GridDataSourceRow[];
+    protected nodes: InternalTreeNode[] = [];
 
+    getIsAsync() {
+        return false;
+    };
+
+    getRowsAsync(): Promise<GridDataSourceRow[]> {
+        throwAbstractError();
+        throw "fake";
+    }
 
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
 
@@ -258,7 +266,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
 
     }
 
-    private recalcChildrenPositions(nodes: InternalTreeNode[]) {
+    protected recalcChildrenPositions(nodes: InternalTreeNode[]) {
         if (this.params.positionFieldName !== undefined) {
             nodes.forEach((node: InternalTreeNode, index: number) => {
                 let nodeData = this.arrayObj[node.sourceIndex];
@@ -267,7 +275,7 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
         }
     }
 
-    private hasParent(rowData: GridDataSourceRow, parentData: GridDataSourceRow): boolean {
+    protected hasParent(rowData: GridDataSourceRow, parentData: GridDataSourceRow): boolean {
         let parentNode = rowData.$$dataSourceTreeNode;
         if (parentNode === parentData.$$dataSourceTreeNode)
             return true;
@@ -279,9 +287,9 @@ export class GridTreeDataSourceFromArray implements GridDataSource {
         return false;
     }
 
-    private nodeList: {[key: string]: InternalTreeNode} = {};
+    protected nodeList: {[key: string]: InternalTreeNode} = {};
 
-    private createNodesFromParentKey() {
+    protected createNodesFromParentKey() {
 
         this.nodes = [];
         this.nodeList = {};

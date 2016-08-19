@@ -18,6 +18,7 @@ import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectD
 import {OpenWindowParams} from "../Desktop/Desktop";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 
+
 ///////////// ВНИМАНИЕ !  //////////////////
 // ag-grid.noStyle.js был запатчен, иначе содержимое ячейки для tree-column будет вставляться перед иконками плюс/минус
 // 1. ищем строку:   resultFromRenderer = cellRendererFunc(params);
@@ -533,6 +534,17 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
         this.createColumns();
         new AgGrid.Grid(this.agGridNativeElement, this.state.agGrid);
+
+        if (this.props.dataSource.getIsAsync()) {
+            this.state.agGrid.api!.showLoadingOverlay();
+            this.props.dataSource.getRowsAsync()
+                .then((rows) => {
+                    this.state.refresh();
+                })
+                .catch((error) => {
+                    this.showErrorWindow(error);
+                });
+        }
 
         if (this.props.enableDragDrop === true) {
             this.enableDragDrop();

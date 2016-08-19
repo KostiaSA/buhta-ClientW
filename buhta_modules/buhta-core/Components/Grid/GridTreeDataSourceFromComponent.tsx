@@ -27,6 +27,15 @@ export class GridTreeDataSourceFromComponent implements GridDataSource {
     constructor(private nodes: BaseControl[], public params: GridTreeDataSourceFromComponentParams) {
         this.set$$parentForAllNodes();
     }
+    
+    getIsAsync() {
+        return false;
+    };
+
+    getRowsAsync(): Promise<GridDataSourceRow[]> {
+        throwAbstractError();
+        throw "fake";
+    }
 
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
         return [];

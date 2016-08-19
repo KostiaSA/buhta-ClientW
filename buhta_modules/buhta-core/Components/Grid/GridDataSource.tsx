@@ -12,7 +12,9 @@ export interface GridDataSourceRow {
 }
 
 export interface GridDataSource {
+    getIsAsync(): boolean;
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[];
+    getRowsAsync(): Promise<GridDataSourceRow[]>;
     getRows(): GridDataSourceRow[];
     getNewRow(): GridDataSourceRow;
     addRow(rowData: GridDataSourceRow): void;

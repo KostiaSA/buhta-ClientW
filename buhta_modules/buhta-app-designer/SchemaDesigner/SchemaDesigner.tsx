@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
-import {ComponentProps, Component} from "../../buhta-core/Components/Component";
+import {ComponentProps, Component, ComponentState} from "../../buhta-core/Components/Component";
 import {DesignedObject} from "../DesignedObject";
 import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from "../PropertyEditors/BasePropertyEditor";
 
@@ -27,20 +27,55 @@ import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorNam
 import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
 import {SqlDb} from "../../buhta-sql/SqlDb";
 import {Schema} from "../../buhta-schema/Schema";
+import Grid from "../../buhta-core/Components/Grid/Grid";
+import {GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
+import {
+    GridTreeDataSourceFromSqlTable,
+    GridTreeDataSourceFromSqlTableParams
+} from "../../buhta-core/Components/Grid/GridTreeDataSourceFromSqlTable";
+import {SelectStmt} from "../../buhta-sql/SelectStmt";
 
 
-export interface SchemaDesignerProps extends ComponentProps<any> {
+export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
     schema: Schema;
 }
 
-export class SchemaDesigner extends Component<SchemaDesignerProps, any> {
+export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
+
+    //dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
+    dataSource: GridTreeDataSourceFromSqlTable;
+
+    createDataSource() {
+        let select = new SelectStmt();
+        select.table("TestParentKey");
+        select.column("id", "parentId", "num", "name", "position");
+
+        let dsParams: GridTreeDataSourceFromSqlTableParams = {
+            db: this.component.props.schema.db,
+            select: select,
+            tableName: "TestParentKey",
+            keyFieldName: "id",
+            parentKeyFieldName: "parentId",
+            positionFieldName: "position",
+            autoExpandNodesToLevel: 3
+        };
+
+        this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);
+    }
+
+}
+
+export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesignerState> {
     constructor(props: SchemaDesignerProps, context: any) {
         super(props, context);
         this.props = props;
+        this.state = new SchemaDesignerState(this);
+        this.state.createDataSource();
     }
 
     protected willMount() {
         super.willMount();
+
     }
 
     protected willUnmount() {
@@ -109,10 +144,7 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, any> {
 
     }
 
-
     render() {
-        //let dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
-        let dataSource:any = {};//new TreeGridComponentChildrenDataSource(this.clonedDesignedObject.children, dataSourceParam);
 
         this.addClassName("schema-designer");
 //        this.addProps({onChange: this.props.onChange});
@@ -130,28 +162,25 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, any> {
                             <Tab key="1" title="Основная">
                                 <Layout type="column" sizeTo="parent">
                                     <Flex>
-                                        <TreeGrid
+                                        <Grid
                                             className="schema-tree-grid"
-                                            dataSource={ dataSource }
-                                            treeMode="parentKey"
-                                            autoExpandNodesToLevel={100}
+                                            dataSource={ this.state.dataSource }
                                             editable={true}
-                                            dragDropNodes={true}
-                                            onChangeFocusedRow={ this.handleTreeGridChangeFocusedRow }
+                                            enableDragDrop={true}
                                         >
-                                            <TreeGridColumns>
-                                                <TreeGridColumn caption="Объект" propertyName="$$controlName"
-                                                                showHierarchyTree={true}
-                                                                width={300}>
-                                                </TreeGridColumn>
-                                                <TreeGridColumn caption="Свойства" propertyName="$$controlMainProps"
-                                                                width={300}>
-                                                </TreeGridColumn>
-                                                <TreeGridColumn caption="События" propertyName="$$controlEvents"
-                                                                width={300}>
-                                                </TreeGridColumn>
-                                            </TreeGridColumns>
-                                        </TreeGrid>
+
+                                            <GridColumnDef caption="Объект" propertyName="num"
+                                                           showHierarchyTree={true}
+                                                           width={300}>
+                                            </GridColumnDef>
+                                            <GridColumnDef caption="Свойства" propertyName="name"
+                                                           width={300}>
+                                            </GridColumnDef>
+                                            <GridColumnDef caption="События" propertyName="position"
+                                                           width={300}>
+                                            </GridColumnDef>
+
+                                        </Grid>
                                     </Flex>
                                     <Fixed>
 

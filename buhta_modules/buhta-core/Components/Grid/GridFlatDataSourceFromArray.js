@@ -9,6 +9,14 @@ var GridFlatDataSourceFromArray = (function () {
         this.params = params;
         this.arrayObj = _arrayObj.filter(function (item) { return item !== undefined; });
     }
+    GridFlatDataSourceFromArray.prototype.getIsAsync = function () {
+        return false;
+    };
+    ;
+    GridFlatDataSourceFromArray.prototype.getRowsAsync = function () {
+        Error_1.throwAbstractError();
+        throw "fake";
+    };
     GridFlatDataSourceFromArray.prototype.getGridColumns = function () {
         var _this = this;
         if (this.arrayObj.length === 0)
