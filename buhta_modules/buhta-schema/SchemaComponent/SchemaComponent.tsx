@@ -11,6 +11,7 @@ import {SchemaComponentDesigner} from "../../buhta-app-designer/SchemaComponentD
 import {PropertyEditorInfo} from "../../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 import {PropertyControl} from "../../buhta-ui/PropertyControl";
 import {ComponentControl} from "../../buhta-ui/ComponentControl";
+import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
 
 export class SchemaComponent extends SchemaObject {
     children: (BaseControl)[] = [];
@@ -163,3 +164,11 @@ export class SchemaComponentRuntimeContext {
         return this.$$vars[varName];
     }
 }
+
+registerSchemaObjectType({
+    id: "23772048-abea-4a53-889f-b77022ac04d7",
+    name: "Компонент формы",
+    description: "Компонент экранной формы",
+    type: SchemaComponent
+});
+

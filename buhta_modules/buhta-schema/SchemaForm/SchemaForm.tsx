@@ -3,6 +3,7 @@ import {SchemaComponent} from "../SchemaComponent/SchemaComponent";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {Component} from "../../buhta-core/Components/Component";
 import {PanelProps, Panel} from "../../buhta-core/Components/Panel/Panel";
+import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
 
 export class SchemaForm extends SchemaComponent {
 
@@ -44,3 +45,11 @@ export class SchemaForm extends SchemaComponent {
 
     }
 }
+
+registerSchemaObjectType({
+    id: "23e1230f-6f7c-461b-84c3-3dac6916398d",
+    name: "Форма",
+    description: "Экранная форма",
+    type: SchemaForm
+});
+

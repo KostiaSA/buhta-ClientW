@@ -45,7 +45,7 @@ export class GridTreeDataSourceFromComponent implements GridDataSource {
         return this.nodes;
     }
 
-    getNewRow(): GridDataSourceRow {
+    getNewRow(parentNode?: BaseControl): GridDataSourceRow {
         if (this.params.getNewRow)
             return this.params.getNewRow();
         else {

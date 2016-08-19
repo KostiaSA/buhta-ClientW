@@ -16,7 +16,7 @@ export interface GridDataSource {
     getGridColumns(): (GridColumnProps | GridColumnGroupProps)[];
     getRowsAsync(): Promise<GridDataSourceRow[]>;
     getRows(): GridDataSourceRow[];
-    getNewRow(): GridDataSourceRow;
+    getNewRow(parentRowData?: GridDataSourceRow): GridDataSourceRow;
     addRow(rowData: GridDataSourceRow): void;
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;

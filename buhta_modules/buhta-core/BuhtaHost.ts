@@ -14,15 +14,23 @@ import {OneWayBinder_JsCode} from "../buhta-schema/OneWayBinder/OneWayBinder_JsC
 import {PropertyControl} from "../buhta-ui/PropertyControl";
 import {SchemaComponent} from "../buhta-schema/SchemaComponent/SchemaComponent";
 import {ComponentControl} from "../buhta-ui/ComponentControl";
+import {registerSchemaObjectType, registeredSchemaObjectTypes} from "../buhta-schema/SchemaObjectTypeInfo";
+import {SchemaDatabase} from "../buhta-schema/SchemaDatabase";
 
 export let buhtaHost: any = {};
 
+buhtaHost.registeredSchemaObjectTypes = registeredSchemaObjectTypes;
+
 buhtaHost.SchemaObject = SchemaObject;
+
 buhtaHost.SchemaTable = SchemaTable;
 buhtaHost.SchemaTableColumn = SchemaTableColumn;
 
 buhtaHost.SchemaForm = SchemaForm;
 buhtaHost.SchemaComponent = SchemaComponent;
+
+buhtaHost.SchemaDatabase = SchemaDatabase;
+
 
 buhtaHost.ButtonControl = ButtonControl;
 buhtaHost.PanelControl = PanelControl;

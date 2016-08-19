@@ -47,15 +47,15 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
 
     createDataSource() {
         let select = new SelectStmt();
-        select.table("TestParentKey");
-        select.column("id", "parentId", "num", "name", "position");
+        select.table("SchemaObject");
+        select.column("id", "parentObjectId", "name", "typeId", "position", "description");
 
         let dsParams: GridTreeDataSourceFromSqlTableParams = {
             db: this.component.props.schema.db,
             select: select,
-            tableName: "TestParentKey",
+            tableName: "SchemaObject",
             keyFieldName: "id",
-            parentKeyFieldName: "parentId",
+            parentKeyFieldName: "parentObjectId",
             positionFieldName: "position",
             autoExpandNodesToLevel: 3
         };
@@ -169,15 +169,15 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
                                             enableDragDrop={true}
                                         >
 
-                                            <GridColumnDef caption="Объект" propertyName="num"
+                                            <GridColumnDef caption="Объект" propertyName="name"
                                                            showHierarchyTree={true}
                                                            width={300}>
                                             </GridColumnDef>
-                                            <GridColumnDef caption="Свойства" propertyName="name"
-                                                           width={300}>
+                                            <GridColumnDef caption="Свойства" propertyName="typeName"
+                                                           width={100}>
                                             </GridColumnDef>
                                             <GridColumnDef caption="События" propertyName="position"
-                                                           width={300}>
+                                                           width={100}>
                                             </GridColumnDef>
 
                                         </Grid>

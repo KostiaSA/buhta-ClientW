@@ -1043,8 +1043,12 @@ export class SqlDb {
                                                                 dataRow[col.name] = row[index];
 
                                                         }
-                                                        else
-                                                            dataRow[col.name] = row[index].toLowerCase();
+                                                        else {
+                                                            if (row[index] !== null && row[index] !== undefined)
+                                                                dataRow[col.name] = row[index].toLowerCase();
+                                                            else
+                                                                dataRow[col.name] = row[index];
+                                                        }
                                                     }
                                                     else if (col.isPgBigInt) {
                                                         dataRow[col.name] = Number.parseInt(row[index]);

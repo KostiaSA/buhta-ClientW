@@ -840,6 +840,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
             let form = new SchemaForm(getSchema());
             form.id = "1F2D95A0-5AF4-11E6-91EA-8FBA7805DE8D";
+            form.name="Тестовая форма 777";
+            form.description="Это описание 'Тестовая форма 777'";
 
             let v = new LocalVariableControl();
             v.variableName = "ИмяКнопки";
@@ -1028,6 +1030,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                         <Layout type="row" sizeTo="parent">
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
                                 Fixed Sidebar 123<br/>
+                                <button onClick={() => { getSchema().initSchemaStorage().then(()=>{alert("ok")}).catch((err)=>{alert(err)}); }}> test init schema storage</button>
+                                <br/>
                                 <button onClick={() => { this.testOpenWindow(); }}> test Promise-Each</button>
                                 <br/>
                                 <button onClick={() => { this.testOpenObjectDesigner(); }}>open designer</button>

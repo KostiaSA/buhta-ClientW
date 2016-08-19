@@ -2,6 +2,7 @@ import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {Schema} from "./Schema";
 import {getNewGuid} from "../buhta-sql/SqlCore";
 import {throwAbstractError} from "../buhta-core/Error";
+import {SchemaObjectTypeInfo} from "./SchemaObjectTypeInfo";
 
 export type SchemaObjectId = string;
 
@@ -53,6 +54,9 @@ export class SchemaObject extends DesignedObject {
         return this.schema.saveObject(this);
     }
 
+    getObjectTypeInfo(): SchemaObjectTypeInfo {
+        return (this.constructor as any).$$schemaObjectTypeInfo;
+    }
 
 }
 

@@ -3,6 +3,7 @@ import {SchemaObject} from "../SchemaObject";
 import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyEditor";
 import {SchemaTableColumn} from "./SchemaTableColumn";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
+import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
 
 export class SchemaTable extends SchemaObject{
 
@@ -13,8 +14,8 @@ export class SchemaTable extends SchemaObject{
         inputDescription: "Имя таблицы"
     })
     name: string;
-    
-    
+
+
     @ListEditor({
         inputTab: "Колонки",
         getNewListItem: (table: SchemaTable) => {
@@ -33,3 +34,11 @@ export class SchemaTable extends SchemaObject{
 
 
 }
+
+registerSchemaObjectType({
+    id: "1d702193-8801-4a72-971b-4095aeaab247",
+    name: "Таблица",
+    description: "Sql таблица",
+    type: SchemaTable
+});
+

@@ -12,6 +12,8 @@ export interface SchemaObjectTable {
     parentObjectId?: SchemaObjectId;
     name?: string;
     description?: string;
+    typeId?: string;
+    typeName?: string;
     createDate?: Date;
     createUserId?: SchemaObjectId;
     changeDate?: Date;

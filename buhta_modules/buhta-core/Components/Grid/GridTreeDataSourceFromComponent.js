@@ -21,7 +21,7 @@ var GridTreeDataSourceFromComponent = (function () {
     GridTreeDataSourceFromComponent.prototype.getRows = function () {
         return this.nodes;
     };
-    GridTreeDataSourceFromComponent.prototype.getNewRow = function () {
+    GridTreeDataSourceFromComponent.prototype.getNewRow = function (parentNode) {
         if (this.params.getNewRow)
             return this.params.getNewRow();
         else {
