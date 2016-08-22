@@ -181,8 +181,8 @@ var SchemaComponentDesigner = (function (_super) {
     // }
     SchemaComponentDesigner.prototype.render = function () {
         var _this = this;
-        var dataSourceParam = {};
-        var dataSource = new GridTreeDataSourceFromComponent_1.GridTreeDataSourceFromComponent(this.clonedDesignedObject.children, dataSourceParam);
+        var dataSourceParam = { nodes: this.clonedDesignedObject.children };
+        var dataSource = new GridTreeDataSourceFromComponent_1.GridTreeDataSourceFromComponent(dataSourceParam);
         this.addClassName("component-designer");
         this.addProps({ onChange: this.props.onChange });
         this.addStyles({ height: "100%" });

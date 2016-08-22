@@ -31,12 +31,12 @@ export class Schema {
         delete this.objects_cache[id];
     }
 
-    getObject<T extends SchemaObject>(id: SchemaObjectId): Promise<T|string> {
+    getObject<T extends SchemaObject>(id: SchemaObjectId): Promise<T> {
         // foreach (var helperTable in HelperTables)
         // if (helperTable.ID==ID)
         // return helperTable as T;
 
-        return new Promise<T|string>(
+        return new Promise<T>(
             (resolve: (obj: T) => void, reject: (error: string) => void) => {
                 let objConstructor = this.objects_cache[id];
 
@@ -57,7 +57,7 @@ export class Schema {
                             resolve(obj as T);
                         })
                         .catch((error) => {
-                            reject(error);
+                            throwError("Ошибка загрузки компонента (SchemaObject). Не найден компонент с id='" + id.toLowerCase() + "', " + error);
                         });
 
                 }

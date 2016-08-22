@@ -647,58 +647,59 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
     openInsertForm() {
 
-        this.state.dataSource.getNewRow().then((designedObject: DesignedObject)=> {
+        // this.state.dataSource.getNewRow().then((designedObject: DesignedObject)=> {
+        //
+        //     if (designedObject) {
+        //         let win =
+        //             <ObjectDesigner
+        //                 designedObject={designedObject}
+        //                 onSaveChanges={ () => {
+        //                this.state.dataSource.addRow(designedObject);
+        //                this.state.refresh();
+        //                this.state.setFocusedRow(designedObject);
+        //             }}
+        //             >
+        //
+        //             </ObjectDesigner>;
+        //
+        //         let openParam: OpenWindowParams = {
+        //             title: "добавление",
+        //             autoPosition: "parent-center",
+        //             parentWindowId: this.getParentWindowId()
+        //         };
+        //
+        //         this.getParentDesktop().openWindow(win, openParam);
+        //     }
+        //
+        // });
 
-            if (designedObject) {
-                let win =
-                    <ObjectDesigner
-                        designedObject={designedObject}
-                        onSaveChanges={ () => {
-                       this.state.dataSource.addRow(designedObject);
-                       this.state.refresh();
-                       this.state.setFocusedRow(designedObject);
-                    }}
-                    >
-
-                    </ObjectDesigner>;
-
-                let openParam: OpenWindowParams = {
-                    title: "добавление",
-                    autoPosition: "parent-center",
-                    parentWindowId: this.getParentWindowId()
-                };
-
-                this.getParentDesktop().openWindow(win, openParam);
-            }
-
-        });
-
-        //let designedObject = this.state.dataSource.getNewRow() as DesignedObject;
 
     }
 
     openEditForm(rowData: GridDataSourceRow) {
 
-        if (!(rowData instanceof DesignedObject))
-            throwError("Grid:openDeleteForm(): rowData must be 'DesignedObject'");
-
-        let designedObject = rowData as DesignedObject;
-
-        let win =
-            <ObjectDesigner
-                designedObject={designedObject}
-                onSaveChanges={ () => { this.state.refresh(); }}
-            >
-
-            </ObjectDesigner>;
-
-        let openParam: OpenWindowParams = {
-            title: "редактирование",
-            autoPosition: "parent-center",
-            parentWindowId: this.getParentWindowId()
-        };
-
-        this.getParentDesktop().openWindow(win, openParam);
+        this.state.dataSource.openEditForm(this.state, rowData);
+        //
+        // if (!(rowData instanceof DesignedObject))
+        //     throwError("Grid:openDeleteForm(): rowData must be 'DesignedObject'");
+        //
+        // let designedObject = rowData as DesignedObject;
+        //
+        // let win =
+        //     <ObjectDesigner
+        //         designedObject={designedObject}
+        //         onSaveChanges={ () => { this.state.refresh(); }}
+        //     >
+        //
+        //     </ObjectDesigner>;
+        //
+        // let openParam: OpenWindowParams = {
+        //     title: "редактирование",
+        //     autoPosition: "parent-center",
+        //     parentWindowId: this.getParentWindowId()
+        // };
+        //
+        // this.getParentDesktop().openWindow(win, openParam);
 
     }
 

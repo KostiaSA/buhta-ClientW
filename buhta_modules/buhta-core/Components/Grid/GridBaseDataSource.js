@@ -1,0 +1,90 @@
+"use strict";
+var DesignedObject_1 = require("../../../buhta-app-designer/DesignedObject");
+var Error_1 = require("../../Error");
+var getInstantPromise_1 = require("../../getInstantPromise");
+var GridBaseDataSource = (function () {
+    function GridBaseDataSource(params) {
+        this.params = params;
+    }
+    GridBaseDataSource.prototype.getIsAsync = function () {
+        return false;
+    };
+    ;
+    GridBaseDataSource.prototype.getRowsAsync = function () {
+        Error_1.throwAbstractError();
+        throw "fake";
+    };
+    GridBaseDataSource.prototype.getGridColumns = function () {
+        return this.params.gridColumns;
+    };
+    GridBaseDataSource.prototype.getEmptyDataSourceMessage = function () {
+        if (this.params.getEmptyDataSourceMessage)
+            return this.params.getEmptyDataSourceMessage();
+        else
+            return "Пустой список.";
+    };
+    GridBaseDataSource.prototype.getDeleteRowMessage = function () {
+        if (this.params.getDeleteRowMessage)
+            return this.params.getDeleteRowMessage();
+        else
+            return "Удалить запись!";
+    };
+    GridBaseDataSource.prototype.canDragRow = function (rowIndex, mode) {
+        return false;
+    };
+    GridBaseDataSource.prototype.canDropInto = function (dragRowIndex, targetRowIndex, mode) {
+        return false;
+    };
+    GridBaseDataSource.prototype.canDropAfter = function (dragRowIndex, targetRowIndex, mode) {
+        return false;
+    };
+    GridBaseDataSource.prototype.canDropBefore = function (dragRowIndex, targetRowIndex, mode) {
+        return false;
+    };
+    GridBaseDataSource.prototype.dropBefore = function (dragRowIndex, targetRowIndex, mode) {
+    };
+    GridBaseDataSource.prototype.dropInto = function (dragRowIndex, targetRowIndex, mode) {
+    };
+    GridBaseDataSource.prototype.dropAfter = function (dragRowIndex, targetRowIndex, mode) {
+    };
+    GridBaseDataSource.prototype.refresh = function () {
+    };
+    GridBaseDataSource.prototype.addRow = function (row) {
+        Error_1.throwAbstractError();
+    };
+    GridBaseDataSource.prototype.getNodeChildDetails = function (dataItem) {
+        return null;
+    };
+    GridBaseDataSource.prototype.getDesignedObjectOfRow = function (rowData) {
+        if (this.params.getDesignedObjectOfRow !== undefined) {
+            return this.params.getDesignedObjectOfRow(rowData);
+        }
+        else if (rowData instanceof DesignedObject_1.DesignedObject)
+            return getInstantPromise_1.getInstantPromise(rowData);
+        else {
+            Error_1.throwError("GridBaseDataSource.getDesignedObjectOfRow(): could not convert rowData to 'DesignedObject'");
+            throw "fake";
+        }
+    };
+    GridBaseDataSource.prototype.openEditForm = function (grid, rowData) {
+        this.getDesignedObjectOfRow(rowData).then(function (designedObject) {
+            // let win =
+            //     <ObjectDesigner
+            //         designedObject={designedObject}
+            //         onSaveChanges={ () => { grid.refresh(); }}
+            //     >
+            //
+            //     </ObjectDesigner>;
+            var win = designedObject.$$getDesigner({ designedObject: designedObject });
+            var openParam = {
+                title: "редактирование",
+                autoPosition: "parent-center",
+                parentWindowId: grid.component.getParentWindowId()
+            };
+            grid.component.getParentDesktop().openWindow(win, openParam);
+        });
+    };
+    return GridBaseDataSource;
+}());
+exports.GridBaseDataSource = GridBaseDataSource;
+//# sourceMappingURL=GridBaseDataSource.js.map

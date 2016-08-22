@@ -1,13 +1,20 @@
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var _ = require("lodash");
 var Error_1 = require("../../Error");
 var getGridColumnInfos_1 = require("./getGridColumnInfos");
 var arrayUtils_1 = require("../../arrayUtils");
-var GridFlatDataSourceFromArray = (function () {
-    function GridFlatDataSourceFromArray(_arrayObj, params) {
-        if (params === void 0) { params = {}; }
+var GridBaseDataSource_1 = require("./GridBaseDataSource");
+var GridFlatDataSourceFromArray = (function (_super) {
+    __extends(GridFlatDataSourceFromArray, _super);
+    function GridFlatDataSourceFromArray(params) {
+        _super.call(this, params);
         this.params = params;
-        this.arrayObj = _arrayObj.filter(function (item) { return item !== undefined; });
+        this.arrayObj = params.arrayObj.filter(function (item) { return item !== undefined; });
     }
     GridFlatDataSourceFromArray.prototype.getIsAsync = function () {
         return false;
@@ -48,46 +55,8 @@ var GridFlatDataSourceFromArray = (function () {
     };
     GridFlatDataSourceFromArray.prototype.deleteRow = function (rowData) {
         arrayUtils_1.removeFromArray(this.arrayObj, rowData);
-        // let deletedItems = _.pullAt(this.arrayObj, rowIndex);
-        // if (deletedItems.length === 0)
-        //     throwError("TreeGridArrayDataSource.deleteRow(): invalid rowIndex (" + rowIndex + ")");
-    };
-    GridFlatDataSourceFromArray.prototype.getEmptyDataSourceMessage = function () {
-        if (this.params.getEmptyDataSourceMessage)
-            return this.params.getEmptyDataSourceMessage();
-        else
-            return "Пустой список.";
-    };
-    GridFlatDataSourceFromArray.prototype.getDeleteRowMessage = function () {
-        if (this.params.getDeleteRowMessage)
-            return this.params.getDeleteRowMessage();
-        else
-            return "Удалить запись!";
-    };
-    GridFlatDataSourceFromArray.prototype.canDragRow = function (rowIndex, mode) {
-        return true;
-    };
-    GridFlatDataSourceFromArray.prototype.canDropInto = function (dragRowIndex, targetRowIndex, mode) {
-        return false;
-    };
-    GridFlatDataSourceFromArray.prototype.canDropAfter = function (dragRowIndex, targetRowIndex, mode) {
-        return false;
-    };
-    GridFlatDataSourceFromArray.prototype.canDropBefore = function (dragRowIndex, targetRowIndex, mode) {
-        return false;
-    };
-    GridFlatDataSourceFromArray.prototype.dropBefore = function (dragRowIndex, targetRowIndex, mode) {
-    };
-    GridFlatDataSourceFromArray.prototype.dropInto = function (dragRowIndex, targetRowIndex, mode) {
-    };
-    GridFlatDataSourceFromArray.prototype.dropAfter = function (dragRowIndex, targetRowIndex, mode) {
-    };
-    GridFlatDataSourceFromArray.prototype.refresh = function () {
-    };
-    GridFlatDataSourceFromArray.prototype.getNodeChildDetails = function (dataItem) {
-        return { group: false };
     };
     return GridFlatDataSourceFromArray;
-}());
+}(GridBaseDataSource_1.GridBaseDataSource));
 exports.GridFlatDataSourceFromArray = GridFlatDataSourceFromArray;
 //# sourceMappingURL=GridFlatDataSourceFromArray.js.map

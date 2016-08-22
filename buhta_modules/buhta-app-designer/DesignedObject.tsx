@@ -1,8 +1,11 @@
-﻿import {PropertyEditorInfo, BasePropertyEditor} from "./PropertyEditors/BasePropertyEditor";
+﻿import * as React from "react";
 import * as _ from "lodash";
+
+import {PropertyEditorInfo, BasePropertyEditor} from "./PropertyEditors/BasePropertyEditor";
 //import {ObservableOnChangeHandler} from "../buhta-core/Observable";
 import {getObjectConstructorName} from "../buhta-core/getObjectConstructorName";
 import {GridDataSourceRow} from "../buhta-core/Components/Grid/GridDataSource";
+import {ObjectDesigner, ObjectDesignerProps} from "./ObjectDesigner/ObjectDesigner";
 
 
 export class DesignedObject implements GridDataSourceRow {
@@ -46,6 +49,16 @@ export class DesignedObject implements GridDataSourceRow {
 
 
     }
+
+    $$getDesigner(props: ObjectDesignerProps): JSX.Element {
+        let win =
+            <ObjectDesigner
+                {...props}
+            >
+            </ObjectDesigner>;
+        return win;
+    }
+
 
     // id: string;
     // name: string;
@@ -109,10 +122,6 @@ export class DesignedObject implements GridDataSourceRow {
     //
     //     return tsCode.getCode();
     // }
-
-    testProc1 = () => {
-
-    };
 
 }
 

@@ -8,7 +8,7 @@ var GridTreeDataSourceFromArray_1 = require("./GridTreeDataSourceFromArray");
 var GridTreeDataSourceFromSqlTable = (function (_super) {
     __extends(GridTreeDataSourceFromSqlTable, _super);
     function GridTreeDataSourceFromSqlTable(params) {
-        _super.call(this, [], params);
+        _super.call(this, params);
         this.params = params;
         this.isLoaded = false;
     }

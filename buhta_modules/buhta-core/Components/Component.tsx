@@ -24,7 +24,10 @@ export interface ComponentProps<S> extends React.ClassAttributes<Element> {
     onGetState?: (state: S) => void;
     $$control?: BaseControl;
     $$schemaComponent?: SchemaComponent;
-    key?: any;
+
+    // нужны, потому что есть в React.ClassAttributes
+    key?: React.Key;
+    ref?: React.Ref<any>;
 }
 
 

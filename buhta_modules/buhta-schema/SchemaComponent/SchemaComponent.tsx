@@ -7,7 +7,10 @@ import {StringEditor, StringPropertyEditor} from "../../buhta-app-designer/Prope
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {throwAbstractError} from "../../buhta-core/Error";
 import {ComponentContext, ComponentProps, Component} from "../../buhta-core/Components/Component";
-import {SchemaComponentDesigner} from "../../buhta-app-designer/SchemaComponentDesigner/SchemaComponentDesigner";
+import {
+    SchemaComponentDesigner,
+    SchemaComponentDesignerProps
+} from "../../buhta-app-designer/SchemaComponentDesigner/SchemaComponentDesigner";
 import {PropertyEditorInfo} from "../../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 import {PropertyControl} from "../../buhta-ui/PropertyControl";
 import {ComponentControl} from "../../buhta-ui/ComponentControl";
@@ -103,10 +106,10 @@ export class SchemaComponent extends SchemaObject {
     //     return xxx;
     // }
 
-    getDesigner(): JSX.Element {
+    $$getDesigner(props: SchemaComponentDesignerProps): JSX.Element {
         return (
             <SchemaComponentDesigner
-                designedObject={this}
+                {...props}
             >
             </SchemaComponentDesigner>
         );

@@ -80,12 +80,13 @@ export function showTestSelectControlForm() {
             //     (window as any)["xxxxx"] = tables;
 
             let params: GridTreeDataSourceFromArrayParams<DataRow> = {
+                arrayObj: tables[0].rows,
                 keyFieldName: "id",
                 parentKeyFieldName: "parentId",
                 positionFieldName: "position",
                 autoExpandNodesToLevel: 1
             };
-            let ds = new GridTreeDataSourceFromArray(tables[0].rows, params);
+            let ds = new GridTreeDataSourceFromArray(params);
             //console.log("select TOP 5000 Ключ,Номер,Название from [Вид ТМЦ] order by Номер =>" + table.rows[0].getValue(1));
 
             let win = (

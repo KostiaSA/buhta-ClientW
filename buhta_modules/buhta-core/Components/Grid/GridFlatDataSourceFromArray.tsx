@@ -10,20 +10,25 @@ import {getGridColumnInfos} from "./getGridColumnInfos";
 import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {removeFromArray} from "../../arrayUtils";
 import {GridColumns} from "./GridColumns";
+import {GridState} from "./Grid";
+import {OpenWindowParams} from "../Desktop/Desktop";
+import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
+import {GridBaseDataSource, GridBaseDataSourceParams} from "./GridBaseDataSource";
 
-export interface GridFlatDataSourceFromArrayParams<T extends GridDataSourceRow> {
-
+export interface GridFlatDataSourceFromArrayParams<T extends GridDataSourceRow> extends GridBaseDataSourceParams<T> {
+    arrayObj: T[];
     positionFieldName?: string;  // sort
     getNewRow?: () => Promise<T>;
-    getEmptyDataSourceMessage?: () => React.ReactNode;
-    getDeleteRowMessage?: () => React.ReactNode;
-    gridColumns?: GridColumns;
+//    getEmptyDataSourceMessage?: () => React.ReactNode;
+//    getDeleteRowMessage?: () => React.ReactNode;
+//    gridColumns?: GridColumns;
 
 }
 
-export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> implements GridDataSource<T> {
-    constructor(_arrayObj: T[], public params: GridFlatDataSourceFromArrayParams<T> = {}) {
-        this.arrayObj = _arrayObj.filter((item) => item !== undefined);
+export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> extends GridBaseDataSource<T> implements GridDataSource<T> {
+    constructor(public params: GridFlatDataSourceFromArrayParams<T>) {
+        super(params);
+        this.arrayObj = params.arrayObj.filter((item) => item !== undefined);
 
     }
 
@@ -73,58 +78,32 @@ export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> implements
 
     deleteRow(rowData: T) {
         removeFromArray(this.arrayObj, rowData);
-        // let deletedItems = _.pullAt(this.arrayObj, rowIndex);
-        // if (deletedItems.length === 0)
-        //     throwError("TreeGridArrayDataSource.deleteRow(): invalid rowIndex (" + rowIndex + ")");
     }
 
-    getEmptyDataSourceMessage(): React.ReactNode {
-        if (this.params.getEmptyDataSourceMessage)
-            return this.params.getEmptyDataSourceMessage();
-        else
-            return "Пустой список.";
-    }
 
-    getDeleteRowMessage(): React.ReactNode {
-        if (this.params.getDeleteRowMessage)
-            return this.params.getDeleteRowMessage();
-        else
-            return "Удалить запись!";
-    }
+    // openEditForm(grid: GridState<T>, rowData: T) {
+    //
+    //     if (!(rowData instanceof DesignedObject))
+    //         throwError("Grid:openDeleteForm(): rowData must be 'DesignedObject'");
+    //
+    //     let designedObject = this.getDesignedObjectOfRow(rowData);
+    //
+    //     let win =
+    //         <ObjectDesigner
+    //             designedObject={designedObject}
+    //             onSaveChanges={ () => { grid.refresh(); }}
+    //         >
+    //
+    //         </ObjectDesigner>;
+    //
+    //     let openParam: OpenWindowParams = {
+    //         title: "редактирование",
+    //         autoPosition: "parent-center",
+    //         parentWindowId: grid.component.getParentWindowId()
+    //     };
+    //
+    //     grid.component.getParentDesktop().openWindow(win, openParam);
+    //
+    // }
 
-    canDragRow(rowIndex: T, mode: "move" | "copy"): boolean {
-        return true;
-    }
-
-    canDropInto(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy"): boolean {
-        return false;
-    }
-
-    canDropAfter(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy"): boolean {
-        return false;
-    }
-
-    canDropBefore(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy"): boolean {
-        return false;
-    }
-
-    dropBefore(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
-
-    }
-
-    dropInto(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
-
-    }
-
-    dropAfter(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
-
-    }
-
-    refresh() {
-
-    }
-
-    getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails {
-        return {group: false};
-    }
 }

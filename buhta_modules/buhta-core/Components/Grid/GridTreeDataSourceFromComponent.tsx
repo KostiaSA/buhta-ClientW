@@ -11,66 +11,50 @@ import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
 import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {BaseControl} from "../../../buhta-ui/BaseControl";
+import {GridBaseDataSource, GridBaseDataSourceParams} from "./GridBaseDataSource";
 
-export interface GridTreeDataSourceFromComponentParams {
+export interface GridTreeDataSourceFromComponentParams extends GridBaseDataSourceParams<BaseControl>{
 
+    nodes: BaseControl[];
     positionFieldName?: string;  // sort
 
-    getNewRow?: () => Promise<BaseControl>;
-    getEmptyDataSourceMessage?: () => React.ReactNode;
-    getDeleteRowMessage?: () => React.ReactNode;
+//    getNewRow?: () => Promise<BaseControl>;
+  //  getEmptyDataSourceMessage?: () => React.ReactNode;
+    //getDeleteRowMessage?: () => React.ReactNode;
 
 }
 
 
-export class GridTreeDataSourceFromComponent implements GridDataSource<BaseControl> {
-    constructor(private nodes: BaseControl[], public params: GridTreeDataSourceFromComponentParams) {
+export class GridTreeDataSourceFromComponent extends GridBaseDataSource<BaseControl> implements GridDataSource<BaseControl> {
+    constructor(public params: GridTreeDataSourceFromComponentParams) {
+        super(params);
         this.set$$parentForAllNodes();
     }
 
-
-    getIsAsync() {
-        return false;
-    };
-
-    getRowsAsync(): Promise<BaseControl[]> {
-        throwAbstractError();
-        throw "fake";
-    }
-
-    getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
-        return [];
-    }
-
     getRows(): BaseControl[] {
-        return this.nodes;
+        return this.params.nodes;
     }
 
-    getNewRow(parentNode?: BaseControl): Promise<BaseControl> {
-        if (this.params.getNewRow)
-            return this.params.getNewRow();
-        else {
-            throwError("TreeGridComponentChildrenDataSource: method getNewRow() not defined");
-            throw  "";  // fake typescript 2
-        }
-    }
-
-    addRow(node: BaseControl) {
-        throwAbstractError();
-        //this.nodes.push(node);
-    }
+    // getNewRow(parentNode?: BaseControl): Promise<BaseControl> {
+    //     if (this.params.getNewRow)
+    //         return this.params.getNewRow();
+    //     else {
+    //         throwError("TreeGridComponentChildrenDataSource: method getNewRow() not defined");
+    //         throw  "";  // fake typescript 2
+    //     }
+    // }
 
     deleteRow(node: BaseControl) {
         if (node.$$parent) {
             removeFromArray(node.$$parent.children, node);
         }
         else {
-            removeFromArray(this.nodes, node);
+            removeFromArray(this.params.nodes, node);
         }
     }
 
     private set$$parentForAllNodes() {
-        this.nodes.forEach((item) => {
+        this.params.nodes.forEach((item) => {
             this.set$$parentRecursive(item);
         });
 
@@ -86,35 +70,11 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
 
     private forEachNode(callback: (node: BaseControl) => void, arr?: BaseControl[]) {
         if (arr === undefined)
-            arr = this.nodes;
+            arr = this.params.nodes;
         arr.forEach((item) => {
             callback(item);
             this.forEachNode(callback, item.children);
         });
-    }
-
-    // private getNodeParent(node: BaseControl): BaseControl | undefined {
-    //     let parent: BaseControl | undefined;
-    //     this.forEachNode((_parent) => {
-    //         if (parent === undefined && _parent.children.indexOf(node) >= 0)
-    //             parent = _parent;
-    //     });
-    //     return parent;
-    // }
-
-
-    getEmptyDataSourceMessage(): React.ReactNode {
-        if (this.params.getEmptyDataSourceMessage)
-            return this.params.getEmptyDataSourceMessage();
-        else
-            return "Пустой список.";
-    }
-
-    getDeleteRowMessage(): React.ReactNode {
-        if (this.params.getDeleteRowMessage)
-            return this.params.getDeleteRowMessage();
-        else
-            return "Удалить запись!";
     }
 
     canDragRow(rowIndex: BaseControl, mode: "move" | "copy"): boolean {
@@ -122,7 +82,6 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
     }
 
     canDropBefore(dragRowData: BaseControl, targetRowData: BaseControl, mode: "move" | "copy"): boolean {
-
         if (this.hasParent(targetRowData, dragRowData))
             return false;
         else
@@ -137,7 +96,6 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
     }
 
     canDropAfter(dragRowData: BaseControl, targetRowData: BaseControl, mode: "move" | "copy"): boolean {
-
         if (this.hasParent(targetRowData, dragRowData))
             return false;
         else
@@ -149,7 +107,7 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
         let targetNode = targetRowData;
 
         if (dragNode.$$parent === targetNode.$$parent) {
-            let arr = this.nodes;
+            let arr = this.params.nodes;
             if (targetNode.$$parent) {
                 arr = targetNode.$$parent.children;
             }
@@ -161,11 +119,11 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
             this.recalcChildrenPositions(arr);
         }
         else {
-            let dragArr = this.nodes;
+            let dragArr = this.params.nodes;
             if (dragNode.$$parent) {
                 dragArr = dragNode.$$parent.children;
             }
-            let targetArr = this.nodes;
+            let targetArr = this.params.nodes;
             if (targetNode.$$parent) {
                 targetArr = targetNode.$$parent.children;
             }
@@ -191,7 +149,7 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
         if (dragNode.$$parent)
             removeFromArray(dragNode.$$parent.children, dragNode);
         else
-            removeFromArray(this.nodes, dragNode);
+            removeFromArray(this.params.nodes, dragNode);
 
         dragNode.$$parent = targetNode;
         //dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
@@ -202,7 +160,7 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
         let targetNode = targetRowData;
 
         if (dragNode.$$parent === targetNode.$$parent) {
-            let arr = this.nodes;
+            let arr = this.params.nodes;
             if (targetNode.$$parent) {
                 arr = targetNode.$$parent.children;
             }
@@ -214,11 +172,11 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
             this.recalcChildrenPositions(arr);
         }
         else {
-            let dragArr = this.nodes;
+            let dragArr = this.params.nodes;
             if (dragNode.$$parent) {
                 dragArr = dragNode.$$parent.children;
             }
-            let targetArr = this.nodes;
+            let targetArr = this.params.nodes;
             if (targetNode.$$parent) {
                 targetArr = targetNode.$$parent.children;
             }

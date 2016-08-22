@@ -18,6 +18,7 @@ import {SqlDb, DataRow, DataTable} from "../../../buhta-sql/SqlDb";
 import {SelectStmt} from "../../../buhta-sql/SelectStmt";
 
 export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSourceFromArrayParams<DataRow> {
+    arrayObj?: DataRow[];
     db: SqlDb;
     select: SelectStmt;
     tableName: string;
@@ -25,7 +26,7 @@ export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSource
 
 export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray<DataRow> {
     constructor(public params: GridTreeDataSourceFromSqlTableParams) {
-        super([], params);
+        super(params);
     }
 
     getIsAsync() {
@@ -50,6 +51,6 @@ export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray<
                 });
         }
     }
-
+    
 
 }

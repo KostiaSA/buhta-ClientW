@@ -4,6 +4,8 @@ import {GridColumnProps, GridColumnDef} from "./GridColumn";
 import {InternalTreeNode} from "./GridTreeDataSourceFromArray";
 import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {GridColumns} from "./GridColumns";
+import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
+import {GridState} from "./Grid";
 
 
 export interface GridDataSourceRow {
@@ -25,7 +27,7 @@ export interface GridDataSource<T extends GridDataSourceRow> {
     getGridColumns(): GridColumns;
     getRowsAsync(): Promise<T[]>;
     getRows(): T[];
-    getNewRow(parentRowData?: T): Promise<T>;
+    //getNewRow(parentRowData?: T): Promise<T>;
     addRow(rowData: T): void;
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;
@@ -49,6 +51,11 @@ export interface GridDataSource<T extends GridDataSourceRow> {
     refresh(): void;
 
     getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails | null;
+
+    getDesignedObjectOfRow(rowData: T): Promise<DesignedObject>;
+
+    openEditForm(grid: GridState<T>, rowData: T): void;
+
 }
 
 

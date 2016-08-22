@@ -14,14 +14,7 @@ import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
 import {Fixed} from "../../buhta-core/Components/LayoutPane/Fixed";
 import {Button} from "../../buhta-core/Components/Button/Button";
-import {TreeGrid, TreeGridState} from "../../buhta-core/Components/TreeGrid/TreeGrid";
-import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
-import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
-import {
-    TreeGridComponentChildrenDataSource,
-    TreeGridComponentChildrenDataSourceParams
-} from "./TreeGridComponentChildrenDataSource";
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {isDeepEqual} from "../../buhta-core/isDeepEqual";
 import {getUserId} from "../../buhta-core/Auth";
@@ -256,8 +249,8 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     // }
 
     render() {
-        let dataSourceParam: GridTreeDataSourceFromComponentParams = {};
-        let dataSource = new GridTreeDataSourceFromComponent(this.clonedDesignedObject.children, dataSourceParam);
+        let dataSourceParam: GridTreeDataSourceFromComponentParams = {nodes: this.clonedDesignedObject.children};
+        let dataSource = new GridTreeDataSourceFromComponent(dataSourceParam);
 
         this.addClassName("component-designer");
         this.addProps({onChange: this.props.onChange});

@@ -45,10 +45,10 @@ export class SchemaObject extends DesignedObject {
         return "Объект";
     }
 
-    getDesigner(): JSX.Element {
-        throwAbstractError();
-        throw  "fake";
-    }
+    // getDesigner(): JSX.Element {
+    //     throwAbstractError();
+    //     throw  "fake";
+    // }
 
     save(): Promise<void|string> {
         return this.schema.saveObject(this);

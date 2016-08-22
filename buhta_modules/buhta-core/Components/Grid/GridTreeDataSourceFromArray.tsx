@@ -11,20 +11,21 @@ import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
 import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {GridColumns} from "./GridColumns";
+import {GridBaseDataSource, GridBaseDataSourceParams} from "./GridBaseDataSource";
 
-export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> {
-
+export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> extends GridBaseDataSourceParams<T>{
+    arrayObj?: T[];
     keyFieldName: string; // key для treeMode parentKey
     parentKeyFieldName: string; // parentKey для treeMode parentKey
     positionFieldName?: string;  // sort для treeMode parentKey
 
     autoExpandNodesToLevel?: number;
 
-    getNewRow?: (parentRowData?: T) => Promise<T>;
-    getEmptyDataSourceMessage?: () => React.ReactNode;
-    getDeleteRowMessage?: () => React.ReactNode;
+//    getNewRow?: (parentRowData?: T) => Promise<T>;
+//    getEmptyDataSourceMessage?: () => React.ReactNode;
+//    getDeleteRowMessage?: () => React.ReactNode;
 
-    gridColumns?: GridColumns;
+//    gridColumns?: GridColumns;
 }
 
 export class InternalTreeNode {
@@ -56,10 +57,14 @@ export class InternalTreeNode {
     // }
 }
 
-export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> implements GridDataSource<T> {
-    constructor(_arrayObj: T[], public params: GridTreeDataSourceFromArrayParams<T>) {
-        this.arrayObj = _arrayObj.filter((item) => item !== undefined);
-        this.createNodesFromParentKey();
+export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> extends GridBaseDataSource<T> implements GridDataSource<T> {
+    constructor(public params: GridTreeDataSourceFromArrayParams<T>) {
+//        this.arrayObj = _arrayObj.filter((item) => item !== undefined);
+        super(params);
+        if (params.arrayObj !== undefined) {
+            this.arrayObj = params.arrayObj.filter((item) => item !== undefined);
+            this.createNodesFromParentKey();
+        }
     }
 
 
@@ -74,14 +79,6 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> implements
     //         return [];
     // };
 
-    getIsAsync() {
-        return false;
-    };
-
-    getRowsAsync(): Promise<T[]> {
-        throwAbstractError();
-        throw "fake";
-    }
 
     getGridColumns(): GridColumns {
 
@@ -107,20 +104,15 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> implements
         }, this);
     }
 
-    getNewRow(parentRowData?: T): Promise<T> {
-        if (this.params.getNewRow)
-            return this.params.getNewRow(parentRowData);
-        else {
-            throwError("GridTreeDataSourceFromArray: method getNewRow() not defined");
-            throw  "";  // fake typescript 2
-        }
-    }
+    // getNewRow(parentRowData?: T): Promise<T> {
+    //     if (this.params.getNewRow)
+    //         return this.params.getNewRow(parentRowData);
+    //     else {
+    //         throwError("GridTreeDataSourceFromArray: method getNewRow() not defined");
+    //         throw  "";  // fake typescript 2
+    //     }
+    // }
 
-    addRow(row: T) {
-        throwAbstractError();
-        // this.arrayObj.push(row);
-        // return this.arrayObj.length - 1;
-    }
 
     deleteRow(rowData: T) {
 

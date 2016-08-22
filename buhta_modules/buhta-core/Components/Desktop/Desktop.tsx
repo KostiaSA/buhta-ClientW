@@ -141,7 +141,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
     }
 
     openSchemaComponentDesigner(component: SchemaComponent, openParams?: OpenWindowParams) {
-        let winContent = component.getDesigner();
+        let winContent = component.$$getDesigner({designedObject: component});
         this.openWindow(winContent, openParams);
     }
 

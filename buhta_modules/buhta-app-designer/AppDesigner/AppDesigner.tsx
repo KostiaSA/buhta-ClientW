@@ -18,14 +18,14 @@ import {Input, InputType} from "../../buhta-core/Components/Input/Input";
 import {InputDivider} from "../../buhta-core/Components/InputDivider/InputDivider";
 import {testBuhtaObject2} from "../../Test1/testBuhtaObject2";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
-import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
-import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
-import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
+//import {TreeGrid} from "../../buhta-core/Components/TreeGrid/TreeGrid";
+//import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
+//import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {Button} from "../../buhta-core/Components/Button/Button";
 import {SqlTable} from "../../components/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
 import {DesignedObject} from "../DesignedObject";
-import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
+//import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import {throwError} from "../../buhta-core/Error";
 import {DataTable, SqlDb, DataRow} from "../../buhta-sql/SqlDb";
@@ -500,94 +500,94 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     }
 
-    testGrid_parentkey() {
-
-        class Vid extends DesignedObject {
-
-            @StringEditor()
-            @GridColumn({caption: "это номер"})
-            Num: string;
-
-            @StringEditor()
-            @GridColumn({})
-            Name: string;
-
-
-            getClassName() {
-                return "Вид товара";
-            }
-
-            toString() {
-                return `[${this.Num}]  ` + this.Name;
-            }
-
-        }
-
-
-        getSchema().db.executeSQL("select * from TestParentKey order by Name")
-            .then((table: DataTable[]) => {
-
-                // let vids = table[0].rows.map<Vid>((r) => {
-                //
-                //     let vid = new Vid();
-                //     vid.Num = "*" + r["Номер"];
-                //     vid.Name = "*" + r["Название"];
-                //
-                //     return vid;
-                // });
-                //
-                // console.log("select TOP 10 ==> ");
-                // //console.log(vids);
-
-                let dataSource = new TreeGridArrayDataSource<DataRow>(table[0].rows);
-                //dataSource.params.getNewRow = () => new Vid();
-                //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
-                //dataSource.params.getEmptyDataSourceMessage = () =>
-                //  <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
-
-                let win2 =
-                    <TreeGrid
-                        dataSource={dataSource}
-                        editable={true}
-                        treeMode="parentKey"
-                        autoExpandNodesToLevel={2}
-                        keyFieldName="id"
-                        parentKeyFieldName="parentId"
-                        positionFieldName="position"
-                        dragDropNodes={true}
-                    >
-                        <TreeGridColumns>
-                            <TreeGridColumn caption="Num" propertyName="num"
-                                            showHierarchyTree={true}
-                                            width={300}>
-                            </TreeGridColumn>
-                            <TreeGridColumn caption="Name" propertyName="name"
-                                            width={400}>
-                            </TreeGridColumn>
-                            <TreeGridColumn caption="position" propertyName="position"
-                                            width={100}>
-                            </TreeGridColumn>
-                        </TreeGridColumns>
-
-                    </TreeGrid>;
-
-                let openParam: OpenWindowParams = {
-                    title: "test grid 2",
-                    top: 20,
-                    left: 20,
-                    width: 700,
-                    height: 800,
-                };
-
-                appInstance.desktop.openWindow(win2, openParam);
-
-            })
-            .catch((err: any) => {
-                throwError(err);
-            });
-
-
-    }
+    // testGrid_parentkey() {
+    //
+    //     class Vid extends DesignedObject {
+    //
+    //         @StringEditor()
+    //         @GridColumn({caption: "это номер"})
+    //         Num: string;
+    //
+    //         @StringEditor()
+    //         @GridColumn({})
+    //         Name: string;
+    //
+    //
+    //         getClassName() {
+    //             return "Вид товара";
+    //         }
+    //
+    //         toString() {
+    //             return `[${this.Num}]  ` + this.Name;
+    //         }
+    //
+    //     }
+    //
+    //
+    //     getSchema().db.executeSQL("select * from TestParentKey order by Name")
+    //         .then((table: DataTable[]) => {
+    //
+    //             // let vids = table[0].rows.map<Vid>((r) => {
+    //             //
+    //             //     let vid = new Vid();
+    //             //     vid.Num = "*" + r["Номер"];
+    //             //     vid.Name = "*" + r["Название"];
+    //             //
+    //             //     return vid;
+    //             // });
+    //             //
+    //             // console.log("select TOP 10 ==> ");
+    //             // //console.log(vids);
+    //
+    //             let dataSource = new TreeGridArrayDataSource<DataRow>(table[0].rows);
+    //             //dataSource.params.getNewRow = () => new Vid();
+    //             //dataSource.params.getEmptyDataSourceMessage = () => "Все пусто, блин! Жми на газ!";
+    //             //dataSource.params.getEmptyDataSourceMessage = () =>
+    //             //  <span>"Все пусто, <i>блин!</i> Жми на газ!"</span>;
+    //
+    //             let win2 =
+    //                 <TreeGrid
+    //                     dataSource={dataSource}
+    //                     editable={true}
+    //                     treeMode="parentKey"
+    //                     autoExpandNodesToLevel={2}
+    //                     keyFieldName="id"
+    //                     parentKeyFieldName="parentId"
+    //                     positionFieldName="position"
+    //                     dragDropNodes={true}
+    //                 >
+    //                     <TreeGridColumns>
+    //                         <TreeGridColumn caption="Num" propertyName="num"
+    //                                         showHierarchyTree={true}
+    //                                         width={300}>
+    //                         </TreeGridColumn>
+    //                         <TreeGridColumn caption="Name" propertyName="name"
+    //                                         width={400}>
+    //                         </TreeGridColumn>
+    //                         <TreeGridColumn caption="position" propertyName="position"
+    //                                         width={100}>
+    //                         </TreeGridColumn>
+    //                     </TreeGridColumns>
+    //
+    //                 </TreeGrid>;
+    //
+    //             let openParam: OpenWindowParams = {
+    //                 title: "test grid 2",
+    //                 top: 20,
+    //                 left: 20,
+    //                 width: 700,
+    //                 height: 800,
+    //             };
+    //
+    //             appInstance.desktop.openWindow(win2, openParam);
+    //
+    //         })
+    //         .catch((err: any) => {
+    //             throwError(err);
+    //         });
+    //
+    //
+    // }
 
     testWindowAutoSize() {
 
@@ -1073,10 +1073,6 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                 <br/>
                                 <button onClick={() => { showTestSelectControlForm(); }}>
                                     showTestSelectControlForm
-                                </button>
-                                <br/>
-                                <button onClick={() => { this.testGrid_parentkey(); }}>
-                                    test testGrid_parentkey
                                 </button>
                                 <br/>
                                 <button onClick={() => { this.testOpenSchemaDesigner(); }}>

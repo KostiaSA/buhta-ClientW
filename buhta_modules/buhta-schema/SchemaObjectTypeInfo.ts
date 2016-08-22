@@ -1,5 +1,6 @@
 import {throwError} from "../buhta-core/Error";
 import {parse} from "UUID";
+import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 
 export class SchemaObjectTypeInfo {
     id: string;

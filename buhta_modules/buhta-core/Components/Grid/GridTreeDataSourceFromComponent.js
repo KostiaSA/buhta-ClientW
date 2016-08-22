@@ -1,49 +1,40 @@
 "use strict";
-var Error_1 = require("../../Error");
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var arrayUtils_1 = require("../../arrayUtils");
-var GridTreeDataSourceFromComponent = (function () {
-    function GridTreeDataSourceFromComponent(nodes, params) {
-        this.nodes = nodes;
+var GridBaseDataSource_1 = require("./GridBaseDataSource");
+var GridTreeDataSourceFromComponent = (function (_super) {
+    __extends(GridTreeDataSourceFromComponent, _super);
+    function GridTreeDataSourceFromComponent(params) {
+        _super.call(this, params);
         this.params = params;
         this.set$$parentForAllNodes();
     }
-    GridTreeDataSourceFromComponent.prototype.getIsAsync = function () {
-        return false;
-    };
-    ;
-    GridTreeDataSourceFromComponent.prototype.getRowsAsync = function () {
-        Error_1.throwAbstractError();
-        throw "fake";
-    };
-    GridTreeDataSourceFromComponent.prototype.getGridColumns = function () {
-        return [];
-    };
     GridTreeDataSourceFromComponent.prototype.getRows = function () {
-        return this.nodes;
+        return this.params.nodes;
     };
-    GridTreeDataSourceFromComponent.prototype.getNewRow = function (parentNode) {
-        if (this.params.getNewRow)
-            return this.params.getNewRow();
-        else {
-            Error_1.throwError("TreeGridComponentChildrenDataSource: method getNewRow() not defined");
-            throw ""; // fake typescript 2
-        }
-    };
-    GridTreeDataSourceFromComponent.prototype.addRow = function (node) {
-        Error_1.throwAbstractError();
-        //this.nodes.push(node);
-    };
+    // getNewRow(parentNode?: BaseControl): Promise<BaseControl> {
+    //     if (this.params.getNewRow)
+    //         return this.params.getNewRow();
+    //     else {
+    //         throwError("TreeGridComponentChildrenDataSource: method getNewRow() not defined");
+    //         throw  "";  // fake typescript 2
+    //     }
+    // }
     GridTreeDataSourceFromComponent.prototype.deleteRow = function (node) {
         if (node.$$parent) {
             arrayUtils_1.removeFromArray(node.$$parent.children, node);
         }
         else {
-            arrayUtils_1.removeFromArray(this.nodes, node);
+            arrayUtils_1.removeFromArray(this.params.nodes, node);
         }
     };
     GridTreeDataSourceFromComponent.prototype.set$$parentForAllNodes = function () {
         var _this = this;
-        this.nodes.forEach(function (item) {
+        this.params.nodes.forEach(function (item) {
             _this.set$$parentRecursive(item);
         });
     };
@@ -57,31 +48,11 @@ var GridTreeDataSourceFromComponent = (function () {
     GridTreeDataSourceFromComponent.prototype.forEachNode = function (callback, arr) {
         var _this = this;
         if (arr === undefined)
-            arr = this.nodes;
+            arr = this.params.nodes;
         arr.forEach(function (item) {
             callback(item);
             _this.forEachNode(callback, item.children);
         });
-    };
-    // private getNodeParent(node: BaseControl): BaseControl | undefined {
-    //     let parent: BaseControl | undefined;
-    //     this.forEachNode((_parent) => {
-    //         if (parent === undefined && _parent.children.indexOf(node) >= 0)
-    //             parent = _parent;
-    //     });
-    //     return parent;
-    // }
-    GridTreeDataSourceFromComponent.prototype.getEmptyDataSourceMessage = function () {
-        if (this.params.getEmptyDataSourceMessage)
-            return this.params.getEmptyDataSourceMessage();
-        else
-            return "Пустой список.";
-    };
-    GridTreeDataSourceFromComponent.prototype.getDeleteRowMessage = function () {
-        if (this.params.getDeleteRowMessage)
-            return this.params.getDeleteRowMessage();
-        else
-            return "Удалить запись!";
     };
     GridTreeDataSourceFromComponent.prototype.canDragRow = function (rowIndex, mode) {
         return true;
@@ -108,7 +79,7 @@ var GridTreeDataSourceFromComponent = (function () {
         var dragNode = dragRowData;
         var targetNode = targetRowData;
         if (dragNode.$$parent === targetNode.$$parent) {
-            var arr = this.nodes;
+            var arr = this.params.nodes;
             if (targetNode.$$parent) {
                 arr = targetNode.$$parent.children;
             }
@@ -120,11 +91,11 @@ var GridTreeDataSourceFromComponent = (function () {
             this.recalcChildrenPositions(arr);
         }
         else {
-            var dragArr = this.nodes;
+            var dragArr = this.params.nodes;
             if (dragNode.$$parent) {
                 dragArr = dragNode.$$parent.children;
             }
-            var targetArr = this.nodes;
+            var targetArr = this.params.nodes;
             if (targetNode.$$parent) {
                 targetArr = targetNode.$$parent.children;
             }
@@ -143,7 +114,7 @@ var GridTreeDataSourceFromComponent = (function () {
         if (dragNode.$$parent)
             arrayUtils_1.removeFromArray(dragNode.$$parent.children, dragNode);
         else
-            arrayUtils_1.removeFromArray(this.nodes, dragNode);
+            arrayUtils_1.removeFromArray(this.params.nodes, dragNode);
         dragNode.$$parent = targetNode;
         //dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
     };
@@ -151,7 +122,7 @@ var GridTreeDataSourceFromComponent = (function () {
         var dragNode = dragRowData;
         var targetNode = targetRowData;
         if (dragNode.$$parent === targetNode.$$parent) {
-            var arr = this.nodes;
+            var arr = this.params.nodes;
             if (targetNode.$$parent) {
                 arr = targetNode.$$parent.children;
             }
@@ -163,11 +134,11 @@ var GridTreeDataSourceFromComponent = (function () {
             this.recalcChildrenPositions(arr);
         }
         else {
-            var dragArr = this.nodes;
+            var dragArr = this.params.nodes;
             if (dragNode.$$parent) {
                 dragArr = dragNode.$$parent.children;
             }
-            var targetArr = this.nodes;
+            var targetArr = this.params.nodes;
             if (targetNode.$$parent) {
                 targetArr = targetNode.$$parent.children;
             }
@@ -212,6 +183,6 @@ var GridTreeDataSourceFromComponent = (function () {
             return null;
     };
     return GridTreeDataSourceFromComponent;
-}());
+}(GridBaseDataSource_1.GridBaseDataSource));
 exports.GridTreeDataSourceFromComponent = GridTreeDataSourceFromComponent;
 //# sourceMappingURL=GridTreeDataSourceFromComponent.js.map

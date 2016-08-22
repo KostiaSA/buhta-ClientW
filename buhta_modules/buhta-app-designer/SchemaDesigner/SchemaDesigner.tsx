@@ -24,7 +24,7 @@ import {OpenWindowParams} from "../../buhta-core/Components/Desktop/Desktop";
 import {appInstance} from "../../buhta-core/Components/App/App";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorName";
-import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
+import {ObjectDesigner, ObjectDesignerProps} from "../ObjectDesigner/ObjectDesigner";
 import {SqlDb, DataRow, DataTable} from "../../buhta-sql/SqlDb";
 import {Schema} from "../../buhta-schema/Schema";
 import Grid from "../../buhta-core/Components/Grid/Grid";
@@ -54,10 +54,60 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
     //dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
     dataSource: GridTreeDataSourceFromSqlTable;
 
+    private getDesignedObjectOfRow = (rowData: DataRow): Promise<DesignedObject> => {
+        console.log("жопа222");
+        return this.component.props.schema.getObject(rowData["id"]);
+        // .then(( schemaObject:SchemaObject) => {
+        //     return
+        // });
+    };
+
+    private openEditForm = (grid: GridState<any>, rowData: DataRow) => {
+
+        this.getDesignedObjectOfRow(rowData)
+            .then((designedObject: DesignedObject) => {
+
+                // let win =
+                //     <ObjectDesigner
+                //         designedObject={designedObject}
+                //         onSaveChanges={ () => { grid.refresh(); }}
+                //     >
+                //
+                //     </ObjectDesigner>;
+
+                let openParam: OpenWindowParams = {
+                    title: "редактирование",
+                    autoPosition: "parent-center",
+                    parentWindowId: grid.component.getParentWindowId()
+                };
+
+                let props: ObjectDesignerProps = {
+                    designedObject: designedObject
+                };
+
+                grid.component.getParentDesktop().openWindow(designedObject.$$getDesigner(props), openParam);
+
+            });
+
+
+    }
+
+
+//     let openParam: OpenWindowParams = {
+//     title: "дизайнер компонента",
+//     top: 10,
+//     left: 10,
+//     width: 800,
+//     height: 600
+// };
+//
+//     appInstance.desktop.openSchemaComponentDesigner(component, openParam);
+
     createDataSource() {
         let select = new SelectStmt();
         select.table("SchemaObject");
         select.column("id", "parentObjectId", "name", "typeId", "position", "description");
+
 
         let dsParams: GridTreeDataSourceFromSqlTableParams = {
             db: this.component.props.schema.db,
@@ -67,39 +117,41 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             parentKeyFieldName: "parentObjectId",
             positionFieldName: "position",
             autoExpandNodesToLevel: 3,
+            getDesignedObjectOfRow: this.getDesignedObjectOfRow
         };
 
-        dsParams.getNewRow = (parentObject?: DataRow) => {
-
-            let arr = registeredSchemaObjectTypesAsArray.sort((a, b) => {
-                return stringCompare(a.name, b.name);
-            });
-
-            let columns: GridColumns = [];
-            columns.push({caption: "Тип объекта", propertyName: "name"});
-            columns.push({caption: "Описание", propertyName: "description"});
-
-            let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>(arr, {gridColumns: columns});
-
-
-            let params: LookupDialogParams<SchemaObjectTypeInfo> = {
-                title: "Выберите тип нового объекта",
-                lookupMode: "single",
-                dataSource: dataSource
-            };
-
-            return showLookupDialog(this.component, params)
-                .then((selected: SchemaObjectTypeInfo[]) => {
-                    let retDataRow = new DataRow(new DataTable());
-                    retDataRow["id"] = getNewGuid();
-                    if (parentObject !== undefined)
-                        retDataRow["parentObjectId"] = parentObject["id"];
-                    retDataRow["name"] = "новый объект " + selected[0].name;
-                    retDataRow["typeId"] = selected[0].id;
-                    return retDataRow;
-                });
-
-        };
+        // dsParams.getNewRow = (parentObject?: DataRow) => {
+        //
+        //
+        //     let columns: GridColumns = [];
+        //     columns.push({caption: "Тип объекта", propertyName: "name"});
+        //     columns.push({caption: "Описание", propertyName: "description"});
+        //
+        //     let arr = registeredSchemaObjectTypesAsArray.sort((a, b) => {
+        //         return stringCompare(a.name, b.name);
+        //     });
+        //
+        //     let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>({arrayObj: arr, gridColumns: columns});
+        //
+        //
+        //     let params: LookupDialogParams<SchemaObjectTypeInfo> = {
+        //         title: "Выберите тип нового объекта",
+        //         lookupMode: "single",
+        //         dataSource: dataSource
+        //     };
+        //
+        //     return showLookupDialog(this.component, params)
+        //         .then((selected: SchemaObjectTypeInfo[]) => {
+        //             let retDataRow = new DataRow(new DataTable());
+        //             retDataRow["id"] = getNewGuid();
+        //             if (parentObject !== undefined)
+        //                 retDataRow["parentObjectId"] = parentObject["id"];
+        //             retDataRow["name"] = "новый объект " + selected[0].name;
+        //             retDataRow["typeId"] = selected[0].id;
+        //             return retDataRow;
+        //         });
+        //
+        // };
 
         this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);
     }
@@ -264,5 +316,9 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
             </div>
         );
     }
+
+}
+
+export function openSchemaObjectDesignerForm(schemaObjectId: string) {
 
 }
