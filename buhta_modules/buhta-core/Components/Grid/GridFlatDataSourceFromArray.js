@@ -19,7 +19,9 @@ var GridFlatDataSourceFromArray = (function () {
     };
     GridFlatDataSourceFromArray.prototype.getGridColumns = function () {
         var _this = this;
-        if (this.arrayObj.length === 0)
+        if (this.params.gridColumns !== undefined)
+            return this.params.gridColumns;
+        else if (this.arrayObj.length === 0)
             return [];
         else
             return getGridColumnInfos_1.getGridColumnInfos(this.arrayObj[0]).map(function (col) {

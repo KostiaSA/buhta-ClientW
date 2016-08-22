@@ -1,10 +1,11 @@
 ﻿import * as AgGrid from "ag-grid";
 import {ComponentProps, Component} from "../Component";
 import Grid from "./Grid";
-import {GridColumnDef} from "./GridColumn";
+import {GridColumnDef, GridColumnProps} from "./GridColumn";
 
 export interface GridColumnGroupProps extends ComponentProps<any> {
     caption?: string;
+    columns?: (GridColumnProps | GridColumnGroupProps)[];
 }
 
 

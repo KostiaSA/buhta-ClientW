@@ -1,8 +1,9 @@
 import * as React from "react";
 import * as AgGrid from "ag-grid";
-import {GridColumnProps} from "./GridColumn";
+import {GridColumnProps, GridColumnDef} from "./GridColumn";
 import {InternalTreeNode} from "./GridTreeDataSourceFromArray";
-import {GridColumnGroupProps} from "./GridColumnGroup";
+import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
+import {GridColumns} from "./GridColumns";
 
 
 export interface GridDataSourceRow {
@@ -11,9 +12,17 @@ export interface GridDataSourceRow {
     $$gridRowHeight?: number;
 }
 
+// export interface DataSourceColumn extends GridColumnProps {
+//
+// }
+//
+// export interface DataSourceColumnGroup extends GridColumnGroupProps {
+//     columns: (DataSourceColumn | DataSourceColumnGroup)[];
+// }
+
 export interface GridDataSource<T extends GridDataSourceRow> {
     getIsAsync(): boolean;
-    getGridColumns(): (GridColumnProps | GridColumnGroupProps)[];
+    getGridColumns(): GridColumns;
     getRowsAsync(): Promise<T[]>;
     getRows(): T[];
     getNewRow(parentRowData?: T): Promise<T>;

@@ -23,7 +23,7 @@ export interface LookupDialogParams<T> { // extends ComponentProps<any> {
 }
 
 
-export function showLookupDialog<T extends GridDataSourceRow>(caller: Component<any,any>, params: LookupDialogParams<T>): Promise<T[]> {
+export function showLookupDialog<T extends GridDataSourceRow>(caller: Component<any, any>, params: LookupDialogParams<T>): Promise<T[]> {
 
     return new Promise<T[]>(
         (resolve: (obj: T[]) => void, reject: (reason: any) => void) => {
@@ -38,13 +38,6 @@ export function showLookupDialog<T extends GridDataSourceRow>(caller: Component<
                             onLookupOk={(selectedRows:T[]) => { resolve(selectedRows); }}
                             onLookupCancel={() => { reject({}); }}
                         >
-                            <GridColumnDef caption="Объект" propertyName="name"
-                                           showHierarchyTree={true}
-                                           width={200}>
-                            </GridColumnDef>
-                            <GridColumnDef caption="Описание" propertyName="description"
-                                           width={400}>
-                            </GridColumnDef>
                         </Grid>
                     </Flex>
                 </Layout>;

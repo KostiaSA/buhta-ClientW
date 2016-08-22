@@ -31,6 +31,8 @@ export interface GridProps extends ComponentProps<GridState<GridDataSourceRow>> 
     dragDropNodes?: boolean;
     dataSource: GridDataSource<GridDataSourceRow>;
 
+    columnDefs?: (GridColumnDef | GridColumnGroup)[];
+
     enableDragDrop?: boolean;
 
     editable?: boolean;
@@ -759,19 +761,19 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         let buttons: JSX.Element[] = [];
         if (this.props.lookupMode === "single" || this.props.lookupMode === "multi") {
             buttons.push(
-                <Button className="is-smalln" onClick={this.handleSelectButtonClick}>
+                <Button key="select" className="is-smalln" onClick={this.handleSelectButtonClick}>
                     Выбрать
                 </Button>
             );
             buttons.push(
-                <Button className="is-smalln" onClick={this.handleCancelButtonClick}>
+                <Button key="cancel" className="is-smalln" onClick={this.handleCancelButtonClick}>
                     Отмена
                 </Button>
             );
         }
         else if (this.props.showCloseButton === true) {
             buttons.push(
-                <Button className="is-smalln" onClick={this.handleCloseButtonClick}>
+                <Button key="closes" className="is-smalln" onClick={this.handleCloseButtonClick}>
                     Закрыть
                 </Button>
             );

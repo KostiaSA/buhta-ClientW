@@ -42,6 +42,7 @@ import {registeredSchemaObjectTypesAsArray, SchemaObjectTypeInfo} from "../../bu
 import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
 import {UUID} from "UUID";
 import {getNewGuid} from "../../buhta-sql/SqlCore";
+import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
@@ -74,7 +75,11 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                 return stringCompare(a.name, b.name);
             });
 
-            let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>(arr, {});
+            let columns: GridColumns = [];
+            columns.push({caption: "Тип объекта", propertyName: "name"});
+            columns.push({caption: "Описание", propertyName: "description"});
+
+            let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>(arr, {gridColumns: columns});
 
 
             let params: LookupDialogParams<SchemaObjectTypeInfo> = {

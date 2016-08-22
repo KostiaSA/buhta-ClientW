@@ -2,13 +2,14 @@ import * as React from "react";
 import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
-import {GridColumnProps} from "./GridColumn";
+import {GridColumnProps, GridColumnDef} from "./GridColumn";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError, throwAbstractError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
-import {GridColumnGroupProps} from "./GridColumnGroup";
+import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {removeFromArray} from "../../arrayUtils";
+import {GridColumns} from "./GridColumns";
 
 export interface GridFlatDataSourceFromArrayParams<T extends GridDataSourceRow> {
 
@@ -16,6 +17,7 @@ export interface GridFlatDataSourceFromArrayParams<T extends GridDataSourceRow> 
     getNewRow?: () => Promise<T>;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
+    gridColumns?: GridColumns;
 
 }
 
@@ -24,7 +26,7 @@ export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> implements
         this.arrayObj = _arrayObj.filter((item) => item !== undefined);
 
     }
-    
+
     private arrayObj: T[];
 
     getIsAsync() {
@@ -35,9 +37,11 @@ export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> implements
         throwAbstractError();
         throw "fake";
     }
-    
-    getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
-        if (this.arrayObj.length === 0)
+
+    getGridColumns(): GridColumns {
+        if (this.params.gridColumns !== undefined)
+            return this.params.gridColumns;
+        else if (this.arrayObj.length === 0)
             return [];
         else
             return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {

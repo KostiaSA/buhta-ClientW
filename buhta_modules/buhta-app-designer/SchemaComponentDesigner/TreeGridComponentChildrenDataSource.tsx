@@ -6,6 +6,8 @@ import {TreeGridDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridD
 import {TreeGridColumnProps} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 import {getGridColumnInfos} from "../../buhta-core/Components/Grid/getGridColumnInfos";
 import {throwError} from "../../buhta-core/Error";
+import {GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
+import {GridColumnGroup} from "../../buhta-core/Components/Grid/GridColumnGroup";
 
 export interface TreeGridComponentChildrenDataSourceParams {
 

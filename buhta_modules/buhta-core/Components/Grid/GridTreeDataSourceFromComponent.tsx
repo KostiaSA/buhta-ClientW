@@ -2,14 +2,14 @@ import * as React from "react";
 import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
-import {GridColumnProps} from "./GridColumn";
+import {GridColumnProps, GridColumnDef} from "./GridColumn";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError, throwAbstractError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
-import {GridColumnGroupProps} from "./GridColumnGroup";
+import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {BaseControl} from "../../../buhta-ui/BaseControl";
 
 export interface GridTreeDataSourceFromComponentParams {
@@ -27,7 +27,8 @@ export class GridTreeDataSourceFromComponent implements GridDataSource<BaseContr
     constructor(private nodes: BaseControl[], public params: GridTreeDataSourceFromComponentParams) {
         this.set$$parentForAllNodes();
     }
-    
+
+
     getIsAsync() {
         return false;
     };

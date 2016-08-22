@@ -2,14 +2,15 @@ import * as React from "react";
 import * as _ from "lodash";
 import * as AgGrid from "ag-grid";
 
-import {GridColumnProps} from "./GridColumn";
+import {GridColumnProps, GridColumnDef} from "./GridColumn";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {throwError, throwAbstractError} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {numberCompare} from "../../numberCompare";
 import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
-import {GridColumnGroupProps} from "./GridColumnGroup";
+import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
+import {GridColumns} from "./GridColumns";
 
 export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> {
 
@@ -23,6 +24,7 @@ export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> 
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
 
+    gridColumns?: GridColumns;
 }
 
 export class InternalTreeNode {
@@ -64,6 +66,14 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> implements
     protected arrayObj: T[];
     protected nodes: InternalTreeNode[] = [];
 
+
+    // getColumnDefs(): (GridColumnDef | GridColumnGroup)[] {
+    //     if (this.params.columnDefs !== undefined)
+    //         return this.params.columnDefs;
+    //     else
+    //         return [];
+    // };
+
     getIsAsync() {
         return false;
     };
@@ -73,9 +83,11 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> implements
         throw "fake";
     }
 
-    getGridColumns(): (GridColumnProps | GridColumnGroupProps)[] {
+    getGridColumns(): GridColumns {
 
-        if (this.arrayObj.length === 0)
+        if (this.params.gridColumns !== undefined)
+            return this.params.gridColumns;
+        else if (this.arrayObj.length === 0)
             return [];
         else
             return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
