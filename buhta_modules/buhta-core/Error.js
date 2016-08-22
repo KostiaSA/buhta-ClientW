@@ -20,4 +20,13 @@ function throwAbstractError() {
     throw err;
 }
 exports.throwAbstractError = throwAbstractError;
+function throwUnderConstruction() {
+    // todo: отключить в production режиме
+    console.error("under construction error");
+    var err;
+    err = new Error("under construction error");
+    err.$$isThrowError = true;
+    throw err;
+}
+exports.throwUnderConstruction = throwUnderConstruction;
 //# sourceMappingURL=Error.js.map

@@ -9,7 +9,7 @@ import {TreeGridColumn} from "../TreeGrid/TreeGridColumn";
 import {GridColumnGroup} from "./GridColumnGroup";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {InMemoryRowModel} from "ag-grid/main";
-import {throwError} from "../../Error";
+import {throwError, throwAbstractError, throwUnderConstruction} from "../../Error";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
@@ -38,6 +38,11 @@ export interface GridProps extends ComponentProps<GridState<GridDataSourceRow>> 
     denyInsert?: boolean;
     denyUpdate?: boolean;
     denyDelete?: boolean;
+
+    lookupMode?: "none" | "single" | "multi";
+    showCloseButton?: boolean;
+    onLookupOk?: (selectedRows: GridDataSourceRow[]) => any;
+    onLookupCancel?: () => any;
 
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
@@ -641,7 +646,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     openInsertForm() {
 
         this.state.dataSource.getNewRow().then((designedObject: DesignedObject)=> {
-            
+
             if (designedObject) {
                 let win =
                     <ObjectDesigner
@@ -723,6 +728,57 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         return buttons;
     }
 
+    handleSelectButtonClick = () => {
+        // todo 'multi' mode
+        if (this.props.lookupMode === "single") {
+            let rowData = this.state.getFocusedRowData();
+            if (rowData !== undefined) {
+                if (this.props.onLookupOk !== undefined) {
+                    this.props.onLookupOk([rowData]);
+                }
+                this.getParentWindow()!.close();
+            }
+        }
+        else
+            throwUnderConstruction();
+
+    }
+
+    handleCancelButtonClick = () => {
+        if (this.props.onLookupCancel !== undefined) {
+            this.props.onLookupCancel();
+        }
+        this.getParentWindow()!.close();
+    }
+
+    handleCloseButtonClick = () => {
+        this.getParentWindow()!.close();
+    }
+
+    renderSelectCancelCloseButtons(): JSX.Element[] {
+        let buttons: JSX.Element[] = [];
+        if (this.props.lookupMode === "single" || this.props.lookupMode === "multi") {
+            buttons.push(
+                <Button className="is-smalln" onClick={this.handleSelectButtonClick}>
+                    Выбрать
+                </Button>
+            );
+            buttons.push(
+                <Button className="is-smalln" onClick={this.handleCancelButtonClick}>
+                    Отмена
+                </Button>
+            );
+        }
+        else if (this.props.showCloseButton === true) {
+            buttons.push(
+                <Button className="is-smalln" onClick={this.handleCloseButtonClick}>
+                    Закрыть
+                </Button>
+            );
+        }
+        return buttons;
+    }
+
     render() {
         return (
             <Layout className="grid???" type="column" sizeTo="parent" {...this.getRenderProps()}
@@ -759,12 +815,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
                         <Flex>
                         </Flex>
                         <Fixed>
-                            <Button className="is-smalln">
-                                Выбрать
-                            </Button>
-                            <Button className="is-smalln">
-                                Отмена
-                            </Button>
+                            {this.renderSelectCancelCloseButtons()}
 
                         </Fixed>
                     </Layout>

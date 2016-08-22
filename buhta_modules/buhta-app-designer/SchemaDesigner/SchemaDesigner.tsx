@@ -35,8 +35,13 @@ import {
 } from "../../buhta-core/Components/Grid/GridTreeDataSourceFromSqlTable";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
 import {GridState} from "../../buhta-core/Components/Grid/Grid";
-import {getNewSchemaObjectDialog} from "./getNewSchemaObjectDialog";
 import {SchemaObject} from "../../buhta-schema/SchemaObject";
+import {LookupDialogParams, showLookupDialog} from "../../buhta-core/Dialogs/showLookupDialog";
+import {stringCompare} from "../../buhta-core/stringCompare";
+import {registeredSchemaObjectTypesAsArray, SchemaObjectTypeInfo} from "../../buhta-schema/SchemaObjectTypeInfo";
+import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
+import {UUID} from "UUID";
+import {getNewGuid} from "../../buhta-sql/SqlCore";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
@@ -64,13 +69,31 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
         };
 
         dsParams.getNewRow = (parentObject?: DataRow) => {
-            return getNewSchemaObjectDialog({
-                callerComponent: this.component,
-                schema: this.component.props.schema,
-                parentSchemaObjectId: parentObject === undefined ? null : parentObject["id"]
-            }).then((newSchemaObject: SchemaObject)=> {
-                return new DataRow(new DataTable());
+
+            let arr = registeredSchemaObjectTypesAsArray.sort((a, b) => {
+                return stringCompare(a.name, b.name);
             });
+
+            let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>(arr, {});
+
+
+            let params: LookupDialogParams<SchemaObjectTypeInfo> = {
+                title: "Выберите тип нового объекта",
+                lookupMode: "single",
+                dataSource: dataSource
+            };
+
+            return showLookupDialog(this.component, params)
+                .then((selected: SchemaObjectTypeInfo[]) => {
+                    let retDataRow = new DataRow(new DataTable());
+                    retDataRow["id"] = getNewGuid();
+                    if (parentObject !== undefined)
+                        retDataRow["parentObjectId"] = parentObject["id"];
+                    retDataRow["name"] = "новый объект " + selected[0].name;
+                    retDataRow["typeId"] = selected[0].id;
+                    return retDataRow;
+                });
+
         };
 
         this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);

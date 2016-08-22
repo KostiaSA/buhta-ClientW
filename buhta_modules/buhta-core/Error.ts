@@ -24,3 +24,14 @@ export function throwAbstractError(): never {
 
     throw err;
 }
+
+export function throwUnderConstruction(): never {
+    // todo: отключить в production режиме
+    console.error("under construction error");
+
+    let err: any;
+    err = new Error("under construction error");
+    err.$$isThrowError = true;
+
+    throw err;
+}
