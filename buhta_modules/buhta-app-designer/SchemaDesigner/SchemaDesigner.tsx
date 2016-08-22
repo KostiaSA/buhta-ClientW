@@ -25,7 +25,7 @@ import {appInstance} from "../../buhta-core/Components/App/App";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorName";
 import {ObjectDesigner} from "../ObjectDesigner/ObjectDesigner";
-import {SqlDb, DataRow} from "../../buhta-sql/SqlDb";
+import {SqlDb, DataRow, DataTable} from "../../buhta-sql/SqlDb";
 import {Schema} from "../../buhta-schema/Schema";
 import Grid from "../../buhta-core/Components/Grid/Grid";
 import {GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
@@ -68,6 +68,8 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                 callerComponent: this.component,
                 schema: this.component.props.schema,
                 parentSchemaObjectId: parentObject === undefined ? null : parentObject["id"]
+            }).then((newSchemaObject: SchemaObject)=> {
+                return new DataRow(new DataTable());
             });
         };
 

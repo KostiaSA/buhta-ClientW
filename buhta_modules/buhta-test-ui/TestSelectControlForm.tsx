@@ -68,7 +68,7 @@ export function showTestSelectControlForm() {
     //     </div>);
 
     //select TOP 500 Ключ,Номер,Название from [Вид ТМЦ] order by Номер
-    getSchema().db.executeSQL("SELECT [id],[parentId],[num],[name],[position] FROM [TestParentKey] order by num")
+    getSchema().db.executeSQL("SELECT top 300 [id],[parentId],[num],[name],[position] FROM [TestParentKey] order by num")
 
         .then((tables: DataTable[]) => {
 
