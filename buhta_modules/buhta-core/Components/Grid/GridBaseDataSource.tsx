@@ -12,7 +12,7 @@ import {removeFromArray} from "../../arrayUtils";
 import {GridColumns} from "./GridColumns";
 import {GridState} from "./Grid";
 import {OpenWindowParams} from "../Desktop/Desktop";
-import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
+import {ObjectDesigner, ObjectDesignerProps} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {getInstantPromise} from "../../getInstantPromise";
 
 export interface GridBaseDataSourceParams<T extends GridDataSourceRow> {
@@ -122,7 +122,14 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
             //
             //     </ObjectDesigner>;
 
-            let win = designedObject.$$getDesigner({designedObject: designedObject});
+            let designerProps: ObjectDesignerProps = {
+                designedObject: designedObject,
+                onSaveChanges: () => {
+                    grid.refresh();
+                }
+            };
+
+            let win = designedObject.$$getDesigner(designerProps);
 
             let openParam: OpenWindowParams = {
                 title: "редактирование",

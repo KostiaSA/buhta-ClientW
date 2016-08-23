@@ -118,6 +118,8 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
     }
 
     refresh() {
+        (this.component as Grid).rowHeightCache = undefined;
+        (this.component as Grid).avgRowHeight = 0;
         this.agGrid.api!.setRowData(this.dataSource.getRows());
     }
 
@@ -264,8 +266,8 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
 
     private agGridNativeElement: HTMLElement;
-    private rowHeightCache: { [id: string]: number };
-    private avgRowHeight = 0;
+    rowHeightCache: { [id: string]: number } | undefined;
+    avgRowHeight = 0;
 
     private calculateRowHeights(nodes: AgGrid.RowNode[]) {
 
@@ -278,16 +280,16 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
         let handleRef = (e: HTMLElement, node: AgGrid.RowNode) => {
             if (e) {
-                let oldHeight = this.rowHeightCache[node.id];
+                let oldHeight = this.rowHeightCache![node.id];
                 if (oldHeight === undefined || e.clientHeight > oldHeight) {
-                    this.rowHeightCache[node.id] = e.clientHeight;
+                    this.rowHeightCache![node.id] = e.clientHeight;
 
                     if (this.avgRowHeight === 0 && Object.keys(this.rowHeightCache).length === avgOf100) {
                         // вычисляем среднюю высоту
                         let sum = 0;
                         let count = 0;
-                        for (let property in this.rowHeightCache) {
-                            let value = this.rowHeightCache[property];
+                        for (let property in this.rowHeightCache!) {
+                            let value = this.rowHeightCache![property];
                             if (_.isNumber(value)) {
                                 sum += value;
                                 count++;
@@ -302,7 +304,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
 
         nodes.forEach((node: AgGrid.RowNode) => {
-            if (this.rowHeightCache[node.id] === undefined) {
+            if (this.rowHeightCache![node.id] === undefined) {
                 this.state.agGrid.columnApi!.getAllColumns().forEach((col: AgGrid.Column, colIndex: number) => {
                     let cell = (
                         <div
@@ -327,15 +329,12 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     }
 
     private handleGetRowHeight(param: AgGetRowHeightParams): number {
-        console.log(param);
-
         const delay200ms = 200; // 1 раз в секунд запускается цикл расчета высот rows, чаще нельзя, браузер замирает
         const max2000 = 2000; // для первых 2000 строк делаем расчет, для остальных берем средний
         const first100 = 100; // после первых 100 рассчитанных строк, показываем гриду юзеру
         const refresh1000 = 1000; // раз в секунду запускаем refreshInMemoryRowModel()
 
         if (this.rowHeightCache === undefined) {
-            console.log("rowHeightCache");
             this.rowHeightCache = {};
             this.avgRowHeight = 0;
 
@@ -833,7 +832,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
                 </Fixed >
             </Layout >
-        )
+        );
 
     }
 

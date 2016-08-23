@@ -75,7 +75,13 @@ var GridBaseDataSource = (function () {
             //     >
             //
             //     </ObjectDesigner>;
-            var win = designedObject.$$getDesigner({ designedObject: designedObject });
+            var designerProps = {
+                designedObject: designedObject,
+                onSaveChanges: function () {
+                    grid.refresh();
+                }
+            };
+            var win = designedObject.$$getDesigner(designerProps);
             var openParam = {
                 title: "редактирование",
                 autoPosition: "parent-center",

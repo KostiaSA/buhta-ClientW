@@ -319,6 +319,3 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
 
 }
 
-export function openSchemaObjectDesignerForm(schemaObjectId: string) {
-
-}
