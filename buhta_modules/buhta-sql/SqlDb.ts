@@ -120,7 +120,7 @@ export class SqlDb {
     }
 
     dbName: string;
-    dialect: SqlDialect
+    dialect: SqlDialect;
 
     // ищет в объекте свойство с заданным именем в режиме case insensitive,
     // возвращает имя найденного свойства или null

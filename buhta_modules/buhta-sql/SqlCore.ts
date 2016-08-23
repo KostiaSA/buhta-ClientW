@@ -32,7 +32,7 @@ export interface WhereClause {
 
 export class SqlValue {
     toSql(dialect: SqlDialect): string {
-        console.log("toSql1");
+     //   console.log("toSql1");
         throwAbstractError();
         throw "fake";
     }
@@ -48,8 +48,8 @@ function mssql_escape_string(str: string) {
         switch (char) {
             case "'":
                 return "''";
-            case "?":
-                return "'+CHAR(63)+N'";
+            // case "?":
+            //     return "'+CHAR(63)+N'";
             default:
                 return char;
         }

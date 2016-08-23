@@ -11,7 +11,7 @@ var SqlValue = (function () {
     function SqlValue() {
     }
     SqlValue.prototype.toSql = function (dialect) {
-        console.log("toSql1");
+        //   console.log("toSql1");
         Error_1.throwAbstractError();
         throw "fake";
     };
@@ -27,8 +27,8 @@ function mssql_escape_string(str) {
         switch (char) {
             case "'":
                 return "''";
-            case "?":
-                return "'+CHAR(63)+N'";
+            // case "?":
+            //     return "'+CHAR(63)+N'";
             default:
                 return char;
         }
