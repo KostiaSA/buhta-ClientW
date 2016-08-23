@@ -27,6 +27,7 @@ export class Schema {
 
 
     private objects_cache: { [key: string]: () => SchemaObject; } = {};
+    private objects_cache_is_loading: { [key: string]: boolean; } = {};
 
     resetObjectCache(id: SchemaObjectId) {
         delete this.objects_cache[id.toLowerCase()];
@@ -39,25 +40,34 @@ export class Schema {
                 let objConstructor = this.objects_cache[id];
 
                 if (!objConstructor) {
-                    console.log("load from sql :" + id);
-                    let select = new SelectStmt()
-                        .table("SchemaObject")
-                        .column("jsCode")
-                        .where("id", "=", new SqlGuidValue(id));
 
-                    this.db.selectToString(select)
-                        .then((jsCode) => {
-                            objConstructor = eval("(function(){return " + jsCode + "})");
-                            this.objects_cache[id] = objConstructor;
-                            let obj: any = objConstructor();
-                            obj.$$schema = this;
+                    if (this.objects_cache_is_loading[id] === true) {
+                        // если уже послан запрос на загрузку объекта, то просто ждем 200мс и запрашиваем снова
+                        setTimeout(() => {
+                            this.getObject(id).then((_obj: T) => resolve(_obj)).catch((_error: string) => reject(_error));
+                        }, 200);
+                    }
+                    else {
+                        this.objects_cache_is_loading[id] = true;
+                        console.log("load schema object from sql :" + id);
+                        let select = new SelectStmt()
+                            .table("SchemaObject")
+                            .column("jsCode")
+                            .where("id", "=", new SqlGuidValue(id));
 
-                            resolve(obj as T);
-                        })
-                        .catch((error) => {
-                            throwError("Ошибка загрузки компонента (SchemaObject). Не найден компонент с id='" + id.toLowerCase() + "', " + error);
-                        });
-
+                        this.db.selectToString(select)
+                            .then((jsCode) => {
+                                objConstructor = eval("(function(){return " + jsCode + "})");
+                                this.objects_cache[id] = objConstructor;
+                                let obj: any = objConstructor();
+                                obj.$$schema = this;
+                                delete this.objects_cache_is_loading[id];
+                                resolve(obj as T);
+                            })
+                            .catch((error) => {
+                                throwError("Ошибка загрузки компонента (SchemaObject). Не найден компонент с id='" + id.toLowerCase() + "', " + error);
+                            });
+                    }
                 }
                 else {
                     let obj: any = objConstructor();
