@@ -114,18 +114,12 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
 
         this.getDesignedObjectOfRow(rowData).then((designedObject) => {
 
-            // let win =
-            //     <ObjectDesigner
-            //         designedObject={designedObject}
-            //         onSaveChanges={ () => { grid.refresh(); }}
-            //     >
-            //
-            //     </ObjectDesigner>;
 
             let designerProps: ObjectDesignerProps = {
                 designedObject: designedObject,
                 onSaveChanges: () => {
                     grid.refresh();
+                    grid.setFocusedRow(rowData);
                 }
             };
 

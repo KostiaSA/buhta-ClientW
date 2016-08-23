@@ -133,6 +133,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
         this.clonedDesignedObject.save()
             .then(() => {
+                console.log("SchemaComponent " + this.clonedDesignedObject.name + " saved");
                 this.getParentWindow()!.close();
             })
             .catch((error) => {

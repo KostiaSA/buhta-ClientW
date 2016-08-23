@@ -269,7 +269,7 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
                                             <GridColumnDef caption="Свойства" propertyName="typeName"
                                                            width={100}>
                                             </GridColumnDef>
-                                            <GridColumnDef caption="События" propertyName="position"
+                                            <GridColumnDef caption="События" propertyName="id"
                                                            width={100}>
                                             </GridColumnDef>
 

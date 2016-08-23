@@ -68,17 +68,11 @@ var GridBaseDataSource = (function () {
     };
     GridBaseDataSource.prototype.openEditForm = function (grid, rowData) {
         this.getDesignedObjectOfRow(rowData).then(function (designedObject) {
-            // let win =
-            //     <ObjectDesigner
-            //         designedObject={designedObject}
-            //         onSaveChanges={ () => { grid.refresh(); }}
-            //     >
-            //
-            //     </ObjectDesigner>;
             var designerProps = {
                 designedObject: designedObject,
                 onSaveChanges: function () {
                     grid.refresh();
+                    grid.setFocusedRow(rowData);
                 }
             };
             var win = designedObject.$$getDesigner(designerProps);

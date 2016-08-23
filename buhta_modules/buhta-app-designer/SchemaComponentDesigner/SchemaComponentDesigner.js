@@ -78,6 +78,7 @@ var SchemaComponentDesigner = (function (_super) {
             _this.clonedDesignedObject.changeUserID = Auth_1.getUserId();
             _this.clonedDesignedObject.save()
                 .then(function () {
+                console.log("SchemaComponent " + _this.clonedDesignedObject.name + " saved");
                 _this.getParentWindow().close();
             })
                 .catch(function (error) {

@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import {SchemaObject, SchemaObjectId} from "./SchemaObject";
 import {SchemaDatabase} from "./SchemaDatabase";
 import {SqlDb, SqlBatch} from "../buhta-sql/SqlDb";
@@ -28,20 +29,17 @@ export class Schema {
     private objects_cache: { [key: string]: () => SchemaObject; } = {};
 
     resetObjectCache(id: SchemaObjectId) {
-        delete this.objects_cache[id];
+        delete this.objects_cache[id.toLowerCase()];
     }
 
     getObject<T extends SchemaObject>(id: SchemaObjectId): Promise<T> {
-        // foreach (var helperTable in HelperTables)
-        // if (helperTable.ID==ID)
-        // return helperTable as T;
-
+        id = id.toLowerCase();
         return new Promise<T>(
             (resolve: (obj: T) => void, reject: (error: string) => void) => {
                 let objConstructor = this.objects_cache[id];
 
                 if (!objConstructor) {
-
+                    console.log("load from sql :" + id);
                     let select = new SelectStmt()
                         .table("SchemaObject")
                         .column("jsCode")
@@ -80,6 +78,17 @@ export class Schema {
         //if (!objectToSave.createDate)
         //  objectToSave.createDate = new Date();
 
+        // нормализация на всякий случай
+        objectToSave.id = objectToSave.id.toLowerCase();
+        if (_.isString(objectToSave.parentObjectID))
+            objectToSave.parentObjectID = objectToSave.parentObjectID.toLowerCase();
+        if (_.isString(objectToSave.createUserID))
+            objectToSave.createUserID = objectToSave.createUserID.toLowerCase();
+        if (_.isString(objectToSave.changeUserID))
+            objectToSave.changeUserID = objectToSave.changeUserID.toLowerCase();
+        if (_.isString(objectToSave.lockedByUserID))
+            objectToSave.lockedByUserID = objectToSave.lockedByUserID.toLowerCase();
+
         let sql = new UpsertStmt("SchemaObject")
             .column("id", new SqlGuidValue(objectToSave.id))
             .column("parentObjectId", new SqlGuidValue(objectToSave.parentObjectID))
@@ -98,9 +107,7 @@ export class Schema {
             .where("id", "=", new SqlGuidValue(objectToSave.id));
 
         return this.db.executeSQL(sql).then(() => {
-            //console.log("resetObjectCache " + objectToSave.id);
             this.resetObjectCache(objectToSave.id!);
-
         });
 
         // var sql = new StringBuilder();
