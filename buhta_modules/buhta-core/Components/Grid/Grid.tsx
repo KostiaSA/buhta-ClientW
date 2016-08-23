@@ -327,12 +327,15 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     }
 
     private handleGetRowHeight(param: AgGetRowHeightParams): number {
+        console.log(param);
+
         const delay200ms = 200; // 1 раз в секунд запускается цикл расчета высот rows, чаще нельзя, браузер замирает
         const max2000 = 2000; // для первых 2000 строк делаем расчет, для остальных берем средний
         const first100 = 100; // после первых 100 рассчитанных строк, показываем гриду юзеру
         const refresh1000 = 1000; // раз в секунду запускаем refreshInMemoryRowModel()
 
         if (this.rowHeightCache === undefined) {
+            console.log("rowHeightCache");
             this.rowHeightCache = {};
             this.avgRowHeight = 0;
 
@@ -367,11 +370,16 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
                 }
             });
 
-            setTimeout(() => {
+            if (nodes.length < first100) {
                 this.calculateRowHeights(nodes.slice(0));
-                if (this.state.agGrid.api)
-                    this.state.agGrid.api.refreshInMemoryRowModel();
-            }, delay);
+            }
+            else {
+                setTimeout(() => {
+                    this.calculateRowHeights(nodes.slice(0));
+                    if (this.state.agGrid.api)
+                        this.state.agGrid.api.refreshInMemoryRowModel();
+                }, delay);
+            }
         }
 
         if (param.data && param.data.$$gridRowHeight !== undefined) {

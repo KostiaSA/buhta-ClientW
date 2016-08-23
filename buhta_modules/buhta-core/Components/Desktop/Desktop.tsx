@@ -307,7 +307,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             // поднимаем дочерние окна
             let childWin = this.state.windows.filter((w: DesktopWindow) => w.parentWindowId === win!.id)[0];
             if (childWin)
-                this.activateWindow(childWin.id);
+                this.activateChildWindow(childWin.id);
         }
     }
 
