@@ -118,6 +118,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
     }
 
     refresh() {
+        console.log("grid-refresh");
         (this.component as Grid).rowHeightCache = undefined;
         (this.component as Grid).avgRowHeight = 0;
         this.agGrid.api!.setRowData(this.dataSource.getRows());
@@ -271,7 +272,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
     private calculateRowHeights(nodes: AgGrid.RowNode[]) {
 
-        const avgOf100 = 100; // для рачета средней высоты row берутся первые 100 rows
+        let avgOf100 = Math.min(100, nodes.length); // для рачета средней высоты row берутся первые 100 rows
 
         if (!this.state.agGrid.columnApi)  // окно с гридой было закрыто
             return;
@@ -283,6 +284,10 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
                 let oldHeight = this.rowHeightCache![node.id];
                 if (oldHeight === undefined || e.clientHeight > oldHeight) {
                     this.rowHeightCache![node.id] = e.clientHeight;
+                    if (node.data && node.data.$$gridRowHeight)
+                        node.data.$$gridRowHeight = undefined;
+
+                    console.log("grid-calculateRowHeights-node.id '" + node.id + "': " + e.clientHeight)
 
                     if (this.avgRowHeight === 0 && Object.keys(this.rowHeightCache).length === avgOf100) {
                         // вычисляем среднюю высоту
@@ -329,12 +334,15 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     }
 
     private handleGetRowHeight(param: AgGetRowHeightParams): number {
+        console.log("get row height " + param.node.id);
+
         const delay200ms = 200; // 1 раз в секунд запускается цикл расчета высот rows, чаще нельзя, браузер замирает
         const max2000 = 2000; // для первых 2000 строк делаем расчет, для остальных берем средний
         const first100 = 100; // после первых 100 рассчитанных строк, показываем гриду юзеру
         const refresh1000 = 1000; // раз в секунду запускаем refreshInMemoryRowModel()
 
         if (this.rowHeightCache === undefined) {
+            console.log("RECALC row heights");
             this.rowHeightCache = {};
             this.avgRowHeight = 0;
 

@@ -57,7 +57,6 @@ export class Schema {
 
                         this.db.selectToString(select)
                             .then((jsCode) => {
-                                console.log(jsCode);
                                 objConstructor = eval("(function(){return " + jsCode + "})");
                                 this.objects_cache[id] = objConstructor;
                                 let obj: any = objConstructor();
