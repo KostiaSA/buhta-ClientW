@@ -84,6 +84,31 @@ var GridBaseDataSource = (function () {
             grid.component.getParentDesktop().openWindow(win, openParam);
         });
     };
+    GridBaseDataSource.prototype.getNewDesignedObject = function (parentRowData) {
+        if (this.params.getNewDesignedObject !== undefined) {
+            return this.params.getNewDesignedObject(parentRowData);
+        }
+        Error_1.throwError("GridBaseDataSource.getNewDesignedObject(): function 'getNewDesignedObject' is not defined");
+        throw "fake";
+    };
+    GridBaseDataSource.prototype.openInsertForm = function (grid, focusedRowData) {
+        this.getNewDesignedObject(focusedRowData).then(function (newDesignedObject) {
+            var designerProps = {
+                designedObject: newDesignedObject,
+                onSaveChanges: function () {
+                    grid.refresh();
+                    grid.setFocusedRow(newDesignedObject);
+                }
+            };
+            var win = newDesignedObject.$$getDesigner(designerProps);
+            var openParam = {
+                title: "добавление",
+                autoPosition: "parent-center",
+                parentWindowId: grid.component.getParentWindowId()
+            };
+            grid.component.getParentDesktop().openWindow(win, openParam);
+        });
+    };
     return GridBaseDataSource;
 }());
 exports.GridBaseDataSource = GridBaseDataSource;

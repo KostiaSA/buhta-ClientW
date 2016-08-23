@@ -55,25 +55,47 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
     dataSource: GridTreeDataSourceFromSqlTable;
 
     private getDesignedObjectOfRow = (rowData: DataRow): Promise<DesignedObject> => {
-        console.log("жопа222");
         return this.component.props.schema.getObject(rowData["id"]);
-        // .then(( schemaObject:SchemaObject) => {
-        //     return
-        // });
+    };
+
+    private getNewDesignedObject = (focusedData: DataRow): Promise<DesignedObject> => {
+
+        let columns: GridColumns = [];
+        columns.push({caption: "Тип объекта", propertyName: "name"});
+        columns.push({caption: "Описание", propertyName: "description"});
+
+        let arr = registeredSchemaObjectTypesAsArray.sort((a, b) => {
+            return stringCompare(a.name, b.name);
+        });
+
+        let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>({arrayObj: arr, gridColumns: columns});
+
+        let params: LookupDialogParams<SchemaObjectTypeInfo> = {
+            title: "Выберите тип нового объекта",
+            lookupMode: "single",
+            dataSource: dataSource
+        };
+
+        return showLookupDialog(this.component, params)
+            .then((selected: SchemaObjectTypeInfo[]) => {
+                console.log(this.component.props.schema);
+                let newObject = new (Function.prototype.bind.apply(selected[0].type, [this, this.component.props.schema]));
+                // console.log(selected[0].type);
+                console.log(newObject);
+                newObject.id = getNewGuid();
+                newObject.name = "новый объект";
+                if (focusedData !== undefined)
+                    newObject.parentObjectID = focusedData["id"];
+                newObject["name"] = "новый объект " + selected[0].name;
+                newObject["typeId"] = selected[0].id;
+                return newObject;
+            });
     };
 
     private openEditForm = (grid: GridState<any>, rowData: DataRow) => {
 
         this.getDesignedObjectOfRow(rowData)
             .then((designedObject: DesignedObject) => {
-
-                // let win =
-                //     <ObjectDesigner
-                //         designedObject={designedObject}
-                //         onSaveChanges={ () => { grid.refresh(); }}
-                //     >
-                //
-                //     </ObjectDesigner>;
 
                 let openParam: OpenWindowParams = {
                     title: "редактирование",
@@ -93,16 +115,6 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
     }
 
 
-//     let openParam: OpenWindowParams = {
-//     title: "дизайнер компонента",
-//     top: 10,
-//     left: 10,
-//     width: 800,
-//     height: 600
-// };
-//
-//     appInstance.desktop.openSchemaComponentDesigner(component, openParam);
-
     createDataSource() {
         let select = new SelectStmt();
         select.table("SchemaObject");
@@ -117,41 +129,9 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             parentKeyFieldName: "parentObjectId",
             positionFieldName: "position",
             autoExpandNodesToLevel: 3,
-            getDesignedObjectOfRow: this.getDesignedObjectOfRow
+            getDesignedObjectOfRow: this.getDesignedObjectOfRow,
+            getNewDesignedObject: this.getNewDesignedObject
         };
-
-        // dsParams.getNewRow = (parentObject?: DataRow) => {
-        //
-        //
-        //     let columns: GridColumns = [];
-        //     columns.push({caption: "Тип объекта", propertyName: "name"});
-        //     columns.push({caption: "Описание", propertyName: "description"});
-        //
-        //     let arr = registeredSchemaObjectTypesAsArray.sort((a, b) => {
-        //         return stringCompare(a.name, b.name);
-        //     });
-        //
-        //     let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>({arrayObj: arr, gridColumns: columns});
-        //
-        //
-        //     let params: LookupDialogParams<SchemaObjectTypeInfo> = {
-        //         title: "Выберите тип нового объекта",
-        //         lookupMode: "single",
-        //         dataSource: dataSource
-        //     };
-        //
-        //     return showLookupDialog(this.component, params)
-        //         .then((selected: SchemaObjectTypeInfo[]) => {
-        //             let retDataRow = new DataRow(new DataTable());
-        //             retDataRow["id"] = getNewGuid();
-        //             if (parentObject !== undefined)
-        //                 retDataRow["parentObjectId"] = parentObject["id"];
-        //             retDataRow["name"] = "новый объект " + selected[0].name;
-        //             retDataRow["typeId"] = selected[0].id;
-        //             return retDataRow;
-        //         });
-        //
-        // };
 
         this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);
     }

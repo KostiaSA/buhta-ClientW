@@ -30,6 +30,12 @@ import {
 import Grid from "../../buhta-core/Components/Grid/Grid";
 import {GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
 import {GridState} from "../../buhta-core/Components/Grid/Grid";
+import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
+import {registeredSchemaObjectTypesAsArray, SchemaObjectTypeInfo} from "../../buhta-schema/SchemaObjectTypeInfo";
+import {stringCompare} from "../../buhta-core/stringCompare";
+import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
+import {LookupDialogParams, showLookupDialog} from "../../buhta-core/Dialogs/showLookupDialog";
+import {registeredControlTypesAsArray, ControlTypeInfo} from "../../buhta-ui/ControlTypeInfo";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -249,8 +255,47 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     //
     // }
 
+    private getNewDesignedObject = (focusedData: BaseControl): Promise<DesignedObject> => {
+
+        let columns: GridColumns = [];
+        columns.push({caption: "Тип объекта", propertyName: "name"});
+        columns.push({caption: "Описание", propertyName: "description"});
+
+        let arr = registeredControlTypesAsArray.sort((a, b) => {
+            return stringCompare(a.name, b.name);
+        });
+
+        let dataSource = new GridFlatDataSourceFromArray<ControlTypeInfo>({arrayObj: arr, gridColumns: columns});
+
+        let params: LookupDialogParams<ControlTypeInfo> = {
+            title: "Выберите тип нового объекта",
+            lookupMode: "single",
+            dataSource: dataSource
+        };
+
+        return showLookupDialog(this, params)
+            .then((selected: ControlTypeInfo[]) => {
+                let newObject = new (Function.prototype.bind.apply(selected[0].type, [this])) as BaseControl;
+                console.log(selected[0].type);
+                console.log(newObject);
+
+                if (focusedData === undefined) {
+                    console.log(this.props.designedObject);
+                    (this.props.designedObject as SchemaComponent).children.push(newObject);
+                }
+                else
+                    focusedData.children.push(newObject);
+
+                return newObject;
+            });
+    };
+
+
     render() {
-        let dataSourceParam: GridTreeDataSourceFromComponentParams = {nodes: this.clonedDesignedObject.children};
+        let dataSourceParam: GridTreeDataSourceFromComponentParams = {
+            nodes: this.clonedDesignedObject.children,
+            getNewDesignedObject: this.getNewDesignedObject
+        };
         let dataSource = new GridTreeDataSourceFromComponent(dataSourceParam);
 
         this.addClassName("component-designer");

@@ -5,6 +5,7 @@ import {Component, ComponentProps} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
 import {OneWayBinder} from "../buhta-schema/OneWayBinder/OneWayBinder";
 import {SelectEditor} from "../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
+import {registerControlType} from "./ControlTypeInfo";
 
 export type PropertyType = "number" | "string" | "date" | "guid";
 
@@ -70,3 +71,10 @@ export class PropertyControl extends BaseControl {
 
 
 }
+
+registerControlType({
+    name: "Property variable",
+    group: "variables",
+    description: "Свойство компонента",
+    type: PropertyControl
+});

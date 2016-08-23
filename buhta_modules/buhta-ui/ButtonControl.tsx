@@ -8,6 +8,7 @@ import {OneWayBinderEditor} from "../buhta-app-designer/PropertyEditors/OneWayBi
 import {onClickEvent} from "../buhta-core/Plugins/OnClickPlugin";
 import {OneWayBinder_EventHandler} from "../buhta-schema/OneWayBinder/OneWayBinder_EventHandler";
 import {ControlEvent} from "./ControlEvent";
+import {registerControlType} from "./ControlTypeInfo";
 
 export class ButtonControl extends BaseControl {
     @OneWayBinderEditor({
@@ -127,3 +128,11 @@ export class ButtonControl extends BaseControl {
     // }
 
 }
+
+registerControlType({
+    name: "Button",
+    group: "HTML",
+    description: "Кнопка",
+    type: ButtonControl
+});
+

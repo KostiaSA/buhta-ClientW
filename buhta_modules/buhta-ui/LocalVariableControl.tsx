@@ -5,6 +5,7 @@ import {Component, ComponentProps} from "../buhta-core/Components/Component";
 import {ButtonProps, Button} from "../buhta-core/Components/Button/Button";
 import {OneWayBinder} from "../buhta-schema/OneWayBinder/OneWayBinder";
 import {SelectEditor} from "../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
+import {registerControlType} from "./ControlTypeInfo";
 
 export type LocalVariableType = "number" | "string" | "date" | "guid";
 
@@ -66,3 +67,11 @@ export class LocalVariableControl extends BaseControl {
 
 
 }
+
+registerControlType({
+    name: "Local variable",
+    group: "variables",
+    description: "Локальная переменная",
+    type: LocalVariableControl
+});
+

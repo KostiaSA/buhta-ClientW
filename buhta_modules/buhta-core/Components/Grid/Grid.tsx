@@ -620,7 +620,8 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     }
 
     handleInsertButtonClick = () => {
-        this.openInsertForm();
+        let rowData = this.state.getFocusedRowData();
+        this.openInsertForm(rowData);
     }
 
     handleDeleteButtonClick = () => {
@@ -652,7 +653,9 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         });
     }
 
-    openInsertForm() {
+    openInsertForm(focusedRowData?: GridDataSourceRow) {
+
+        this.state.dataSource.openInsertForm(this.state, focusedRowData);
 
         // this.state.dataSource.getNewRow().then((designedObject: DesignedObject)=> {
         //

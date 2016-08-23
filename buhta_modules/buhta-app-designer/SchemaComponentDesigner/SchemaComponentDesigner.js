@@ -29,6 +29,10 @@ var ObjectDesigner_1 = require("../ObjectDesigner/ObjectDesigner");
 var GridTreeDataSourceFromComponent_1 = require("../../buhta-core/Components/Grid/GridTreeDataSourceFromComponent");
 var Grid_1 = require("../../buhta-core/Components/Grid/Grid");
 var GridColumn_1 = require("../../buhta-core/Components/Grid/GridColumn");
+var stringCompare_1 = require("../../buhta-core/stringCompare");
+var GridFlatDataSourceFromArray_1 = require("../../buhta-core/Components/Grid/GridFlatDataSourceFromArray");
+var showLookupDialog_1 = require("../../buhta-core/Dialogs/showLookupDialog");
+var ControlTypeInfo_1 = require("../../buhta-ui/ControlTypeInfo");
 var SchemaComponentDesigner = (function (_super) {
     __extends(SchemaComponentDesigner, _super);
     function SchemaComponentDesigner(props, context) {
@@ -139,6 +143,39 @@ var SchemaComponentDesigner = (function (_super) {
         this.handleDeleteButtonClick = function () {
             //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
         };
+        // handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
+        //     this.gridState = state;
+        //     //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
+        //     //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
+        //
+        // }
+        this.getNewDesignedObject = function (focusedData) {
+            var columns = [];
+            columns.push({ caption: "Тип объекта", propertyName: "name" });
+            columns.push({ caption: "Описание", propertyName: "description" });
+            var arr = ControlTypeInfo_1.registeredControlTypesAsArray.sort(function (a, b) {
+                return stringCompare_1.stringCompare(a.name, b.name);
+            });
+            var dataSource = new GridFlatDataSourceFromArray_1.GridFlatDataSourceFromArray({ arrayObj: arr, gridColumns: columns });
+            var params = {
+                title: "Выберите тип нового объекта",
+                lookupMode: "single",
+                dataSource: dataSource
+            };
+            return showLookupDialog_1.showLookupDialog(_this, params)
+                .then(function (selected) {
+                var newObject = new (Function.prototype.bind.apply(selected[0].type, [_this]));
+                console.log(selected[0].type);
+                console.log(newObject);
+                if (focusedData === undefined) {
+                    console.log(_this.props.designedObject);
+                    _this.props.designedObject.children.push(newObject);
+                }
+                else
+                    focusedData.children.push(newObject);
+                return newObject;
+            });
+        };
         this.props = props;
     }
     //observableDesignedObject: SchemaComponent;
@@ -174,15 +211,12 @@ var SchemaComponentDesigner = (function (_super) {
         buttons.push(React.createElement(Button_1.Button, {key: "delete", className: "is-outlined is-danger", onClick: this.handleDeleteButtonClick}, "Удалить"));
         return buttons;
     };
-    // handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
-    //     this.gridState = state;
-    //     //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
-    //     //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
-    //
-    // }
     SchemaComponentDesigner.prototype.render = function () {
         var _this = this;
-        var dataSourceParam = { nodes: this.clonedDesignedObject.children };
+        var dataSourceParam = {
+            nodes: this.clonedDesignedObject.children,
+            getNewDesignedObject: this.getNewDesignedObject
+        };
         var dataSource = new GridTreeDataSourceFromComponent_1.GridTreeDataSourceFromComponent(dataSourceParam);
         this.addClassName("component-designer");
         this.addProps({ onChange: this.props.onChange });

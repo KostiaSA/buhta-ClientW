@@ -839,9 +839,9 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         checkAuth().then(() => {
 
             let form = new SchemaForm(getSchema());
-            form.id = "1F2D95A0-5AF4-11E6-91EA-8FBA7805DE8D";
-            form.name="Тестовая форма 777";
-            form.description="Это описание 'Тестовая форма 777'";
+            form.id = "1f2d95a0-5af4-11e6-91ea-8fba7805de8d";
+            form.name = "Тестовая форма 777";
+            form.description = "Это описание 'Тестовая форма 777'";
 
             let v = new LocalVariableControl();
             v.variableName = "ИмяКнопки";
@@ -888,7 +888,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             panel1.children.push(but6);
 
             let comp = new ComponentControl();
-            comp.schemaComponentId = "333395A0-5AF4-11E6-3333-8FBA78053333";
+            comp.schemaComponentId = "333395a0-5af4-11e6-3333-8fba78053333";
             panel1.children.push(comp);
 
             let openParam: OpenWindowParams = {
@@ -910,7 +910,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     testOpenSchemaFormDesigner() {
 
 
-        getSchema().getObject<SchemaForm>("1F2D95A0-5AF4-11E6-91EA-8FBA7805DE8D").then((form: SchemaForm) => {
+        getSchema().getObject<SchemaForm>("1f2d95a0-5af4-11e6-91ea-8fba7805de8d").then((form: SchemaForm) => {
             let openParam: OpenWindowParams = {
                 title: "дизайнер формы",
                 top: 50,
@@ -929,7 +929,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         checkAuth().then(() => {
 
             let form = new SchemaComponent(getSchema());
-            form.id = "333395A0-5AF4-11E6-3333-8FBA78053333";
+            form.id = "333395a0-5af4-11e6-3333-8fba78053333";
             form.name = "Buttons3Stuck";
 
             let p = new PropertyControl();
@@ -982,7 +982,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     testOpenSchemaComponent3ButtonsDesigner() {
 
-        getSchema().getObject<SchemaComponent>("333395A0-5AF4-11E6-3333-8FBA78053333").then((component: SchemaComponent) => {
+        getSchema().getObject<SchemaComponent>("333395a0-5af4-11e6-3333-8fba78053333").then((component: SchemaComponent) => {
             let openParam: OpenWindowParams = {
                 title: "дизайнер компонента",
                 top: 10,
@@ -1030,7 +1030,10 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                         <Layout type="row" sizeTo="parent">
                             <Fixed className="sidebar" style={{width:this.sideWidth}}>
                                 Fixed Sidebar 123<br/>
-                                <button onClick={() => { getSchema().initSchemaStorage().then(()=>{alert("ok")}).catch((err)=>{alert(err)}); }}> test init schema storage</button>
+                                <button
+                                    onClick={() => { getSchema().initSchemaStorage().then(()=>{alert("ok")}).catch((err)=>{alert(err)}); }}>
+                                    test init schema storage
+                                </button>
                                 <br/>
                                 <button onClick={() => { this.testOpenWindow(); }}> test Promise-Each</button>
                                 <br/>

@@ -23,7 +23,8 @@ export interface GridBaseDataSourceParams<T extends GridDataSourceRow> {
     getDeleteRowMessage?: () => React.ReactNode;
     gridColumns?: GridColumns;
 
-    getDesignedObjectOfRow?: (rowData: T) =>  Promise<DesignedObject>;
+    getNewDesignedObject?: (focusedData: T) =>  Promise<DesignedObject>;
+    getDesignedObjectOfRow?: (editedData: T) =>  Promise<DesignedObject>;
 
 }
 
@@ -127,6 +128,42 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
 
             let openParam: OpenWindowParams = {
                 title: "редактирование",
+                autoPosition: "parent-center",
+                parentWindowId: grid.component.getParentWindowId()
+            };
+
+            grid.component.getParentDesktop().openWindow(win, openParam);
+
+        });
+
+
+    }
+
+    getNewDesignedObject(parentRowData: T): Promise<DesignedObject> {
+        if (this.params.getNewDesignedObject !== undefined) {
+            return this.params.getNewDesignedObject(parentRowData);
+        }
+        throwError("GridBaseDataSource.getNewDesignedObject(): function 'getNewDesignedObject' is not defined");
+        throw  "fake";
+    }
+
+    openInsertForm(grid: GridState<T>, focusedRowData: T) {
+
+        this.getNewDesignedObject(focusedRowData).then((newDesignedObject) => {
+
+
+            let designerProps: ObjectDesignerProps = {
+                designedObject: newDesignedObject,
+                onSaveChanges: () => {
+                    grid.refresh();
+                    grid.setFocusedRow(newDesignedObject as any);
+                }
+            };
+
+            let win = newDesignedObject.$$getDesigner(designerProps);
+
+            let openParam: OpenWindowParams = {
+                title: "добавление",
                 autoPosition: "parent-center",
                 parentWindowId: grid.component.getParentWindowId()
             };

@@ -53,8 +53,10 @@ export interface GridDataSource<T extends GridDataSourceRow> {
     getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails | null;
 
     getDesignedObjectOfRow(rowData: T): Promise<DesignedObject>;
+    getNewDesignedObject(rowData: T): Promise<DesignedObject>;
 
-    openEditForm(grid: GridState<T>, rowData: T): void;
+    openInsertForm(grid: GridState<T>, focusedRowData?: T): void;
+    openEditForm(grid: GridState<T>, editedRowData: T): void;
 
 }
 
