@@ -16,6 +16,7 @@ import {
 } from "./GridTreeDataSourceFromArray";
 import {SqlDb, DataRow, DataTable} from "../../../buhta-sql/SqlDb";
 import {SelectStmt} from "../../../buhta-sql/SelectStmt";
+import {getInstantPromise} from "../../getInstantPromise";
 
 export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSourceFromArrayParams<DataRow> {
     arrayObj?: DataRow[];
@@ -35,12 +36,20 @@ export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray<
 
     protected isLoaded: boolean = false;
 
+    refreshFromSql(): Promise<string> {
+        this.isLoaded = false;
+        return this.getRowsAsync().then(() => {
+            return "Ok";
+        });
+    }
+
     getRowsAsync(): Promise<DataRow[]> {
         if (this.isLoaded) {
-            return new Promise(
-                (resolve: (obj: DataRow[]) => void, reject: (error: string) => void) => {
-                    resolve(this.getRows());
-                });
+            return getInstantPromise<DataRow[]>(this.getRows());
+            // return new Promise(
+            //     (resolve: (obj: DataRow[]) => void, reject: (error: string) => void) => {
+            //         resolve(this.getRows());
+            //     });
         }
         else {
             return this.params.db.executeSQL(this.params.select)
@@ -51,6 +60,6 @@ export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray<
                 });
         }
     }
-    
+
 
 }

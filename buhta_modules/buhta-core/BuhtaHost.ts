@@ -16,6 +16,7 @@ import {SchemaComponent} from "../buhta-schema/SchemaComponent/SchemaComponent";
 import {ComponentControl} from "../buhta-ui/ComponentControl";
 import {registerSchemaObjectType, registeredSchemaObjectTypes} from "../buhta-schema/SchemaObjectTypeInfo";
 import {SchemaDatabase} from "../buhta-schema/SchemaDatabase";
+import {SchemaFolder} from "../buhta-schema/SchemaFolder/SchemaFolder";
 
 export let buhtaHost: any = {};
 
@@ -30,6 +31,7 @@ buhtaHost.SchemaForm = SchemaForm;
 buhtaHost.SchemaComponent = SchemaComponent;
 
 buhtaHost.SchemaDatabase = SchemaDatabase;
+buhtaHost.SchemaFolder = SchemaFolder;
 
 
 buhtaHost.ButtonControl = ButtonControl;

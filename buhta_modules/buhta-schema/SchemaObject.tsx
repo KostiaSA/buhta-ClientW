@@ -1,8 +1,15 @@
+import * as React from "react";
+import * as _ from "lodash";
+
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 import {Schema} from "./Schema";
 import {getNewGuid} from "../buhta-sql/SqlCore";
 import {throwAbstractError} from "../buhta-core/Error";
 import {SchemaObjectTypeInfo} from "./SchemaObjectTypeInfo";
+import {
+    SchemaObjectDesigner,
+    SchemaObjectDesignerProps
+} from "../buhta-app-designer/SchemaObjectDesigner/SchemaObjectDesigner";
 
 export type SchemaObjectId = string;
 
@@ -56,6 +63,17 @@ export class SchemaObject extends DesignedObject {
 
     getObjectTypeInfo(): SchemaObjectTypeInfo {
         return (this.constructor as any).$$schemaObjectTypeInfo;
+    }
+
+    $$getDesigner(props: SchemaObjectDesignerProps): JSX.Element {
+
+        return (
+            <SchemaObjectDesigner
+            {...props}
+            >
+            </SchemaObjectDesigner>
+        );
+
     }
 
 }

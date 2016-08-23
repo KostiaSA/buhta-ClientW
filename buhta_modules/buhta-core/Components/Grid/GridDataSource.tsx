@@ -48,8 +48,6 @@ export interface GridDataSource<T extends GridDataSourceRow> {
 
     dropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy"): void;
 
-    refresh(): void;
-
     getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails | null;
 
     getDesignedObjectOfRow(rowData: T): Promise<DesignedObject>;

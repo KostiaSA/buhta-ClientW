@@ -7,7 +7,6 @@ import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from ".
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {Snapshot} from "../../buhta-core/Snapshot";
-//import {Observable} from "../../buhta-core/Observable";
 import {deepClone} from "../../buhta-core/deepClone";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
@@ -53,10 +52,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
 
     needToSave: boolean;
     snapshot: Snapshot = new Snapshot();
-
-    //needToSave: boolean = false;
     clonedDesignedObject: SchemaComponent;
-    //observableDesignedObject: SchemaComponent;
 
     protected willMount() {
         super.willMount();
@@ -89,39 +85,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     protected didMount() {
         super.didMount();
         this.startCheckDesignedObjectIsChanged();
-        //this.snapshot.saveObject(this.props.designedObject, "root");
     }
-
-    // renderPropertyDesigners(): JSX.Element[] {
-    //     let ret: JSX.Element[] = [];
-    //
-    //     getPropertyEditors(this.observableDesignedObject).forEach((propInfo: PropertyEditorInfo, index: number) => {
-    //         //console.log(propInfo);
-    //         let editorProps: BasePropertyEditorProps & PropertyEditorInfo = {
-    //             designedObject: this.observableDesignedObject,
-    //             //propertyEditorInfo: propInfo,
-    //             index: index,
-    //             key: index,
-    //             onChange: this.props.onChange,
-    //
-    //             // это из propInfo: PropertyEditorInfo, заполяется далее через _.assign
-    //             propertyName: "",
-    //             objectType: DesignedObject,
-    //             editorType: BasePropertyEditor,
-    //             propertyType: null
-    //         };
-    //
-    //         _.assign(editorProps, propInfo);
-    //
-    //         if (!editorProps.inputCaption)
-    //             editorProps.inputCaption = editorProps.propertyName;
-    //         //console.log(editorProps);
-    //
-    //         ret.push(React.createElement(propInfo.editorType, editorProps, {}));
-    //     });
-    //
-    //     return ret;
-    // }
 
     handleSaveButtonClick = (sender: Button, e: React.MouseEvent): void => {
         if (this.props.onSaveChanges)
@@ -157,29 +121,8 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         e.stopPropagation();
     }
 
-    // handleSaveChanges = () => {
-    //     console.log("save-changes");
-    //     //console.log(this.props.designedObject);
-    //     _.assign(this.props.designedObject, this.observableDesignedObject);
-    //     if (this.props.onSaveChanges)
-    //         this.props.onSaveChanges();
-    //
-    // }
-    //
-    // handleCancelChanges = () => {
-    //     console.log("cancel-changes");
-    //     //this.snapshot.restoreObject(this.props.designedObject, "root");
-    //     if (this.props.onCancelChanges)
-    //         this.props.onCancelChanges();
-    //     //console.log(this.props.designedObject);
-    // }
-
-    // handleGetNeedToSave = (): boolean => {
-    //     return this.needToSave;
-    // }
 
     handleTestButtonClick = () => {
-        //this.openEditForm(this.state.rows[this.state.focusedRowIndex]);
         let designedObject = deepClone(this.clonedDesignedObject);
 
         let openParam: OpenWindowParams = {
@@ -191,69 +134,62 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         this.getParentDesktop().openSchemaComponent(designedObject as SchemaForm, openParam);
     }
 
-    handleUpdateButtonClick = () => {
-        let designedObject = this.gridState.getFocusedRowData();
-
-        if (designedObject) {
-            let win =
-                <ObjectDesigner
-                    designedObject={designedObject}
-                    onSaveChanges={ () => { this.gridState.refresh(); }}
-                >
-
-                </ObjectDesigner>;
-
-            let openParam: OpenWindowParams = {
-                title: "редактирование",
-                autoPosition: "parent-center",
-                parentWindowId: this.getParentWindowId()
-            };
-
-            this.getParentDesktop().openWindow(win, openParam);
-        }
-    }
-
-    handleInsertButtonClick = () => {
-        //this.openInsertForm();
-    }
-
-    handleDeleteButtonClick = () => {
-        //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
-
-    }
-
-    renderEditableButtons(): JSX.Element[] {
-        let buttons: JSX.Element[] = [];
-
-        buttons.push(
-            <Button key="insert" className="is-outlined is-success" onClick={this.handleInsertButtonClick}>
-                Добавить
-            </Button>
-        );
-
-        buttons.push(
-            <Button key="update" className="is-outlined is-info" onClick={this.handleUpdateButtonClick}>
-                Изменить
-            </Button>
-        );
-
-        buttons.push(
-            <Button key="delete" className="is-outlined is-danger" onClick={this.handleDeleteButtonClick}>
-                Удалить
-            </Button>
-        );
-
-        return buttons;
-    }
-
-    private gridState: GridState<BaseControl>;
-
-    // handleTreeGridChangeFocusedRow = (state: TreeGridState<BaseControl>) => {
-    //     this.gridState = state;
-    //     //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
+    // handleUpdateButtonClick = () => {
+    //     let designedObject = this.gridState.getFocusedRowData();
+    //
+    //     if (designedObject) {
+    //         let win =
+    //             <ObjectDesigner
+    //                 designedObject={designedObject}
+    //                 onSaveChanges={ () => { this.gridState.refresh(); }}
+    //             >
+    //
+    //             </ObjectDesigner>;
+    //
+    //         let openParam: OpenWindowParams = {
+    //             title: "редактирование",
+    //             autoPosition: "parent-center",
+    //             parentWindowId: this.getParentWindowId()
+    //         };
+    //
+    //         this.getParentDesktop().openWindow(win, openParam);
+    //     }
+    // }
+    //
+    // handleInsertButtonClick = () => {
+    //     //this.openInsertForm();
+    // }
+    //
+    // handleDeleteButtonClick = () => {
     //     //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
     //
     // }
+
+    // renderEditableButtons(): JSX.Element[] {
+    //     let buttons: JSX.Element[] = [];
+    //
+    //     buttons.push(
+    //         <Button key="insert" className="is-outlined is-success" onClick={this.handleInsertButtonClick}>
+    //             Добавить
+    //         </Button>
+    //     );
+    //
+    //     buttons.push(
+    //         <Button key="update" className="is-outlined is-info" onClick={this.handleUpdateButtonClick}>
+    //             Изменить
+    //         </Button>
+    //     );
+    //
+    //     buttons.push(
+    //         <Button key="delete" className="is-outlined is-danger" onClick={this.handleDeleteButtonClick}>
+    //             Удалить
+    //         </Button>
+    //     );
+    //
+    //     return buttons;
+    // }
+
+    private gridState: GridState<BaseControl>;
 
     private getNewDesignedObject = (focusedData: BaseControl): Promise<DesignedObject> => {
 
@@ -276,16 +212,6 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
         return showLookupDialog(this, params)
             .then((selected: ControlTypeInfo[]) => {
                 let newObject = new (Function.prototype.bind.apply(selected[0].type, [this])) as BaseControl;
-                console.log(selected[0].type);
-                console.log(newObject);
-
-                // if (focusedData === undefined) {
-                //     console.log(this.props.designedObject);
-                //     (this.props.designedObject as SchemaComponent).children.push(newObject);
-                // }
-                // else
-                //     focusedData.children.push(newObject);
-
                 return newObject;
             });
     };
@@ -334,7 +260,6 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                         </Grid>
                                     </Flex>
                                     <Fixed>
-                                        {this.renderEditableButtons()}
 
                                     </Fixed>
                                 </Layout>

@@ -43,6 +43,7 @@ import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/Grid
 import {UUID} from "UUID";
 import {getNewGuid} from "../../buhta-sql/SqlCore";
 import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
+import {SchemaObjectDesignerProps} from "../SchemaObjectDesigner/SchemaObjectDesigner";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
@@ -95,7 +96,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
     private openEditForm = (grid: GridState<any>, rowData: DataRow) => {
 
         this.getDesignedObjectOfRow(rowData)
-            .then((designedObject: DesignedObject) => {
+            .then((designedObject: SchemaObject) => {
 
                 let openParam: OpenWindowParams = {
                     title: "редактирование",
@@ -103,8 +104,15 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                     parentWindowId: grid.component.getParentWindowId()
                 };
 
-                let props: ObjectDesignerProps = {
-                    designedObject: designedObject
+                let props: SchemaObjectDesignerProps = {
+                    designedObject: designedObject,
+                    onSaveChanges: () => {
+                        this.dataSource.refreshFromSql()
+                            .then(() => {
+                                grid.refresh();
+                                grid.setFocusedRow(designedObject as any);
+                            });
+                    }
                 };
 
                 grid.component.getParentDesktop().openWindow(designedObject.$$getDesigner(props), openParam);
@@ -130,7 +138,8 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             positionFieldName: "position",
             autoExpandNodesToLevel: 3,
             getDesignedObjectOfRow: this.getDesignedObjectOfRow,
-            getNewDesignedObject: this.getNewDesignedObject
+            getNewDesignedObject: this.getNewDesignedObject,
+            openEditForm: this.openEditForm
         };
 
         this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);

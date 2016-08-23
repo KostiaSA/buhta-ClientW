@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var GridTreeDataSourceFromArray_1 = require("./GridTreeDataSourceFromArray");
+var getInstantPromise_1 = require("../../getInstantPromise");
 var GridTreeDataSourceFromSqlTable = (function (_super) {
     __extends(GridTreeDataSourceFromSqlTable, _super);
     function GridTreeDataSourceFromSqlTable(params) {
@@ -16,12 +17,16 @@ var GridTreeDataSourceFromSqlTable = (function (_super) {
         return true;
     };
     ;
+    GridTreeDataSourceFromSqlTable.prototype.refreshFromSql = function () {
+        this.isLoaded = false;
+        return this.getRowsAsync().then(function () {
+            return "Ok";
+        });
+    };
     GridTreeDataSourceFromSqlTable.prototype.getRowsAsync = function () {
         var _this = this;
         if (this.isLoaded) {
-            return new Promise(function (resolve, reject) {
-                resolve(_this.getRows());
-            });
+            return getInstantPromise_1.getInstantPromise(this.getRows());
         }
         else {
             return this.params.db.executeSQL(this.params.select)

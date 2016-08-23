@@ -67,22 +67,27 @@ var GridBaseDataSource = (function () {
         }
     };
     GridBaseDataSource.prototype.openEditForm = function (grid, rowData) {
-        this.getDesignedObjectOfRow(rowData).then(function (designedObject) {
-            var designerProps = {
-                designedObject: designedObject,
-                onSaveChanges: function () {
-                    grid.refresh();
-                    grid.setFocusedRow(rowData);
-                }
-            };
-            var win = designedObject.$$getDesigner(designerProps);
-            var openParam = {
-                title: "редактирование",
-                autoPosition: "parent-center",
-                parentWindowId: grid.component.getParentWindowId()
-            };
-            grid.component.getParentDesktop().openWindow(win, openParam);
-        });
+        if (this.params.openEditForm !== undefined) {
+            this.params.openEditForm(grid, rowData);
+        }
+        else {
+            this.getDesignedObjectOfRow(rowData).then(function (designedObject) {
+                var designerProps = {
+                    designedObject: designedObject,
+                    onSaveChanges: function () {
+                        grid.refresh();
+                        grid.setFocusedRow(rowData);
+                    }
+                };
+                var win = designedObject.$$getDesigner(designerProps);
+                var openParam = {
+                    title: "редактирование",
+                    autoPosition: "parent-center",
+                    parentWindowId: grid.component.getParentWindowId()
+                };
+                grid.component.getParentDesktop().openWindow(win, openParam);
+            });
+        }
     };
     GridBaseDataSource.prototype.getNewDesignedObject = function (parentRowData) {
         if (this.params.getNewDesignedObject !== undefined) {
@@ -92,22 +97,27 @@ var GridBaseDataSource = (function () {
         throw "fake";
     };
     GridBaseDataSource.prototype.openInsertForm = function (grid, focusedRowData) {
-        this.getNewDesignedObject(focusedRowData).then(function (newDesignedObject) {
-            var designerProps = {
-                designedObject: newDesignedObject,
-                onSaveChanges: function () {
-                    grid.refresh();
-                    grid.setFocusedRow(newDesignedObject);
-                }
-            };
-            var win = newDesignedObject.$$getDesigner(designerProps);
-            var openParam = {
-                title: "добавление",
-                autoPosition: "parent-center",
-                parentWindowId: grid.component.getParentWindowId()
-            };
-            grid.component.getParentDesktop().openWindow(win, openParam);
-        });
+        if (this.params.openInsertForm !== undefined) {
+            this.params.openInsertForm(grid, focusedRowData);
+        }
+        else {
+            this.getNewDesignedObject(focusedRowData).then(function (newDesignedObject) {
+                var designerProps = {
+                    designedObject: newDesignedObject,
+                    onSaveChanges: function () {
+                        grid.refresh();
+                        grid.setFocusedRow(newDesignedObject);
+                    }
+                };
+                var win = newDesignedObject.$$getDesigner(designerProps);
+                var openParam = {
+                    title: "добавление",
+                    autoPosition: "parent-center",
+                    parentWindowId: grid.component.getParentWindowId()
+                };
+                grid.component.getParentDesktop().openWindow(win, openParam);
+            });
+        }
     };
     return GridBaseDataSource;
 }());

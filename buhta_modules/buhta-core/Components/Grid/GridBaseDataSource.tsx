@@ -26,6 +26,9 @@ export interface GridBaseDataSourceParams<T extends GridDataSourceRow> {
     getNewDesignedObject?: (focusedData: T) =>  Promise<DesignedObject>;
     getDesignedObjectOfRow?: (editedData: T) =>  Promise<DesignedObject>;
 
+    openEditForm?: (grid: GridState<T>, rowData: T) => void;
+    openInsertForm?: (grid: GridState<T>, focusedRowData: T)=> void;
+
 }
 
 export class GridBaseDataSource<T extends GridDataSourceRow> {
@@ -112,30 +115,34 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
     }
 
     openEditForm(grid: GridState<T>, rowData: T) {
+        if (this.params.openEditForm !== undefined) {
+            this.params.openEditForm(grid, rowData);
+        }
+        else {
 
-        this.getDesignedObjectOfRow(rowData).then((designedObject) => {
+            this.getDesignedObjectOfRow(rowData).then((designedObject) => {
 
 
-            let designerProps: ObjectDesignerProps = {
-                designedObject: designedObject,
-                onSaveChanges: () => {
-                    grid.refresh();
-                    grid.setFocusedRow(rowData);
-                }
-            };
+                let designerProps: ObjectDesignerProps = {
+                    designedObject: designedObject,
+                    onSaveChanges: () => {
+                        grid.refresh();
+                        grid.setFocusedRow(rowData);
+                    }
+                };
 
-            let win = designedObject.$$getDesigner(designerProps);
+                let win = designedObject.$$getDesigner(designerProps);
 
-            let openParam: OpenWindowParams = {
-                title: "редактирование",
-                autoPosition: "parent-center",
-                parentWindowId: grid.component.getParentWindowId()
-            };
+                let openParam: OpenWindowParams = {
+                    title: "редактирование",
+                    autoPosition: "parent-center",
+                    parentWindowId: grid.component.getParentWindowId()
+                };
 
-            grid.component.getParentDesktop().openWindow(win, openParam);
+                grid.component.getParentDesktop().openWindow(win, openParam);
 
-        });
-
+            });
+        }
 
     }
 
@@ -148,30 +155,34 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
     }
 
     openInsertForm(grid: GridState<T>, focusedRowData: T) {
+        if (this.params.openInsertForm !== undefined) {
+            this.params.openInsertForm(grid, focusedRowData);
+        }
+        else {
 
-        this.getNewDesignedObject(focusedRowData).then((newDesignedObject) => {
+            this.getNewDesignedObject(focusedRowData).then((newDesignedObject) => {
 
 
-            let designerProps: ObjectDesignerProps = {
-                designedObject: newDesignedObject,
-                onSaveChanges: () => {
-                    grid.refresh();
-                    grid.setFocusedRow(newDesignedObject as any);
-                }
-            };
+                let designerProps: ObjectDesignerProps = {
+                    designedObject: newDesignedObject,
+                    onSaveChanges: () => {
+                        grid.refresh();
+                        grid.setFocusedRow(newDesignedObject as any);
+                    }
+                };
 
-            let win = newDesignedObject.$$getDesigner(designerProps);
+                let win = newDesignedObject.$$getDesigner(designerProps);
 
-            let openParam: OpenWindowParams = {
-                title: "добавление",
-                autoPosition: "parent-center",
-                parentWindowId: grid.component.getParentWindowId()
-            };
+                let openParam: OpenWindowParams = {
+                    title: "добавление",
+                    autoPosition: "parent-center",
+                    parentWindowId: grid.component.getParentWindowId()
+                };
 
-            grid.component.getParentDesktop().openWindow(win, openParam);
+                grid.component.getParentDesktop().openWindow(win, openParam);
 
-        });
-
+            });
+        }
 
     }
 
