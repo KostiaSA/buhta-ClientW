@@ -12,14 +12,17 @@ import {removeFromArray, moveInArray, insertIntoArray} from "../../arrayUtils";
 import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {BaseControl} from "../../../buhta-ui/BaseControl";
 import {GridBaseDataSource, GridBaseDataSourceParams} from "./GridBaseDataSource";
+import {GridState} from "./Grid";
+import {ObjectDesignerProps} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
+import {OpenWindowParams} from "../Desktop/Desktop";
 
-export interface GridTreeDataSourceFromComponentParams extends GridBaseDataSourceParams<BaseControl>{
+export interface GridTreeDataSourceFromComponentParams extends GridBaseDataSourceParams<BaseControl> {
 
     nodes: BaseControl[];
     positionFieldName?: string;  // sort
 
 //    getNewRow?: () => Promise<BaseControl>;
-  //  getEmptyDataSourceMessage?: () => React.ReactNode;
+    //  getEmptyDataSourceMessage?: () => React.ReactNode;
     //getDeleteRowMessage?: () => React.ReactNode;
 
 }
@@ -228,6 +231,41 @@ export class GridTreeDataSourceFromComponent extends GridBaseDataSource<BaseCont
             };
         else
             return null;
+    }
+
+    openInsertForm(grid: GridState<BaseControl>, focusedRowData: BaseControl) {
+
+        this.getNewDesignedObject(focusedRowData).then((newDesignedObject: BaseControl) => {
+
+
+            let designerProps: ObjectDesignerProps = {
+                designedObject: newDesignedObject,
+                onSaveChanges: () => {
+
+                    if (focusedRowData === undefined) {
+                        this.params.nodes.push(newDesignedObject);
+                    }
+                    else
+                        focusedRowData.children.push(newDesignedObject);
+
+                    grid.refresh();
+                    grid.setFocusedRow(newDesignedObject);
+                }
+            };
+
+            let win = newDesignedObject.$$getDesigner(designerProps);
+
+            let openParam: OpenWindowParams = {
+                title: "добавление",
+                autoPosition: "parent-center",
+                parentWindowId: grid.component.getParentWindowId()
+            };
+
+            grid.component.getParentDesktop().openWindow(win, openParam);
+
+        });
+
+
     }
 
 }

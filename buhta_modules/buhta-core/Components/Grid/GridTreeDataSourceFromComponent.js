@@ -182,6 +182,30 @@ var GridTreeDataSourceFromComponent = (function (_super) {
         else
             return null;
     };
+    GridTreeDataSourceFromComponent.prototype.openInsertForm = function (grid, focusedRowData) {
+        var _this = this;
+        this.getNewDesignedObject(focusedRowData).then(function (newDesignedObject) {
+            var designerProps = {
+                designedObject: newDesignedObject,
+                onSaveChanges: function () {
+                    if (focusedRowData === undefined) {
+                        _this.params.nodes.push(newDesignedObject);
+                    }
+                    else
+                        focusedRowData.children.push(newDesignedObject);
+                    grid.refresh();
+                    grid.setFocusedRow(newDesignedObject);
+                }
+            };
+            var win = newDesignedObject.$$getDesigner(designerProps);
+            var openParam = {
+                title: "добавление",
+                autoPosition: "parent-center",
+                parentWindowId: grid.component.getParentWindowId()
+            };
+            grid.component.getParentDesktop().openWindow(win, openParam);
+        });
+    };
     return GridTreeDataSourceFromComponent;
 }(GridBaseDataSource_1.GridBaseDataSource));
 exports.GridTreeDataSourceFromComponent = GridTreeDataSourceFromComponent;

@@ -279,12 +279,12 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                 console.log(selected[0].type);
                 console.log(newObject);
 
-                if (focusedData === undefined) {
-                    console.log(this.props.designedObject);
-                    (this.props.designedObject as SchemaComponent).children.push(newObject);
-                }
-                else
-                    focusedData.children.push(newObject);
+                // if (focusedData === undefined) {
+                //     console.log(this.props.designedObject);
+                //     (this.props.designedObject as SchemaComponent).children.push(newObject);
+                // }
+                // else
+                //     focusedData.children.push(newObject);
 
                 return newObject;
             });

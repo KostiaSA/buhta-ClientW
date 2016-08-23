@@ -167,12 +167,12 @@ var SchemaComponentDesigner = (function (_super) {
                 var newObject = new (Function.prototype.bind.apply(selected[0].type, [_this]));
                 console.log(selected[0].type);
                 console.log(newObject);
-                if (focusedData === undefined) {
-                    console.log(_this.props.designedObject);
-                    _this.props.designedObject.children.push(newObject);
-                }
-                else
-                    focusedData.children.push(newObject);
+                // if (focusedData === undefined) {
+                //     console.log(this.props.designedObject);
+                //     (this.props.designedObject as SchemaComponent).children.push(newObject);
+                // }
+                // else
+                //     focusedData.children.push(newObject);
                 return newObject;
             });
         };
