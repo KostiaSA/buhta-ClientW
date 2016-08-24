@@ -272,7 +272,7 @@ export class Window extends Component<WindowProps, WindowState> {
                 <Layout type="column" sizeTo="parent">
                     <Fixed
                         className="window-header"
-                        style={{borderRadius: "5px 5px 0px 0px", position:"relative", paddingLeft: 10}}
+                        style={{/*borderRadius: "5px 5px 0px 0px",*/ position:"relative", paddingLeft: 10}}
                     >
                         <Layout type="row" sizeTo="parent">
                             <Flex>
@@ -315,7 +315,7 @@ export class Window extends Component<WindowProps, WindowState> {
                     </Flex>
                 </Layout>
                 <div className={disabledWrapperClass}
-                     style={{ position:"absolute", left:0, top:0, right:0, bottom:0}}
+                     style={{ position:"absolute", left:-2, top:0, right:0, bottom:0}}
                 >
 
                 </div>

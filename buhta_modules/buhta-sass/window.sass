@@ -2,13 +2,19 @@
   border: 1px solid red
   background: #e8e8e8
 
+$window-border-width: 2px
+$window-border-radius: 5px
+$window-border-color: lightslategray
+
+.window.box
+  border-radius: $window-border-radius
+
 .window
   background: white
-  //border: 1px solid gray
 
   .window-header
-    background: lightslategray
-    border: 1px solid gray
+    background: $window-border-color
+    border: $window-border-width solid $window-border-color
 
     .window-title
       color: white
@@ -27,7 +33,8 @@
     background: rgba(146, 146, 146, 0.22)
 
   .window-body
-    //margin: 5px
+     border: $window-border-width solid $window-border-color
+     border-radius: 0 0 $window-border-radius $window-border-radius
 
   .window-disabled-wrapper
     background: rgba(255, 255, 255, 0.43)
