@@ -17,6 +17,11 @@ import {Button} from "../Button/Button";
 import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {OpenWindowParams} from "../Desktop/Desktop";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
+import {
+    INSERT_BUTTON_TEXT, DELETE_BUTTON_TEXT, UPDATE_BUTTON_TEXT, INSERT_BUTTON_ICON,
+    UPDATE_BUTTON_ICON, DELETE_BUTTON_ICON, SELECT_BUTTON_TEXT, REJECT_BUTTON_TEXT, CLOSE_BUTTON_TEXT,
+    SELECT_BUTTON_ICON, CLOSE_BUTTON_ICON, REJECT_BUTTON_ICON
+} from "../../Constants";
 
 
 ///////////// ВНИМАНИЕ !  //////////////////
@@ -726,22 +731,33 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         if (this.props.editable) {
             if (this.props.denyInsert !== true)
                 buttons.push(
-                    <Button key="insert" className="is-outlined is-success" onClick={this.handleInsertButtonClick}>
-                        Добавить
+                    <Button
+                        key="insert"
+                        icon={INSERT_BUTTON_ICON}
+                        onClick={this.handleInsertButtonClick}>
+                        { INSERT_BUTTON_TEXT}
                     </Button>
                 );
 
             if (this.props.denyUpdate !== true)
                 buttons.push(
-                    <Button key="update" className="is-outlined is-info" onClick={this.handleUpdateButtonClick}>
-                        Изменить
+                    <Button
+                        key="update"
+                        onClick={this.handleUpdateButtonClick}
+                        icon={UPDATE_BUTTON_ICON}
+                    >
+                        { UPDATE_BUTTON_TEXT}
                     </Button>
                 );
 
             if (this.props.denyDelete !== true)
                 buttons.push(
-                    <Button key="delete" className="is-outlined is-danger" onClick={this.handleDeleteButtonClick}>
-                        Удалить
+                    <Button
+                        key="delete"
+                        onClick={this.handleDeleteButtonClick}
+                        icon={DELETE_BUTTON_ICON}
+                    >
+                        { DELETE_BUTTON_TEXT}
                     </Button>
                 );
         }
@@ -779,20 +795,32 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         let buttons: JSX.Element[] = [];
         if (this.props.lookupMode === "single" || this.props.lookupMode === "multi") {
             buttons.push(
-                <Button key="select" className="is-smalln" onClick={this.handleSelectButtonClick}>
-                    Выбрать
+                <Button
+                    key="select"
+                    onClick={this.handleSelectButtonClick}
+                    icon={SELECT_BUTTON_ICON}
+                >
+                    { SELECT_BUTTON_TEXT }
                 </Button>
             );
             buttons.push(
-                <Button key="cancel" className="is-smalln" onClick={this.handleCancelButtonClick}>
-                    Отмена
+                <Button
+                    key="cancel"
+                    onClick={this.handleCancelButtonClick}
+                    icon={REJECT_BUTTON_ICON}
+                >
+                    { REJECT_BUTTON_TEXT }
                 </Button>
             );
         }
         else if (this.props.showCloseButton === true) {
             buttons.push(
-                <Button key="closes" className="is-smalln" onClick={this.handleCloseButtonClick}>
-                    Закрыть
+                <Button
+                    key="close"
+                    onClick={this.handleCloseButtonClick}
+                    icon={CLOSE_BUTTON_ICON}
+                >
+                    { CLOSE_BUTTON_TEXT }
                 </Button>
             );
         }
@@ -803,7 +831,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         return (
             <Layout className="grid???" type="column" sizeTo="parent" {...this.getRenderProps()}
             >
-                <Fixed className="grid-header">
+                <Fixed className="grid-header" style={{ paddingBottom: 5 }}>
                     <button onClick={ () => {  }}>
                         refresh 5001
                     </button>
@@ -818,7 +846,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
                     </button>
                     заголовок и т.д.
                 </Fixed>
-                <Flex className="grid-body">
+                <Flex className="grid-body" style={{ paddingBottom: 5 }}>
                     <div
                         className="ag-fresh"
                         ref={ (e) => { this.agGridNativeElement = e; }}
@@ -826,7 +854,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
                     >
                     </div>
                 </Flex>
-                <Fixed className="grid-footer">
+                <Fixed className="grid-footer" style={{ paddingBottom: 5 }}>
 
                     <Layout type="row" sizeTo="content">
                         <Fixed>

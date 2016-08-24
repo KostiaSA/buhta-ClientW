@@ -44,6 +44,7 @@ import {UUID} from "UUID";
 import {getNewGuid} from "../../buhta-sql/SqlCore";
 import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
 import {SchemaObjectDesignerProps} from "../SchemaObjectDesigner/SchemaObjectDesigner";
+import {CLOSE_BUTTON_TEXT} from "../../buhta-core/Constants";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
@@ -278,25 +279,16 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
                     <Fixed>
                         <Layout className="auto-form-footer" type="row" sizeTo="content">
                             <Flex>
-                                <Button key="insert" className="is-outlined is-success"
-                                        onClick={this.handleInsertButtonClick}>
-                                    Добавить
-                                </Button>
-                                <Button key="update" className="is-outlined is-info"
-                                        onClick={this.handleUpdateButtonClick}>
-                                    Изменить
-                                </Button>
-                                <Button key="delete" className="is-outlined is-danger"
-                                        onClick={this.handleDeleteButtonClick}>
-                                    Удалить
-                                </Button>
                                 <Button onClick={ this.handleTestButtonClick }>
                                     Тест
                                 </Button>
                             </Flex>
                             <Fixed>
-                                <Button onClick={ this.handleCloseButtonClick }>
-                                    Закрыть
+                                <Button
+                                    onClick={ this.handleCloseButtonClick }
+                                    icon="buhta-set-1/application-export"
+                                >
+                                    {CLOSE_BUTTON_TEXT}
                                 </Button>
                             </Fixed>
                         </Layout>

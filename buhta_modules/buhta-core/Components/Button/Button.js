@@ -16,6 +16,7 @@ var React = require("react");
 var VisiblePlugin_1 = require("../../Plugins/VisiblePlugin");
 var OnClickPlugin_1 = require("../../Plugins/OnClickPlugin");
 var Component_1 = require("../Component");
+var getIconFullPath_1 = require("../../getIconFullPath");
 var ButtonState = (function (_super) {
     __extends(ButtonState, _super);
     function ButtonState() {
@@ -33,9 +34,17 @@ var Button = (function (_super) {
         this.plugins.push(new VisiblePlugin_1.VisiblePlugin(this));
         this.plugins.push(new OnClickPlugin_1.OnClickPlugin(this));
     }
+    Button.prototype.renderIcon = function () {
+        if (this.props.icon !== undefined) {
+            return (React.createElement("img", {src: getIconFullPath_1.getIconFullPath(this.props.icon)}));
+        }
+        else
+            return undefined;
+    };
     Button.prototype.render = function () {
         this.addClassName("button");
         return (React.createElement("a", __assign({}, this.getRenderProps()), 
+            this.renderIcon(), 
             this.props.text, 
             this.props.children));
     };

@@ -8,6 +8,10 @@ import {Layout} from "../LayoutPane/Layout";
 import {Flex} from "../LayoutPane/Flex";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Button} from "../Button/Button";
+import {
+    SAVE_BUTTON_ICON, CANCEL_BUTTON_ICON, CLOSE_BUTTON_ICON, CANCEL_BUTTON_TEXT,
+    CLOSE_BUTTON_TEXT, SAVE_BUTTON_TEXT
+} from "../../Constants";
 
 
 export interface AutoFormControlProps {
@@ -133,12 +137,18 @@ export class AutoForm extends Component<AutoFormProps, any> {
 
                             </Flex>
                             <Fixed>
-                                <Button visible={ this.props.needToSave } className="is-success is-outlined"
-                                        onClick={ this.handleSaveButtonClick }>
-                                    Сохранить
+                                <Button
+                                    visible={ this.props.needToSave }
+                                    icon={SAVE_BUTTON_ICON}
+                                    onClick={ this.handleSaveButtonClick }
+                                >
+                                    { SAVE_BUTTON_TEXT}
                                 </Button>
-                                <Button onClick={ this.handleCancelButtonClick }>
-                                    {this.props.needToSave ? "Отмена" : "Закрыть" }
+                                <Button
+                                    onClick={ this.handleCancelButtonClick }
+                                    icon={this.props.needToSave ? CANCEL_BUTTON_ICON : CLOSE_BUTTON_ICON}
+                                >
+                                    {this.props.needToSave ? CANCEL_BUTTON_TEXT : CLOSE_BUTTON_TEXT }
                                 </Button>
                             </Fixed>
                         </Layout>
