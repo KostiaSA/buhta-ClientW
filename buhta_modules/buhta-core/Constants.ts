@@ -25,6 +25,8 @@ export const SELECT_BUTTON_TEXT = "Выбрать";
 export const REJECT_BUTTON_ICON = "buhta-set-1/cross-script";
 export const REJECT_BUTTON_TEXT = "Отказ";
 
+export const TEST_BUTTON_ICON = "buhta-set-1/bug--arrow";
+export const TEST_BUTTON_TEXT = "Тест";
 
 export const SCHEMA_COMPONENT_ICON = "buhta-set-1/molecule";
 export const SCHEMA_FOLDER_ICON = "buhta-set-1/folder-horizontal";

@@ -35,6 +35,10 @@ import {stringCompare} from "../../buhta-core/stringCompare";
 import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
 import {LookupDialogParams, showLookupDialog} from "../../buhta-core/Dialogs/showLookupDialog";
 import {registeredControlTypesAsArray, ControlTypeInfo} from "../../buhta-ui/ControlTypeInfo";
+import {
+    TEST_BUTTON_TEXT, TEST_BUTTON_ICON, SAVE_BUTTON_ICON, CANCEL_BUTTON_ICON,
+    CLOSE_BUTTON_ICON, SAVE_BUTTON_TEXT, CANCEL_BUTTON_TEXT, CLOSE_BUTTON_TEXT
+} from "../../buhta-core/Constants";
 
 
 export interface SchemaComponentDesignerProps extends ComponentProps<any> {
@@ -271,20 +275,30 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                         </Tabs>
                     </Flex>
                     <Fixed>
-                        <Layout className="auto-form-footer" type="row" sizeTo="content">
+                        <Layout className="component-designer-footer" type="row" sizeTo="content">
                             <Flex>
-                                <Button onClick={ this.handleTestButtonClick }>
-                                    Тест
+                                <Button
+                                    onClick={ this.handleTestButtonClick }
+                                    icon={TEST_BUTTON_ICON}
+                                >
+                                    {TEST_BUTTON_TEXT}
                                 </Button>
                             </Flex>
                             <Fixed>
-                                <Button visible={ this.needToSave } className="is-success is-outlined"
-                                        onClick={ this.handleSaveButtonClick }>
-                                    Сохранить
+                                <Button
+                                    visible={ this.needToSave }
+                                    icon={SAVE_BUTTON_ICON}
+                                    onClick={ this.handleSaveButtonClick }
+                                >
+                                    { SAVE_BUTTON_TEXT}
                                 </Button>
-                                <Button onClick={ this.handleCancelButtonClick }>
-                                    {this.needToSave ? "Отмена" : "Закрыть" }
+                                <Button
+                                    onClick={ this.handleCancelButtonClick }
+                                    icon={this.needToSave ? CANCEL_BUTTON_ICON : CLOSE_BUTTON_ICON}
+                                >
+                                    {this.needToSave ? CANCEL_BUTTON_TEXT : CLOSE_BUTTON_TEXT }
                                 </Button>
+
                             </Fixed>
                         </Layout>
                     </Fixed>

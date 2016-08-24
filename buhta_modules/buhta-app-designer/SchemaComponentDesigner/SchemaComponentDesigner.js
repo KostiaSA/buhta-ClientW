@@ -31,6 +31,7 @@ var stringCompare_1 = require("../../buhta-core/stringCompare");
 var GridFlatDataSourceFromArray_1 = require("../../buhta-core/Components/Grid/GridFlatDataSourceFromArray");
 var showLookupDialog_1 = require("../../buhta-core/Dialogs/showLookupDialog");
 var ControlTypeInfo_1 = require("../../buhta-ui/ControlTypeInfo");
+var Constants_1 = require("../../buhta-core/Constants");
 var SchemaComponentDesigner = (function (_super) {
     __extends(SchemaComponentDesigner, _super);
     function SchemaComponentDesigner(props, context) {
@@ -145,13 +146,13 @@ var SchemaComponentDesigner = (function (_super) {
                         React.createElement(Tabs_1.Tab, {key: "2", title: "Кто-когда"}))
                 ), 
                 React.createElement(Fixed_1.Fixed, null, 
-                    React.createElement(Layout_1.Layout, {className: "auto-form-footer", type: "row", sizeTo: "content"}, 
+                    React.createElement(Layout_1.Layout, {className: "component-designer-footer", type: "row", sizeTo: "content"}, 
                         React.createElement(Flex_1.Flex, null, 
-                            React.createElement(Button_1.Button, {onClick: this.handleTestButtonClick}, "Тест")
+                            React.createElement(Button_1.Button, {onClick: this.handleTestButtonClick, icon: Constants_1.TEST_BUTTON_ICON}, Constants_1.TEST_BUTTON_TEXT)
                         ), 
                         React.createElement(Fixed_1.Fixed, null, 
-                            React.createElement(Button_1.Button, {visible: this.needToSave, className: "is-success is-outlined", onClick: this.handleSaveButtonClick}, "Сохранить"), 
-                            React.createElement(Button_1.Button, {onClick: this.handleCancelButtonClick}, this.needToSave ? "Отмена" : "Закрыть")))
+                            React.createElement(Button_1.Button, {visible: this.needToSave, icon: Constants_1.SAVE_BUTTON_ICON, onClick: this.handleSaveButtonClick}, Constants_1.SAVE_BUTTON_TEXT), 
+                            React.createElement(Button_1.Button, {onClick: this.handleCancelButtonClick, icon: this.needToSave ? Constants_1.CANCEL_BUTTON_ICON : Constants_1.CLOSE_BUTTON_ICON}, this.needToSave ? Constants_1.CANCEL_BUTTON_TEXT : Constants_1.CLOSE_BUTTON_TEXT)))
                 ))
         ));
     };
