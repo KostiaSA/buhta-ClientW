@@ -38,13 +38,16 @@ import {GridState} from "../../buhta-core/Components/Grid/Grid";
 import {SchemaObject} from "../../buhta-schema/SchemaObject";
 import {LookupDialogParams, showLookupDialog} from "../../buhta-core/Dialogs/showLookupDialog";
 import {stringCompare} from "../../buhta-core/stringCompare";
-import {registeredSchemaObjectTypesAsArray, SchemaObjectTypeInfo} from "../../buhta-schema/SchemaObjectTypeInfo";
+import {
+    registeredSchemaObjectTypesAsArray, SchemaObjectTypeInfo,
+    registeredSchemaObjectTypes
+} from "../../buhta-schema/SchemaObjectTypeInfo";
 import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
 import {UUID} from "UUID";
 import {getNewGuid} from "../../buhta-sql/SqlCore";
 import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
 import {SchemaObjectDesignerProps} from "../SchemaObjectDesigner/SchemaObjectDesigner";
-import {CLOSE_BUTTON_TEXT} from "../../buhta-core/Constants";
+import {CLOSE_BUTTON_TEXT, SCHEMA_FOLDER_ICON} from "../../buhta-core/Constants";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
@@ -63,7 +66,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
     private getNewDesignedObject = (focusedData: DataRow): Promise<DesignedObject> => {
 
         let columns: GridColumns = [];
-        columns.push({caption: "Тип объекта", propertyName: "name"});
+        columns.push({caption: "Тип объекта", propertyName: "name", iconPropertyName: "icon"});
         columns.push({caption: "Описание", propertyName: "description"});
 
         let arr = registeredSchemaObjectTypesAsArray.sort((a, b) => {
@@ -123,6 +126,35 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
 
     }
 
+    private openInsertForm = (grid: GridState<any>, focusedRowData: DataRow) => {
+
+        this.getNewDesignedObject(focusedRowData)
+            .then((designedObject: SchemaObject) => {
+
+                let openParam: OpenWindowParams = {
+                    title: "добавление",
+                    autoPosition: "parent-center",
+                    parentWindowId: grid.component.getParentWindowId()
+                };
+
+                let props: SchemaObjectDesignerProps = {
+                    designedObject: designedObject,
+                    onSaveChanges: () => {
+                        this.dataSource.refreshFromSql()
+                            .then(() => {
+                                grid.refresh();
+                                grid.setFocusedRow(designedObject as any);
+                            });
+                    }
+                };
+
+                grid.component.getParentDesktop().openWindow(designedObject.$$getDesigner(props), openParam);
+
+            });
+
+
+    }
+
 
     createDataSource() {
         let select = new SelectStmt();
@@ -140,7 +172,14 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             autoExpandNodesToLevel: 3,
             getDesignedObjectOfRow: this.getDesignedObjectOfRow,
             getNewDesignedObject: this.getNewDesignedObject,
-            openEditForm: this.openEditForm
+            openEditForm: this.openEditForm,
+            openInsertForm: this.openInsertForm,
+            onGetDataValue: (rowData: DataRow, propertyName: string) => {
+                if (propertyName === "icon")
+                    return registeredSchemaObjectTypes[rowData["typeId"]].icon;
+                else
+                    return rowData[propertyName];
+            }
         };
 
         this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);
@@ -252,7 +291,9 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
                                             enableDragDrop={true}
                                         >
 
-                                            <GridColumnDef caption="Объект" propertyName="name"
+                                            <GridColumnDef caption="Объект"
+                                                           propertyName="name"
+                                                           iconPropertyName="icon"
                                                            showHierarchyTree={true}
                                                            width={300}>
                                             </GridColumnDef>

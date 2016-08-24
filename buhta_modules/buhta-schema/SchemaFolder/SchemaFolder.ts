@@ -1,6 +1,7 @@
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {SchemaObject} from "../SchemaObject";
 import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
+import {SCHEMA_FOLDER_ICON} from "../../buhta-core/Constants";
 
 
 export class SchemaFolder extends SchemaObject {
@@ -30,7 +31,8 @@ registerSchemaObjectType({
     id: "24e296b2-605d-4e66-8c35-8c25e181e5ba",
     name: "Каталог",
     description: "Каталог объектов схемы",
-    type: SchemaFolder
+    type: SchemaFolder,
+    icon: SCHEMA_FOLDER_ICON
 });
 
 

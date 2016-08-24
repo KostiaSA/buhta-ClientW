@@ -32,6 +32,10 @@ export interface GridDataSource<T extends GridDataSourceRow> {
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;
 
+    getDataValue(rowData: T, propertyName: string): any;
+
+    getIsRowsDataEqual(rowData1: T, rowData2: T): boolean;  // используется в Grid-e для поиска FocusedRow
+
     deleteRow(rowData: T): void;
 
     canDragRow(rowIndex: T, mode: "move" | "copy"): boolean;

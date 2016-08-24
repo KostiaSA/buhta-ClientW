@@ -47,8 +47,6 @@ var GridBaseDataSource = (function () {
     };
     GridBaseDataSource.prototype.dropAfter = function (dragRowIndex, targetRowIndex, mode) {
     };
-    GridBaseDataSource.prototype.refresh = function () {
-    };
     GridBaseDataSource.prototype.addRow = function (row) {
         Error_1.throwAbstractError();
     };
@@ -118,6 +116,15 @@ var GridBaseDataSource = (function () {
                 grid.component.getParentDesktop().openWindow(win, openParam);
             });
         }
+    };
+    GridBaseDataSource.prototype.getIsRowsDataEqual = function (rowData1, rowData2) {
+        return rowData1 === rowData2;
+    };
+    GridBaseDataSource.prototype.getDataValue = function (rowData, propertyName) {
+        if (this.params.onGetDataValue !== undefined)
+            return this.params.onGetDataValue(rowData, propertyName);
+        else
+            return rowData[propertyName];
     };
     return GridBaseDataSource;
 }());

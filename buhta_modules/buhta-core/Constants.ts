@@ -24,3 +24,10 @@ export const SELECT_BUTTON_TEXT = "Выбрать";
 
 export const REJECT_BUTTON_ICON = "buhta-set-1/cross-script";
 export const REJECT_BUTTON_TEXT = "Отказ";
+
+
+export const SCHEMA_COMPONENT_ICON = "buhta-set-1/molecule";
+export const SCHEMA_FOLDER_ICON = "buhta-set-1/folder-horizontal";
+export const SCHEMA_FORM_ICON = "buhta-set-1/application-form";
+export const SCHEMA_DATABASE_ICON = "buhta-set-1/database-sql";
+export const SCHEMA_TABLE_ICON = "buhta-set-1/table";

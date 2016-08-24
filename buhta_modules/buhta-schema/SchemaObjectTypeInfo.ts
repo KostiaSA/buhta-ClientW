@@ -7,6 +7,7 @@ export class SchemaObjectTypeInfo {
     name: string;
     description: string;
     type: Function;
+    icon?: string;
 }
 
 export let registeredSchemaObjectTypes: { [id: string]: SchemaObjectTypeInfo } = {};
@@ -26,5 +27,5 @@ export function registerSchemaObjectType(info: SchemaObjectTypeInfo) {
     (info.type as any).$$schemaObjectTypeInfo = info;
 
 }
-
+ 
 

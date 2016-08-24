@@ -3,6 +3,7 @@ import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyE
 import {SchemaTableColumn} from "./SchemaTableColumn";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
+import {SCHEMA_TABLE_ICON} from "../../buhta-core/Constants";
 
 export class SchemaTable extends SchemaObject {
 
@@ -38,6 +39,7 @@ registerSchemaObjectType({
     id: "1d702193-8801-4a72-971b-4095aeaab247",
     name: "Таблица",
     description: "Sql таблица",
-    type: SchemaTable
+    type: SchemaTable,
+    icon: SCHEMA_TABLE_ICON
 });
 

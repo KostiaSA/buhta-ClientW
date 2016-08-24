@@ -13,7 +13,7 @@ import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {GridColumns} from "./GridColumns";
 import {GridBaseDataSource, GridBaseDataSourceParams} from "./GridBaseDataSource";
 
-export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> extends GridBaseDataSourceParams<T>{
+export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> extends GridBaseDataSourceParams<T> {
     arrayObj?: T[];
     keyFieldName: string; // key для treeMode parentKey
     parentKeyFieldName: string; // parentKey для treeMode parentKey
@@ -412,5 +412,10 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> extends Gr
         else
             return null;
     }
+
+    getIsRowsDataEqual(rowData1: T, rowData2: T): boolean {
+        return rowData1[this.params.keyFieldName] === rowData2[this.params.keyFieldName];
+    }
+
 
 }

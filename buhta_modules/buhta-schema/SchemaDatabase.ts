@@ -1,5 +1,6 @@
 import {SchemaObject} from "./SchemaObject";
 import {registerSchemaObjectType} from "./SchemaObjectTypeInfo";
+import {SCHEMA_DATABASE_ICON} from "../buhta-core/Constants";
 
 
 export class SchemaDatabase extends SchemaObject {
@@ -20,7 +21,8 @@ registerSchemaObjectType({
     id: "10092060-d748-4ccb-97d3-56b95d14e4e0",
     name: "База данных",
     description: "База данных",
-    type: SchemaDatabase
+    type: SchemaDatabase,
+    icon: SCHEMA_DATABASE_ICON
 });
 
 

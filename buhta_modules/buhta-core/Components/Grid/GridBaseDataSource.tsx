@@ -23,11 +23,13 @@ export interface GridBaseDataSourceParams<T extends GridDataSourceRow> {
     getDeleteRowMessage?: () => React.ReactNode;
     gridColumns?: GridColumns;
 
-    getNewDesignedObject?: (focusedData: T) =>  Promise<DesignedObject>;
-    getDesignedObjectOfRow?: (editedData: T) =>  Promise<DesignedObject>;
+    getNewDesignedObject?: (focusedData: T) => Promise<DesignedObject>;
+    getDesignedObjectOfRow?: (editedData: T) => Promise<DesignedObject>;
 
     openEditForm?: (grid: GridState<T>, rowData: T) => void;
-    openInsertForm?: (grid: GridState<T>, focusedRowData: T)=> void;
+    openInsertForm?: (grid: GridState<T>, focusedRowData: T) => void;
+
+    onGetDataValue?: (rowData: T, propertyName: string) => any;
 
 }
 
@@ -87,10 +89,6 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
     }
 
     dropAfter(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
-
-    }
-
-    refresh() {
 
     }
 
@@ -184,6 +182,17 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
             });
         }
 
+    }
+
+    getIsRowsDataEqual(rowData1: T, rowData2: T): boolean {
+        return rowData1 === rowData2;
+    }
+
+    getDataValue(rowData: T, propertyName: string): any {
+        if (this.params.onGetDataValue !== undefined)
+            return this.params.onGetDataValue(rowData, propertyName);
+        else
+            return rowData[propertyName];
     }
 
 }

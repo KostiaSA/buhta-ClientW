@@ -16,6 +16,7 @@ export interface GridColumnProps extends ComponentProps<any> {
     showHierarchyTree?: boolean;
     showHierarchyPadding?: boolean;
     order?: number;
+    iconPropertyName?: string;
 }
 
 export class GridColumnDef extends Component<GridColumnProps, any> {
@@ -36,6 +37,8 @@ export class GridColumnDef extends Component<GridColumnProps, any> {
             cellRenderer: grid.cellRenderer.bind(grid),
             cellClassRules: this.getAgCellRules()
         };
+
+        (col as any).$$gridColumnProps = this.props;
 
         if (this.props.showHierarchyTree === true) {
             col.cellRenderer = "group";

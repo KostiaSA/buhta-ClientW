@@ -22,6 +22,7 @@ import {
     UPDATE_BUTTON_ICON, DELETE_BUTTON_ICON, SELECT_BUTTON_TEXT, REJECT_BUTTON_TEXT, CLOSE_BUTTON_TEXT,
     SELECT_BUTTON_ICON, CLOSE_BUTTON_ICON, REJECT_BUTTON_ICON
 } from "../../Constants";
+import {Icon} from "../Icon/Icon";
 
 
 ///////////// ВНИМАНИЕ !  //////////////////
@@ -29,6 +30,9 @@ import {
 // 1. ищем строку:   resultFromRenderer = cellRendererFunc(params);
 // 2. перед ней вставляем: params.eTarget=eTarget;
 // todo надо будет вставить в исходник ag-grid: ag-grid-master\src\ts\rendering\cellRendererService.ts, строка 52
+
+const MIN_ROW_HEIGHT = 24;
+const MAX_ROW_HEIGHT = 350;
 
 
 export interface GridProps extends ComponentProps<GridState<GridDataSourceRow>> {
@@ -163,7 +167,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
     findAgRowNodeOfData(dataItem: T): AgGrid.RowNode | undefined {
         let ret: AgGrid.RowNode| undefined = undefined;
         this.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
-            if (node.data === dataItem)
+            if (this.dataSource.getIsRowsDataEqual(node.data, dataItem))
                 ret = node;
         });
         return ret;
@@ -173,7 +177,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
         let rowModel = this.agGrid.api!.getModel();
 
         for (let i = 0; i < rowModel.getRowCount(); i++) {
-            if (rowModel.getRow(i).data === dataItem)
+            if (this.dataSource.getIsRowsDataEqual(rowModel.getRow(i).data, dataItem))
                 return i;
         }
 
@@ -286,8 +290,10 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         let handleRef = (e: HTMLElement, node: AgGrid.RowNode) => {
             if (e) {
                 let oldHeight = this.rowHeightCache![node.id];
-                if (oldHeight === undefined || e.clientHeight > oldHeight) {
-                    this.rowHeightCache![node.id] = e.clientHeight;
+                let clientHeight = Math.max(e.clientHeight, MIN_ROW_HEIGHT);
+                clientHeight = Math.min(clientHeight, MAX_ROW_HEIGHT);
+                if (oldHeight === undefined || clientHeight > oldHeight) {
+                    this.rowHeightCache![node.id] = clientHeight;
                     if (node.data && node.data.$$gridRowHeight)
                         node.data.$$gridRowHeight = undefined;
 
@@ -407,7 +413,19 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     }
 
     private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: GridDataSourceRow): JSX.Element {
-        let cell = <span>{data[column.getColDef().field!]}</span>;
+
+        let gridColumnProps = (column.getColDef() as any).$$gridColumnProps as GridColumnProps;
+
+        let icon: JSX.Element | undefined = undefined;
+        if (gridColumnProps.iconPropertyName !== undefined) {
+            icon = (
+                <Icon path={this.state.dataSource.getDataValue(data,gridColumnProps.iconPropertyName)}
+                      style={{ marginRight:5 }}>
+                </Icon>
+            );
+        }
+
+        let cell = <span>{icon}{this.state.dataSource.getDataValue(data, column.getColDef().field!)}</span>;
         return cell;
     };
 
@@ -831,21 +849,6 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         return (
             <Layout className="grid???" type="column" sizeTo="parent" {...this.getRenderProps()}
             >
-                <Fixed className="grid-header" style={{ paddingBottom: 5 }}>
-                    <button onClick={ () => {  }}>
-                        refresh 5001
-                    </button>
-                    <button onClick={ () => {  }}>
-                        filter
-                    </button>
-                    <button onClick={ () => {  }}>
-                        expand all
-                    </button>
-                    <button onClick={ () => {  }}>
-                        collapse all
-                    </button>
-                    заголовок и т.д.
-                </Fixed>
                 <Flex className="grid-body" style={{ paddingBottom: 5 }}>
                     <div
                         className="ag-fresh"
