@@ -416,5 +416,10 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
 }
 
+
+export function getDesktop():Desktop{
+    return appInstance.desktop;
+}
+
 //onMoveStart={ w.handleMoveStart }
 //onResizeRightBottomCornerStart={ w.handleResizeRightBottomCornerStart }

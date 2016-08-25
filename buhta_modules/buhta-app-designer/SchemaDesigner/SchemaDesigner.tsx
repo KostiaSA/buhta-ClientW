@@ -44,10 +44,11 @@ import {
 } from "../../buhta-schema/SchemaObjectTypeInfo";
 import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
 import {UUID} from "UUID";
-import {getNewGuid} from "../../buhta-sql/SqlCore";
+import {getNewGuid, SqlStmt, SqlGuidValue} from "../../buhta-sql/SqlCore";
 import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
 import {SchemaObjectDesignerProps} from "../SchemaObjectDesigner/SchemaObjectDesigner";
 import {CLOSE_BUTTON_TEXT, SCHEMA_FOLDER_ICON} from "../../buhta-core/Constants";
+import {DeleteStmt} from "../../buhta-sql/DeleteStmt";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {
@@ -182,6 +183,19 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                     return registeredSchemaObjectTypes[rowData["typeId"]].icon;
                 else
                     return rowData[propertyName];
+            },
+            onDeleteRows: (rows: DataRow[])=> {
+                let sqlBatch: SqlStmt[] = [];
+                rows.forEach((row: DataRow)=> {
+                    let deleteStmt = new DeleteStmt().table("SchemaObject").where("id", "=", new SqlGuidValue(row["id"]));
+                    sqlBatch.push(deleteStmt);
+                }, this);
+
+                return this.component.props.schema.db.executeSQL(sqlBatch).then(()=> {
+                });
+                //console.log("delete->");
+                //console.log(rows);
+                //throw "пиздец";
             }
         };
 

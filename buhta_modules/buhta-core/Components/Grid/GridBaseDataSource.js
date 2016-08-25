@@ -99,7 +99,17 @@ var GridBaseDataSource = (function () {
             grid.component.showDeleteConfirmationWindow(message, function (okResult) {
                 if (okResult) {
                     _this.deleteRow(row_1);
-                    grid.refresh();
+                    if (_this.params.onDeleteRows !== undefined) {
+                        _this.params.onDeleteRows([row_1])
+                            .then(function () {
+                            grid.refresh();
+                        })
+                            .catch(function (error) {
+                            grid.component.showErrorWindow("Ошибка удаления: " + error);
+                        });
+                    }
+                    else
+                        grid.refresh();
                 }
             });
         }

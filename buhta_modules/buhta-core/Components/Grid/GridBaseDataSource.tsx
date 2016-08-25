@@ -11,7 +11,7 @@ import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {removeFromArray} from "../../arrayUtils";
 import {GridColumns} from "./GridColumns";
 import {GridState} from "./Grid";
-import {OpenWindowParams} from "../Desktop/Desktop";
+import {OpenWindowParams, getDesktop} from "../Desktop/Desktop";
 import {ObjectDesigner, ObjectDesignerProps} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {getInstantPromise} from "../../getInstantPromise";
 
@@ -25,6 +25,7 @@ export interface GridBaseDataSourceParams<T extends GridDataSourceRow> {
 
     getNewDesignedObject?: (focusedData: T) => Promise<DesignedObject>;
     getDesignedObjectOfRow?: (editedData: T) => Promise<DesignedObject>;
+    onDeleteRows?: (rowData: T[]) => Promise<void>;
 
     openInsertForm?: (grid: GridState<T>, focusedRowData: T) => void;
     openEditForm?: (grid: GridState<T>, rowData: T) => void;
@@ -144,7 +145,17 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
             grid.component.showDeleteConfirmationWindow(message, (okResult) => {
                 if (okResult) {
                     this.deleteRow(row);
-                    grid.refresh();
+                    if (this.params.onDeleteRows !== undefined) {
+                        this.params.onDeleteRows([row])
+                            .then(()=> {
+                                grid.refresh();
+                            })
+                            .catch((error: string)=> {
+                                grid.component.showErrorWindow("Ошибка удаления: " + error);
+                            });
+                    }
+                    else
+                        grid.refresh();
                 }
             });
         }

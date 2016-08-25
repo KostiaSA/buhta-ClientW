@@ -166,35 +166,3 @@ export class Schema {
 
     }
 }
-//     public string SchemaSqlUrl { get; set; }
-// public int? SchemaSqlPort { get; set; }
-// public string SchemaSqlDatabase { get; set; }
-// public string SchemaSqlLogin { get; set; }
-// public string SchemaSqlPassword { get; set; }
-// public bool SchemaIsTest { get; set; }
-//
-// public delegate void AfterSaveSchemaObjectEventHandler(SchemaObject schemaObject);
-//
-// public event AfterSaveSchemaObjectEventHandler AfterSaveSchemaObject;
-
-
-// public Dictionary<Guid, SchemaObject_cache> Objects_cache
-// {
-//     get
-//     {
-//         if (objects_cache == null || objects_cache.Count == 0)
-//         {
-//             using (var db = GetMetadataDbManager())
-//             {
-//                 objects_cache = db.SetCommand("SELECT * FROM SchemaObject").ExecuteDictionary<Guid, SchemaObject_cache>("ID");
-//                 foreach (var cache in objects_cache.Values)
-//                 cache.Schema = this;
-//             }
-//         }
-//         return objects_cache;
-//
-//     }
-// }
-
-//public ImageCollection Images16 = new ImageCollection();
-
