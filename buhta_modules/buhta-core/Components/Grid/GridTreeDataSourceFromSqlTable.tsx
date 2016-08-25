@@ -17,6 +17,8 @@ import {
 import {SqlDb, DataRow, DataTable} from "../../../buhta-sql/SqlDb";
 import {SelectStmt} from "../../../buhta-sql/SelectStmt";
 import {getInstantPromise} from "../../getInstantPromise";
+import {UpdateStmt} from "../../../buhta-sql/UpdateStmt";
+import {SqlGuidValue, SqlNumberValue} from "../../../buhta-sql/SqlCore";
 
 export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSourceFromArrayParams<DataRow> {
     arrayObj?: DataRow[];
@@ -28,6 +30,30 @@ export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSource
 export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray<DataRow> {
     constructor(public params: GridTreeDataSourceFromSqlTableParams) {
         super(params);
+
+        if (params.onDragDropUpdate === undefined)
+            params.onDragDropUpdate = this.onDragDropUpdate;
+    }
+
+    // стандартная обработка подразумевает, что id и parent - это Guid, а position - number
+    onDragDropUpdate = (rowKey: string, rowFieldName: string, newFieldValue: any): void => {
+        let sql: UpdateStmt;
+
+        if (rowFieldName === this.params.positionFieldName) {
+            sql = new UpdateStmt(this.params.tableName)
+                .column(rowFieldName, new SqlNumberValue(newFieldValue))
+                .where(this.params.keyFieldName, "=", new SqlGuidValue(rowKey));
+        }
+        else {
+            sql = new UpdateStmt(this.params.tableName)
+                .column(rowFieldName, new SqlGuidValue(newFieldValue))
+                .where(this.params.keyFieldName, "=", new SqlGuidValue(rowKey));
+        }
+
+        this.params.db.executeSQL(sql)
+            .catch((error) => {
+                alert("Ошибка DragDrop: " + error);
+            });
     }
 
     getIsAsync() {

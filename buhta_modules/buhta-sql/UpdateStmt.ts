@@ -27,6 +27,11 @@ export class UpdateStmt {
     private _selectColumns: SelectColumn[] = [];
     private _where: WhereClause[] = [];
 
+    constructor(table?: string | UpdateTable) {
+        if (table)
+            this.table(table);
+    }
+
     column(column: string | UpdateColumn, value: string|number|Date|SelectColumn|SqlValue): UpdateStmt {
         if (_.isString(column))
             this._updateColumns.push({colName: column});

@@ -6,12 +6,35 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var GridTreeDataSourceFromArray_1 = require("./GridTreeDataSourceFromArray");
 var getInstantPromise_1 = require("../../getInstantPromise");
+var UpdateStmt_1 = require("../../../buhta-sql/UpdateStmt");
+var SqlCore_1 = require("../../../buhta-sql/SqlCore");
 var GridTreeDataSourceFromSqlTable = (function (_super) {
     __extends(GridTreeDataSourceFromSqlTable, _super);
     function GridTreeDataSourceFromSqlTable(params) {
+        var _this = this;
         _super.call(this, params);
         this.params = params;
+        // стандартная обработка подразумевает, что id и parent - это Guid, а position - number
+        this.onDragDropUpdate = function (rowKey, rowFieldName, newFieldValue) {
+            var sql;
+            if (rowFieldName === _this.params.positionFieldName) {
+                sql = new UpdateStmt_1.UpdateStmt(_this.params.tableName)
+                    .column(rowFieldName, new SqlCore_1.SqlNumberValue(newFieldValue))
+                    .where(_this.params.keyFieldName, "=", new SqlCore_1.SqlGuidValue(rowKey));
+            }
+            else {
+                sql = new UpdateStmt_1.UpdateStmt(_this.params.tableName)
+                    .column(rowFieldName, new SqlCore_1.SqlGuidValue(newFieldValue))
+                    .where(_this.params.keyFieldName, "=", new SqlCore_1.SqlGuidValue(rowKey));
+            }
+            _this.params.db.executeSQL(sql)
+                .catch(function (error) {
+                alert("Ошибка DragDrop: " + error);
+            });
+        };
         this.isLoaded = false;
+        if (params.onDragDropUpdate === undefined)
+            params.onDragDropUpdate = this.onDragDropUpdate;
     }
     GridTreeDataSourceFromSqlTable.prototype.getIsAsync = function () {
         return true;

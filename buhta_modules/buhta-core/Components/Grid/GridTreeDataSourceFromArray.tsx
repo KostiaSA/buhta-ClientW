@@ -21,6 +21,8 @@ export interface GridTreeDataSourceFromArrayParams<T extends GridDataSourceRow> 
 
     autoExpandNodesToLevel?: number;
 
+    onDragDropUpdate?: (rowKey: string, rowFieldName: string, newFieldValue: any) => void; // вызывается после DragDrop, когда меняется parent или position
+
 //    getNewRow?: (parentRowData?: T) => Promise<T>;
 //    getEmptyDataSourceMessage?: () => React.ReactNode;
 //    getDeleteRowMessage?: () => React.ReactNode;
@@ -178,6 +180,9 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> extends Gr
     }
 
     dropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy") {
+
+        let changedRowKeyAndNewValues: {[fieldName: string]: any} = {};
+
         let dragNode = dragRowData.$$dataSourceTreeNode!;
         let targetNode = targetRowData.$$dataSourceTreeNode!;
 
@@ -208,6 +213,10 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> extends Gr
 
             dragNode.parent = targetNode.parent;
             dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
+
+            if (this.params.onDragDropUpdate !== undefined)
+                this.params.onDragDropUpdate(dragNode.key, this.params.parentKeyFieldName, dragNode.parent !== undefined ? dragNode.parent.key : null);
+
             this.recalcChildrenPositions(targetArr);
 
         }
@@ -229,6 +238,10 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> extends Gr
 
         dragNode.parent = targetNode;
         dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
+
+        if (this.params.onDragDropUpdate !== undefined)
+            this.params.onDragDropUpdate(dragNode.key, this.params.parentKeyFieldName, dragNode.parent !== undefined ? dragNode.parent.key : null);
+
     }
 
     dropAfter(dragRowData: T, targetRowData: T, mode: "move" | "copy") {
@@ -262,6 +275,10 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> extends Gr
 
             dragNode.parent = targetNode.parent;
             dragRowData[this.params.parentKeyFieldName!] = targetRowData[this.params.keyFieldName!];
+
+            if (this.params.onDragDropUpdate !== undefined)
+                this.params.onDragDropUpdate(dragNode.key, this.params.parentKeyFieldName, dragNode.parent !== undefined ? dragNode.parent.key : null);
+
             this.recalcChildrenPositions(targetArr);
         }
     }
@@ -274,7 +291,13 @@ export class GridTreeDataSourceFromArray<T extends GridDataSourceRow> extends Gr
         if (this.params.positionFieldName !== undefined) {
             nodes.forEach((node: InternalTreeNode, index: number) => {
                 let nodeData = this.arrayObj[node.sourceIndex];
-                nodeData[this.params.positionFieldName!] = index;
+
+                if (nodeData[this.params.positionFieldName!] !== index) {
+                    nodeData[this.params.positionFieldName!] = index;
+
+                    if (this.params.onDragDropUpdate !== undefined)
+                        this.params.onDragDropUpdate(node.key, this.params.positionFieldName!, index);
+                }
             });
         }
     }
