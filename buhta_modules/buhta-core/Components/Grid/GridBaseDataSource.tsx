@@ -173,7 +173,7 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
                     title: "редактирование",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    borderTheme: "blue"
+                    theme: "blue"
                 };
 
                 grid.component.getParentDesktop().openWindow(win, openParam);
@@ -214,7 +214,7 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
                     title: "добавление",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    borderTheme: "green"
+                    theme: "green"
                 };
 
                 grid.component.getParentDesktop().openWindow(win, openParam);

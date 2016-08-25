@@ -258,7 +258,8 @@ export class GridTreeDataSourceFromComponent extends GridBaseDataSource<BaseCont
             let openParam: OpenWindowParams = {
                 title: "добавление",
                 autoPosition: "parent-center",
-                parentWindowId: grid.component.getParentWindowId()
+                parentWindowId: grid.component.getParentWindowId(),
+                theme: "green"
             };
 
             grid.component.getParentDesktop().openWindow(win, openParam);

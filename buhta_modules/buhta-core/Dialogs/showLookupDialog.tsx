@@ -45,7 +45,8 @@ export function showLookupDialog<T extends GridDataSourceRow>(caller: Component<
             let openParam: OpenWindowParams = {
                 title: params.winTitle || "выбор...",
                 autoPosition: "parent-center",
-                parentWindowId: caller.getParentWindowId()
+                parentWindowId: caller.getParentWindowId(),
+                theme: "orange"
             };
 
             caller.getParentDesktop().openWindow(win, openParam);

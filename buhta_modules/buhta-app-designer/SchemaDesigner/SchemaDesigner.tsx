@@ -106,7 +106,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                     title: "редактирование",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    borderTheme: "blue"
+                    theme: "blue"
                 };
 
                 let props: SchemaObjectDesignerProps = {
@@ -136,7 +136,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                     title: "добавление",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    borderTheme: "green"
+                    theme: "green"
                 };
 
                 let props: SchemaObjectDesignerProps = {
@@ -328,7 +328,10 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
                             </Flex>
                             <Fixed>
                                 <Button
-                                    onClick={ this.handleCloseButtonClick }
+                                    onClick={(sender:Button, e:React.MouseEvent) => {
+                                              sender.closeParentWindow();
+                                              e.stopPropagation();
+                                            }}
                                     icon="buhta-set-1/application-export"
                                 >
                                     {CLOSE_BUTTON_TEXT}

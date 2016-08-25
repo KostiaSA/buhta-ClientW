@@ -80,7 +80,7 @@ export interface OpenWindowParams {
     parentWindowId?: string;
     autoPosition?: WindowAutoPosition;
     autoSize?: WindowAutoSize;
-    borderTheme?: string;
+    theme?: string;
 }
 
 export interface OpenMessageWindowParams {
@@ -90,7 +90,7 @@ export interface OpenMessageWindowParams {
     okButtonContent?: React.ReactNode;
     cancelButtonContent?: React.ReactNode;
     resultCallback?: (resultOK: boolean) => void;
-    borderTheme?: string;
+    theme?: string;
 }
 
 export class DesktopWindow implements OpenWindowParams {
@@ -109,7 +109,7 @@ export class DesktopWindow implements OpenWindowParams {
     parentWindowId: string | undefined;
     autoPosition: WindowAutoPosition | undefined;
     autoSize: WindowAutoSize | undefined;
-    borderTheme: string | undefined;
+    theme: string | undefined;
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
@@ -166,7 +166,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         newWin.width = openParams.width;
         newWin.right = openParams.right;
         newWin.bottom = openParams.bottom;
-        newWin.borderTheme = openParams.borderTheme;
+        newWin.theme = openParams.theme;
 
 
         if (!newWin.left) {
@@ -232,7 +232,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             autoSize: "content"
         };
 
-        winParams.borderTheme = openParams.borderTheme;
+        winParams.theme = openParams.theme;
 
         if (!winParams.parentWindowId)
             winParams.autoPosition = "desktop-center";
@@ -246,16 +246,16 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
             if (openParams.style === "danger") {
                 icon = MESSAGE_OK_DANGER_BUTTON_ICON;
-                if (winParams.borderTheme===undefined)
-                    winParams.borderTheme="red";
+                if (winParams.theme===undefined)
+                    winParams.theme="red";
             }
             if (openParams.style === "error") {
                 icon = MESSAGE_OK_ERROR_BUTTON_ICON;
-                if (winParams.borderTheme === undefined)
-                    winParams.borderTheme = "red";
+                if (winParams.theme === undefined)
+                    winParams.theme = "red";
             }
-            if (winParams.borderTheme === undefined)
-                winParams.borderTheme = "blue";
+            if (winParams.theme === undefined)
+                winParams.theme = "blue";
 
             okButton =
                 <Button
@@ -402,7 +402,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             autoSize={w.autoSize}
                             autoPosition={w.autoPosition}
                             parentWindowId={w.parentWindowId}
-                            borderTheme={w.borderTheme}
+                            theme={w.theme}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
                         >

@@ -201,7 +201,8 @@ var GridTreeDataSourceFromComponent = (function (_super) {
             var openParam = {
                 title: "добавление",
                 autoPosition: "parent-center",
-                parentWindowId: grid.component.getParentWindowId()
+                parentWindowId: grid.component.getParentWindowId(),
+                theme: "green"
             };
             grid.component.getParentDesktop().openWindow(win, openParam);
         });
