@@ -34,6 +34,7 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     parentWindowId: string;
     autoPosition: WindowAutoPosition;
     autoSize: WindowAutoSize;
+    borderTheme: string;
 
 //    childWindow: Window;
 }
@@ -222,6 +223,9 @@ export class Window extends Component<WindowProps, WindowState> {
         this.addProps({id: this.state.id});
 
         this.addClassName("window box");
+        if (this.state.borderTheme !== undefined)
+            this.addClassName("border-theme-" + this.state.borderTheme);
+
         this.addStyles({position: "absolute"});
 
         this.addStyles({

@@ -662,25 +662,28 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     }
 
     openDeleteForm(rowToDelete: GridDataSourceRow) {
-        if (!(rowToDelete instanceof DesignedObject))
-            throwError("Grid:openDeleteForm(): rowToDelete must be 'DesignedObject'");
-        let row = rowToDelete as DesignedObject;
-        let objectClassName = "запись";
-        if (row.getClassName)
-            objectClassName = row.getClassName();
-
-        let objectName = "";
-        if (row.toString)
-            objectName = row.toString();
-
-        let message = <div className="color-red">Удалить "{objectClassName}"?<br/>{ objectName }</div>;
-
-        this.showDeleteConfirmationWindow(message, (okResult) => {
-            if (okResult) {
-                this.state.dataSource.deleteRow(rowToDelete);
-                this.state.refresh();
-            }
-        });
+        // todo сделать удаление нескольких отмеченных
+        this.state.dataSource.openDeleteForm(this.state, [rowToDelete]);
+        
+        // if (!(rowToDelete instanceof DesignedObject))
+        //     throwError("Grid:openDeleteForm(): rowToDelete must be 'DesignedObject'");
+        // let row = rowToDelete as DesignedObject;
+        // let objectClassName = "запись";
+        // if (row.getClassName)
+        //     objectClassName = row.getClassName();
+        //
+        // let objectName = "";
+        // if (row.toString)
+        //     objectName = row.toString();
+        //
+        // let message = <div className="color-red">Удалить "{objectClassName}"?<br/>{ objectName }</div>;
+        //
+        // this.showDeleteConfirmationWindow(message, (okResult) => {
+        //     if (okResult) {
+        //         this.state.dataSource.deleteRow(rowToDelete);
+        //         this.state.refresh();
+        //     }
+        // });
     }
 
     openInsertForm(focusedRowData?: GridDataSourceRow) {

@@ -59,6 +59,7 @@ export interface GridDataSource<T extends GridDataSourceRow> {
 
     openInsertForm(grid: GridState<T>, focusedRowData?: T): void;
     openEditForm(grid: GridState<T>, editedRowData: T): void;
+    openDeleteForm(grid: GridState<T>, toDeleteRows: T[]): void;
 
 }
 

@@ -5,7 +5,7 @@ import * as AgGrid from "ag-grid";
 import {GridColumnProps, GridColumnDef} from "./GridColumn";
 import {GridDataSource, GridDataSourceRow} from "./GridDataSource";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
-import {throwError, throwAbstractError} from "../../Error";
+import {throwError, throwAbstractError, throwUnderConstruction} from "../../Error";
 import {getGridColumnInfos} from "./getGridColumnInfos";
 import {GridColumnGroupProps, GridColumnGroup} from "./GridColumnGroup";
 import {removeFromArray} from "../../arrayUtils";
@@ -26,8 +26,9 @@ export interface GridBaseDataSourceParams<T extends GridDataSourceRow> {
     getNewDesignedObject?: (focusedData: T) => Promise<DesignedObject>;
     getDesignedObjectOfRow?: (editedData: T) => Promise<DesignedObject>;
 
-    openEditForm?: (grid: GridState<T>, rowData: T) => void;
     openInsertForm?: (grid: GridState<T>, focusedRowData: T) => void;
+    openEditForm?: (grid: GridState<T>, rowData: T) => void;
+    openDeleteForm?: (grid: GridState<T>, toDeleteRows: T[])=> void;
 
     onGetDataValue?: (rowData: T, propertyName: string) => any;
 
@@ -81,15 +82,15 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
     }
 
     dropBefore(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
-
+        throwAbstractError();
     }
 
     dropInto(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
-
+        throwAbstractError();
     }
 
     dropAfter(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
-
+        throwAbstractError();
     }
 
     addRow(row: T) {
@@ -109,6 +110,43 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
         else {
             throwError("GridBaseDataSource.getDesignedObjectOfRow(): could not convert rowData to 'DesignedObject'");
             throw  "fake";
+        }
+    }
+
+    deleteRow(rowData: T) {
+        throwAbstractError();
+    }
+
+    openDeleteForm(grid: GridState<T>, toDeleteRows: T[]) {
+        if (this.params.openDeleteForm !== undefined) {
+            this.params.openDeleteForm(grid, toDeleteRows);
+        }
+        else {
+            // todo удаление нескольких
+            if (toDeleteRows.length > 1)
+                throwUnderConstruction();
+
+            // if (!(toDeleteRows[0] instanceof DesignedObject))
+            //     throwError("GridBaseDataSource:openDeleteForm(): rowToDelete must be of type 'DesignedObject'");
+            let row = toDeleteRows[0];// as DesignedObject;
+
+            let objectClassName = "запись";
+            if (row instanceof DesignedObject && row.getClassName !== undefined)
+                objectClassName = row.getClassName();
+
+            let objectName = "";
+            if (row.toString)
+                objectName = row.toString();
+
+//            let message = <div className="color-red">Удалить "{objectClassName}"?<br/>{ objectName }</div>;
+            let message = <div>Удалить "{objectClassName}"?<br/>{ objectName }</div>;
+
+            grid.component.showDeleteConfirmationWindow(message, (okResult) => {
+                if (okResult) {
+                    this.deleteRow(row);
+                    grid.refresh();
+                }
+            });
         }
     }
 
@@ -134,7 +172,8 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
                 let openParam: OpenWindowParams = {
                     title: "редактирование",
                     autoPosition: "parent-center",
-                    parentWindowId: grid.component.getParentWindowId()
+                    parentWindowId: grid.component.getParentWindowId(),
+                    borderTheme: "blue"
                 };
 
                 grid.component.getParentDesktop().openWindow(win, openParam);
@@ -174,7 +213,8 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
                 let openParam: OpenWindowParams = {
                     title: "добавление",
                     autoPosition: "parent-center",
-                    parentWindowId: grid.component.getParentWindowId()
+                    parentWindowId: grid.component.getParentWindowId(),
+                    borderTheme: "green"
                 };
 
                 grid.component.getParentDesktop().openWindow(win, openParam);

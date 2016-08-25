@@ -105,7 +105,8 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                 let openParam: OpenWindowParams = {
                     title: "редактирование",
                     autoPosition: "parent-center",
-                    parentWindowId: grid.component.getParentWindowId()
+                    parentWindowId: grid.component.getParentWindowId(),
+                    borderTheme: "blue"
                 };
 
                 let props: SchemaObjectDesignerProps = {
@@ -134,7 +135,8 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                 let openParam: OpenWindowParams = {
                     title: "добавление",
                     autoPosition: "parent-center",
-                    parentWindowId: grid.component.getParentWindowId()
+                    parentWindowId: grid.component.getParentWindowId(),
+                    borderTheme: "green"
                 };
 
                 let props: SchemaObjectDesignerProps = {

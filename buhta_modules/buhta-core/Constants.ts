@@ -28,6 +28,12 @@ export const REJECT_BUTTON_TEXT = "Отказ";
 export const TEST_BUTTON_ICON = "buhta-set-1/bug--arrow";
 export const TEST_BUTTON_TEXT = "Тест";
 
+export const MESSAGE_OK_BUTTON_ICON = "buhta-set-1/tick";
+export const MESSAGE_OK_ERROR_BUTTON_ICON = "buhta-set-1/exclamation-octagon";
+export const MESSAGE_OK_DANGER_BUTTON_ICON = "buhta-set-1/tick-red";
+export const MESSAGE_CANCEL_BUTTON_ICON = "buhta-set-1/application-export";
+
+
 export const SCHEMA_COMPONENT_ICON = "buhta-set-1/molecule";
 export const SCHEMA_FOLDER_ICON = "buhta-set-1/folder-horizontal";
 export const SCHEMA_FORM_ICON = "buhta-set-1/application-form";

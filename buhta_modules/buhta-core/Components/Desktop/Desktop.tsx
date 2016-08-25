@@ -12,6 +12,10 @@ import {SchemaForm} from "../../../buhta-schema/SchemaForm/SchemaForm";
 import {SchemaComponent} from "../../../buhta-schema/SchemaComponent/SchemaComponent";
 import {UIForm} from "../UIForm/UIForm";
 import {UIComponent} from "../UIComponent/UIComponent";
+import {
+    MESSAGE_OK_BUTTON_ICON, MESSAGE_OK_ERROR_BUTTON_ICON, MESSAGE_OK_DANGER_BUTTON_ICON,
+    MESSAGE_CANCEL_BUTTON_ICON
+} from "../../Constants";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -76,6 +80,7 @@ export interface OpenWindowParams {
     parentWindowId?: string;
     autoPosition?: WindowAutoPosition;
     autoSize?: WindowAutoSize;
+    borderTheme?: string;
 }
 
 export interface OpenMessageWindowParams {
@@ -85,6 +90,7 @@ export interface OpenMessageWindowParams {
     okButtonContent?: React.ReactNode;
     cancelButtonContent?: React.ReactNode;
     resultCallback?: (resultOK: boolean) => void;
+    borderTheme?: string;
 }
 
 export class DesktopWindow implements OpenWindowParams {
@@ -103,6 +109,7 @@ export class DesktopWindow implements OpenWindowParams {
     parentWindowId: string | undefined;
     autoPosition: WindowAutoPosition | undefined;
     autoSize: WindowAutoSize | undefined;
+    borderTheme: string | undefined;
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
@@ -159,6 +166,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         newWin.width = openParams.width;
         newWin.right = openParams.right;
         newWin.bottom = openParams.bottom;
+        newWin.borderTheme = openParams.borderTheme;
+
 
         if (!newWin.left) {
             if (!newWin.right && !newWin.width) {
@@ -223,6 +232,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             autoSize: "content"
         };
 
+        winParams.borderTheme = openParams.borderTheme;
+
         if (!winParams.parentWindowId)
             winParams.autoPosition = "desktop-center";
 
@@ -230,14 +241,25 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
         let okButton: React.ReactNode = [];
         if (openParams.okButtonContent) {
-            let buttonClassName = "is-outlined";
-            if (openParams.style === "danger")
-                buttonClassName += " is-danger";
-            if (openParams.style === "error")
-                buttonClassName += " is-danger";
+
+            let icon = MESSAGE_OK_BUTTON_ICON;
+
+            if (openParams.style === "danger") {
+                icon = MESSAGE_OK_DANGER_BUTTON_ICON;
+                if (winParams.borderTheme===undefined)
+                    winParams.borderTheme="red";
+            }
+            if (openParams.style === "error") {
+                icon = MESSAGE_OK_ERROR_BUTTON_ICON;
+                if (winParams.borderTheme === undefined)
+                    winParams.borderTheme = "red";
+            }
+            if (winParams.borderTheme === undefined)
+                winParams.borderTheme = "blue";
+
             okButton =
                 <Button
-                    className={buttonClassName}
+                    icon={icon}
                     style={buttonStyle}
                     onClick={ (sender:Button, e:React.MouseEvent) => {
                           sender.closeParentWindow();
@@ -254,8 +276,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         if (openParams.cancelButtonContent) {
             cancelButton =
                 <Button
-                    className="is-outlined"
                     style={buttonStyle}
+                    icon={MESSAGE_CANCEL_BUTTON_ICON}
                     onClick={ (sender:Button, e:React.MouseEvent) => {
                           sender.closeParentWindow();
                           if (openParams && openParams.resultCallback)
@@ -380,6 +402,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             autoSize={w.autoSize}
                             autoPosition={w.autoPosition}
                             parentWindowId={w.parentWindowId}
+                            borderTheme={w.borderTheme}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
                         >

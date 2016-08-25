@@ -1,4 +1,5 @@
 "use strict";
+var React = require("react");
 var DesignedObject_1 = require("../../../buhta-app-designer/DesignedObject");
 var Error_1 = require("../../Error");
 var getInstantPromise_1 = require("../../getInstantPromise");
@@ -42,10 +43,13 @@ var GridBaseDataSource = (function () {
         return false;
     };
     GridBaseDataSource.prototype.dropBefore = function (dragRowIndex, targetRowIndex, mode) {
+        Error_1.throwAbstractError();
     };
     GridBaseDataSource.prototype.dropInto = function (dragRowIndex, targetRowIndex, mode) {
+        Error_1.throwAbstractError();
     };
     GridBaseDataSource.prototype.dropAfter = function (dragRowIndex, targetRowIndex, mode) {
+        Error_1.throwAbstractError();
     };
     GridBaseDataSource.prototype.addRow = function (row) {
         Error_1.throwAbstractError();
@@ -62,6 +66,42 @@ var GridBaseDataSource = (function () {
         else {
             Error_1.throwError("GridBaseDataSource.getDesignedObjectOfRow(): could not convert rowData to 'DesignedObject'");
             throw "fake";
+        }
+    };
+    GridBaseDataSource.prototype.deleteRow = function (rowData) {
+        Error_1.throwAbstractError();
+    };
+    GridBaseDataSource.prototype.openDeleteForm = function (grid, toDeleteRows) {
+        var _this = this;
+        if (this.params.openDeleteForm !== undefined) {
+            this.params.openDeleteForm(grid, toDeleteRows);
+        }
+        else {
+            // todo удаление нескольких
+            if (toDeleteRows.length > 1)
+                Error_1.throwUnderConstruction();
+            // if (!(toDeleteRows[0] instanceof DesignedObject))
+            //     throwError("GridBaseDataSource:openDeleteForm(): rowToDelete must be of type 'DesignedObject'");
+            var row_1 = toDeleteRows[0]; // as DesignedObject;
+            var objectClassName = "запись";
+            if (row_1 instanceof DesignedObject_1.DesignedObject && row_1.getClassName !== undefined)
+                objectClassName = row_1.getClassName();
+            var objectName = "";
+            if (row_1.toString)
+                objectName = row_1.toString();
+            //            let message = <div className="color-red">Удалить "{objectClassName}"?<br/>{ objectName }</div>;
+            var message = React.createElement("div", null, 
+                "Удалить \"", 
+                objectClassName, 
+                "\"?", 
+                React.createElement("br", null), 
+                objectName);
+            grid.component.showDeleteConfirmationWindow(message, function (okResult) {
+                if (okResult) {
+                    _this.deleteRow(row_1);
+                    grid.refresh();
+                }
+            });
         }
     };
     GridBaseDataSource.prototype.openEditForm = function (grid, rowData) {
@@ -81,7 +121,8 @@ var GridBaseDataSource = (function () {
                 var openParam = {
                     title: "редактирование",
                     autoPosition: "parent-center",
-                    parentWindowId: grid.component.getParentWindowId()
+                    parentWindowId: grid.component.getParentWindowId(),
+                    borderTheme: "blue"
                 };
                 grid.component.getParentDesktop().openWindow(win, openParam);
             });
@@ -111,7 +152,8 @@ var GridBaseDataSource = (function () {
                 var openParam = {
                     title: "добавление",
                     autoPosition: "parent-center",
-                    parentWindowId: grid.component.getParentWindowId()
+                    parentWindowId: grid.component.getParentWindowId(),
+                    borderTheme: "green"
                 };
                 grid.component.getParentDesktop().openWindow(win, openParam);
             });
