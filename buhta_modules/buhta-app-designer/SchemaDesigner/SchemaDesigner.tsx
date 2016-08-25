@@ -60,6 +60,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
     dataSource: GridTreeDataSourceFromSqlTable;
 
     private getDesignedObjectOfRow = (rowData: DataRow): Promise<DesignedObject> => {
+        this.component.props.schema.resetObjectCache(rowData["id"]);
         return this.component.props.schema.getObject(rowData["id"]);
     };
 

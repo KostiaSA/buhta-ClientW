@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import {SchemaObject, SchemaObjectId} from "./SchemaObject";
 import {SchemaDatabase} from "./SchemaDatabase";
-import {SqlDb, SqlBatch} from "../buhta-sql/SqlDb";
+import {SqlDb, SqlBatch, DataTable} from "../buhta-sql/SqlDb";
 import {CheckTableExistsStmt} from "../buhta-sql/CheckTableExistsStmt";
 import {throwError} from "../buhta-core/Error";
 import {CreateTableStmt} from "../buhta-sql/CreateTableStmt";
@@ -52,20 +52,30 @@ export class Schema {
                         console.log("load schema object from sql :" + id);
                         let select = new SelectStmt()
                             .table("SchemaObject")
+                            .column("parentObjectID")
+                            .column("position")
                             .column("jsCode")
                             .where("id", "=", new SqlGuidValue(id));
 
-                        this.db.selectToString(select)
-                            .then((jsCode) => {
-                                objConstructor = eval("(function(){return " + jsCode + "})");
+                        this.db.executeSQL(select)
+                            .then((tables: DataTable[]) => {
+                                if (tables[0].rows.length < 1)
+                                    throwError("Ошибка загрузки компонента (SchemaObject). Не найден компонент с id='" + id.toLowerCase() + "'");
+                                let row = tables[0].rows[0];
+                                objConstructor = eval("(function(){return " + row["jsCode"] + "})");
                                 this.objects_cache[id] = objConstructor;
                                 let obj: any = objConstructor();
                                 obj.$$schema = this;
                                 delete this.objects_cache_is_loading[id];
+
+                                // эти два поля может менять грида при DragDrop
+                                obj.parentObjectID = row["parentObjectID"];
+                                obj.position = row["position"];
+
                                 resolve(obj as T);
                             })
                             .catch((error) => {
-                                throwError("Ошибка загрузки компонента (SchemaObject). Не найден компонент с id='" + id.toLowerCase() + "', " + error);
+                                throwError("Ошибка загрузки компонента с id='" + id.toLowerCase() + "', " + error);
                             });
                     }
                 }
