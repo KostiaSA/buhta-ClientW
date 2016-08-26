@@ -4,6 +4,7 @@ import {ComponentProps, Component} from "../Component";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
 import {SelectInputDataSource, SelectInputItem} from "./SelectInputDataSource";
 import {SelectInputDataSourceFromArray} from "./SelectInputDataSourceFromArray";
+import {throwError} from "../../Error";
 
 export interface SelectInputProps<T> extends ComponentProps<any>, AutoFormControlProps {
     bindObject: any;
@@ -67,6 +68,9 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
             this.ds = new SelectInputDataSourceFromArray(this.props.valuesDataSource)
         else
             this.ds = this.props.valuesDataSource as SelectInputDataSource<any>;
+
+        if (this.ds===undefined)
+            throwError("SelectInput: property 'valuesDataSource' is not defined");
 
         this.clearStyles();
         this.addClassName("select");

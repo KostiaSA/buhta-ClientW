@@ -16,6 +16,7 @@ var React = require("react");
 var _ = require("lodash");
 var Component_1 = require("../Component");
 var SelectInputDataSourceFromArray_1 = require("./SelectInputDataSourceFromArray");
+var Error_1 = require("../../Error");
 var SelectInput = (function (_super) {
     __extends(SelectInput, _super);
     function SelectInput(props, context) {
@@ -52,6 +53,8 @@ var SelectInput = (function (_super) {
             this.ds = new SelectInputDataSourceFromArray_1.SelectInputDataSourceFromArray(this.props.valuesDataSource);
         else
             this.ds = this.props.valuesDataSource;
+        if (this.ds === undefined)
+            Error_1.throwError("SelectInput: property 'valuesDataSource' is not defined");
         this.clearStyles();
         this.addClassName("select");
         this.addStyles(this.props.style);

@@ -4,6 +4,7 @@ import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPrope
 import {SqlDataType} from "../../buhta-sql/SqlCore";
 import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 import {BaseDataType} from "./DataTypes/BaseDataType";
+import {DataTypeEditor} from "../../buhta-app-designer/PropertyEditors/DataTypePropertyEditor";
 
 export class SchemaTableColumn extends DesignedObject {
     constructor(public table: SchemaTable) {
@@ -23,13 +24,12 @@ export class SchemaTableColumn extends DesignedObject {
     @GridColumn({caption: "Имя колонки"})
     name: string;
 
-    @StringEditor({
-        inputCaption: "тип",
+    @DataTypeEditor({
+        inputCaption: "Тип данных",
         inputTab: "Главная",
         inputGroup: "Основная",
-        inputDescription: "sql тип колонки"
+        inputDescription: "Тип данных колонки"
     })
-
     @GridColumn({caption: "Тип"})
     dataType: BaseDataType;
 
