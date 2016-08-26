@@ -15,6 +15,10 @@ var GridBaseDataSource = (function () {
         Error_1.throwAbstractError();
         throw "fake";
     };
+    GridBaseDataSource.prototype.getRows = function () {
+        Error_1.throwAbstractError();
+        throw "fake";
+    };
     GridBaseDataSource.prototype.getGridColumns = function () {
         return this.params.gridColumns;
     };
@@ -146,6 +150,7 @@ var GridBaseDataSource = (function () {
         throw "fake";
     };
     GridBaseDataSource.prototype.openInsertForm = function (grid, focusedRowData) {
+        var _this = this;
         if (this.params.openInsertForm !== undefined) {
             this.params.openInsertForm(grid, focusedRowData);
         }
@@ -154,6 +159,8 @@ var GridBaseDataSource = (function () {
                 var designerProps = {
                     designedObject: newDesignedObject,
                     onSaveChanges: function () {
+                        // todo надо как-то уметь получать DataRow из DesignedObject
+                        _this.addRow(newDesignedObject);
                         grid.refresh();
                         grid.setFocusedRow(newDesignedObject);
                     }

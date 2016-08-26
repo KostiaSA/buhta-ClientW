@@ -58,14 +58,14 @@ export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState>
 export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
 
     //dataSourceParam: TreeGridComponentChildrenDataSourceParams = {};
-    dataSource: GridTreeDataSourceFromSqlTable;
+    dataSource: GridTreeDataSourceFromSqlTable<SchemaObject>;
 
-    private getDesignedObjectOfRow = (rowData: DataRow): Promise<DesignedObject> => {
+    private getDesignedObjectOfRow = (rowData: DataRow): Promise<SchemaObject> => {
         this.component.props.schema.resetObjectCache(rowData["id"]);
         return this.component.props.schema.getObject(rowData["id"]);
     };
 
-    private getNewDesignedObject = (focusedData: DataRow): Promise<DesignedObject> => {
+    private getNewDesignedObject = (focusedData: DataRow): Promise<SchemaObject> => {
 
         let columns: GridColumns = [];
         columns.push({caption: "Тип объекта", propertyName: "name", iconPropertyName: "icon"});
@@ -75,7 +75,10 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             return stringCompare(a.name, b.name);
         });
 
-        let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo>({arrayObj: arr, gridColumns: columns});
+        let dataSource = new GridFlatDataSourceFromArray<SchemaObjectTypeInfo, DesignedObject>({
+            arrayObj: arr,
+            gridColumns: columns
+        });
 
         let params: LookupDialogParams<SchemaObjectTypeInfo> = {
             title: "Выберите тип нового объекта",
@@ -99,7 +102,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             });
     };
 
-    private openEditForm = (grid: GridState<any>, rowData: DataRow) => {
+    private openEditForm = (grid: GridState<DataRow,DesignedObject>, rowData: DataRow) => {
 
         this.getDesignedObjectOfRow(rowData)
             .then((designedObject: SchemaObject) => {
@@ -117,7 +120,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                         this.dataSource.refreshFromSql()
                             .then(() => {
                                 grid.refresh();
-                                grid.setFocusedRow(designedObject as any);
+                                grid.setFocusedRow(rowData);
                             });
                     }
                 };
@@ -129,7 +132,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
 
     }
 
-    private openInsertForm = (grid: GridState<any>, focusedRowData: DataRow) => {
+    private openInsertForm = (grid: GridState<DataRow,DesignedObject>, focusedRowData: DataRow) => {
 
         this.getNewDesignedObject(focusedRowData)
             .then((designedObject: SchemaObject) => {
@@ -166,7 +169,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
         select.column("id", "parentObjectId", "name", "typeId", "position", "description");
 
 
-        let dsParams: GridTreeDataSourceFromSqlTableParams = {
+        let dsParams: GridTreeDataSourceFromSqlTableParams<SchemaObject> = {
             db: this.component.props.schema.db,
             select: select,
             tableName: "SchemaObject",
@@ -199,7 +202,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
             }
         };
 
-        this.dataSource = new GridTreeDataSourceFromSqlTable(dsParams);
+        this.dataSource = new GridTreeDataSourceFromSqlTable<SchemaObject>(dsParams);
     }
 
 }
@@ -274,14 +277,14 @@ export class SchemaDesigner extends Component<SchemaDesignerProps, SchemaDesigne
 
     }
 
-    private treeGridState: GridState<BaseControl>;
-
-    handleTreeGridChangeFocusedRow = (state: GridState<BaseControl>) => {
-        this.treeGridState = state;
-        //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
-        //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
-
-    }
+    // private treeGridState: GridState<BaseControl>;
+    //
+    // handleTreeGridChangeFocusedRow = (state: GridState<BaseControl>) => {
+    //     this.treeGridState = state;
+    //     //console.log("handleTreeGridChangeFocusedRow:" + state.focusedRowIndex);
+    //     //this.openDeleteForm(this.state.rows[this.state.focusedRowIndex]);
+    //
+    // }
 
     render() {
 

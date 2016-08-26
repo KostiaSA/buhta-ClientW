@@ -22,44 +22,44 @@ export interface GridDataSourceRow {
 //     columns: (DataSourceColumn | DataSourceColumnGroup)[];
 // }
 
-export interface GridDataSource<T extends GridDataSourceRow> {
+export interface GridDataSource<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject> {
     getIsAsync(): boolean;
     getGridColumns(): GridColumns;
-    getRowsAsync(): Promise<T[]>;
-    getRows(): T[];
-    //getNewRow(parentRowData?: T): Promise<T>;
-    addRow(rowData: T): void;
+    getRowsAsync(): Promise<TRow[]>;
+    getRows(): TRow[];
+    //getNewRow(parentRowData?: TRow): Promise<TRow>;
+    addRow(rowData: TRow): void;
     getEmptyDataSourceMessage(): React.ReactNode;
     getDeleteRowMessage (): React.ReactNode;
 
-    getDataValue(rowData: T, propertyName: string): any;
+    getDataValue(rowData: TRow, propertyName: string): any;
 
-    getIsRowsDataEqual(rowData1: T, rowData2: T): boolean;  // используется в Grid-e для поиска FocusedRow
+    getIsRowsDataEqual(rowData1: TRow, rowData2: TRow): boolean;  // используется в Grid-e для поиска FocusedRow
 
-    deleteRow(rowData: T): void;
+    deleteRow(rowData: TRow): void;
 
-    canDragRow(rowIndex: T, mode: "move" | "copy"): boolean;
+    canDragRow(rowIndex: TRow, mode: "move" | "copy"): boolean;
 
-    canDropInto(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean;
+    canDropInto(dragRowData: TRow, targetRowData: TRow, mode: "move" | "copy"): boolean;
 
-    canDropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean;
+    canDropBefore(dragRowData: TRow, targetRowData: TRow, mode: "move" | "copy"): boolean;
 
-    canDropAfter(dragRowData: T, targetRowData: T, mode: "move" | "copy"): boolean;
+    canDropAfter(dragRowData: TRow, targetRowData: TRow, mode: "move" | "copy"): boolean;
 
-    dropInto(dragRowData: T, targetRowData: T, mode: "move" | "copy"): void;
+    dropInto(dragRowData: TRow, targetRowData: TRow, mode: "move" | "copy"): void;
 
-    dropAfter(dragRowData: T, targetRowData: T, mode: "move" | "copy"): void;
+    dropAfter(dragRowData: TRow, targetRowData: TRow, mode: "move" | "copy"): void;
 
-    dropBefore(dragRowData: T, targetRowData: T, mode: "move" | "copy"): void;
+    dropBefore(dragRowData: TRow, targetRowData: TRow, mode: "move" | "copy"): void;
 
-    getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails | null;
+    getNodeChildDetails(dataItem: TRow): AgGrid.NodeChildDetails | null;
 
-    getDesignedObjectOfRow(rowData: T): Promise<DesignedObject>;
-    getNewDesignedObject(rowData: T): Promise<DesignedObject>;
+    getDesignedObjectOfRow(rowData: TRow): Promise<TDesignedObject>;
+    getNewDesignedObject(rowData: TRow): Promise<TDesignedObject>;
 
-    openInsertForm(grid: GridState<T>, focusedRowData?: T): void;
-    openEditForm(grid: GridState<T>, editedRowData: T): void;
-    openDeleteForm(grid: GridState<T>, toDeleteRows: T[]): void;
+    openInsertForm(grid: GridState<TRow,TDesignedObject>, focusedRowData?: TRow): void;
+    openEditForm(grid: GridState<TRow,TDesignedObject>, editedRowData: TRow): void;
+    openDeleteForm(grid: GridState<TRow,TDesignedObject>, toDeleteRows: TRow[]): void;
 
 }
 

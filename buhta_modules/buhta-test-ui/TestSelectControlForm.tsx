@@ -22,6 +22,7 @@ import {
     GridTreeDataSourceFromArrayParams,
     GridTreeDataSourceFromArray
 } from "../buhta-core/Components/Grid/GridTreeDataSourceFromArray";
+import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 /**
  * Created by Kostia on 06.08.2016.
  */
@@ -79,7 +80,7 @@ export function showTestSelectControlForm() {
             // else
             //     (window as any)["xxxxx"] = tables;
 
-            let params: GridTreeDataSourceFromArrayParams<DataRow> = {
+            let params: GridTreeDataSourceFromArrayParams<DataRow,DesignedObject> = {
                 arrayObj: tables[0].rows,
                 keyFieldName: "id",
                 parentKeyFieldName: "parentId",

@@ -52,6 +52,7 @@ import enumerate = Reflect.enumerate;
 import {SchemaComponentDesigner} from "../SchemaComponentDesigner/SchemaComponentDesigner";
 import {SchemaDesigner} from "../SchemaDesigner/SchemaDesigner";
 import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
+import {SchemaTable} from "../../buhta-schema/SchemaTable/SchemaTable";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -340,17 +341,19 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testTableDesigner() {
-        let table = new SqlTable();
+        let table = new SchemaTable(getSchema());
 
         table.name = "Организация";
-        table.sqlname = "dbo.Организация";
+        //table.sqlname = "dbo.Организация";
         table.addColumn((col) => {
             col.name = "Номер";
-            col.dataType = "varchar(10)";
+            col.dataType = "string";
+            col.dataLen = 33;
         });
         table.addColumn((col) => {
             col.name = "Название";
-            col.dataType = "varchar(50)";
+            col.dataType = "string";
+            col.dataLen = 444;
         });
 
         let win = <ObjectDesigner

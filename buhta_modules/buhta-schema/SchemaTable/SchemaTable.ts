@@ -4,6 +4,8 @@ import {SchemaTableColumn} from "./SchemaTableColumn";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
 import {SCHEMA_TABLE_ICON} from "../../buhta-core/Constants";
+import {getInstantPromise} from "../../buhta-core/getInstantPromise";
+import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
 
 export class SchemaTable extends SchemaObject {
 
@@ -18,9 +20,14 @@ export class SchemaTable extends SchemaObject {
 
     @ListEditor({
         inputTab: "Колонки",
-        // getNewListItem: (table: SchemaTable) => {
-        //     return new SchemaTableColumn(table);
-        //}
+        enableDragDrop: true,
+        getNewListItem: (table: SchemaTable, parentItem?: SchemaTableColumn) => {
+            let column = new SchemaTableColumn(table);
+            column.name = "Новая колонка";
+            column.dataType = "string";
+            column.dataLen = 50;
+            return getInstantPromise<DesignedObject>(column);
+        }
     })
     columns: SchemaTableColumn[] = [];
 

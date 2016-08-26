@@ -22,11 +22,11 @@ export class BaseControl extends DesignedObject {
     // fake777: string;
 
 
-    $$flatIndex: number; // используется в TreeGridComponentChildrenDataSourceParams
-    $$flatParent: BaseControl | null; // используется в TreeGridComponentChildrenDataSourceParams
+    //$$flatIndex: number; // используется в TreeGridComponentChildrenDataSourceParams
+    //$$flatParent: BaseControl | null; // используется в TreeGridComponentChildrenDataSourceParams
 
     $$parent: BaseControl | undefined; // используется в GridTreeDataSourceFromComponent
-    
+
 
     children: BaseControl[] = [];
 //    reactElement: Component<any, any>;

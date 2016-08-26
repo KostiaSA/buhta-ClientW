@@ -15,30 +15,32 @@ import {OpenWindowParams} from "../Desktop/Desktop";
 import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {GridBaseDataSource, GridBaseDataSourceParams} from "./GridBaseDataSource";
 
-export interface GridFlatDataSourceFromArrayParams<T extends GridDataSourceRow> extends GridBaseDataSourceParams<T> {
-    arrayObj: T[];
+export interface GridFlatDataSourceFromArrayParams<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject>
+extends GridBaseDataSourceParams<TRow,TDesignedObject> {
+    arrayObj: TRow[];
     positionFieldName?: string;  // sort
-    getNewRow?: () => Promise<T>;
+//    getNewRow?: () => Promise<TRow>;
 //    getEmptyDataSourceMessage?: () => React.ReactNode;
 //    getDeleteRowMessage?: () => React.ReactNode;
 //    gridColumns?: GridColumns;
 
 }
 
-export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> extends GridBaseDataSource<T> implements GridDataSource<T> {
-    constructor(public params: GridFlatDataSourceFromArrayParams<T>) {
+export class GridFlatDataSourceFromArray<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject>
+extends GridBaseDataSource<TRow,TDesignedObject> implements GridDataSource<TRow,TDesignedObject> {
+    constructor(public params: GridFlatDataSourceFromArrayParams<TRow,TDesignedObject>) {
         super(params);
-        this.arrayObj = params.arrayObj.filter((item) => item !== undefined);
+        // this.arrayObj = params.arrayObj;//.filter((item) => item !== undefined);
 
     }
 
-    private arrayObj: T[];
+    // private arrayObj: TRow[];
 
     getIsAsync() {
         return false;
     };
 
-    getRowsAsync(): Promise<T[]> {
+    getRowsAsync(): Promise<TRow[]> {
         throwAbstractError();
         throw "fake";
     }
@@ -46,10 +48,10 @@ export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> extends Gr
     getGridColumns(): GridColumns {
         if (this.params.gridColumns !== undefined)
             return this.params.gridColumns;
-        else if (this.arrayObj.length === 0)
+        else if (this.params.arrayObj.length === 0)
             return [];
         else
-            return getGridColumnInfos(this.arrayObj[0]).map<GridColumnProps>((col) => {
+            return getGridColumnInfos(this.params.arrayObj[0]).map<GridColumnProps>((col) => {
                 if (col.isPositionField === true)
                     this.params.positionFieldName = col.propertyName;
                 let ret: any = {};
@@ -59,51 +61,31 @@ export class GridFlatDataSourceFromArray<T extends GridDataSourceRow> extends Gr
 
     }
 
-    getRows(): T[] {
-        return this.arrayObj;
+    getRows(): TRow[] {
+        return this.params.arrayObj.filter((item) => item !== undefined);
+        //return this.arrayObj;
     }
 
-    getNewRow(): Promise<T> {
-        if (this.params.getNewRow)
-            return this.params.getNewRow();
-        else {
-            throwError("TreeGridArrayDataSource: method getNewRow() not defined");
-            throw  "";  // fake typescript 2
-        }
-    }
-
-    addRow(row: T) {
-        this.arrayObj.push(row);
-    }
-
-    deleteRow(rowData: T) {
-        removeFromArray(this.arrayObj, rowData);
-    }
-
-
-    // openEditForm(grid: GridState<T>, rowData: T) {
-    //
-    //     if (!(rowData instanceof DesignedObject))
-    //         throwError("Grid:openDeleteForm(): rowData must be 'DesignedObject'");
-    //
-    //     let designedObject = this.getDesignedObjectOfRow(rowData);
-    //
-    //     let win =
-    //         <ObjectDesigner
-    //             designedObject={designedObject}
-    //             onSaveChanges={ () => { grid.refresh(); }}
-    //         >
-    //
-    //         </ObjectDesigner>;
-    //
-    //     let openParam: OpenWindowParams = {
-    //         title: "редактирование",
-    //         autoPosition: "parent-center",
-    //         parentWindowId: grid.component.getParentWindowId()
-    //     };
-    //
-    //     grid.component.getParentDesktop().openWindow(win, openParam);
-    //
+    // getNewRow(): Promise<TRow> {
+    //     if (this.params.getNewRow)
+    //         return this.params.getNewRow();
+    //     else {
+    //         throwError("GridFlatDataSourceFromArray: function 'getNewRow' is not defined");
+    //         throw  "";  // fake typescript 2
+    //     }
     // }
+
+    addRow(row: TRow) {
+        this.params.arrayObj.push(row);
+    }
+
+    deleteRow(rowData: TRow) {
+        removeFromArray(this.params.arrayObj, rowData);
+    }
+
+    canDropInto(dragRowData: TRow, targetRowData: TRow, mode: "move" | "copy"): boolean {
+        return false;
+    }
+
 
 }

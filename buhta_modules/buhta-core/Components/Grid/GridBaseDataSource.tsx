@@ -15,35 +15,41 @@ import {OpenWindowParams, getDesktop} from "../Desktop/Desktop";
 import {ObjectDesigner, ObjectDesignerProps} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {getInstantPromise} from "../../getInstantPromise";
 
-export interface GridBaseDataSourceParams<T extends GridDataSourceRow> {
+export interface GridBaseDataSourceParams<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject> {
 //
 //     positionFieldName?: string;  // sort
-//     getNewRow?: () => Promise<T>;
+//     getNewRow?: () => Promise<TRow>;
     getEmptyDataSourceMessage?: () => React.ReactNode;
     getDeleteRowMessage?: () => React.ReactNode;
     gridColumns?: GridColumns;
 
-    getNewDesignedObject?: (focusedData: T) => Promise<DesignedObject>;
-    getDesignedObjectOfRow?: (editedData: T) => Promise<DesignedObject>;
-    onDeleteRows?: (rowData: T[]) => Promise<void>;
+    getNewDesignedObject?: (focusedData: TRow) => Promise<TDesignedObject>;
+    getDesignedObjectOfRow?: (editedData: TRow) => Promise<TDesignedObject>;
+    onDeleteRows?: (rowData: TRow[]) => Promise<void>;
 
-    openInsertForm?: (grid: GridState<T>, focusedRowData: T) => void;
-    openEditForm?: (grid: GridState<T>, rowData: T) => void;
-    openDeleteForm?: (grid: GridState<T>, toDeleteRows: T[])=> void;
+    openInsertForm?: (grid: GridState<TRow,TDesignedObject>, focusedRowData: TRow) => void;
+    openEditForm?: (grid: GridState<TRow,TDesignedObject>, rowData: TRow) => void;
+    openDeleteForm?: (grid: GridState<TRow,TDesignedObject>, toDeleteRows: TRow[])=> void;
 
-    onGetDataValue?: (rowData: T, propertyName: string) => any;
+    onGetDataValue?: (rowData: TRow, propertyName: string) => any;
 
 }
 
-export class GridBaseDataSource<T extends GridDataSourceRow> {
-    constructor(public params: GridBaseDataSourceParams<T>) {
+export class GridBaseDataSource<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject>
+implements GridDataSource<TRow,TDesignedObject> {
+    constructor(public params: GridBaseDataSourceParams<TRow,TDesignedObject>) {
     }
 
     getIsAsync() {
         return false;
     };
 
-    getRowsAsync(): Promise<T[]> {
+    getRowsAsync(): Promise<TRow[]> {
+        throwAbstractError();
+        throw "fake";
+    }
+    
+    getRows(): TRow[] {
         throwAbstractError();
         throw "fake";
     }
@@ -66,59 +72,59 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
             return "Удалить запись!";
     }
 
-    canDragRow(rowIndex: T, mode: "move" | "copy"): boolean {
+    canDragRow(rowIndex: TRow, mode: "move" | "copy"): boolean {
         return false;
     }
 
-    canDropInto(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy"): boolean {
+    canDropInto(dragRowIndex: TRow, targetRowIndex: TRow, mode: "move" | "copy"): boolean {
         return false;
     }
 
-    canDropAfter(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy"): boolean {
+    canDropAfter(dragRowIndex: TRow, targetRowIndex: TRow, mode: "move" | "copy"): boolean {
         return false;
     }
 
-    canDropBefore(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy"): boolean {
+    canDropBefore(dragRowIndex: TRow, targetRowIndex: TRow, mode: "move" | "copy"): boolean {
         return false;
     }
 
-    dropBefore(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
+    dropBefore(dragRowIndex: TRow, targetRowIndex: TRow, mode: "move" | "copy") {
         throwAbstractError();
     }
 
-    dropInto(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
+    dropInto(dragRowIndex: TRow, targetRowIndex: TRow, mode: "move" | "copy") {
         throwAbstractError();
     }
 
-    dropAfter(dragRowIndex: T, targetRowIndex: T, mode: "move" | "copy") {
+    dropAfter(dragRowIndex: TRow, targetRowIndex: TRow, mode: "move" | "copy") {
         throwAbstractError();
     }
 
-    addRow(row: T) {
+    addRow(row: TRow) {
         throwAbstractError();
     }
 
-    getNodeChildDetails(dataItem: T): AgGrid.NodeChildDetails | null {
+    getNodeChildDetails(dataItem: TRow): AgGrid.NodeChildDetails | null {
         return null;
     }
 
-    getDesignedObjectOfRow(rowData: T): Promise<DesignedObject> {
+    getDesignedObjectOfRow(rowData: TRow): Promise<TDesignedObject> {
         if (this.params.getDesignedObjectOfRow !== undefined) {
             return this.params.getDesignedObjectOfRow(rowData);
         }
         else if (rowData instanceof DesignedObject)
-            return getInstantPromise<DesignedObject>(rowData);
+            return getInstantPromise<TDesignedObject>(rowData as TDesignedObject);
         else {
             throwError("GridBaseDataSource.getDesignedObjectOfRow(): could not convert rowData to 'DesignedObject'");
             throw  "fake";
         }
     }
 
-    deleteRow(rowData: T) {
+    deleteRow(rowData: TRow) {
         throwAbstractError();
     }
 
-    openDeleteForm(grid: GridState<T>, toDeleteRows: T[]) {
+    openDeleteForm(grid: GridState<TRow,TDesignedObject>, toDeleteRows: TRow[]) {
         if (this.params.openDeleteForm !== undefined) {
             this.params.openDeleteForm(grid, toDeleteRows);
         }
@@ -161,7 +167,7 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
         }
     }
 
-    openEditForm(grid: GridState<T>, rowData: T) {
+    openEditForm(grid: GridState<TRow,TDesignedObject>, rowData: TRow) {
         if (this.params.openEditForm !== undefined) {
             this.params.openEditForm(grid, rowData);
         }
@@ -194,7 +200,7 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
 
     }
 
-    getNewDesignedObject(parentRowData: T): Promise<DesignedObject> {
+    getNewDesignedObject(parentRowData: TRow): Promise<TDesignedObject> {
         if (this.params.getNewDesignedObject !== undefined) {
             return this.params.getNewDesignedObject(parentRowData);
         }
@@ -202,7 +208,7 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
         throw  "fake";
     }
 
-    openInsertForm(grid: GridState<T>, focusedRowData: T) {
+    openInsertForm(grid: GridState<TRow,TDesignedObject>, focusedRowData: TRow) {
         if (this.params.openInsertForm !== undefined) {
             this.params.openInsertForm(grid, focusedRowData);
         }
@@ -210,10 +216,11 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
 
             this.getNewDesignedObject(focusedRowData).then((newDesignedObject) => {
 
-
                 let designerProps: ObjectDesignerProps = {
                     designedObject: newDesignedObject,
                     onSaveChanges: () => {
+                        // todo надо как-то уметь получать DataRow из DesignedObject
+                        this.addRow((newDesignedObject as any)as TRow);
                         grid.refresh();
                         grid.setFocusedRow(newDesignedObject as any);
                     }
@@ -235,11 +242,11 @@ export class GridBaseDataSource<T extends GridDataSourceRow> {
 
     }
 
-    getIsRowsDataEqual(rowData1: T, rowData2: T): boolean {
+    getIsRowsDataEqual(rowData1: TRow, rowData2: TRow): boolean {
         return rowData1 === rowData2;
     }
 
-    getDataValue(rowData: T, propertyName: string): any {
+    getDataValue(rowData: TRow, propertyName: string): any {
         if (this.params.onGetDataValue !== undefined)
             return this.params.onGetDataValue(rowData, propertyName);
         else

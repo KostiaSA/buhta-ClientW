@@ -20,15 +20,15 @@ import {getInstantPromise} from "../../getInstantPromise";
 import {UpdateStmt} from "../../../buhta-sql/UpdateStmt";
 import {SqlGuidValue, SqlNumberValue} from "../../../buhta-sql/SqlCore";
 
-export interface GridTreeDataSourceFromSqlTableParams extends GridTreeDataSourceFromArrayParams<DataRow> {
+export interface GridTreeDataSourceFromSqlTableParams<TDesignedObject extends DesignedObject> extends GridTreeDataSourceFromArrayParams<DataRow,TDesignedObject> {
     arrayObj?: DataRow[];
     db: SqlDb;
     select: SelectStmt;
     tableName: string;
 }
 
-export class GridTreeDataSourceFromSqlTable extends GridTreeDataSourceFromArray<DataRow> {
-    constructor(public params: GridTreeDataSourceFromSqlTableParams) {
+export class GridTreeDataSourceFromSqlTable<TDesignedObject extends DesignedObject> extends GridTreeDataSourceFromArray<DataRow,TDesignedObject> {
+    constructor(public params: GridTreeDataSourceFromSqlTableParams<TDesignedObject>) {
         super(params);
 
         if (params.onDragDropUpdate === undefined)

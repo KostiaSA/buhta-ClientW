@@ -14,8 +14,9 @@ var GridFlatDataSourceFromArray = (function (_super) {
     function GridFlatDataSourceFromArray(params) {
         _super.call(this, params);
         this.params = params;
-        this.arrayObj = params.arrayObj.filter(function (item) { return item !== undefined; });
+        // this.arrayObj = params.arrayObj;//.filter((item) => item !== undefined);
     }
+    // private arrayObj: TRow[];
     GridFlatDataSourceFromArray.prototype.getIsAsync = function () {
         return false;
     };
@@ -28,10 +29,10 @@ var GridFlatDataSourceFromArray = (function (_super) {
         var _this = this;
         if (this.params.gridColumns !== undefined)
             return this.params.gridColumns;
-        else if (this.arrayObj.length === 0)
+        else if (this.params.arrayObj.length === 0)
             return [];
         else
-            return getGridColumnInfos_1.getGridColumnInfos(this.arrayObj[0]).map(function (col) {
+            return getGridColumnInfos_1.getGridColumnInfos(this.params.arrayObj[0]).map(function (col) {
                 if (col.isPositionField === true)
                     _this.params.positionFieldName = col.propertyName;
                 var ret = {};
@@ -40,21 +41,25 @@ var GridFlatDataSourceFromArray = (function (_super) {
             });
     };
     GridFlatDataSourceFromArray.prototype.getRows = function () {
-        return this.arrayObj;
+        return this.params.arrayObj.filter(function (item) { return item !== undefined; });
+        //return this.arrayObj;
     };
-    GridFlatDataSourceFromArray.prototype.getNewRow = function () {
-        if (this.params.getNewRow)
-            return this.params.getNewRow();
-        else {
-            Error_1.throwError("TreeGridArrayDataSource: method getNewRow() not defined");
-            throw ""; // fake typescript 2
-        }
-    };
+    // getNewRow(): Promise<TRow> {
+    //     if (this.params.getNewRow)
+    //         return this.params.getNewRow();
+    //     else {
+    //         throwError("GridFlatDataSourceFromArray: function 'getNewRow' is not defined");
+    //         throw  "";  // fake typescript 2
+    //     }
+    // }
     GridFlatDataSourceFromArray.prototype.addRow = function (row) {
-        this.arrayObj.push(row);
+        this.params.arrayObj.push(row);
     };
     GridFlatDataSourceFromArray.prototype.deleteRow = function (rowData) {
-        arrayUtils_1.removeFromArray(this.arrayObj, rowData);
+        arrayUtils_1.removeFromArray(this.params.arrayObj, rowData);
+    };
+    GridFlatDataSourceFromArray.prototype.canDropInto = function (dragRowData, targetRowData, mode) {
+        return false;
     };
     return GridFlatDataSourceFromArray;
 }(GridBaseDataSource_1.GridBaseDataSource));

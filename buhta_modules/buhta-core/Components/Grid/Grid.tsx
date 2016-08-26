@@ -35,10 +35,10 @@ const MIN_ROW_HEIGHT = 24;
 const MAX_ROW_HEIGHT = 350;
 
 
-export interface GridProps extends ComponentProps<GridState<GridDataSourceRow>> {
+export interface GridProps extends ComponentProps<GridState<GridDataSourceRow,DesignedObject>> {
 
     dragDropNodes?: boolean;
-    dataSource: GridDataSource<GridDataSourceRow>;
+    dataSource: GridDataSource<GridDataSourceRow,DesignedObject>;
 
     columnDefs?: (GridColumnDef | GridColumnGroup)[];
 
@@ -77,7 +77,7 @@ export interface GridProps extends ComponentProps<GridState<GridDataSourceRow>> 
 }
 
 class DragDropState {
-    constructor(public gridState: GridState<GridDataSourceRow>) {
+    constructor(public gridState: GridState<GridDataSourceRow,DesignedObject>) {
 
     }
 
@@ -113,13 +113,13 @@ class DragDropState {
 
 }
 
-export class GridState<T extends GridDataSourceRow> extends ComponentState<GridProps> {
+export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject> extends ComponentState<GridProps> {
     constructor(private grid: Grid) {
         super(grid);
     }
 
     agGrid: AgGrid.GridOptions = {};
-    dataSource: GridDataSource<T>;
+    dataSource: GridDataSource<TRow,TDesignedObject>;
     dragDropState: DragDropState = new DragDropState(this);
 
     isRowsToRender(): boolean {
@@ -132,7 +132,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
         this.agGrid.api!.setRowData(this.dataSource.getRows());
     }
 
-    expandRow(dataItem: T) {
+    expandRow(dataItem: TRow) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && !node.expanded) {
             node.expanded = true;
@@ -140,7 +140,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
         }
     }
 
-    collapseRow(dataItem: T) {
+    collapseRow(dataItem: TRow) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && node.expanded) {
             node.expanded = false;
@@ -148,7 +148,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
         }
     }
 
-    expandRowParent(dataItem: T) {
+    expandRowParent(dataItem: TRow) {
         let node = this.findAgRowNodeOfData(dataItem);
         if (node && node.parent && !node.parent.expanded) {
             node.parent.expanded = true;
@@ -156,7 +156,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
         }
     }
 
-    setFocusedRow(dataItem: T) {
+    setFocusedRow(dataItem: TRow) {
         this.expandRowParent(dataItem);
         let col = this.agGrid.columnApi!.getAllDisplayedColumns();
         let rowIndex = this.findAgNodeIndexOfData(dataItem);
@@ -164,7 +164,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
             this.agGrid.api!.setFocusedCell(rowIndex, col[0]);
     }
 
-    findAgRowNodeOfData(dataItem: T): AgGrid.RowNode | undefined {
+    findAgRowNodeOfData(dataItem: TRow): AgGrid.RowNode | undefined {
         let ret: AgGrid.RowNode| undefined = undefined;
         this.agGrid.api!.forEachNode((node: AgGrid.RowNode) => {
             if (this.dataSource.getIsRowsDataEqual(node.data, dataItem))
@@ -173,7 +173,7 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
         return ret;
     }
 
-    findAgNodeIndexOfData(dataItem: T): number {
+    findAgNodeIndexOfData(dataItem: TRow): number {
         let rowModel = this.agGrid.api!.getModel();
 
         for (let i = 0; i < rowModel.getRowCount(); i++) {
@@ -184,11 +184,11 @@ export class GridState<T extends GridDataSourceRow> extends ComponentState<GridP
         return -1;
     }
 
-    getDataByAgRowIndex(rowIndex: number): T {
+    getDataByAgRowIndex(rowIndex: number): TRow {
         return this.agGrid.api!.getModel().getRow(rowIndex).data;
     }
 
-    getFocusedRowData(): T | undefined {
+    getFocusedRowData(): TRow | undefined {
         if (!this.isRowsToRender())
             return undefined;
         let focusedCell = this.agGrid.api!.getFocusedCell();
@@ -241,7 +241,7 @@ export interface AgCellClassRules {
     [cssClassName: string]: AgCellClassRuleFunction;
 }
 
-export default class Grid extends Component<GridProps, GridState<GridDataSourceRow>> {
+export default class Grid extends Component<GridProps, GridState<GridDataSourceRow,DesignedObject>> {
     constructor(props: GridProps, context: any) {
         super(props, context);
 
@@ -595,7 +595,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         }
     }
 
-    protected didUpdate(prevProps: GridProps, prevState: GridState<GridDataSourceRow>, prevContext: any) {
+    protected didUpdate(prevProps: GridProps, prevState: GridState<GridDataSourceRow,DesignedObject>, prevContext: any) {
         super.didUpdate(prevProps, prevState, prevContext);
         this.disableDragDrop();
         if (this.props.enableDragDrop === true) {
@@ -664,7 +664,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     openDeleteForm(rowToDelete: GridDataSourceRow) {
         // todo сделать удаление нескольких отмеченных
         this.state.dataSource.openDeleteForm(this.state, [rowToDelete]);
-        
+
         // if (!(rowToDelete instanceof DesignedObject))
         //     throwError("Grid:openDeleteForm(): rowToDelete must be 'DesignedObject'");
         // let row = rowToDelete as DesignedObject;

@@ -16,7 +16,7 @@ import {GridState} from "./Grid";
 import {ObjectDesignerProps} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {OpenWindowParams} from "../Desktop/Desktop";
 
-export interface GridTreeDataSourceFromComponentParams extends GridBaseDataSourceParams<BaseControl> {
+export interface GridTreeDataSourceFromComponentParams extends GridBaseDataSourceParams<BaseControl,BaseControl> {
 
     nodes: BaseControl[];
     positionFieldName?: string;  // sort
@@ -28,7 +28,7 @@ export interface GridTreeDataSourceFromComponentParams extends GridBaseDataSourc
 }
 
 
-export class GridTreeDataSourceFromComponent extends GridBaseDataSource<BaseControl> implements GridDataSource<BaseControl> {
+export class GridTreeDataSourceFromComponent extends GridBaseDataSource<BaseControl,BaseControl> implements GridDataSource<BaseControl,BaseControl> {
     constructor(public params: GridTreeDataSourceFromComponentParams) {
         super(params);
         this.set$$parentForAllNodes();
@@ -233,7 +233,7 @@ export class GridTreeDataSourceFromComponent extends GridBaseDataSource<BaseCont
             return null;
     }
 
-    openInsertForm(grid: GridState<BaseControl>, focusedRowData: BaseControl) {
+    openInsertForm(grid: GridState<BaseControl,BaseControl>, focusedRowData: BaseControl) {
 
         this.getNewDesignedObject(focusedRowData).then((newDesignedObject: BaseControl) => {
 

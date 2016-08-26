@@ -13,13 +13,14 @@ import {stringCompare} from "../../buhta-core/stringCompare";
 import {OpenWindowParams, Desktop} from "../../buhta-core/Components/Desktop/Desktop";
 import {Schema} from "../../buhta-schema/Schema";
 import {GridDataSource, GridDataSourceRow} from "../Components/Grid/GridDataSource";
+import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
 
 
 export interface LookupDialogParams<T> { // extends ComponentProps<any> {
     winTitle?: string;
     title?: string;
     lookupMode: "single" | "multi";
-    dataSource: GridDataSource<T>;
+    dataSource: GridDataSource<T,DesignedObject>;
 }
 
 

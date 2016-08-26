@@ -81,7 +81,10 @@ var SchemaComponentDesigner = (function (_super) {
             var arr = ControlTypeInfo_1.registeredControlTypesAsArray.sort(function (a, b) {
                 return stringCompare_1.stringCompare(a.name, b.name);
             });
-            var dataSource = new GridFlatDataSourceFromArray_1.GridFlatDataSourceFromArray({ arrayObj: arr, gridColumns: columns });
+            var dataSource = new GridFlatDataSourceFromArray_1.GridFlatDataSourceFromArray({
+                arrayObj: arr,
+                gridColumns: columns
+            });
             var params = {
                 title: "Выберите тип нового объекта",
                 lookupMode: "single",

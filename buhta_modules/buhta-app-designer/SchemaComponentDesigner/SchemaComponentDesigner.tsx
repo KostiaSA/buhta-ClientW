@@ -193,9 +193,9 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     //     return buttons;
     // }
 
-    private gridState: GridState<BaseControl>;
+    private gridState: GridState<BaseControl,BaseControl>;
 
-    private getNewDesignedObject = (focusedData: BaseControl): Promise<DesignedObject> => {
+    private getNewDesignedObject = (focusedData: BaseControl): Promise<BaseControl> => {
 
         let columns: GridColumns = [];
         columns.push({caption: "Тип объекта", propertyName: "name"});
@@ -205,7 +205,10 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
             return stringCompare(a.name, b.name);
         });
 
-        let dataSource = new GridFlatDataSourceFromArray<ControlTypeInfo>({arrayObj: arr, gridColumns: columns});
+        let dataSource = new GridFlatDataSourceFromArray<ControlTypeInfo,DesignedObject>({
+            arrayObj: arr,
+            gridColumns: columns
+        });
 
         let params: LookupDialogParams<ControlTypeInfo> = {
             title: "Выберите тип нового объекта",
@@ -249,7 +252,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
                                             dataSource={dataSource}
                                             editable={true}
                                             enableDragDrop={true}
-                                            onGetState={(state:GridState<BaseControl>) => this.gridState = state}
+                                            onGetState={(state:GridState<BaseControl,BaseControl>) => this.gridState = state}
                                         >
                                             <GridColumnDef caption="Control" propertyName="$$controlName"
                                                            showHierarchyTree={true}
