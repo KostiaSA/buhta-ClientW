@@ -17,15 +17,24 @@ import {ComponentControl} from "../buhta-ui/ComponentControl";
 import {registerSchemaObjectType, registeredSchemaObjectTypes} from "../buhta-schema/SchemaObjectTypeInfo";
 import {SchemaDatabase} from "../buhta-schema/SchemaDatabase";
 import {SchemaFolder} from "../buhta-schema/SchemaFolder/SchemaFolder";
+import {registeredDataTypes} from "../buhta-schema/SchemaTable/DataTypes/DataTypeInfo";
+import {getObjectInstanceOfType} from "./getObjectInstanceOfType";
+import {BaseDataType} from "../buhta-schema/SchemaTable/DataTypes/BaseDataType";
+import {StringDataType} from "../buhta-schema/SchemaTable/DataTypes/StringDataType";
 
 export let buhtaHost: any = {};
 
 buhtaHost.registeredSchemaObjectTypes = registeredSchemaObjectTypes;
+buhtaHost.registeredDataTypes = registeredDataTypes;
+buhtaHost.getObjectInstanceOfType = getObjectInstanceOfType;
 
 buhtaHost.SchemaObject = SchemaObject;
 
 buhtaHost.SchemaTable = SchemaTable;
 buhtaHost.SchemaTableColumn = SchemaTableColumn;
+buhtaHost.BaseDataType = BaseDataType;
+buhtaHost.StringDataType = StringDataType;
+
 
 buhtaHost.SchemaForm = SchemaForm;
 buhtaHost.SchemaComponent = SchemaComponent;

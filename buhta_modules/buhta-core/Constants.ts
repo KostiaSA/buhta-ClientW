@@ -39,3 +39,11 @@ export const SCHEMA_FOLDER_ICON = "buhta-set-1/folder-horizontal";
 export const SCHEMA_FORM_ICON = "buhta-set-1/application-form";
 export const SCHEMA_DATABASE_ICON = "buhta-set-1/database-sql";
 export const SCHEMA_TABLE_ICON = "buhta-set-1/table";
+
+export const STRING_DATA_TYPE_NAME = "Строка"
+export const STRING_DATA_TYPE_DESCRIPTION = "Строка переменной длины"
+
+export const GUID_DATA_TYPE_NAME = "GUID"
+export const GUID_DATA_TYPE_DESCRIPTION = "Статистически уникальный 128-битный идентификатор, он же UUID"
+
+//export const STRING_DATA_TYPE_NAME = "Строка"

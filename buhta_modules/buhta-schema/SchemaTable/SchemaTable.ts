@@ -6,6 +6,7 @@ import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
 import {SCHEMA_TABLE_ICON} from "../../buhta-core/Constants";
 import {getInstantPromise} from "../../buhta-core/getInstantPromise";
 import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
+import {StringDataType} from "./DataTypes/StringDataType";
 
 export class SchemaTable extends SchemaObject {
 
@@ -27,8 +28,7 @@ export class SchemaTable extends SchemaObject {
         getNewListItem: (table: SchemaTable, parentItem?: SchemaTableColumn) => {
             let column = new SchemaTableColumn(table);
             column.name = "Новая колонка";
-            column.dataType = "string";
-            column.dataLen = 50;
+            column.dataType = new StringDataType(column, 50);
             return getInstantPromise<DesignedObject>(column);
         }
     })

@@ -1,12 +1,6 @@
 "use strict";
 var Error_1 = require("../buhta-core/Error");
 var UUID_1 = require("UUID");
-var SchemaObjectTypeInfo = (function () {
-    function SchemaObjectTypeInfo() {
-    }
-    return SchemaObjectTypeInfo;
-}());
-exports.SchemaObjectTypeInfo = SchemaObjectTypeInfo;
 exports.registeredSchemaObjectTypes = {};
 exports.registeredSchemaObjectTypesAsArray = [];
 function registerSchemaObjectType(info) {

@@ -340,34 +340,34 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
     testTableDesigner() {
-        let table = new SchemaTable(getSchema());
-
-        table.name = "Организация";
-        //table.sqlname = "dbo.Организация";
-        table.addColumn((col) => {
-            col.name = "Номер";
-            col.dataType = "string";
-            col.dataLen = 33;
-        });
-        table.addColumn((col) => {
-            col.name = "Название";
-            col.dataType = "string";
-            col.dataLen = 444;
-        });
-
-        let win = <ObjectDesigner
-            onChange={() => { console.log("table-change"); }}
-            designedObject={table}>
-        </ObjectDesigner>;
-
-        let openParam: OpenWindowParams = {
-            title: "Организация",
-            top: 50,
-            left: 50
-        };
-
-        appInstance.desktop.openWindow(win, openParam);
-
+        // let table = new SchemaTable(getSchema());
+        //
+        // table.name = "Организация";
+        // //table.sqlname = "dbo.Организация";
+        // table.addColumn((col) => {
+        //     col.name = "Номер";
+        //     col.dataType = "string";
+        //     col.dataLen = 33;
+        // });
+        // table.addColumn((col) => {
+        //     col.name = "Название";
+        //     col.dataType = "string";
+        //     col.dataLen = 444;
+        // });
+        //
+        // let win = <ObjectDesigner
+        //     onChange={() => { console.log("table-change"); }}
+        //     designedObject={table}>
+        // </ObjectDesigner>;
+        //
+        // let openParam: OpenWindowParams = {
+        //     title: "Организация",
+        //     top: 50,
+        //     left: 50
+        // };
+        //
+        // appInstance.desktop.openWindow(win, openParam);
+        //
     };
 
     testSnapshot() {

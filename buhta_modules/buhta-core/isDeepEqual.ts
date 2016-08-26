@@ -67,25 +67,31 @@ export function isDeepEqual(obj1: any, obj2: any, compared?: any): boolean {
         if (obj2.$$deepEqualId === undefined)
             obj2.$$deepEqualId = getRandomString();
 
-        if (compared[obj1.$$deepEqualId + obj2.$$deepEqualId] === true)
+        // через compared избавляемся от зацикливания реккурсии
+        let comparedValue = compared[obj1.$$deepEqualId + obj2.$$deepEqualId];
+        if (comparedValue === undefined)
+            compared[obj1.$$deepEqualId + obj2.$$deepEqualId] = 1;
+        else if (comparedValue > 3)
             return true;
+        else
+            compared[obj1.$$deepEqualId + obj2.$$deepEqualId] += 1;
 
         for (let propName in obj1) {
             if (obj1.hasOwnProperty(propName) && propName.substring(0, 2) !== "$$") {
-                if (!isDeepEqual(obj1[propName], obj2[propName], compared))
+                if (!isDeepEqual(obj1[propName], obj2[propName], compared)) {
                     return false;
+                }
             }
         }
         for (let propName in obj2) {
             if (obj2.hasOwnProperty(propName) && propName.substring(0, 2) !== "$$") {
-                if (!isDeepEqual(obj1[propName], obj2[propName], compared)){
+                if (!isDeepEqual(obj1[propName], obj2[propName], compared)) {
                     return false;
                 }
 
             }
         }
-
-        compared[obj1.$$deepEqualId + obj2.$$deepEqualId] = true;
+        compared[obj1.$$deepEqualId + obj2.$$deepEqualId] = 100;
     }
 
     return true;

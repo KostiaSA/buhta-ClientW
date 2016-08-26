@@ -2,7 +2,7 @@ import {throwError} from "../buhta-core/Error";
 import {parse} from "UUID";
 import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 
-export class SchemaObjectTypeInfo {
+export interface SchemaObjectTypeInfo {
     id: string;
     name: string;
     description: string;
@@ -27,5 +27,5 @@ export function registerSchemaObjectType(info: SchemaObjectTypeInfo) {
     (info.type as any).$$schemaObjectTypeInfo = info;
 
 }
- 
+
 

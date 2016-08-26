@@ -9,6 +9,8 @@ import {SchemaTableColumn} from "../../buhta-schema/SchemaTable/SchemaTableColum
 import {SchemaTable} from "../../buhta-schema/SchemaTable/SchemaTable";
 import {Schema} from "../../buhta-schema/Schema";
 import {objectToHostJavaScript} from "../../buhta-core/objectToHostJavaScript";
+import {StringDataType} from "../../buhta-schema/SchemaTable/DataTypes/StringDataType";
+import {GuidDataType} from "../../buhta-schema/SchemaTable/DataTypes/GuidDataType";
 
 function test_proc(dialect: SqlDialect, done: () => void) {
 
@@ -38,17 +40,15 @@ function test_proc(dialect: SqlDialect, done: () => void) {
             //table.sqlname = "dbo.Организация";
             table.addColumn((col: SchemaTableColumn) => {
                 col.name = "Id";
-                col.dataType = "guid";
+                col.dataType = new GuidDataType(col);
             });
             table.addColumn((col: SchemaTableColumn) => {
                 col.name = "Номер";
-                col.dataType = "string";
-                col.dataLen = 20;
+                col.dataType = new StringDataType(col,20);
             });
             table.addColumn((col) => {
                 col.name = "Название";
-                col.dataType = "string";
-                col.dataLen = 50;
+                col.dataType = new StringDataType(col,50);
             });
 
             return testSchema.saveObject(table);
@@ -60,7 +60,7 @@ function test_proc(dialect: SqlDialect, done: () => void) {
         .then((table: SchemaTable) => {
             assert.equal(table.name, "Организация");
             assert.equal(table.columns[1].name, "Номер");
-            assert.equal(table, table.columns[2].$$table);
+            assert.equal(table, table.columns[2].table);
             done();
         })
         .catch((error) => {
