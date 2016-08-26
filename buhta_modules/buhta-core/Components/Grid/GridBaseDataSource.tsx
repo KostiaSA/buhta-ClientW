@@ -48,7 +48,7 @@ implements GridDataSource<TRow,TDesignedObject> {
         throwAbstractError();
         throw "fake";
     }
-    
+
     getRows(): TRow[] {
         throwAbstractError();
         throw "fake";
@@ -220,6 +220,7 @@ implements GridDataSource<TRow,TDesignedObject> {
                     designedObject: newDesignedObject,
                     onSaveChanges: () => {
                         // todo надо как-то уметь получать DataRow из DesignedObject
+                        console.error(newDesignedObject);
                         this.addRow((newDesignedObject as any)as TRow);
                         grid.refresh();
                         grid.setFocusedRow(newDesignedObject as any);

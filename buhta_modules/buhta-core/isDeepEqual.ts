@@ -85,7 +85,7 @@ export function isDeepEqual(obj1: any, obj2: any, compared?: any): boolean {
             }
         }
 
-        compared[obj1.$$deepEqualId + obj2.$$deepEqualId] === true;
+        compared[obj1.$$deepEqualId + obj2.$$deepEqualId] = true;
     }
 
     return true;

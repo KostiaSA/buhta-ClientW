@@ -22,7 +22,6 @@ import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 //import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 //import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {Button} from "../../buhta-core/Components/Button/Button";
-import {SqlTable} from "../../components/SqlTable";
 import {Snapshot} from "../../buhta-core/Snapshot";
 import {DesignedObject} from "../DesignedObject";
 //import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
@@ -372,65 +371,65 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     };
 
     testSnapshot() {
-        let table = new SqlTable();
-
-        table.name = "Организация";
-        table.sqlname = "dbo.Организация";
-        table.addColumn((col) => {
-            col.name = "Номер";
-            col.dataType = "varchar(10)";
-        });
-        table.addColumn((col) => {
-            col.name = "Название";
-            col.dataType = "varchar(50)";
-        });
-
-        console.log(table);
-
-        let s = new Snapshot();
-        s.saveObject(table, "table1");
-
-        console.log(table);
-
-        table.name = "жопа";
-        table.columns.length = 0;
-        console.log(table);
-
-        s.restoreObject(table, "table1");
-        console.log(table);
-
-        this.testSnapshotPreformance();
+        // let table = new SqlTable();
+        //
+        // table.name = "Организация";
+        // table.sqlname = "dbo.Организация";
+        // table.addColumn((col) => {
+        //     col.name = "Номер";
+        //     col.dataType = "varchar(10)";
+        // });
+        // table.addColumn((col) => {
+        //     col.name = "Название";
+        //     col.dataType = "varchar(50)";
+        // });
+        //
+        // console.log(table);
+        //
+        // let s = new Snapshot();
+        // s.saveObject(table, "table1");
+        //
+        // console.log(table);
+        //
+        // table.name = "жопа";
+        // table.columns.length = 0;
+        // console.log(table);
+        //
+        // s.restoreObject(table, "table1");
+        // console.log(table);
+        //
+        // this.testSnapshotPreformance();
 
 
     };
 
     testSnapshotPreformance() {
-        let x: any = [];
-
-        for (let i = 0; i < 100; i++) {
-            let table = new SqlTable();
-
-            table.name = "Организация";
-            table.sqlname = "dbo.Организация";
-            table.addColumn((col) => {
-                col.name = "Номер";
-                col.dataType = "varchar(10)";
-            });
-            table.addColumn((col) => {
-                col.name = "Название";
-                col.dataType = "varchar(50)";
-            });
-            x.push(table);
-        }
-
-
-        let s = new Snapshot();
-        console.time("x1");
-        s.saveObject(x, "x");
-        console.timeEnd("x1");
-        x.length = 0;
-        s.restoreObject(x, "x");
-        console.log(x);
+        // let x: any = [];
+        //
+        // for (let i = 0; i < 100; i++) {
+        //     let table = new SqlTable();
+        //
+        //     table.name = "Организация";
+        //     table.sqlname = "dbo.Организация";
+        //     table.addColumn((col) => {
+        //         col.name = "Номер";
+        //         col.dataType = "varchar(10)";
+        //     });
+        //     table.addColumn((col) => {
+        //         col.name = "Название";
+        //         col.dataType = "varchar(50)";
+        //     });
+        //     x.push(table);
+        // }
+        //
+        //
+        // let s = new Snapshot();
+        // console.time("x1");
+        // s.saveObject(x, "x");
+        // console.timeEnd("x1");
+        // x.length = 0;
+        // s.restoreObject(x, "x");
+        // console.log(x);
     };
 
     testGrid2() {

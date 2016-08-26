@@ -1,111 +1,98 @@
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var DesignedObject_1 = require("../buhta-app-designer/DesignedObject");
-var StringPropertyEditor_1 = require("../buhta-app-designer/PropertyEditors/StringPropertyEditor");
-var ListPropertyEditor_1 = require("../buhta-app-designer/PropertyEditors/ListPropertyEditor");
-var GridColumn_1 = require("../buhta-core/Components/Grid/GridColumn");
-var SqlTable = (function (_super) {
-    __extends(SqlTable, _super);
-    function SqlTable() {
-        _super.apply(this, arguments);
-        this.columns = [];
-    }
-    SqlTable.prototype.addColumn = function (initCallback) {
-        var col = new SqlTableColumn(this);
-        if (initCallback)
-            initCallback(col);
-        this.columns.push(col);
-        return col;
-    };
-    SqlTable.prototype.getClassName = function () {
-        return "sql-таблица";
-    };
-    SqlTable.prototype.toString = function () {
-        return this.name;
-    };
-    __decorate([
-        StringPropertyEditor_1.StringEditor({
-            inputCaption: "Имя",
-            inputTab: "Главная",
-            inputGroup: "Основная",
-            inputDescription: "Имя таблицы"
-        })
-    ], SqlTable.prototype, "name", void 0);
-    __decorate([
-        StringPropertyEditor_1.StringEditor({
-            inputCaption: "sql имя",
-            inputTab: "Главная",
-            inputGroup: "Основная",
-            inputDescription: "sql имя таблицы"
-        })
-    ], SqlTable.prototype, "sqlname", void 0);
-    __decorate([
-        ListPropertyEditor_1.ListEditor({
-            inputTab: "Колонки",
-        })
-    ], SqlTable.prototype, "columns", void 0);
-    return SqlTable;
-}(DesignedObject_1.DesignedObject));
-exports.SqlTable = SqlTable;
-var SqlTableColumn = (function (_super) {
-    __extends(SqlTableColumn, _super);
-    function SqlTableColumn($$table) {
-        _super.call(this);
-        this.$$table = $$table;
-    }
-    Object.defineProperty(SqlTableColumn.prototype, "table", {
-        get: function () {
-            return this.$$table;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SqlTableColumn.prototype, "testColumn", {
-        get: function () {
-            return this.name + "+" + this.dataType + "->" + this.table.name + this.table.$$uniqueObjectId;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ;
-    SqlTableColumn.prototype.getClassName = function () {
-        return "sql-колонка";
-    };
-    SqlTableColumn.prototype.toString = function () {
-        return this.name + " of (" + this.table.name + ")";
-    };
-    __decorate([
-        StringPropertyEditor_1.StringEditor({
-            inputCaption: "Имя колонки",
-            inputTab: "Главная",
-            inputGroup: "Основная",
-            inputDescription: "Имя колонки"
-        }),
-        GridColumn_1.GridColumn({ caption: "Имя колонки" })
-    ], SqlTableColumn.prototype, "name", void 0);
-    __decorate([
-        StringPropertyEditor_1.StringEditor({
-            inputCaption: "тип",
-            inputTab: "Главная",
-            inputGroup: "Основная",
-            inputDescription: "sql тип колонки"
-        }),
-        GridColumn_1.GridColumn({ caption: "Тип" })
-    ], SqlTableColumn.prototype, "dataType", void 0);
-    __decorate([
-        GridColumn_1.GridColumn({ caption: "test", order: -1 })
-    ], SqlTableColumn.prototype, "testColumn", null);
-    return SqlTableColumn;
-}(DesignedObject_1.DesignedObject));
-exports.SqlTableColumn = SqlTableColumn;
+// import {DesignedObject} from "../buhta-app-designer/DesignedObject";
+// import {StringEditor} from "../buhta-app-designer/PropertyEditors/StringPropertyEditor";
+// import {ListEditor} from "../buhta-app-designer/PropertyEditors/ListPropertyEditor";
+// import {GridColumn} from "../buhta-core/Components/Grid/GridColumn";
+//
+//
+// export class SqlTable extends DesignedObject {
+//
+//     @StringEditor({
+//         inputCaption: "Имя",
+//         inputTab: "Главная",
+//         inputGroup: "Основная",
+//         inputDescription: "Имя таблицы"
+//     })
+//     name: string;
+//
+//     @StringEditor({
+//         inputCaption: "sql имя",
+//         inputTab: "Главная",
+//         inputGroup: "Основная",
+//         inputDescription: "sql имя таблицы"
+//     })
+//
+//     sqlname: string;
+//
+//     @ListEditor({
+//         inputTab: "Колонки",
+//         // getNewListItem: (table: SqlTable) => {
+//         //     return new SqlTableColumn(table);
+//         // }
+//     })
+//     columns: SqlTableColumn[] = [];
+//
+//     addColumn(initCallback?: (newColumn: SqlTableColumn) => void): SqlTableColumn {
+//         let col = new SqlTableColumn(this);
+//         if (initCallback)
+//             initCallback(col);
+//         this.columns.push(col);
+//         return col;
+//     }
+//
+//
+//     getClassName() {
+//         return "sql-таблица";
+//     }
+//
+//     toString() {
+//         return this.name;
+//     }
+//
+//
+// }
+//
+// export class SqlTableColumn extends DesignedObject {
+//     constructor(private $$table: SqlTable) {
+//         super();
+//     }
+//
+//     get table(): SqlTable {
+//         return this.$$table;
+//     }
+//
+//     @StringEditor({
+//         inputCaption: "Имя колонки",
+//         inputTab: "Главная",
+//         inputGroup: "Основная",
+//         inputDescription: "Имя колонки"
+//     })
+//     @GridColumn({caption: "Имя колонки"})
+//     name: string;
+//
+//     @StringEditor({
+//         inputCaption: "тип",
+//         inputTab: "Главная",
+//         inputGroup: "Основная",
+//         inputDescription: "sql тип колонки"
+//     })
+//     @GridColumn({caption: "Тип"})
+//     dataType: string;
+//
+//     @GridColumn({caption: "test", order: -1})
+//     get testColumn(): string {
+//         return this.name + "+" + this.dataType + "->" + this.table.name + (this.table as any).$$uniqueObjectId;
+//     };
+//
+//     $$testObject: any;
+//
+//     getClassName() {
+//         return "sql-колонка";
+//     }
+//
+//     toString() {
+//         return this.name + " of (" + this.table.name + ")";
+//     }
+//
+// }
+//
 //# sourceMappingURL=SqlTable.js.map

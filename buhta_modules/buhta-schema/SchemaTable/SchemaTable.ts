@@ -21,6 +21,9 @@ export class SchemaTable extends SchemaObject {
     @ListEditor({
         inputTab: "Колонки",
         enableDragDrop: true,
+        gridColumns: [
+            {caption: "Имя", propertyName: "name"}
+        ],
         getNewListItem: (table: SchemaTable, parentItem?: SchemaTableColumn) => {
             let column = new SchemaTableColumn(table);
             column.name = "Новая колонка";

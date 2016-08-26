@@ -67,7 +67,7 @@ function isDeepEqual(obj1, obj2, compared) {
                 }
             }
         }
-        compared[obj1.$$deepEqualId + obj2.$$deepEqualId] === true;
+        compared[obj1.$$deepEqualId + obj2.$$deepEqualId] = true;
     }
     return true;
 }

@@ -7,7 +7,7 @@ import {SqlDataType} from "../../buhta-sql/SqlCore";
 import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 
 export class SchemaTableColumn extends DesignedObject {
-    constructor(public $$table: SchemaTable) {
+    constructor(public table: SchemaTable) {
         super();
     }
 
@@ -39,7 +39,7 @@ export class SchemaTableColumn extends DesignedObject {
     primaryKey: boolean;
 
     toString() {
-        return this.name + " of (" + this.$$table.name + ")";
+        return this.name + " of (" + this.table.name + ")";
     }
 
 }

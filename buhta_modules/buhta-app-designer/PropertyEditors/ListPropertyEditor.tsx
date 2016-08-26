@@ -12,6 +12,7 @@ import Grid from "../../buhta-core/Components/Grid/Grid";
 import {throwError} from "../../buhta-core/Error";
 import {getObjectConstructorName} from "../../buhta-core/getObjectConstructorName";
 import {GridDataSourceRow} from "../../buhta-core/Components/Grid/GridDataSource";
+import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
 
 
 export class ListPropertyEditor extends BasePropertyEditor {
@@ -36,6 +37,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
 
         let dataSourceParams: GridFlatDataSourceFromArrayParams<GridDataSourceRow,DesignedObject> = {
             arrayObj: this.props.designedObject[this.props.propertyName],
+            gridColumns: customParams.gridColumns,
             getNewDesignedObject: (focusedData: DesignedObject): Promise<DesignedObject>=> {
                 if (customParams.getNewListItem === undefined)
                     throwError("ListPropertyEditor param 'getNewListItem' is not defined for property '" + this.props.propertyName + "' of object '" + getObjectConstructorName(this.props.designedObject) + "'");
@@ -60,6 +62,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
 }
 
 export interface ListEditorParams extends AutoFormControlProps {
+    gridColumns: GridColumns;
     getNewListItem?: (listOwner: DesignedObject, parentItem?: DesignedObject) => Promise<DesignedObject>;
     enableDragDrop?: boolean;
 }
