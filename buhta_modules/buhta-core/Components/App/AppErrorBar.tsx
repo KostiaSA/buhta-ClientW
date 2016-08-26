@@ -45,6 +45,9 @@ export class AppErrorBar extends Component<AppErrorBarProps, AppErrorBarState> {
     handlePromiseError = (reason: any): void => {
         if (reason.message)  // bluebird вызываеи обработчик 2 раза, второй с пустым message пропускаем
             this.errorMessage = reason.message;
+        
+        if (reason.stack)
+        console.error(reason.stack);
 
         this.state.visible = true;
         this.forceUpdate();
