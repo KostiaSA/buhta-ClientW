@@ -95,7 +95,7 @@ export class Form extends Component<FormProps, any> {
         }
         else {
 
-            this.addStyles({width: "inherit"});
+            //this.addStyles({width: "inherit"});
 
             return (
                 <table ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>

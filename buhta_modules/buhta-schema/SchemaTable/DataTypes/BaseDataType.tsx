@@ -23,7 +23,7 @@ export class BaseDataType extends DesignedObject {
         return this.getNameEx();
     }
 
-    getDesignerEditor(): JSX.Element {
+    getDesignerEditor(): JSX.Element | null {
         throwAbstractError();
         throw "fake";
     }

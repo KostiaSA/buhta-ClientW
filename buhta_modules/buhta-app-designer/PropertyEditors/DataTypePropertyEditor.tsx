@@ -16,13 +16,19 @@ import {SelectInputDataSource} from "../../buhta-core/Components/SelectInput/Sel
 
 export class DataTypePropertyEditor extends BasePropertyEditor {
 
-    handleChange(event: React.SyntheticEvent) {
-        // this.props.designedObject[this.props.propertyName] = (event.target as any).value;
-        // console.log("change === " + this.props.propertyName + " " + this.props.designedObject[this.props.propertyName]);
+    handleChange = (): void=> {
+        //this.props.designedObject[this.props.propertyName] = (event.target as any).value;
+        if (this.props.onChange !== undefined)
+            this.props.onChange();
+        console.log("change === " + this.props.propertyName + " " + this.props.designedObject[this.props.propertyName]);
+        this.forceUpdate();
     }
 
     private selectDataSource: SelectInputDataSource<BaseDataType>;
-    private activeDataType: BaseDataType;
+    //private activeDataType: BaseDataType;
+    get activeDataType(): BaseDataType {
+        return this.props.designedObject[this.props.propertyName] as BaseDataType;
+    };
 
     createSelectDataSource() {
         this.selectDataSource = new SelectInputDataSourceFromArray<BaseDataType>(
@@ -42,6 +48,13 @@ export class DataTypePropertyEditor extends BasePropertyEditor {
                 }));
     };
 
+    renderDataTypeEditor(): JSX.Element | null {
+        if (this.activeDataType !== undefined)
+            return this.activeDataType.getDesignerEditor();
+        else
+            return null;
+
+    }
 
     render(): JSX.Element {
 
@@ -58,24 +71,17 @@ export class DataTypePropertyEditor extends BasePropertyEditor {
             this.createSelectDataSource();
 
         return (
-            <div className="control is-horizontal">
+            <div className="control is-grouped" style={{whiteSpace:"nowrap"}}>
                 <p className="control">
                     <SelectInput
                         bindObject={this.props.designedObject}
                         bindPropName={this.props.propertyName}
                         valuesDataSource={this.selectDataSource}
-                        onChange={this.props.onChange}
+                        onChange={this.handleChange}
                         {...this.getRenderProps()}
                     />
                 </p>
-                <p className="control">
-                    <span>макс. длина</span>
-                    <Input
-                        type={InputType.Number}
-                        bindObject={this}
-                        bindPropName="value"
-                    />
-                </p>
+                { this.renderDataTypeEditor() }
             </div>
         );
     }

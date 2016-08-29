@@ -6,6 +6,7 @@ import {CreateColumn} from "../../../buhta-sql/CreateTableStmt";
 import {BaseDataType} from "./BaseDataType";
 import {STRING_DATA_TYPE_NAME, STRING_DATA_TYPE_DESCRIPTION} from "../../../buhta-core/Constants";
 import {registerDataType} from "./DataTypeInfo";
+import {InputType, Input} from "../../../buhta-core/Components/Input/Input";
 
 export class StringDataType extends BaseDataType {
     constructor(public column: SchemaTableColumn, public maxSize: number) {
@@ -26,9 +27,18 @@ export class StringDataType extends BaseDataType {
         return this.getNameEx();
     }
 
-    getDesignerEditor(): JSX.Element {
-        throwAbstractError();
-        throw "fake";
+    getDesignerEditor(): JSX.Element | null {
+        return (
+            <p className="control">
+                <span className="caption" style={{marginRight:10}}>длина</span>
+                <Input
+                    type={InputType.Number}
+                    style={{width:80}}
+                    bindObject={this}
+                    bindPropName="maxSize"
+                />
+            </p>
+        )
     }
 
     getEditor(): JSX.Element {

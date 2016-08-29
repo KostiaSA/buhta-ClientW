@@ -27,9 +27,8 @@ export class GuidDataType extends BaseDataType {
         return this.getNameEx();
     }
 
-    getDesignerEditor(): JSX.Element {
-        throwAbstractError();
-        throw "fake";
+    getDesignerEditor(): JSX.Element | null {
+        return null;
     }
 
     getEditor(): JSX.Element {
