@@ -27,7 +27,8 @@ export class SchemaApplication extends SchemaObject {
         inputCaption: "Имя основной базы даных",
         inputTab: "Базы данных",
         inputGroup: "Базы данных",
-        inputDescription: "Имя базы для хранения основных данных"
+        inputDescription: "Имя базы для хранения основных данных",
+        inputWidthPx: 150
     })
     mainDbName: string;
 
@@ -37,7 +38,7 @@ export class SchemaApplication extends SchemaObject {
         inputGroup: "Базы данных",
         inputDescription: "Sql-диалект базы для хранения основных данных",
         selectValues: SqlDialectValues,
-        combineWithPrevInput:true
+        combineWithPrevInput: true
     })
     mainDbDialect: SqlDialect;
 
@@ -45,7 +46,8 @@ export class SchemaApplication extends SchemaObject {
         inputCaption: "Имя базы пользовательских настроек",
         inputTab: "Базы данных",
         inputGroup: "Базы данных",
-        inputDescription: "Имя базы данных для хранения пользовательских настроек"
+        inputDescription: "Имя базы данных для хранения пользовательских настроек",
+        inputWidthPx: 150
     })
     userSettingsDbName: string;
 
@@ -55,7 +57,7 @@ export class SchemaApplication extends SchemaObject {
         inputGroup: "Базы данных",
         inputDescription: "Sql-диалект базы пользовательских настроек",
         selectValues: SqlDialectValues,
-        combineWithPrevInput:true
+        combineWithPrevInput: true
     })
     userSettingsDbDialect: SqlDialect;
 

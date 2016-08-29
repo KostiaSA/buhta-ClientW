@@ -39,10 +39,19 @@ export class Form extends Component<FormProps, any> {
                 else if (index < controlArr.length - 1 && (controlArr[index + 1].props as InputProps).combineWithPrevInput === true)
                     mode = 2;
 
+                //console.log({index, controlArr});
+
+                let inputStyle = controlProps.inputStyle;
+                if (inputStyle === undefined)
+                    inputStyle = {};
+                if (controlProps.inputWidthPx !== undefined)
+                    inputStyle!.width = controlProps.inputWidthPx;
+
+
                 let renderMode12 = (): JSX.Element=> {
                     if (mode === 1)
                         return (
-                            <div className="control">
+                            <div className="control" slyle={inputStyle}>
                                 {control}
                             </div>
                         )
@@ -55,14 +64,21 @@ export class Form extends Component<FormProps, any> {
                                 break;
                             extraControls.push(
                                 <p className="control">
-                                    <span className="caption" style={{marginRight:10}}>{extraControlProps.inputCaption}</span>
+                                    <span className="caption"
+                                          style={{marginLeft:10,marginRight:10}}
+                                    >
+                                        {extraControlProps.inputCaption}
+                                    </span>
                                     {controlArr[i]}
                                 </p>
                             );
                         }
 
+                        if (inputStyle!.whiteSpace === undefined)
+                            inputStyle!.whiteSpace = "nowrap";
+
                         return (
-                            <div className="control is-grouped" style={{whiteSpace:"nowrap"}}>
+                            <div className="control is-grouped" slyle={inputStyle} style={inputStyle}>
                                 {control}
                                 {extraControls}
                             </div>
@@ -82,9 +98,6 @@ export class Form extends Component<FormProps, any> {
                                 </span>
                             </td>
                             <td style={{textAlign: "left", verticalAlign: "middle"}}>
-                                <div className="control">
-                                    {"control1"}
-                                </div>
                                 {renderMode12()}
                             </td>
                         </tr>;
@@ -96,9 +109,6 @@ export class Form extends Component<FormProps, any> {
                     let node =
                         <tr className="control" key={index}>
                             <td colSpan="10" style={{textAlign: "left", verticalAlign: "middle"}}>
-                                <div className="control">
-                                    {"control2"}
-                                </div>
                                 {renderMode12()}
                             </td>
                         </tr>;
@@ -138,7 +148,7 @@ export class Form extends Component<FormProps, any> {
         }
         else {
 
-            //this.addStyles({width: "inherit"});
+            this.addStyles({width: "initial"});
 
             return (
                 <table ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>

@@ -19,6 +19,8 @@ export interface AutoFormControlProps {
     inputTab?: string;
     inputGroup?: string;
     inputDescription?: string;
+    inputWidthPx?: number;
+    inputStyle?: React.CSSProperties;
     combineWithPrevInput?: boolean;
 }
 
