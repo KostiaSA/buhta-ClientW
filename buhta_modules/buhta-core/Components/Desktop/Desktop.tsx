@@ -81,6 +81,7 @@ export interface OpenWindowParams {
     autoPosition?: WindowAutoPosition;
     autoSize?: WindowAutoSize;
     theme?: string;
+    sizePositionStoreKey?: string;
 }
 
 export interface OpenMessageWindowParams {
@@ -246,8 +247,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
             if (openParams.style === "danger") {
                 icon = MESSAGE_OK_DANGER_BUTTON_ICON;
-                if (winParams.theme===undefined)
-                    winParams.theme="red";
+                if (winParams.theme === undefined)
+                    winParams.theme = "red";
             }
             if (openParams.style === "error") {
                 icon = MESSAGE_OK_ERROR_BUTTON_ICON;
@@ -417,7 +418,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 }
 
 
-export function getDesktop():Desktop{
+export function getDesktop(): Desktop {
     return appInstance.desktop;
 }
 

@@ -19,6 +19,7 @@ export interface AutoFormControlProps {
     inputTab?: string;
     inputGroup?: string;
     inputDescription?: string;
+    combineWithPrevInput?: boolean;
 }
 
 export interface AutoFormProps extends ComponentProps<any> {

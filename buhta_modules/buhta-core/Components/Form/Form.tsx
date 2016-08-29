@@ -22,16 +22,57 @@ export class Form extends Component<FormProps, any> {
     renderControls(): JSX.Element[] {
         let list: JSX.Element[] = [];
 
-        React.Children.toArray(this.props.children as React.ReactNode).forEach((control: any, index: number) => {
+        React.Children.toArray(this.props.children as React.ReactNode).forEach((control: any, index: number, controlArr: any[]) => {
+
+                // три режима :
+                // 1. нормальный, рендерим tr
+                // 2. начало горизонтальной группы, рендерим tr, который включает всю группу
+                // 3. член горизонтальной группы, рендерим пустышку
 
                 let controlProps = control.props as InputProps;
 
+                let mode = 1;
+                if (controlProps.combineWithPrevInput === true) {
+                    // mode = 3;
+                    return null;
+                }
+                else if (index < controlArr.length - 1 && (controlArr[index + 1].props as InputProps).combineWithPrevInput === true)
+                    mode = 2;
+
+                let renderMode12 = (): JSX.Element=> {
+                    if (mode === 1)
+                        return (
+                            <div className="control">
+                                {control}
+                            </div>
+                        )
+                    else {
+
+                        let extraControls: JSX.Element[] = [];
+                        for (let i = index + 1; i < controlArr.length; i++) {
+                            let extraControlProps = controlArr[i].props as InputProps;
+                            if (extraControlProps.combineWithPrevInput !== true)
+                                break;
+                            extraControls.push(
+                                <p className="control">
+                                    <span className="caption" style={{marginRight:10}}>{extraControlProps.inputCaption}</span>
+                                    {controlArr[i]}
+                                </p>
+                            );
+                        }
+
+                        return (
+                            <div className="control is-grouped" style={{whiteSpace:"nowrap"}}>
+                                {control}
+                                {extraControls}
+                            </div>
+                        )
+
+                    }
+
+                };
+
                 if (controlProps && (controlProps.inputCaption || controlProps.bindPropName)) {
-
-
-                    // if (control.type === InputDivider) {
-                    //     console.log("InputDivider");
-                    // }
 
                     let node =
                         <tr className="control" key={index}>
@@ -42,8 +83,9 @@ export class Form extends Component<FormProps, any> {
                             </td>
                             <td style={{textAlign: "left", verticalAlign: "middle"}}>
                                 <div className="control">
-                                    {control}
+                                    {"control1"}
                                 </div>
+                                {renderMode12()}
                             </td>
                         </tr>;
 
@@ -55,8 +97,9 @@ export class Form extends Component<FormProps, any> {
                         <tr className="control" key={index}>
                             <td colSpan="10" style={{textAlign: "left", verticalAlign: "middle"}}>
                                 <div className="control">
-                                    {control}
+                                    {"control2"}
                                 </div>
+                                {renderMode12()}
                             </td>
                         </tr>;
 
@@ -91,7 +134,7 @@ export class Form extends Component<FormProps, any> {
             //     );
             // }
             // else
-                return <div {...this.getRenderProps()}>{this.props.children}</div>;
+            return <div {...this.getRenderProps()}>{this.props.children}</div>;
         }
         else {
 

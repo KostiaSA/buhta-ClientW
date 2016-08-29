@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var moment = require("moment");
 var uuid = require("UUID");
 var Error_1 = require("../buhta-core/Error");
+exports.SqlDialectValues = ["mssql", "pg", "mysql"];
 var SqlValue = (function () {
     function SqlValue() {
     }

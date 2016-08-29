@@ -6,6 +6,7 @@ import {throwError, throwAbstractError} from "../buhta-core/Error";
 import {SqlBatch} from "./SqlDb";
 
 export type SqlDialect = "mssql" | "pg" | "mysql";
+export let SqlDialectValues = ["mssql", "pg", "mysql"];
 
 export type BooleanOper = "=" | ">" | "<" | ">=" | "<=" | "<>" | "!=" | "LIKE";
 
@@ -32,7 +33,7 @@ export interface WhereClause {
 
 export class SqlValue {
     toSql(dialect: SqlDialect): string {
-     //   console.log("toSql1");
+        //   console.log("toSql1");
         throwAbstractError();
         throw "fake";
     }

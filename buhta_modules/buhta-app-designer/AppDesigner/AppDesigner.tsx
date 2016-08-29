@@ -1007,7 +1007,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             top: 10,
             left: 10,
             width: 800,
-            height: 600
+            height: 600,
+            sizePositionStoreKey: "SchemaDesigner"
         };
 
         let winContent = (

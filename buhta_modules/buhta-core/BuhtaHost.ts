@@ -22,6 +22,7 @@ import {getObjectInstanceOfType} from "./getObjectInstanceOfType";
 import {BaseDataType} from "../buhta-schema/SchemaTable/DataTypes/BaseDataType";
 import {StringDataType} from "../buhta-schema/SchemaTable/DataTypes/StringDataType";
 import {GuidDataType} from "../buhta-schema/SchemaTable/DataTypes/GuidDataType";
+import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
 
 export let buhtaHost: any = {};
 
@@ -38,9 +39,9 @@ buhtaHost.StringDataType = StringDataType;
 buhtaHost.GuidDataType = GuidDataType;
 
 
+buhtaHost.SchemaApplication = SchemaApplication;
 buhtaHost.SchemaForm = SchemaForm;
 buhtaHost.SchemaComponent = SchemaComponent;
-
 buhtaHost.SchemaDatabase = SchemaDatabase;
 buhtaHost.SchemaFolder = SchemaFolder;
 

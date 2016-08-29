@@ -34,6 +34,7 @@ export const MESSAGE_OK_DANGER_BUTTON_ICON = "buhta-set-1/tick-red";
 export const MESSAGE_CANCEL_BUTTON_ICON = "buhta-set-1/application-export";
 
 
+export const SCHEMA_APPLICATION_ICON = "buhta-set-1/sitemap-application-blue";
 export const SCHEMA_COMPONENT_ICON = "buhta-set-1/molecule";
 export const SCHEMA_FOLDER_ICON = "buhta-set-1/folder-horizontal";
 export const SCHEMA_FORM_ICON = "buhta-set-1/application-form";
