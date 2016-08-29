@@ -425,7 +425,26 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
             );
         }
 
-        let cell = <span>{icon}{this.state.dataSource.getDataValue(data, column.getColDef().field!)}</span>;
+        let dataValue: any = this.state.dataSource.getDataValue(data, column.getColDef().field!);
+
+        if (dataValue === undefined)
+            dataValue = "";
+        else if (dataValue === null)
+            dataValue = "<null>";
+        else if (_.isString(dataValue)) {
+            // это строка, отставляем как есть
+        }
+        else if (dataValue.$$typeof !== undefined) {
+            // это JSX.Element, отставляем как есть
+        }
+        else if (dataValue.toString !== undefined) {
+            dataValue = dataValue.toString();
+        }
+        else if (_.isArray(dataValue))
+            dataValue = "<array>";
+        else
+            dataValue = "<invalid type>";
+        let cell = <span>{icon}{dataValue}</span>;
         return cell;
     };
 

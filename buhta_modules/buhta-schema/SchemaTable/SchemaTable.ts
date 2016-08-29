@@ -18,12 +18,21 @@ export class SchemaTable extends SchemaObject {
     })
     name: string;
 
+    @StringEditor({
+        inputCaption: "Описание",
+        inputTab: "Главная",
+        inputGroup: "Основная",
+        inputDescription: "Описание таблицы"
+    })
+    description: string;
 
     @ListEditor({
         inputTab: "Колонки",
         enableDragDrop: true,
         gridColumns: [
-            {caption: "Имя", propertyName: "name"}
+            {caption: "Имя", propertyName: "name"},
+            {caption: "Тип данных", propertyName: "dataType"},
+            {caption: "Описание", propertyName: "description"}
         ],
         getNewListItem: (table: SchemaTable, parentItem?: SchemaTableColumn) => {
             let column = new SchemaTableColumn(table);

@@ -33,8 +33,15 @@ export class SchemaTableColumn extends DesignedObject {
     @GridColumn({caption: "Тип"})
     dataType: BaseDataType;
 
-    //dataLen: number;
-    //decimals: number;
+    @StringEditor({
+        inputCaption: "Описание",
+        inputTab: "Главная",
+        inputGroup: "Основная",
+        inputDescription: "Описание колонки"
+    })
+    @GridColumn({caption: "Описание"})
+    description: string;
+
     notNull: boolean;
     primaryKey: boolean;
 
