@@ -6,9 +6,10 @@ import {ComponentProps, Component, ComponentState} from "../Component";
 import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
-import {Movable, MoveStartEvent} from "../Movable/Movable";
+import {Movable, MoveStartEvent, MoveEndEvent} from "../Movable/Movable";
 import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize} from "../Desktop/Desktop";
 import {throwError} from "../../Error";
+import {saveWindowSizePosition} from "./WindowSizePositionStore";
 
 
 export interface WindowProps extends OpenWindowParams, ComponentProps<WindowState> {
@@ -164,6 +165,11 @@ export class Window extends Component<WindowProps, WindowState> {
         this.handleOnClick();
     };
 
+    moveOrResizeEnd = (e: MoveEndEvent): void => {
+        if (this.props.sizePositionStoreKey !== undefined)
+            saveWindowSizePosition(this.props.sizePositionStoreKey, this.state.top, this.state.left, this.state.height, this.state.width);
+    };
+
     resizeRightBottomCornerStart = (e: MoveStartEvent): void => {
         e.bindX(this.state, "width", () => {
             if (this.state.width < this.state.minWidth)
@@ -210,6 +216,7 @@ export class Window extends Component<WindowProps, WindowState> {
                     className="window-resizer"
                     style={{position:"absolute", height:10, width:10, right:0,bottom:0, borderRadius: "0 0 5px 0",cursor: "se-resize"}}
                     onMoveStart={this.resizeRightBottomCornerStart}
+                    onMoveEnd={this.moveOrResizeEnd}
                 >
                 </Movable>
             );
@@ -284,6 +291,7 @@ export class Window extends Component<WindowProps, WindowState> {
                                 <Movable
                                     style={{position:"absolute", top:0, left:0, right:0,bottom:0}}
                                     onMoveStart={this.moveStart}
+                                    onMoveEnd={this.moveOrResizeEnd}
                                 >
                                 </Movable>
                             </Flex>

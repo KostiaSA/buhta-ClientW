@@ -16,6 +16,7 @@ import {
     MESSAGE_OK_BUTTON_ICON, MESSAGE_OK_ERROR_BUTTON_ICON, MESSAGE_OK_DANGER_BUTTON_ICON,
     MESSAGE_CANCEL_BUTTON_ICON
 } from "../../Constants";
+import {getWindowSizePosition} from "../Window/WindowSizePositionStore";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -111,6 +112,7 @@ export class DesktopWindow implements OpenWindowParams {
     autoPosition: WindowAutoPosition | undefined;
     autoSize: WindowAutoSize | undefined;
     theme: string | undefined;
+    sizePositionStoreKey: string | undefined;
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
@@ -217,7 +219,18 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             this.getWindowById(newWin.parentWindowId)!.disabled = true;
         }
 
+        if (openParams.sizePositionStoreKey!==undefined) {
+            newWin.sizePositionStoreKey = openParams.sizePositionStoreKey;
 
+            let sizePosInfo = getWindowSizePosition(openParams.sizePositionStoreKey);
+
+            if (sizePosInfo !== undefined) {
+                newWin.left = sizePosInfo.L;
+                newWin.top = sizePosInfo.T;
+                newWin.height = sizePosInfo.H;
+                newWin.width = sizePosInfo.W;
+            }
+        }
         this.state.windows.push(newWin);
         this.forceUpdate();
     };
@@ -402,10 +415,12 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             minHeight={w.minHeight}
                             autoSize={w.autoSize}
                             autoPosition={w.autoPosition}
+                            sizePositionStoreKey={w.sizePositionStoreKey}
                             parentWindowId={w.parentWindowId}
                             theme={w.theme}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
+
                         >
                             {w.content}
                         </Window>

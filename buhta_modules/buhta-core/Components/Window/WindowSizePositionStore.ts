@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import {SelectStmt} from "../../../buhta-sql/SelectStmt";
 import {SqlGuidValue, SqlStringValue} from "../../../buhta-sql/SqlCore";
 import {getUserId} from "../../Auth";
@@ -8,8 +9,8 @@ import {UpsertStmt} from "../../../buhta-sql/UpsertStmt";
 
 interface SizePositionStoreInfo {
     // делаем имена короче, чтобы JSON гонять по сети более компактный
-    sH: number;  // screen Height
-    sW: number;  // screen Width
+    // sH: number;  // screen Height
+    // sW: number;  // screen Width
     T: number;  // top
     L: number;  // left
     H: number;  // height
@@ -17,7 +18,20 @@ interface SizePositionStoreInfo {
 }
 
 let windowSizePositionStore: { [key: string]: SizePositionStoreInfo; };
-let keysNeedToSave: string[];
+let keysNeedToSave: string[] = [];
+
+export function saveWindowSizePosition(key: string, top: number, left: number, height: number, width: number) {
+    let fullKey = screen.availWidth + "x" + screen.availHeight + "/" + key;
+    windowSizePositionStore[fullKey] = {T: top, L: left, H: height, W: width};
+    keysNeedToSave.push(fullKey);
+    console.log("saveWindowSizePosition " + fullKey);
+    console.log({T: top, L: left, H: height, W: width});
+}
+
+export function getWindowSizePosition(key: string): SizePositionStoreInfo | undefined {
+    let fullKey = screen.availWidth + "x" + screen.availHeight + "/" + key;
+    return windowSizePositionStore[fullKey];
+}
 
 // вызывать только один раз после успешного логина!
 export function loadWindowSizePositionStore(): Promise<void> {
@@ -35,7 +49,8 @@ export function loadWindowSizePositionStore(): Promise<void> {
                 windowSizePositionStore[row["storeKey"]] = JSON.parse(row["settingsJson"]);
             });
 
-            setInterval(saveWindowSizePositionStore, 120);
+            // сохраняемся раз в минуту
+            setInterval(saveWindowSizePositionStore, 5 * 1000);
 
             console.log("loadWindowSizePositionStore - Ok");
 
@@ -49,7 +64,7 @@ function saveWindowSizePositionStore() {
 
     let sqlBatch: SqlBatchItem[] = [];
 
-    keysNeedToSave.forEach((key: string)=> {
+    _.uniq(keysNeedToSave).forEach((key: string)=> {
 
         let sql = new UpsertStmt("WindowSizePosition")
             .column("userId", new SqlGuidValue(getUserId()))
