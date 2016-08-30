@@ -8,6 +8,7 @@ import {SCHEMA_APPLICATION_TYPE_ID} from "./Constants";
 import {getSchema} from "../buhta-schema/Schema";
 import {setApplication} from "./getApplication";
 import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
+import {loadWindowSizePositionStore} from "./Components/Window/WindowSizePositionStore";
 
 let authOk: boolean;
 let userId: string | null = null;
@@ -26,9 +27,70 @@ export function getUserId(): string {
     }
 }
 
-export function auth(login: string, password: string): Promise<string> {
-    let promise: Promise<string> = new Promise(
-        (resolve: (okStr: "ok") => void, reject: (error: string) => void) => {
+// export function auth(login: string, password: string): Promise<string> {
+//     let promise: Promise<string> = new Promise(
+//         (resolve: (okStr: "ok") => void, reject: (error: string) => void) => {
+//
+//
+//             let queryId = "query-" + Math.random().toString(36).slice(2);
+//             let req: AuthSocketRequest = {
+//                 connectionId: getConnectionId(),
+//                 queryId: queryId,
+//                 login: login,
+//                 password: password
+//             };
+//
+//             socket.emit("auth", req);
+//
+//             socket.once(queryId, (response: AuthSocketAnswer) => {
+//                 //console.log("socket.emit.response");
+//                 //console.log(response);
+//
+//                 if (response.error) {
+//                     authOk = false;
+//                     userId = null;
+//                     reject(response.error);
+//                 }
+//                 else {
+//                     authOk = true;
+//                     userId = response.userId!;
+//
+//                     // todo сделать выбор app, вместо top 1
+//                     let sql = new SelectStmt().table("SchemaObject").column("id").where("typeId", "=", new SqlGuidValue(SCHEMA_APPLICATION_TYPE_ID));
+//                     getSchema().db.selectToString(sql)
+//                         .then((id: string)=> {
+//
+//                             getSchema().getObject<SchemaApplication>(id)
+//                                 .then((app: SchemaApplication) => {
+//                                     setApplication(app);
+//                                     resolve("ok");
+//                                 })
+//                                 .catch((error)=> {
+//                                     reject(error);
+//                                 });
+//
+//
+//                         })
+//                         .catch((error)=> {
+//                             reject(error);
+//                         });
+//
+//
+//                 }
+//
+//             });
+//
+//
+//         }
+//     );
+//
+//     return promise;
+//
+// }
+
+export function auth(login: string, password: string): Promise<void> {
+    let promise: Promise<void> = new Promise(
+        (resolve: () => void, reject: (error: string) => void) => {
 
 
             let queryId = "query-" + Math.random().toString(36).slice(2);
@@ -40,8 +102,6 @@ export function auth(login: string, password: string): Promise<string> {
             };
 
             socket.emit("auth", req);
-
-            //console.log("socket.emit");
 
             socket.once(queryId, (response: AuthSocketAnswer) => {
                 //console.log("socket.emit.response");
@@ -55,54 +115,48 @@ export function auth(login: string, password: string): Promise<string> {
                 else {
                     authOk = true;
                     userId = response.userId!;
-
-                    // todo сделать выбор app, вместо top 1
-                    let sql = new SelectStmt().table("SchemaObject").column("id").where("typeId", "=", new SqlGuidValue(SCHEMA_APPLICATION_TYPE_ID));
-                    getSchema().db.selectToString(sql)
-                        .then((id: string)=> {
-
-                            getSchema().getObject<SchemaApplication>(id)
-                                .then((app: SchemaApplication) => {
-                                    setApplication(app);
-                                    resolve("ok");
-                                })
-                                .catch((error)=> {
-                                    reject(error);
-                                });
-
-
-                        })
-                        .catch((error)=> {
-                            reject(error);
-                        });
-
-
+                    resolve();
                 }
-
             });
 
 
         }
-    );
+    )
+        .then(()=> {
+            // ищем первый попавщийся SchemaApplication, берем его id
+            // todo сделать выбор app, вместо top 1
+            let sql = new SelectStmt().table("SchemaObject").column("id").where("typeId", "=", new SqlGuidValue(SCHEMA_APPLICATION_TYPE_ID));
+            return getSchema().db.selectToString(sql)
+        })
+        .then((id: string)=> {
+            // загружаем SchemaApplication
+            return getSchema().getObject<SchemaApplication>(id)
+        })
+        .then((app: SchemaApplication) => {
+            setApplication(app);
+        })
+        .then(()=>{
+            // загружаем настройки пользователя
+            return loadWindowSizePositionStore();
+        });
 
     return promise;
 
 }
 
-export function checkAuth(): Promise<string> {
+export function checkAuth(): Promise<void> {
     //console.log("checkAuth");
     if (authOk) {
         //  console.log("checkAuthOk");
-        return new Promise(
-            (resolve: (okStr: "ok") => void, reject: (error: string) => void) => {
-                resolve("ok");
+        return new Promise<void>(
+            (resolve: () => void, reject: (error: string) => void) => {
+                resolve();
             }
         );
 
     }
     else {
         //console.log("checkAuth-req");
-
         return auth("admin", "admin");
     }
 
