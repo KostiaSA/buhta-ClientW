@@ -111,7 +111,9 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                     title: "редактирование",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    theme: "blue"
+                    theme: "blue",
+                    sizePositionStoreKey:designedObject.$$getDesignerWindowSizePosStoreKey()
+                   
                 };
 
                 let props: SchemaObjectDesignerProps = {
@@ -141,7 +143,8 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                     title: "добавление",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    theme: "green"
+                    theme: "green",
+                    sizePositionStoreKey:designedObject.$$getDesignerWindowSizePosStoreKey()
                 };
 
                 let props: SchemaObjectDesignerProps = {

@@ -202,7 +202,8 @@ var GridTreeDataSourceFromComponent = (function (_super) {
                 title: "добавление",
                 autoPosition: "parent-center",
                 parentWindowId: grid.component.getParentWindowId(),
-                theme: "green"
+                theme: "green",
+                sizePositionStoreKey: newDesignedObject.$$getDesignerWindowSizePosStoreKey()
             };
             grid.component.getParentDesktop().openWindow(win, openParam);
         });

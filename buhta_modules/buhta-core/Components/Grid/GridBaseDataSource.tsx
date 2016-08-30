@@ -190,7 +190,8 @@ implements GridDataSource<TRow,TDesignedObject> {
                     title: "редактирование",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    theme: "blue"
+                    theme: "blue",
+                    sizePositionStoreKey:designedObject.$$getDesignerWindowSizePosStoreKey()
                 };
 
                 grid.component.getParentDesktop().openWindow(win, openParam);
@@ -233,7 +234,9 @@ implements GridDataSource<TRow,TDesignedObject> {
                     title: "добавление",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    theme: "green"
+                    theme: "green",
+                    sizePositionStoreKey:newDesignedObject.$$getDesignerWindowSizePosStoreKey()
+
                 };
 
                 grid.component.getParentDesktop().openWindow(win, openParam);

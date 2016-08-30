@@ -136,7 +136,8 @@ var GridBaseDataSource = (function () {
                     title: "редактирование",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    theme: "blue"
+                    theme: "blue",
+                    sizePositionStoreKey: designedObject.$$getDesignerWindowSizePosStoreKey()
                 };
                 grid.component.getParentDesktop().openWindow(win, openParam);
             });
@@ -171,7 +172,8 @@ var GridBaseDataSource = (function () {
                     title: "добавление",
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
-                    theme: "green"
+                    theme: "green",
+                    sizePositionStoreKey: newDesignedObject.$$getDesignerWindowSizePosStoreKey()
                 };
                 grid.component.getParentDesktop().openWindow(win, openParam);
             });

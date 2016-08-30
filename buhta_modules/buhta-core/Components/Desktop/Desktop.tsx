@@ -230,6 +230,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                 newWin.height = sizePosInfo.H;
                 newWin.width = sizePosInfo.W;
             }
+
+            console.log("да");
         }
         this.state.windows.push(newWin);
         this.forceUpdate();

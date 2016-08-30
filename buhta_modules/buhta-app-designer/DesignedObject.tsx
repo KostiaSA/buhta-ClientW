@@ -59,5 +59,9 @@ export class DesignedObject implements GridDataSourceRow {
         return win;
     }
 
+    $$getDesignerWindowSizePosStoreKey(): string {
+        return "DesignedObject"
+    }
+
 }
 
