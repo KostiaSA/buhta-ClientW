@@ -36,7 +36,7 @@ import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 import {SchemaForm} from "../../buhta-schema/SchemaForm/SchemaForm";
 import {ButtonControl} from "../../buhta-ui/ButtonControl";
 import {PanelControl} from "../../buhta-ui/PanelControl";
-import {checkAuth} from "../../buhta-core/Auth";
+import {checkAuth, getUserId, getAuthOk} from "../../buhta-core/Auth";
 import {LocalVariableControl} from "../../buhta-ui/LocalVariableControl";
 import {showTestSelectControlForm} from "../../buhta-test-ui/TestSelectControlForm";
 import {OneWayBinder} from "../../buhta-schema/OneWayBinder/OneWayBinder";
@@ -52,6 +52,7 @@ import {SchemaComponentDesigner} from "../SchemaComponentDesigner/SchemaComponen
 import {SchemaDesigner} from "../SchemaDesigner/SchemaDesigner";
 import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 import {SchemaTable} from "../../buhta-schema/SchemaTable/SchemaTable";
+import {getApplication} from "../../buhta-core/getApplication";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -1020,82 +1021,94 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     };
 
-    render() {
+    render(): JSX.Element {
         this.addClassName("app-designer");
 
         this.addProps({sizeTo: "parent"});
 
-        return (
-            <App {...this.getRenderProps()}>
-                <Layout sizeTo="parent" type="column">
-                    <Fixed className="header1">Fixed Header</Fixed>
-                    <Flex>
-                        <Layout type="row" sizeTo="parent">
-                            <Fixed className="sidebar" style={{width:this.sideWidth}}>
-                                Fixed Sidebar 123<br/>
-                                <button
-                                    onClick={() => { getSchema().initSchemaStorage().then(()=>{alert("ok")}).catch((err)=>{alert(err)}); }}>
-                                    test init schema storage
-                                </button>
-                                <br/>
-                                <button onClick={() => { this.testOpenWindow(); }}> test Promise-Each</button>
-                                <br/>
-                                <button onClick={() => { this.testOpenObjectDesigner(); }}>open designer</button>
-                                <br/>
-                                <button onClick={() => { this.testImmutable(); }}>testImmutable</button>
-                                <br/>
-                                <button onClick={() => { this.testAutoForm(); }}>test autoform</button>
-                                <br/>
-                                <button onClick={() => { this.testGrid(); }}>test GRID</button>
-                                <br/>
-                                <button onClick={() => { this.testFlex(); }}>test FLEX</button>
-                                <br/>
-                                <button onClick={() => { this.testTableDesigner(); }}>test TABLE DESIGNER</button>
-                                <br/>
-                                <button onClick={() => { this.testSnapshot(); }}>test SNAPSHOT</button>
-                                <br/>
-                                <button onClick={() => { this.testGrid2(); }}>test GRID-2</button>
-                                <br/>
-                                <button onClick={() => { this.testWindowAutoSize(); }}>test WIN AUTOSIZE</button>
-                                <br/>
-                                <button onClick={() => { this.testObservable(); }}>test OBSERVABLE</button>
-                                <br/>
-                                <button onClick={() => { this.testOpenSchemaForm(); }}>test SchemaForm</button>
-                                <br/>
-                                <button onClick={() => { this.testSchemaFormDesigner(); }}>test SchemaFormDesigner
-                                </button>
-                                <br/>
-                                <button onClick={() => { this.testSchemaComponent3ButtonsDesigner(); }}>
-                                    test SchemaComponent3ButDesigner
-                                </button>
-                                <br/>
-                                <button onClick={() => { this.testOpenSchemaFormDesigner(); }}>
-                                    test OpenSchemaFormDesigner
-                                </button>
-                                <br/>
-                                <button onClick={() => { this.testOpenSchemaComponent3ButtonsDesigner(); }}>
-                                    test OpenSchemaComponent3ButtonsDesigner
-                                </button>
-                                <br/>
-                                <button onClick={() => { showTestSelectControlForm(); }}>
-                                    showTestSelectControlForm
-                                </button>
-                                <br/>
-                                <button onClick={() => { this.testOpenSchemaDesigner(); }}>
-                                    test OpenSchemDesigner +++++++++++++
-                                </button>
-                            </Fixed>
-                            <Flex className="XXXcontent">
-                                <Desktop>
-                                    <Movable onMoveStart={this.moveStart.bind(this)}>MOV</Movable>
+        if (!getAuthOk()) {
+            checkAuth().then(()=> {
+                this.forceUpdate()
+            });
+            return <span>Аутентификация...</span>;
+        }
+        else
+            return (
+                <App {...this.getRenderProps()}>
+                    <Layout sizeTo="parent" type="column">
+                        <Fixed className="header1">Fixed Header</Fixed>
+                        <Flex>
+                            <Layout type="row" sizeTo="parent">
+                                <Fixed className="sidebar" style={{width:this.sideWidth}}>
+                                    Fixed Sidebar 123<br/>
+                                    <button
+                                        onClick={() => { getSchema().initSchemaStorage().then(()=>{alert("ok")}).catch((err)=>{alert(err)}); }}>
+                                        init schema storage
+                                    </button>
+                                    <br/>
+                                    <button
+                                        onClick={() => { getApplication().initUserSettingsDb().then(()=>{alert("ok")}).catch((err)=>{alert(err)}); }}>
+                                        init user settings db
+                                    </button>
+                                    <br/>
+                                    <button onClick={() => { this.testOpenWindow(); }}> test Promise-Each</button>
+                                    <br/>
+                                    <button onClick={() => { this.testOpenObjectDesigner(); }}>open designer</button>
+                                    <br/>
+                                    <button onClick={() => { this.testImmutable(); }}>testImmutable</button>
+                                    <br/>
+                                    <button onClick={() => { this.testAutoForm(); }}>test autoform</button>
+                                    <br/>
+                                    <button onClick={() => { this.testGrid(); }}>test GRID</button>
+                                    <br/>
+                                    <button onClick={() => { this.testFlex(); }}>test FLEX</button>
+                                    <br/>
+                                    <button onClick={() => { this.testTableDesigner(); }}>test TABLE DESIGNER</button>
+                                    <br/>
+                                    <button onClick={() => { this.testSnapshot(); }}>test SNAPSHOT</button>
+                                    <br/>
+                                    <button onClick={() => { this.testGrid2(); }}>test GRID-2</button>
+                                    <br/>
+                                    <button onClick={() => { this.testWindowAutoSize(); }}>test WIN AUTOSIZE</button>
+                                    <br/>
+                                    <button onClick={() => { this.testObservable(); }}>test OBSERVABLE</button>
+                                    <br/>
+                                    <button onClick={() => { this.testOpenSchemaForm(); }}>test SchemaForm</button>
+                                    <br/>
+                                    <button onClick={() => { this.testSchemaFormDesigner(); }}>test SchemaFormDesigner
+                                    </button>
+                                    <br/>
+                                    <button onClick={() => { this.testSchemaComponent3ButtonsDesigner(); }}>
+                                        test SchemaComponent3ButDesigner
+                                    </button>
+                                    <br/>
+                                    <button onClick={() => { this.testOpenSchemaFormDesigner(); }}>
+                                        test OpenSchemaFormDesigner
+                                    </button>
+                                    <br/>
+                                    <button onClick={() => { this.testOpenSchemaComponent3ButtonsDesigner(); }}>
+                                        test OpenSchemaComponent3ButtonsDesigner
+                                    </button>
+                                    <br/>
+                                    <button onClick={() => { showTestSelectControlForm(); }}>
+                                        showTestSelectControlForm
+                                    </button>
+                                    <br/>
+                                    <button onClick={() => { this.testOpenSchemaDesigner(); }}>
+                                        test OpenSchemDesigner +++++++++++++
+                                    </button>
+                                </Fixed>
+                                <Flex className="XXXcontent">
+                                    <Desktop>
+                                        <Movable onMoveStart={this.moveStart.bind(this)}>MOV</Movable>
 
-                                </Desktop>
-                            </Flex>
-                        </Layout>
-                    </Flex>
-                </Layout>
-            </App>
-        );
+                                    </Desktop>
+                                </Flex>
+                            </Layout>
+                        </Flex>
+                    </Layout>
+                </App>
+            );
     }
 
 }

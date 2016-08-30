@@ -35,10 +35,14 @@ export const MESSAGE_CANCEL_BUTTON_ICON = "buhta-set-1/application-export";
 
 
 export const SCHEMA_APPLICATION_ICON = "buhta-set-1/sitemap-application-blue";
+export const SCHEMA_APPLICATION_TYPE_ID = "dc1b02b8-df9a-425c-8860-395237d18fc0";
+
 export const SCHEMA_COMPONENT_ICON = "buhta-set-1/molecule";
 export const SCHEMA_FOLDER_ICON = "buhta-set-1/folder-horizontal";
 export const SCHEMA_FORM_ICON = "buhta-set-1/application-form";
 export const SCHEMA_DATABASE_ICON = "buhta-set-1/database-sql";
+
+export const SCHEMA_TABLE_TYPE_ID = "1d702193-8801-4a72-971b-4095aeaab247";
 export const SCHEMA_TABLE_ICON = "buhta-set-1/table";
 
 export const STRING_DATA_TYPE_NAME = "Строка"

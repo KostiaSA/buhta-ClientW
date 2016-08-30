@@ -1,9 +1,13 @@
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {SchemaObject} from "../SchemaObject";
 import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
-import {SCHEMA_FOLDER_ICON, SCHEMA_APPLICATION_ICON} from "../../buhta-core/Constants";
+import {SCHEMA_FOLDER_ICON, SCHEMA_APPLICATION_ICON, SCHEMA_APPLICATION_TYPE_ID} from "../../buhta-core/Constants";
 import {SqlDialect, SqlDialectValues} from "../../buhta-sql/SqlCore";
 import {SelectEditor} from "../../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
+import {SqlDb, SqlBatch} from "../../buhta-sql/SqlDb";
+import {CheckTableExistsStmt} from "../../buhta-sql/CheckTableExistsStmt";
+import {throwError} from "../../buhta-core/Error";
+import {CreateTableStmt} from "../../buhta-sql/CreateTableStmt";
 
 
 export class SchemaApplication extends SchemaObject {
@@ -65,10 +69,36 @@ export class SchemaApplication extends SchemaObject {
         return "Приложение";
     }
 
+    getMainDb(): SqlDb {
+        return new SqlDb(this.mainDbName, this.mainDbDialect);
+    }
+
+    getUserSettingsDb(): SqlDb {
+        return new SqlDb(this.userSettingsDbName, this.userSettingsDbDialect);
+    }
+
+    initUserSettingsDb(): Promise<void> {
+        let batch: SqlBatch = [];
+
+        return this.getUserSettingsDb().selectToBoolean(new CheckTableExistsStmt("WindowSizePosition"))
+            .then((isTableExists: boolean) => {
+                if (isTableExists)
+                    throwError("таблица 'WindowSizePosition' уже существует, выберите чистую базу данных");
+
+                let sql = new CreateTableStmt("WindowSizePosition")
+                    .column("userId", "guid")
+                    .column("storeKey", "text", 0)
+                    .column("settingsJson", "text");
+
+                return this.getUserSettingsDb().executeSQL(sql).then(()=>{});
+            });
+
+    }
+
 }
 
 registerSchemaObjectType({
-    id: "dc1b02b8-df9a-425c-8860-395237d18fc0",
+    id: SCHEMA_APPLICATION_TYPE_ID,
     name: "Приложение",
     description: "Пользовательское приложение",
     type: SchemaApplication,

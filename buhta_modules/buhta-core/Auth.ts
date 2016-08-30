@@ -2,9 +2,20 @@ import {AuthSocketRequest, AuthSocketAnswer} from "../buhta-sql/SqlDb";
 import {getConnectionId} from "./getConnectionId";
 import {socket} from "./Socket";
 import {throwError} from "./Error";
+import {SelectStmt} from "../buhta-sql/SelectStmt";
+import {SqlGuidValue} from "../buhta-sql/SqlCore";
+import {SCHEMA_APPLICATION_TYPE_ID} from "./Constants";
+import {getSchema} from "../buhta-schema/Schema";
+import {setApplication} from "./getApplication";
+import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
 
 let authOk: boolean;
 let userId: string | null = null;
+
+export function getAuthOk(): boolean {
+    return authOk;
+}
+
 
 export function getUserId(): string {
     if (userId !== null)
@@ -44,7 +55,28 @@ export function auth(login: string, password: string): Promise<string> {
                 else {
                     authOk = true;
                     userId = response.userId!;
-                    resolve("ok");
+
+                    // todo сделать выбор app, вместо top 1
+                    let sql = new SelectStmt().table("SchemaObject").column("id").where("typeId", "=", new SqlGuidValue(SCHEMA_APPLICATION_TYPE_ID));
+                    getSchema().db.selectToString(sql)
+                        .then((id: string)=> {
+
+                            getSchema().getObject<SchemaApplication>(id)
+                                .then((app: SchemaApplication) => {
+                                    setApplication(app);
+                                    resolve("ok");
+                                })
+                                .catch((error)=> {
+                                    reject(error);
+                                });
+
+
+                        })
+                        .catch((error)=> {
+                            reject(error);
+                        });
+
+
                 }
 
             });
