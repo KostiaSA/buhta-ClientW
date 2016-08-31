@@ -229,6 +229,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                 newWin.top = sizePosInfo.T;
                 newWin.height = sizePosInfo.H;
                 newWin.width = sizePosInfo.W;
+                newWin.autoPosition = "none";
             }
 
             console.log("да");

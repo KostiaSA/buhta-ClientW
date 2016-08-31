@@ -69,12 +69,17 @@ export class SchemaObject extends DesignedObject {
 
         return (
             <SchemaObjectDesigner
-            {...props}
+                {...props}
             >
             </SchemaObjectDesigner>
         );
 
     }
+
+    $$getDesignerWindowSizePosStoreKey(): string {
+        return this.getObjectTypeInfo().id;
+    }
+
 
 }
 

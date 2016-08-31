@@ -50,9 +50,9 @@ export function loadWindowSizePositionStore(): Promise<void> {
             });
 
             // сохраняемся раз в минуту
-            setInterval(saveWindowSizePositionStore, 5 * 1000);
+            setInterval(saveWindowSizePositionStore, 60 * 1000);
 
-            console.log("loadWindowSizePositionStore - Ok");
+            console.log("saveWindowSizePositionStore - Ok");
 
         });
 }
