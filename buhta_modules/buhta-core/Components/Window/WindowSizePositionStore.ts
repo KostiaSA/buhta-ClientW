@@ -21,7 +21,7 @@ let windowSizePositionStore: { [key: string]: SizePositionStoreInfo; };
 let keysNeedToSave: string[] = [];
 
 export function saveWindowSizePosition(key: string, top: number, left: number, height: number, width: number) {
-    let fullKey = screen.availWidth + "x" + screen.availHeight + "/" + key;
+    let fullKey = getScreenSizePrefix() + "/" + key;
     windowSizePositionStore[fullKey] = {T: top, L: left, H: height, W: width};
     keysNeedToSave.push(fullKey);
     console.log("saveWindowSizePosition " + fullKey);
@@ -29,8 +29,36 @@ export function saveWindowSizePosition(key: string, top: number, left: number, h
 }
 
 export function getWindowSizePosition(key: string): SizePositionStoreInfo | undefined {
-    let fullKey = screen.availWidth + "x" + screen.availHeight + "/" + key;
+    let fullKey = getScreenSizePrefix() + "/" + key;
     return windowSizePositionStore[fullKey];
+}
+
+function getScreenSizePrefix(): string {
+    let w = screen.availWidth;
+    if (w > 1700)
+        w = 1920;
+    else if (w > 1300)
+        w = 1366;
+    else if (w > 1100)
+        w = 1280;
+    else if (w > 900)
+        w = 1024;
+    else
+        w = 800;
+
+    let h = screen.availHeight;
+    if (h > 1030)
+        h = 1080;
+    else if (h > 900)
+        h = 1024;
+    else if (h > 790)
+        h = 800;
+    else if (h > 700)
+        h = 768;
+    else
+        h=600;
+
+    return w + "x" + h;
 }
 
 // вызывать только один раз после успешного логина!

@@ -27,7 +27,7 @@ import {DesignedObject} from "../DesignedObject";
 //import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
 import {throwError} from "../../buhta-core/Error";
-import {DataTable, SqlDb, DataRow} from "../../buhta-sql/SqlDb";
+import {DataTable, SqlDb, DataRow, SqlBatch} from "../../buhta-sql/SqlDb";
 import {SchemaObject} from "../../buhta-schema/SchemaObject";
 import {Schema, getSchema} from "../../buhta-schema/Schema";
 import {SelectStmt} from "../../buhta-sql/SelectStmt";
@@ -53,6 +53,7 @@ import {SchemaDesigner} from "../SchemaDesigner/SchemaDesigner";
 import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 import {SchemaTable} from "../../buhta-schema/SchemaTable/SchemaTable";
 import {getApplication} from "../../buhta-core/getApplication";
+import {SchemaQuery, QueryTable, QueryColumn} from "../../buhta-schema/SchemaQuery/SchemaQuery";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -1021,6 +1022,31 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
     };
 
+    testSchemaQuery() {
+        let q = new SchemaQuery(getSchema());
+        let t = new QueryTable();
+        q.rootTable = t;
+        t.parentSchemaQuery = q;
+        t.sourceObjectId = "1796c360-6b9e-11e6-b8c4-1fd02a9b4368";
+
+        let c = new QueryColumn();
+        c.parentTable = t;
+        c.columnName = "Номер";
+        c.columnAlias = "нммм";
+        t.columns.push(c);
+
+        c = new QueryColumn();
+        c.parentTable = t;
+        c.columnName = "Название";
+        c.columnAlias = "назва77";
+        t.columns.push(c);
+
+        q.getSelectStmt().then((stmt: SqlBatch)=> {
+            getApplication().getMainDb().executeSQL(stmt);
+        });
+    }
+
+
     render(): JSX.Element {
         this.addClassName("app-designer");
 
@@ -1096,6 +1122,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                     <br/>
                                     <button onClick={() => { this.testOpenSchemaDesigner(); }}>
                                         test OpenSchemDesigner +++++++++++++
+                                    </button>
+                                    <br/>
+                                    <br/>
+                                    <button onClick={() => { this.testSchemaQuery(); }}>
+                                        testSchemaQuery
                                     </button>
                                 </Fixed>
                                 <Flex className="XXXcontent">

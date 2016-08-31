@@ -76,9 +76,9 @@ export class SchemaObject extends DesignedObject {
 
     }
 
-    $$getDesignerWindowSizePosStoreKey(): string {
-        return this.getObjectTypeInfo().id;
-    }
+    // $$getDesignerWindowSizePosStoreKey(): string {
+    //     return this.getObjectTypeInfo().id;
+    // }
 
 
 }

@@ -11,6 +11,7 @@ import {ControlEvent} from "./ControlEvent";
 import {SchemaComponent} from "../buhta-schema/SchemaComponent/SchemaComponent";
 import {UIComponent} from "../buhta-core/Components/UIComponent/UIComponent";
 import {ControlPropsForDesignerGrid} from "../buhta-app-designer/ObjectDesigner/ControlPropsForDesignerGrid";
+import {getObjectConstructorName} from "../buhta-core/getObjectConstructorName";
 
 export class BaseControl extends DesignedObject {
 //    name: string;
@@ -199,6 +200,8 @@ export class BaseControl extends DesignedObject {
 
         return event;
     }
+
+
 }
 
 export interface ShowInDesignerGridParams {

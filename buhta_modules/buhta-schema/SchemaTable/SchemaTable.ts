@@ -7,11 +7,13 @@ import {SCHEMA_TABLE_ICON, SCHEMA_TABLE_TYPE_ID} from "../../buhta-core/Constant
 import {getInstantPromise} from "../../buhta-core/getInstantPromise";
 import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
 import {StringDataType} from "./DataTypes/StringDataType";
+import {QuerySourceObject} from "../SchemaQuery/SchemaQuery";
+import {SelectTable} from "../../buhta-sql/SelectStmt";
 
-export class SchemaTable extends SchemaObject {
+export class SchemaTable extends SchemaObject implements QuerySourceObject {
 
     @StringEditor({
-        inputCaption: "Имя",
+        inputCaption: "Имя таблицы",
         inputTab: "Главная",
         inputGroup: "Основная",
         inputDescription: "Имя таблицы"
@@ -51,6 +53,13 @@ export class SchemaTable extends SchemaObject {
         return col;
     }
 
+    isQuerySourceObject(): boolean {
+        return true;
+    }
+
+    getSelectTable(): Promise<SelectTable> {
+        return getInstantPromise<SelectTable>({tableName: this.name});
+    }
 
 }
 

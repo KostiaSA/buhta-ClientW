@@ -45,6 +45,9 @@ export const SCHEMA_DATABASE_ICON = "buhta-set-1/database-sql";
 export const SCHEMA_TABLE_TYPE_ID = "1d702193-8801-4a72-971b-4095aeaab247";
 export const SCHEMA_TABLE_ICON = "buhta-set-1/table";
 
+export const SCHEMA_QUERY_TYPE_ID = "98768896-71c2-4a03-bfaf-1eef8c16d2f7";
+export const SCHEMA_QUERY_ICON = "buhta-set-1/tables";
+
 export const STRING_DATA_TYPE_NAME = "Строка"
 export const STRING_DATA_TYPE_DESCRIPTION = "Строка переменной длины"
 

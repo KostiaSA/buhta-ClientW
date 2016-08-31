@@ -823,7 +823,7 @@ export class SqlDb {
                         };
 
                         //console.log(this.dialect);
-                        //console.log(req.sql);
+                        console.log(req.sql);
 
                         socket.emit("executeSqlBatch", req);
 
