@@ -1081,13 +1081,24 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         //let ds = [["1", "111"], ["2", "222"]];
 
         let winContent = (
-            <SelectExInput
-                multiSelect={false}
-                bindObject={obj}
-                bindPropName="qqq"
-                valuesDataSource={ds}
-            >
-            </SelectExInput>);
+            <AutoForm sizeTo="content">
+                <Input type={InputType.Text} bindObject={this} bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee1" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee2" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
+                <Input inputTab="параметры1" inputCaption="eee3" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
+                <SelectExInput
+                    multiSelect={false}
+                    bindObject={obj}
+                    bindPropName="qqq"
+                    valuesDataSource={ds}
+                >
+                </SelectExInput>
+                <Input inputTab="параметры2" inputCaption="eee4" type={InputType.Text} bindObject={this}
+                       bindPropName="str"/>
+            </AutoForm>);
         appInstance.desktop.openWindow(winContent, openParam);
 
     };
