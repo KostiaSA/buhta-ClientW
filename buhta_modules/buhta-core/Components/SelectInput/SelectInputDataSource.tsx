@@ -8,6 +8,8 @@ export interface SelectInputItem<T> {
 
 export interface SelectInputDataSource<T> {
     getItems(): SelectInputItem<T>[];
+    getLabel(value: T): React.ReactNode;
+    isValuesEqual(a: T, b: T): boolean;
 }
 
 

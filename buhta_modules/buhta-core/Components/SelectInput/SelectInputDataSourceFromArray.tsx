@@ -2,6 +2,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import {SelectInputDataSource, SelectInputItem} from "./SelectInputDataSource";
 import {throwError} from "../../Error";
+import {isDeepEqual} from "../../isDeepEqual";
 
 
 export class SelectInputDataSourceFromArray<T> implements SelectInputDataSource<T> {
@@ -40,6 +41,22 @@ export class SelectInputDataSourceFromArray<T> implements SelectInputDataSource<
             });
         }
         return this.cachedItems;
+    }
+
+    isValuesEqual(a: T, b: T): boolean {
+        return isDeepEqual(a, b);
+    }
+
+    getLabel(value: T): React.ReactNode {
+        if (!value)
+            return "";
+
+        for (let i = 0; i < this.getItems().length; i++) {
+            if (this.isValuesEqual(value, this.getItems()[i].value)) {
+                return this.getItems()[i].label;
+            }
+        }
+        return "<error>";
     }
 }
 

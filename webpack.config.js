@@ -37,6 +37,8 @@ module.exports = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM",
+        //"react-select": "Select",
+        //"react-select-props": "ReactSelectProps",
         "lodash": "_",
         "jquery": "$",
         "socket.io-client": "io",

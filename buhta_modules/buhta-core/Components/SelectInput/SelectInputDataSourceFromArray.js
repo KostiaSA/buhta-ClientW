@@ -1,6 +1,7 @@
 "use strict";
 var _ = require("lodash");
 var Error_1 = require("../../Error");
+var isDeepEqual_1 = require("../../isDeepEqual");
 var SelectInputDataSourceFromArray = (function () {
     function SelectInputDataSourceFromArray(arr) {
         this.arr = arr;
@@ -33,6 +34,19 @@ var SelectInputDataSourceFromArray = (function () {
             });
         }
         return this.cachedItems;
+    };
+    SelectInputDataSourceFromArray.prototype.isValuesEqual = function (a, b) {
+        return isDeepEqual_1.isDeepEqual(a, b);
+    };
+    SelectInputDataSourceFromArray.prototype.getLabel = function (value) {
+        if (!value)
+            return "";
+        for (var i = 0; i < this.getItems().length; i++) {
+            if (this.isValuesEqual(value, this.getItems()[i].value)) {
+                return this.getItems()[i].label;
+            }
+        }
+        return "<error>";
     };
     return SelectInputDataSourceFromArray;
 }());

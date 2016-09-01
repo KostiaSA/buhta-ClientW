@@ -54,6 +54,7 @@ import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 import {SchemaTable} from "../../buhta-schema/SchemaTable/SchemaTable";
 import {getApplication} from "../../buhta-core/getApplication";
 import {SchemaQuery, QueryTable, QueryColumn} from "../../buhta-schema/SchemaQuery/SchemaQuery";
+import {SelectExInput} from "../../buhta-core/Components/SelectExInput/SelectExInput";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -83,7 +84,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
     }
 
 
-    sideWidth: number = 300;
+    sideWidth: number = 150;
 
 
     pro9(): Promise<number> {
@@ -1046,6 +1047,50 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         });
     }
 
+    testSelectEx() {
+
+        let openParam: OpenWindowParams = {
+            title: "дизайнер схемы",
+            top: 10,
+            left: 10,
+            width: 800,
+            height: 600,
+            sizePositionStoreKey: "SchemaDesigner"
+        };
+
+        // bindObject: any;
+        // bindPropName: string;
+        // valuesDataSource: SelectInputDataSource<T> | any[];
+        // maxWidth?: number;
+        // //onClick?: React.ReactEventHandler;
+        // placeHolder?: string;
+        // onChange?: () => void;
+
+        let obj: any = {};
+        obj.qqq = [];
+        let ds: any[] = [];
+        //let ds = [["1", "111"], ["2", "222"]];
+
+        for (let i = 0; i < 500; i++) {
+            if (i >494)
+                obj.qqq.push("val" + i.toString());
+            ds.push(["val" + i.toString(), "label" + i.toString()]);
+        }
+        obj.qqq="val333";
+
+        //let ds = [["1", "111"], ["2", "222"]];
+
+        let winContent = (
+            <SelectExInput
+                multiSelect={false}
+                bindObject={obj}
+                bindPropName="qqq"
+                valuesDataSource={ds}
+            >
+            </SelectExInput>);
+        appInstance.desktop.openWindow(winContent, openParam);
+
+    };
 
     render(): JSX.Element {
         this.addClassName("app-designer");
@@ -1127,6 +1172,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                     <br/>
                                     <button onClick={() => { this.testSchemaQuery(); }}>
                                         testSchemaQuery
+                                    </button>
+                                    <br/>
+                                    <br/>
+                                    <button onClick={() => { this.testSelectEx(); }}>
+                                        testSelectEx
                                     </button>
                                 </Fixed>
                                 <Flex className="XXXcontent">
