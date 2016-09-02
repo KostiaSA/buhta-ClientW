@@ -54,6 +54,7 @@ export interface OpenWindowParams {
     theme?: string;
     sizePositionStoreKey?: string;
     isPopup?: boolean;
+    noPaddings?: boolean;
     // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
 }
 
@@ -86,7 +87,8 @@ export class DesktopWindow implements OpenWindowParams {
     theme: string | undefined;
     sizePositionStoreKey: string | undefined;
     isPopup: boolean| undefined;
-    // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
+    noPaddings: boolean | undefined;
+    // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
@@ -145,7 +147,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         newWin.bottom = openParams.bottom;
         newWin.theme = openParams.theme;
         newWin.isPopup = openParams.isPopup;
-        // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
+        newWin.noPaddings = openParams.noPaddings;
+        // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 
 
         if (!newWin.left) {
@@ -375,14 +378,14 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.addStyles({position: "relative", overflow: "auto"});
 
         // сортируем, чтобы popup были в конце
-        let wins = this.state.windows.sort((a: DesktopWindow,b: DesktopWindow)=>{
-            if (a.isPopup===true && b.isPopup===true)
+        let wins = this.state.windows.sort((a: DesktopWindow, b: DesktopWindow)=> {
+            if (a.isPopup === true && b.isPopup === true)
                 return 0;
-            if (a.isPopup!==true && b.isPopup!==true)
+            if (a.isPopup !== true && b.isPopup !== true)
                 return 0;
-            if (a.isPopup===true && b.isPopup!==true)
+            if (a.isPopup === true && b.isPopup !== true)
                 return 1;
-            if (a.isPopup!==true && b.isPopup===true)
+            if (a.isPopup !== true && b.isPopup === true)
                 return -1;
             throw  "internal  error";
         });
@@ -411,6 +414,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             parentWindowId={w.parentWindowId}
                             theme={w.theme}
                             isPopup={w.isPopup}
+                            noPaddings={w.noPaddings}
+                            { /* при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place' */ ...{}}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
 

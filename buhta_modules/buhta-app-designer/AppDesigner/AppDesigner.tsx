@@ -1118,7 +1118,8 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             width: 200,
             height: 400,
             isPopup: true,
-            theme: "blue"
+            theme: "blue",
+            noPaddings: true
         };
 
         getApplication().getMainDb().executeSQL("select TOP 100 Номер,Название from [ТМЦ]")

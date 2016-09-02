@@ -37,7 +37,8 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     autoSize: WindowAutoSize;
     theme: string;
     isPopup: boolean;
-    // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
+    noPaddings: boolean;
+    // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 }
 
 export class Window extends Component<WindowProps, WindowState> {
@@ -229,7 +230,7 @@ export class Window extends Component<WindowProps, WindowState> {
 
         this.addProps({id: this.state.id});
 
-        if (this.props.isPopup===true)
+        if (this.props.isPopup === true)
             this.addClassName("popup");
         else
             this.addClassName("window box");
@@ -278,14 +279,18 @@ export class Window extends Component<WindowProps, WindowState> {
         if (!this.state.disabled || this.state.disabled === false)
             disabledWrapperClass += " is-hidden";
 
+        let bodyPadding = 10;
+        if (this.props.noPaddings === true)
+            bodyPadding = 0;
+
         if (this.props.isPopup === true)
             return (
                 <div
                     {...this.getRenderProps()}
-                     ref={ (e: any) => { this.nativeElement = e; }}
-                     onClick={ this.handleOnClick }
+                    ref={ (e: any) => { this.nativeElement = e; }}
+                    onClick={ this.handleOnClick }
                 >
-                    <div className="window-body" style={{ padding:10, overflow:"hidden", height:"100%" }}>
+                    <div className="window-body" style={{ padding:bodyPadding, overflow:"hidden", height:"100%" }}>
                         {this.props.children}
                         {this.renderRightBottomCornerResizer()}
                     </div>
@@ -299,8 +304,8 @@ export class Window extends Component<WindowProps, WindowState> {
             return (
                 <div
                     {...this.getRenderProps()}
-                     ref={ (e: any) => { this.nativeElement = e; }}
-                     onClick={ this.handleOnClick }
+                    ref={ (e: any) => { this.nativeElement = e; }}
+                    onClick={ this.handleOnClick }
                 >
                     <Layout type="column" sizeTo="parent">
                         <Fixed
@@ -343,7 +348,7 @@ export class Window extends Component<WindowProps, WindowState> {
                             </Layout>
                         </Fixed>
 
-                        <Flex className="window-body" style={{ padding:10, overflow:"hidden" }}>
+                        <Flex className="window-body" style={{ padding:bodyPadding, overflow:"hidden" }}>
                             {this.props.children}
                             {this.renderRightBottomCornerResizer()}
                         </Flex>
