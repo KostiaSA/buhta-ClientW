@@ -51,7 +51,7 @@ export class Form extends Component<FormProps, any> {
                 let renderMode12 = (): JSX.Element=> {
                     if (mode === 1)
                         return (
-                            <div className="control" slyle={inputStyle}>
+                            <div className="control" style={inputStyle}>
                                 {control}
                             </div>
                         )

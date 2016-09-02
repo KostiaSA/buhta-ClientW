@@ -7,7 +7,7 @@ import {Layout} from "../LayoutPane/Layout";
 import {Fixed} from "../LayoutPane/Fixed";
 import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent, MoveEndEvent} from "../Movable/Movable";
-import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize} from "../Desktop/Desktop";
+import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize, PopupAutoPosition} from "../Desktop/Desktop";
 import {throwError} from "../../Error";
 import {saveWindowSizePosition} from "./WindowSizePositionStore";
 
@@ -38,6 +38,8 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     theme: string;
     isPopup: boolean;
     noPaddings: boolean;
+    popupAutoPosition: PopupAutoPosition;
+    popupAnchor: Component<any,any>;
     // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 }
 
@@ -138,6 +140,21 @@ export class Window extends Component<WindowProps, WindowState> {
         //this.centerTo($("#" + this.state.parentWindowId));
     }
 
+    private setPositionAnchorDown() {
+
+        if (this.state.popupAnchor === undefined)
+            throwError("Window.setPositionAnchorDown(): popupAnchor component is not defined");
+
+        let win = $(this.nativeElement);
+        let desktop = $(this.getParentDesktopElement());
+        let anchorControl = $(this.state.popupAnchor.getNativeElement());
+
+        this.state.top = anchorControl.offset().top - desktop.offset().top + desktop.scrollTop()+anchorControl.outerHeight()-2;
+        this.state.left = anchorControl.offset().left - desktop.offset().left + desktop.scrollLeft();
+
+        this.forceUpdate();
+    }
+
     protected didMount() {
         super.didMount();
         (this.nativeElement as any)["$$window"] = this;
@@ -146,6 +163,9 @@ export class Window extends Component<WindowProps, WindowState> {
             this.centerToDesktop();
         else if (this.state.autoPosition === "parent-center")
             this.centerToParentWindow();
+
+        if (this.state.popupAutoPosition === "anchor-down")
+            this.setPositionAnchorDown();
 
     }
 

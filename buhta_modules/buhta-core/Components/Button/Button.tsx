@@ -26,8 +26,12 @@ export class Button extends Component<ButtonProps, ButtonState> {
 
     renderIcon(): JSX.Element | undefined {
         if (this.props.icon !== undefined) {
+
+            let marginRight = 0;
+            if (this.props.text || this.props.children)
+                marginRight = 5;
             return (
-                <img src={ getIconFullPath(this.props.icon) }/>
+                <img src={ getIconFullPath(this.props.icon)} style={{marginRight:marginRight}}/>
             );
         }
         else

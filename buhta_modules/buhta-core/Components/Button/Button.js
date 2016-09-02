@@ -36,7 +36,10 @@ var Button = (function (_super) {
     }
     Button.prototype.renderIcon = function () {
         if (this.props.icon !== undefined) {
-            return (React.createElement("img", {src: getIconFullPath_1.getIconFullPath(this.props.icon)}));
+            var marginRight = 0;
+            if (this.props.text || this.props.children)
+                marginRight = 5;
+            return (React.createElement("img", {src: getIconFullPath_1.getIconFullPath(this.props.icon), style: { marginRight: marginRight }}));
         }
         else
             return undefined;

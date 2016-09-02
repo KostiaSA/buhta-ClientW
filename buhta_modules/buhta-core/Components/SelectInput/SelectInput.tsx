@@ -6,10 +6,10 @@ import {SelectInputDataSource, SelectInputItem} from "./SelectInputDataSource";
 import {SelectInputDataSourceFromArray} from "./SelectInputDataSourceFromArray";
 import {throwError} from "../../Error";
 
-export interface SelectInputProps<T> extends ComponentProps<any>, AutoFormControlProps {
+export interface SelectInputProps<TValue> extends ComponentProps<any>, AutoFormControlProps {
     bindObject: any;
     bindPropName: string;
-    valuesDataSource: SelectInputDataSource<T> | any[];
+    valuesDataSource: SelectInputDataSource<TValue> | any[];
     maxWidth?: number;
     //onClick?: React.ReactEventHandler;
     placeHolder?: string;

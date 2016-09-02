@@ -38,6 +38,9 @@ export interface WindowInfo {
 export type WindowAutoSize = "none" | "content" | "full-desktop";
 export type WindowAutoPosition = "none" | "parent-center" | "desktop-center";
 
+// todo "anchor-up", "anchor-right", "anchor-left", "desktop-top-left" и все desktop-варианты
+export type PopupAutoPosition = "anchor-down" | "anchor-up" | "anchor-right" | "anchor-left";
+
 export interface OpenWindowParams {
     title?: string;
     top?: number;
@@ -55,6 +58,8 @@ export interface OpenWindowParams {
     sizePositionStoreKey?: string;
     isPopup?: boolean;
     noPaddings?: boolean;
+    popupAutoPosition?: PopupAutoPosition;
+    popupAnchor?: Component<any,any>;
     // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
 }
 
@@ -88,6 +93,8 @@ export class DesktopWindow implements OpenWindowParams {
     sizePositionStoreKey: string | undefined;
     isPopup: boolean| undefined;
     noPaddings: boolean | undefined;
+    popupAutoPosition: PopupAutoPosition | undefined;
+    popupAnchor: Component<any,any> | undefined;
     // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 }
 
@@ -131,7 +138,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.openWindow(winContent, openParams);
     }
 
-    openWindow(winContent: React.ReactNode, openParams?: OpenWindowParams) {
+    openWindow(winContent: React.ReactNode, openParams?: OpenWindowParams): string {
         if (!openParams)
             openParams = {};
         let newWin = new DesktopWindow();
@@ -148,6 +155,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         newWin.theme = openParams.theme;
         newWin.isPopup = openParams.isPopup;
         newWin.noPaddings = openParams.noPaddings;
+        newWin.popupAutoPosition = openParams.popupAutoPosition;
+        newWin.popupAnchor = openParams.popupAnchor;
         // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 
 
@@ -215,9 +224,10 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         }
         this.state.windows.push(newWin);
         this.forceUpdate();
+        return newWin.id;
     };
 
-    openMessageWindow(winContent: React.ReactNode, openParams?: OpenMessageWindowParams) {
+    openMessageWindow(winContent: React.ReactNode, openParams?: OpenMessageWindowParams): string {
         if (!openParams)
             openParams = {style: "information"};
 
@@ -296,8 +306,12 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
 
         console.log(openParams);
 
-        this.openWindow(win, winParams);
+        return this.openWindow(win, winParams);
     };
+
+    isWindowHasFocus(id: string): boolean {
+        return $(document.activeElement).parents("#" + id).length > 0;
+    }
 
     activateWindow(id: string) {
         let win = this.getTopParentWindow(id);
@@ -415,6 +429,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             theme={w.theme}
                             isPopup={w.isPopup}
                             noPaddings={w.noPaddings}
+                            popupAutoPosition={w.popupAutoPosition}
+                            popupAnchor={w.popupAnchor}
                             { /* при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place' */ ...{}}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }

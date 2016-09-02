@@ -61,6 +61,7 @@ import {
     GridTreeDataSourceFromSqlTableParams
 } from "../../buhta-core/Components/Grid/GridTreeDataSourceFromSqlTable";
 import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
+import {LookupInput} from "../../buhta-core/Components/LookupInput/LookupInput";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -1064,48 +1065,35 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             sizePositionStoreKey: "SchemaDesigner"
         };
 
-        // bindObject: any;
-        // bindPropName: string;
-        // valuesDataSource: SelectInputDataSource<T> | any[];
-        // maxWidth?: number;
-        // //onClick?: React.ReactEventHandler;
-        // placeHolder?: string;
-        // onChange?: () => void;
+        let obj = {qqq: "111"};
 
-        let obj: any = {};
-        obj.qqq = [];
-        let ds: any[] = [];
-        //let ds = [["1", "111"], ["2", "222"]];
+        getApplication().getMainDb().executeSQL("select TOP 100 Номер,Название from [ТМЦ]")
+            .done((tables: DataTable[]) => {
 
-        for (let i = 0; i < 500; i++) {
-            if (i > 494)
-                obj.qqq.push("val" + i.toString());
-            ds.push(["val" + i.toString(), "label" + i.toString()]);
-        }
-        obj.qqq = "val333";
+                let ds = new GridFlatDataSourceFromArray({arrayObj: tables[0].rows});
 
-        //let ds = [["1", "111"], ["2", "222"]];
+                let winContent = (
+                    <AutoForm sizeTo="content">
+                        <Input type={InputType.Text} bindObject={this} bindPropName="str"/>
+                        <Input inputTab="параметры1" inputCaption="eee1" type={InputType.Text} bindObject={this}
+                               bindPropName="str"/>
+                        <Input inputTab="параметры1" inputCaption="eee2" type={InputType.Text} bindObject={this}
+                               bindPropName="str"/>
+                        <Input inputTab="параметры1" inputCaption="eee3" type={InputType.Text} bindObject={this}
+                               bindPropName="str"/>
+                        <LookupInput
+                            inputCaption="найди город"
+                            multiSelect={false}
+                            bindObject={obj}
+                            bindPropName="qqq"
+                            lookupDataSource={ds}
+                        >
+                        </LookupInput>
+                    </AutoForm>);
+                appInstance.desktop.openWindow(winContent, openParam);
 
-        let winContent = (
-            <AutoForm sizeTo="content">
-                <Input type={InputType.Text} bindObject={this} bindPropName="str"/>
-                <Input inputTab="параметры1" inputCaption="eee1" type={InputType.Text} bindObject={this}
-                       bindPropName="str"/>
-                <Input inputTab="параметры1" inputCaption="eee2" type={InputType.Text} bindObject={this}
-                       bindPropName="str"/>
-                <Input inputTab="параметры1" inputCaption="eee3" type={InputType.Text} bindObject={this}
-                       bindPropName="str"/>
-                <SelectExInput
-                    multiSelect={false}
-                    bindObject={obj}
-                    bindPropName="qqq"
-                    valuesDataSource={ds}
-                >
-                </SelectExInput>
-                <Input inputTab="параметры2" inputCaption="eee4" type={InputType.Text} bindObject={this}
-                       bindPropName="str"/>
-            </AutoForm>);
-        appInstance.desktop.openWindow(winContent, openParam);
+            });
+
 
     };
 
@@ -1113,7 +1101,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         let openParam: OpenWindowParams = {
             title: "popup",
-            top: 10,
+            top: 400,
             left: 10,
             width: 200,
             height: 400,

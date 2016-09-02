@@ -75,6 +75,17 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
 
     nativeElement: HTMLElement;
 
+    getNativeElement(): Element{
+        if (this.nativeElement!==undefined)
+            return this.nativeElement;
+        else
+            return ReactDOM.findDOMNode(this);
+    }
+
+    getNativeElement$(): JQuery {
+        return $(this.getNativeElement())
+    }
+
     private renderClasses: string[] = [];
     private renderProps: any = {};
     private renderStyles: any = {};
@@ -97,6 +108,10 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
             parent = parent.parentElement;
         }
         return null;
+    }
+
+    focus() {
+        this.getNativeElement$().focus();
     }
 
     getParentDesktop(): Desktop {
@@ -338,7 +353,7 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     getChildrenOfProps(props: any, childType?: Function): JSX.Element[] {
         let ret: JSX.Element[] = [];
         React.Children.toArray(props.children).forEach((child: any) => {
-            if (childType===undefined || childType === child.type)
+            if (childType === undefined || childType === child.type)
                 ret.push(child);
         });
         return ret;
