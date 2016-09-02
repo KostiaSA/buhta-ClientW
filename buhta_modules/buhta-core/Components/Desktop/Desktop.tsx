@@ -26,36 +26,6 @@ export interface DesktopProps extends ComponentProps<any> {
 
 export class DesktopState extends ComponentState<DesktopProps> {
     windows: DesktopWindow[] = [];  // последнее активно
-
-    // getWindowById(id: string): WindowState {
-    //     for (let w of this.windows) {
-    //         if (w.id === id)
-    //             return w;
-    //     }
-    //     console.warn("DesktopWindow id='" + id + "' not found");
-    //     return null;
-    // }
-    //
-    // getWindowIndexById(id: string): number {
-    //     return this.windows.indexOf(this.getWindowById(id));
-    // }
-    //
-    // activateWindow(id: string) {
-    //     let win = this.getWindowById(id);
-    //     if (win) {
-    //         _.pull(this.windows, win);
-    //         this.windows.push(win);
-    //         this.forceUpdate();
-    //     }
-    // }
-    //
-    // closeWindow(id: string) {
-    //     let win = this.getWindowById(id);
-    //     _.pull(this.windows, win);
-    //     this.forceUpdate();
-    // }
-
-
 }
 
 export interface WindowInfo {
@@ -83,6 +53,8 @@ export interface OpenWindowParams {
     autoSize?: WindowAutoSize;
     theme?: string;
     sizePositionStoreKey?: string;
+    isPopup?: boolean;
+    // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
 }
 
 export interface OpenMessageWindowParams {
@@ -113,6 +85,8 @@ export class DesktopWindow implements OpenWindowParams {
     autoSize: WindowAutoSize | undefined;
     theme: string | undefined;
     sizePositionStoreKey: string | undefined;
+    isPopup: boolean| undefined;
+    // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
 }
 
 export class Desktop extends Component<DesktopProps, DesktopState> {
@@ -170,6 +144,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         newWin.right = openParams.right;
         newWin.bottom = openParams.bottom;
         newWin.theme = openParams.theme;
+        newWin.isPopup = openParams.isPopup;
+        // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
 
 
         if (!newWin.left) {
@@ -219,7 +195,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
             this.getWindowById(newWin.parentWindowId)!.disabled = true;
         }
 
-        if (openParams.sizePositionStoreKey!==undefined) {
+        if (openParams.sizePositionStoreKey !== undefined) {
             newWin.sizePositionStoreKey = openParams.sizePositionStoreKey;
 
             let sizePosInfo = getWindowSizePosition(openParams.sizePositionStoreKey);
@@ -398,9 +374,22 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.addStyles({height: "100%"});
         this.addStyles({position: "relative", overflow: "auto"});
 
+        // сортируем, чтобы popup были в конце
+        let wins = this.state.windows.sort((a: DesktopWindow,b: DesktopWindow)=>{
+            if (a.isPopup===true && b.isPopup===true)
+                return 0;
+            if (a.isPopup!==true && b.isPopup!==true)
+                return 0;
+            if (a.isPopup===true && b.isPopup!==true)
+                return 1;
+            if (a.isPopup!==true && b.isPopup===true)
+                return -1;
+            throw  "internal  error";
+        });
+
         return (
             <div ref={ (e) => { this.nativeElement = e; } } {...this.getRenderProps()}>
-                {this.state.windows.map((w, index) => {
+                {wins.map((w: DesktopWindow, index: number) => {
                     console.log("render-desktop-win");
                     return (
                         <Window
@@ -421,6 +410,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             sizePositionStoreKey={w.sizePositionStoreKey}
                             parentWindowId={w.parentWindowId}
                             theme={w.theme}
+                            isPopup={w.isPopup}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }
 

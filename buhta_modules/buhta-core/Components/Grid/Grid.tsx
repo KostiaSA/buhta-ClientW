@@ -35,6 +35,8 @@ const MIN_ROW_HEIGHT = 24;
 const MAX_ROW_HEIGHT = 350;
 
 
+// GridDataSourceRow - тип объекта для показа
+// DesignedObject - тип объекта для редактирования
 export interface GridProps extends ComponentProps<GridState<GridDataSourceRow,DesignedObject>> {
 
     dragDropNodes?: boolean;
@@ -54,6 +56,11 @@ export interface GridProps extends ComponentProps<GridState<GridDataSourceRow,De
     showCloseButton?: boolean;
     onLookupOk?: (selectedRows: GridDataSourceRow[]) => any;
     onLookupCancel?: () => any;
+
+    sizeColumnsToFit?: boolean; // The columns will scale (growing or shrinking) to fit the available width.
+    onGridSizeChanged?: (grid: GridState<GridDataSourceRow,DesignedObject>) => void; // The grid had to lay out again because it changed size.
+    noBorder?: boolean;  // .ag-root стираем внешний border
+    hideColumnsHeaders?: boolean;  // 
 
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
@@ -130,6 +137,8 @@ export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends De
         console.log("grid-refresh");
         (this.component as Grid).rowHeightCache = undefined;
         this.agGrid.api!.setRowData(this.dataSource.getRows());
+        if (this.component.props.sizeColumnsToFit === true)
+            this.agGrid.api!.sizeColumnsToFit();
     }
 
     expandRow(dataItem: TRow) {
@@ -265,7 +274,18 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         //(this.state.agGrid as any).groupHeaders = true;
         this.state.agGrid.enableColResize = true;
 
+        this.state.agGrid.onGridSizeChanged = (e: any)=> {
+            if (this.props.onGridSizeChanged !== undefined) {
+                this.props.onGridSizeChanged(this.state);
+            }
+            if (this.props.sizeColumnsToFit === true)
+                this.state.agGrid.api!.sizeColumnsToFit();
+        };
+
+        if (this.props.hideColumnsHeaders === true)
+            this.state.agGrid.headerHeight = 0;
     }
+
 
     handleAgRowGroupOpened(params: { node: AgGrid.RowNode}) {
         this.state.agGrid.api!.refreshRows([params.node]);
@@ -598,6 +618,15 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         this.createColumns();
         new AgGrid.Grid(this.agGridNativeElement, this.state.agGrid);
 
+        if (this.props.noBorder === true) {
+            let agRoot = $(this.agGridNativeElement).find(".ag-root");
+            agRoot.css("border", "1px solid transparent");
+        }
+
+
+        if (this.props.sizeColumnsToFit === true)
+            this.state.agGrid.api!.sizeColumnsToFit();
+
         if (this.props.dataSource.getIsAsync()) {
             this.state.agGrid.api!.showLoadingOverlay();
             this.props.dataSource.getRowsAsync()
@@ -620,6 +649,8 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         if (this.props.enableDragDrop === true) {
             this.enableDragDrop();
         }
+        if (this.props.sizeColumnsToFit === true)
+            this.state.agGrid.api!.sizeColumnsToFit();
     }
 
     protected willUnmount() {

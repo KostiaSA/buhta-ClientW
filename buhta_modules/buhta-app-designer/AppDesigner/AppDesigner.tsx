@@ -50,11 +50,17 @@ import {ComponentControl} from "../../buhta-ui/ComponentControl";
 import enumerate = Reflect.enumerate;
 import {SchemaComponentDesigner} from "../SchemaComponentDesigner/SchemaComponentDesigner";
 import {SchemaDesigner} from "../SchemaDesigner/SchemaDesigner";
-import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
+import {GridColumn, GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
 import {SchemaTable} from "../../buhta-schema/SchemaTable/SchemaTable";
 import {getApplication} from "../../buhta-core/getApplication";
 import {SchemaQuery, QueryTable, QueryColumn} from "../../buhta-schema/SchemaQuery/SchemaQuery";
 import {SelectExInput} from "../../buhta-core/Components/SelectExInput/SelectExInput";
+import Grid from "../../buhta-core/Components/Grid/Grid";
+import {
+    GridTreeDataSourceFromSqlTable,
+    GridTreeDataSourceFromSqlTableParams
+} from "../../buhta-core/Components/Grid/GridTreeDataSourceFromSqlTable";
+import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -1072,11 +1078,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
         //let ds = [["1", "111"], ["2", "222"]];
 
         for (let i = 0; i < 500; i++) {
-            if (i >494)
+            if (i > 494)
                 obj.qqq.push("val" + i.toString());
             ds.push(["val" + i.toString(), "label" + i.toString()]);
         }
-        obj.qqq="val333";
+        obj.qqq = "val333";
 
         //let ds = [["1", "111"], ["2", "222"]];
 
@@ -1100,6 +1106,43 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                        bindPropName="str"/>
             </AutoForm>);
         appInstance.desktop.openWindow(winContent, openParam);
+
+    };
+
+    testPopup() {
+
+        let openParam: OpenWindowParams = {
+            title: "popup",
+            top: 10,
+            left: 10,
+            width: 200,
+            height: 400,
+            isPopup: true,
+            theme: "blue"
+        };
+
+        getApplication().getMainDb().executeSQL("select TOP 100 Номер,Название from [ТМЦ]")
+            .done((tables: DataTable[]) => {
+
+                let ds = new GridFlatDataSourceFromArray({arrayObj: tables[0].rows});
+
+                let winContent = (
+                    <div style={{height:"100%"}}>
+                        <Grid
+                            dataSource={ds}
+                            sizeColumnsToFit={true}
+                            noBorder={true}
+                            hideColumnsHeaders={true}
+                        >
+                            <GridColumnDef propertyName="Название">
+                            </GridColumnDef>
+                        </Grid>
+                    </div>);
+
+                appInstance.desktop.openWindow(winContent, openParam);
+
+            });
+
 
     };
 
@@ -1180,14 +1223,17 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                         test OpenSchemDesigner +++++++++++++
                                     </button>
                                     <br/>
-                                    <br/>
                                     <button onClick={() => { this.testSchemaQuery(); }}>
                                         testSchemaQuery
                                     </button>
                                     <br/>
-                                    <br/>
                                     <button onClick={() => { this.testSelectEx(); }}>
                                         testSelectEx
+                                    </button>
+                                    <br/>
+                                    <br/>
+                                    <button onClick={() => { this.testPopup(); }}>
+                                        test POPUP
                                     </button>
                                 </Fixed>
                                 <Flex className="XXXcontent">

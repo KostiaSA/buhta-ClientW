@@ -36,8 +36,8 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     autoPosition: WindowAutoPosition;
     autoSize: WindowAutoSize;
     theme: string;
-
-//    childWindow: Window;
+    isPopup: boolean;
+    // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
 }
 
 export class Window extends Component<WindowProps, WindowState> {
@@ -229,7 +229,11 @@ export class Window extends Component<WindowProps, WindowState> {
 
         this.addProps({id: this.state.id});
 
-        this.addClassName("window box");
+        if (this.props.isPopup===true)
+            this.addClassName("popup");
+        else
+            this.addClassName("window box");
+
         if (this.state.theme !== undefined)
             this.addClassName("border-theme-" + this.state.theme);
 
@@ -274,65 +278,83 @@ export class Window extends Component<WindowProps, WindowState> {
         if (!this.state.disabled || this.state.disabled === false)
             disabledWrapperClass += " is-hidden";
 
-        return (
-            <div className="window"
-                {...this.getRenderProps()}
-                 ref={ (e: any) => { this.nativeElement = e; }}
-                 onClick={ this.handleOnClick }
-            >
-                <Layout type="column" sizeTo="parent">
-                    <Fixed
-                        className="window-header"
-                        style={{/*borderRadius: "5px 5px 0px 0px",*/ position:"relative", paddingLeft: 10}}
+        if (this.props.isPopup === true)
+            return (
+                <div
+                    {...this.getRenderProps()}
+                     ref={ (e: any) => { this.nativeElement = e; }}
+                     onClick={ this.handleOnClick }
+                >
+                    <div className="window-body" style={{ padding:10, overflow:"hidden", height:"100%" }}>
+                        {this.props.children}
+                        {this.renderRightBottomCornerResizer()}
+                    </div>
+                    <div className={disabledWrapperClass}
+                         style={{ position:"absolute", left:-2, top:0, right:0, bottom:0}}
                     >
-                        <Layout type="row" sizeTo="parent">
-                            <Flex>
-                                <span className="window-title">{this.props.title}</span>
-                                <Movable
-                                    style={{position:"absolute", top:0, left:0, right:0,bottom:0}}
-                                    onMoveStart={this.moveStart}
-                                    onMoveEnd={this.moveOrResizeEnd}
-                                >
-                                </Movable>
-                            </Flex>
-                            <Fixed>
-                                <p className="control has-addons buttons-bar"
-                                   style={{paddingTop: 2, paddingRight: 4}}>
-                                    <a className="button is-small minimize-button" style={headerButtonStyle}>
+                    </div>
+                </div>
+            );
+        else
+            return (
+                <div
+                    {...this.getRenderProps()}
+                     ref={ (e: any) => { this.nativeElement = e; }}
+                     onClick={ this.handleOnClick }
+                >
+                    <Layout type="column" sizeTo="parent">
+                        <Fixed
+                            className="window-header"
+                            style={{/*borderRadius: "5px 5px 0px 0px",*/ position:"relative", paddingLeft: 10}}
+                        >
+                            <Layout type="row" sizeTo="parent">
+                                <Flex>
+                                    <span className="window-title">{this.props.title}</span>
+                                    <Movable
+                                        style={{position:"absolute", top:0, left:0, right:0,bottom:0}}
+                                        onMoveStart={this.moveStart}
+                                        onMoveEnd={this.moveOrResizeEnd}
+                                    >
+                                    </Movable>
+                                </Flex>
+                                <Fixed>
+                                    <p className="control has-addons buttons-bar"
+                                       style={{paddingTop: 2, paddingRight: 4}}>
+                                        <a className="button is-small minimize-button" style={headerButtonStyle}>
                                     <span className="icon is-small " style={{marginLeft: 0}}>
                                       <i className="fa fa-minus" style={{top: 3}}></i>
                                     </span>
-                                    </a>
-                                    <a className="button is-small maximize-button" style={headerButtonStyle}>
+                                        </a>
+                                        <a className="button is-small maximize-button" style={headerButtonStyle}>
                                     <span className="icon is-small" style={{marginLeft: 0}}>
                                       <i className="fa fa-square-o" style={{fontWeight: "bold"}}></i>
                                     </span>
-                                    </a>
-                                    <a className="button is-small close-button"
-                                       style={headerButtonStyle}
-                                       onClick={this.handleCloseButtonClick}
-                                    >
+                                        </a>
+                                        <a className="button is-small close-button"
+                                           style={headerButtonStyle}
+                                           onClick={this.handleCloseButtonClick}
+                                        >
                                     <span className="icon is-small" style={{marginLeft: 0}}>
                                       <i className="fa fa-close" style={{top: -1}}></i>
                                     </span>
-                                    </a>
-                                </p>
-                            </Fixed>
-                        </Layout>
-                    </Fixed>
+                                        </a>
+                                    </p>
+                                </Fixed>
+                            </Layout>
+                        </Fixed>
 
-                    <Flex className="window-body" style={{ padding:10, overflow:"hidden" }}>
-                        {this.props.children}
-                        {this.renderRightBottomCornerResizer()}
-                    </Flex>
-                </Layout>
-                <div className={disabledWrapperClass}
-                     style={{ position:"absolute", left:-2, top:0, right:0, bottom:0}}
-                >
+                        <Flex className="window-body" style={{ padding:10, overflow:"hidden" }}>
+                            {this.props.children}
+                            {this.renderRightBottomCornerResizer()}
+                        </Flex>
+                    </Layout>
+                    <div className={disabledWrapperClass}
+                         style={{ position:"absolute", left:-2, top:0, right:0, bottom:0}}
+                    >
 
+                    </div>
                 </div>
-            </div>
-        );
+            );
     }
 
 }
