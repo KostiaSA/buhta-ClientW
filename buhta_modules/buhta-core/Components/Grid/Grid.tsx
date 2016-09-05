@@ -23,6 +23,7 @@ import {
     SELECT_BUTTON_ICON, CLOSE_BUTTON_ICON, REJECT_BUTTON_ICON
 } from "../../Constants";
 import {Icon} from "../Icon/Icon";
+import {JQueryKeyCodeToReact} from "../../Keycode";
 
 
 ///////////// ВНИМАНИЕ !  //////////////////
@@ -60,7 +61,11 @@ export interface GridProps extends ComponentProps<GridState<GridDataSourceRow,De
     sizeColumnsToFit?: boolean; // The columns will scale (growing or shrinking) to fit the available width.
     onGridSizeChanged?: (grid: GridState<GridDataSourceRow,DesignedObject>) => void; // The grid had to lay out again because it changed size.
     noBorder?: boolean;  // .ag-root стираем внешний border
-    hideColumnsHeaders?: boolean;  // 
+    hideColumnsHeaders?: boolean;  //
+    onGetGridState?: (grid: GridState<GridDataSourceRow,DesignedObject>) => void; // получить доступ к GridState
+    onFirstRender?: (grid: GridState<GridDataSourceRow,DesignedObject>) => void; // после первого рендеринга
+    onKeyDown?: (grid: GridState<GridDataSourceRow,DesignedObject>, keyCode: string, rowData: GridDataSourceRow)=>void;
+    onExternalFilter?: (grid: GridState<GridDataSourceRow,DesignedObject>, rowData: GridDataSourceRow)=>boolean;
 
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
@@ -133,6 +138,11 @@ export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends De
         return this.agGrid.api!.getModel().isRowsToRender();
     }
 
+    externalFilterChanged() {
+        if (this.agGrid.api)
+            this.agGrid.api!.onFilterChanged();
+    }
+
     refresh() {
         console.log("grid-refresh");
         (this.component as Grid).rowHeightCache = undefined;
@@ -171,6 +181,12 @@ export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends De
         let rowIndex = this.findAgNodeIndexOfData(dataItem);
         if (rowIndex >= 0)
             this.agGrid.api!.setFocusedCell(rowIndex, col[0]);
+    }
+
+    setFocusToFirstRow() {
+        let col = this.agGrid.columnApi!.getAllDisplayedColumns();
+        let rowIndex = 0;
+        this.agGrid.api!.setFocusedCell(rowIndex, col[0]);
     }
 
     findAgRowNodeOfData(dataItem: TRow): AgGrid.RowNode | undefined {
@@ -282,8 +298,21 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
                 this.state.agGrid.api!.sizeColumnsToFit();
         };
 
+
         if (this.props.hideColumnsHeaders === true)
             this.state.agGrid.headerHeight = 0;
+
+        if (this.props.onExternalFilter !== undefined) {
+            this.state.agGrid.isExternalFilterPresent = (): boolean => true;
+            this.state.agGrid.doesExternalFilterPass = (node: AgGrid.RowNode): boolean => {
+                return this.props.onExternalFilter!(this.state, node.data);
+            };
+        }
+
+
+        if (this.props.onGetGridState !== undefined) {
+            this.props.onGetGridState(this.state);
+        }
     }
 
 
@@ -470,6 +499,15 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
     cellRenderer(params: AgCellRendererParams): any {
 
+        let focusedDiv = params.eGridCell;
+        if (this.props.onKeyDown !== undefined) {
+            $(focusedDiv).on("keydown", (e: JQueryKeyEventObject)=> {
+                this.props.onKeyDown!(this.state, JQueryKeyCodeToReact[e.keyCode.toString()], params.data);
+                //console.log(e.charCode);
+                //console.log(e.keyCode);
+            });
+        }
+
         let cell = this.renderCell(params.column, params.node, params.data);
 
         ////////////////// drag-over///////////////////
@@ -632,10 +670,18 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
             this.props.dataSource.getRowsAsync()
                 .then((rows) => {
                     this.state.refresh();
+                    if (this.props.onFirstRender !== undefined) {
+                        this.props.onFirstRender(this.state);
+                    }
                 })
                 .catch((error) => {
                     this.showErrorWindow(error);
                 });
+        }
+        else {
+            if (this.props.onFirstRender !== undefined) {
+                this.props.onFirstRender(this.state);
+            }
         }
 
         if (this.props.enableDragDrop === true) {

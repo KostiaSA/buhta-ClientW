@@ -1065,12 +1065,17 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
             sizePositionStoreKey: "SchemaDesigner"
         };
 
-        let obj = {qqq: "111"};
+        let obj = {qqq: "100.13"};
 
-        getApplication().getMainDb().executeSQL("select TOP 100 Номер,Название from [ТМЦ]")
+        getApplication().getMainDb().executeSQL("select TOP 3000 Номер,Номер+Название Название from [ТМЦ] order by номер")
             .done((tables: DataTable[]) => {
 
-                let ds = new GridFlatDataSourceFromArray({arrayObj: tables[0].rows});
+                let ds = new GridFlatDataSourceFromArray({
+                    arrayObj: tables[0].rows,
+                    lookupValuePropName: "Номер",
+                    lookupLabelPropName: "Название"
+                });
+
 
                 let winContent = (
                     <AutoForm sizeTo="content">
@@ -1087,6 +1092,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                             bindObject={obj}
                             bindPropName="qqq"
                             lookupDataSource={ds}
+                            onChange={ ()=>{ console.log(obj); }}
                         >
                         </LookupInput>
                     </AutoForm>);

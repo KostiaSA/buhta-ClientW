@@ -7,6 +7,14 @@ var GridBaseDataSource = (function () {
     function GridBaseDataSource(params) {
         this.params = params;
     }
+    GridBaseDataSource.prototype.getLookupLabel = function (lookupValue) {
+        Error_1.throwAbstractError();
+        throw "fake";
+    };
+    GridBaseDataSource.prototype.getLookupLabelAsync = function (lookupValue) {
+        Error_1.throwAbstractError();
+        throw "fake";
+    };
     GridBaseDataSource.prototype.getIsAsync = function () {
         return false;
     };

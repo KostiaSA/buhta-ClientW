@@ -150,7 +150,8 @@ export class Window extends Component<WindowProps, WindowState> {
         let anchorControl = $(this.state.popupAnchor.getNativeElement());
 
         this.state.top = anchorControl.offset().top - desktop.offset().top + desktop.scrollTop()+anchorControl.outerHeight()-2;
-        this.state.left = anchorControl.offset().left - desktop.offset().left + desktop.scrollLeft();
+        this.state.left = anchorControl.offset().left - desktop.offset().left + desktop.scrollLeft()-1;
+        //this.state.width = anchorControl.width();
 
         this.forceUpdate();
     }

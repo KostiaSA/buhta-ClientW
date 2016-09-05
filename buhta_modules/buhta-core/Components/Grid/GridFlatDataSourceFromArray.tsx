@@ -14,11 +14,15 @@ import {GridState} from "./Grid";
 import {OpenWindowParams} from "../Desktop/Desktop";
 import {ObjectDesigner} from "../../../buhta-app-designer/ObjectDesigner/ObjectDesigner";
 import {GridBaseDataSource, GridBaseDataSourceParams} from "./GridBaseDataSource";
+import {isDeepEqual} from "../../isDeepEqual";
 
 export interface GridFlatDataSourceFromArrayParams<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject>
 extends GridBaseDataSourceParams<TRow,TDesignedObject> {
     arrayObj: TRow[];
     positionFieldName?: string;  // sort
+    lookupValuePropName?: string;
+    lookupLabelPropName?: string;
+
 //    getNewRow?: () => Promise<TRow>;
 //    getEmptyDataSourceMessage?: () => React.ReactNode;
 //    getDeleteRowMessage?: () => React.ReactNode;
@@ -31,6 +35,8 @@ extends GridBaseDataSource<TRow,TDesignedObject> implements GridDataSource<TRow,
     constructor(public params: GridFlatDataSourceFromArrayParams<TRow,TDesignedObject>) {
         super(params);
         // this.arrayObj = params.arrayObj;//.filter((item) => item !== undefined);
+        this.lookupLabelPropName=params.lookupLabelPropName!;
+        this.lookupValuePropName=params.lookupValuePropName!;
 
     }
 
@@ -41,6 +47,25 @@ extends GridBaseDataSource<TRow,TDesignedObject> implements GridDataSource<TRow,
     };
 
     getRowsAsync(): Promise<TRow[]> {
+        throwAbstractError();
+        throw "fake";
+    }
+
+    getLookupLabel(lookupValue: any): string {
+        if (this.lookupValuePropName===undefined)
+            throwError("GridFlatDataSourceFromArray.getLookupLabel(): property 'lookupValuePropName' is not defined");
+        if (this.lookupLabelPropName===undefined)
+            throwError("GridFlatDataSourceFromArray.getLookupLabel(): property 'lookupLabelPropName' is not defined");
+
+        for (let i=0; i<this.params.arrayObj.length; i++){
+            if (isDeepEqual(lookupValue,this.params.arrayObj[i][this.lookupValuePropName]))
+                return this.params.arrayObj[i][this.lookupLabelPropName].toString()
+        }
+
+        return "<error>";
+    }
+
+    getLookupLabelAsync(lookupValue: any): Promise<string>{
         throwAbstractError();
         throw "fake";
     }

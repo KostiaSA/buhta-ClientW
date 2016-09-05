@@ -23,6 +23,13 @@ export interface GridDataSourceRow {
 // }
 
 export interface GridDataSource<TRow extends GridDataSourceRow,TDesignedObject extends DesignedObject> {
+    lookupValuePropName?: string;
+    lookupLabelPropName?: string;
+
+    getLookupLabel(lookupValue: any): string;
+    getLookupLabelAsync(lookupValue: any): Promise<string>;
+
+
     getIsAsync(): boolean;
     getGridColumns(): GridColumns;
     getRowsAsync(): Promise<TRow[]>;

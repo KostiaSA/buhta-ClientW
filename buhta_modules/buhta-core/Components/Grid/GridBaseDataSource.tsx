@@ -40,6 +40,20 @@ implements GridDataSource<TRow,TDesignedObject> {
     constructor(public params: GridBaseDataSourceParams<TRow,TDesignedObject>) {
     }
 
+    lookupValuePropName: string ;
+    lookupLabelPropName: string ;
+
+    getLookupLabel(lookupValue: any): string {
+        throwAbstractError();
+        throw "fake";
+
+    }
+
+    getLookupLabelAsync(lookupValue: any): Promise<string> {
+        throwAbstractError();
+        throw "fake";
+    }
+
     getIsAsync() {
         return false;
     };
@@ -191,7 +205,7 @@ implements GridDataSource<TRow,TDesignedObject> {
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
                     theme: "blue",
-                    sizePositionStoreKey:designedObject.$$getDesignerWindowSizePosStoreKey()
+                    sizePositionStoreKey: designedObject.$$getDesignerWindowSizePosStoreKey()
                 };
 
                 grid.component.getParentDesktop().openWindow(win, openParam);
@@ -235,7 +249,7 @@ implements GridDataSource<TRow,TDesignedObject> {
                     autoPosition: "parent-center",
                     parentWindowId: grid.component.getParentWindowId(),
                     theme: "green",
-                    sizePositionStoreKey:newDesignedObject.$$getDesignerWindowSizePosStoreKey()
+                    sizePositionStoreKey: newDesignedObject.$$getDesignerWindowSizePosStoreKey()
 
                 };
 

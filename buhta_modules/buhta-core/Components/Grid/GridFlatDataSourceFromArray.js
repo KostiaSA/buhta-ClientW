@@ -9,12 +9,15 @@ var Error_1 = require("../../Error");
 var getGridColumnInfos_1 = require("./getGridColumnInfos");
 var arrayUtils_1 = require("../../arrayUtils");
 var GridBaseDataSource_1 = require("./GridBaseDataSource");
+var isDeepEqual_1 = require("../../isDeepEqual");
 var GridFlatDataSourceFromArray = (function (_super) {
     __extends(GridFlatDataSourceFromArray, _super);
     function GridFlatDataSourceFromArray(params) {
         _super.call(this, params);
         this.params = params;
         // this.arrayObj = params.arrayObj;//.filter((item) => item !== undefined);
+        this.lookupLabelPropName = params.lookupLabelPropName;
+        this.lookupValuePropName = params.lookupValuePropName;
     }
     // private arrayObj: TRow[];
     GridFlatDataSourceFromArray.prototype.getIsAsync = function () {
@@ -22,6 +25,21 @@ var GridFlatDataSourceFromArray = (function (_super) {
     };
     ;
     GridFlatDataSourceFromArray.prototype.getRowsAsync = function () {
+        Error_1.throwAbstractError();
+        throw "fake";
+    };
+    GridFlatDataSourceFromArray.prototype.getLookupLabel = function (lookupValue) {
+        if (this.lookupValuePropName === undefined)
+            Error_1.throwError("GridFlatDataSourceFromArray.getLookupLabel(): property 'lookupValuePropName' is not defined");
+        if (this.lookupLabelPropName === undefined)
+            Error_1.throwError("GridFlatDataSourceFromArray.getLookupLabel(): property 'lookupLabelPropName' is not defined");
+        for (var i = 0; i < this.params.arrayObj.length; i++) {
+            if (isDeepEqual_1.isDeepEqual(lookupValue, this.params.arrayObj[i][this.lookupValuePropName]))
+                return this.params.arrayObj[i][this.lookupLabelPropName].toString();
+        }
+        return "<error>";
+    };
+    GridFlatDataSourceFromArray.prototype.getLookupLabelAsync = function (lookupValue) {
         Error_1.throwAbstractError();
         throw "fake";
     };
