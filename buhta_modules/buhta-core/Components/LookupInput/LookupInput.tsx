@@ -180,6 +180,7 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
     popupListBoxWindowId: string | undefined;
 
     closePopupListBox() {
+        clearInterval(this.listBoxCloseCheckerInterval);
         if (this.popupListBoxWindowId !== undefined) {
             this.getParentDesktop().closeWindow(this.popupListBoxWindowId);
             this.popupListBoxWindowId = undefined;
