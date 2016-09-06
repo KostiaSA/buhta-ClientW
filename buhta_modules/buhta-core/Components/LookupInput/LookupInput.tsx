@@ -143,8 +143,7 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
                     {...this.getRenderProps()}
                 />
                 <Button icon="buhta-set-2/lookup-down" onClick={this.handleDownButtonClick}></Button>
-                <Button>поиск</Button>
-                <Button icon="buhta-set-2/lookup-clear"></Button>
+                <Button icon="buhta-set-2/lookup-clear" onClick={this.handleClearButtonClick}></Button>
             </p>
         );
     }
@@ -153,27 +152,29 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
         this.inputElement.focus();
     }
 
-    renderPopupListBox(): JSX.Element {
-
-        this.clearStyles();
-        this.addClassName("input lookup-input");
-        this.addStyles({width: 300});
-
-        //   this.addStyles(this.props.style);
-
-        return (
-            <p className="control has-addons">
-            </p>
-        );
-    }
+    // renderPopupListBox(): JSX.Element {
+    //
+    //     this.clearStyles();
+    //     this.addClassName("input lookup-input");
+    //     this.addStyles({width: 300});
+    //
+    //     //   this.addStyles(this.props.style);
+    //
+    //     return (
+    //         <p className="control has-addons">
+    //         </p>
+    //     );
+    // }
 
 
     handleDownButtonClick = (sender: Component<any, any>, event: React.MouseEvent): void => {
         this.showPopupListBox(false);
         this.focus();
-        // setTimeout(()=> {
-        //     this.focus();
-        // }, 1000);
+    };
+
+    handleClearButtonClick = (sender: Component<any, any>, event: React.MouseEvent): void => {
+        this.clearValue();
+        this.focus();
     };
 
     popupListBoxWindowId: string | undefined;
@@ -218,6 +219,15 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
     private setValue(value: any) {
         this.props.bindObject[this.props.bindPropName] = value;
         this.inputText = this.props.lookupDataSource.getLookupLabel(value);
+        if (this.props.onChange)
+            this.props.onChange();
+        this.forceUpdate();
+    }
+
+    private clearValue() {
+        this.closePopupListBox();
+        this.props.bindObject[this.props.bindPropName] = undefined;
+        this.inputText = "";
         if (this.props.onChange)
             this.props.onChange();
         this.forceUpdate();
