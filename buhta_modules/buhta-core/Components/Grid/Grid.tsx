@@ -130,6 +130,7 @@ export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends De
         super(grid);
     }
 
+    filterWords: string[] | undefined;
     agGrid: AgGrid.GridOptions = {};
     dataSource: GridDataSource<TRow,TDesignedObject>;
     dragDropState: DragDropState = new DragDropState(this);
@@ -461,6 +462,39 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
             return 25;
     }
 
+
+    private highlightFilters(str: string): JSX.Element[] | string {
+
+        if (this.state.filterWords === undefined || this.state.filterWords.length === 0)
+            return str;
+
+        let ret: any[] = [str];
+
+        for (let i = 0; i < this.state.filterWords.length; i++) {
+            let regexp = new RegExp(this.state.filterWords[i], "i");
+
+            for (let retIndex = 0; retIndex < ret.length; retIndex++) {
+                let str = ret[retIndex];
+                if (_.isString(ret[retIndex])) {
+                    let pos = str.search(regexp);
+                    if (pos >= 0) {
+                        let beforeStr = str.substring(0, pos);
+                        let searchStr = str.substr(pos, this.state.filterWords[i].length);
+                        let afterStr = str.substring(pos + this.state.filterWords[i].length);
+                        let ret1 = ret.slice(0, retIndex);
+                        let ret2 = [beforeStr,
+                            <span className="grid-filter-highlight">{searchStr}</span>, afterStr];
+                        let ret3 = ret.slice(retIndex + 1);
+                        ret = ret1.concat(ret2, ret3);
+                        break;
+                    }
+                }
+            }
+
+        }
+        return ret;
+    }
+
     private renderCell(column: AgGrid.Column, rowNode: AgGrid.RowNode, data: GridDataSourceRow): JSX.Element {
 
         let gridColumnProps = (column.getColDef() as any).$$gridColumnProps as GridColumnProps;
@@ -481,7 +515,8 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         else if (dataValue === null)
             dataValue = "<null>";
         else if (_.isString(dataValue)) {
-            // это строка, отставляем как есть
+            // это строка, отставляем как есть, только подсвечиваем фильтрацию
+            dataValue = this.highlightFilters(dataValue);
         }
         else if (dataValue.$$typeof !== undefined) {
             // это JSX.Element, отставляем как есть

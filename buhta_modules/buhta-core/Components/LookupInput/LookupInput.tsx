@@ -59,16 +59,19 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
 
     // google like filtering setup
     private listBoxFilterRegExp: RegExp[] | undefined;
+    private listBoxFilterWords: string[] | undefined;
 
     private setListBoxFilter(filterStr: string) {
-        let filterWords = filterStr.split(" ");
-        if (filterWords.length > 0) {
-            this.listBoxFilterRegExp = filterWords.map((word: string)=> {
+        this.listBoxFilterWords = filterStr.split(" ");
+        if (this.listBoxFilterWords.length > 0) {
+            this.listBoxFilterRegExp = this.listBoxFilterWords.map((word: string)=> {
                 return new RegExp(word, "i");
             });
         }
-        else
+        else {
             this.listBoxFilterRegExp = undefined;
+            this.listBoxFilterWords = undefined;
+        }
         if (this.listBoxGrid !== undefined)
             this.listBoxGrid.externalFilterChanged();
     }
@@ -209,6 +212,7 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
     }
 
     private handleGridExternalFilter = (grid: GridState<GridDataSourceRow,DesignedObject>, rowData: GridDataSourceRow): boolean => {
+        grid.filterWords = this.listBoxFilterWords;
         if (this.listBoxFilterRegExp !== undefined) {
             let label = rowData[this.props.lookupDataSource.lookupValuePropName!] + "\t" + rowData[this.props.lookupDataSource.lookupLabelPropName!];
             for (let i = 0; i < this.listBoxFilterRegExp.length; i++) {
