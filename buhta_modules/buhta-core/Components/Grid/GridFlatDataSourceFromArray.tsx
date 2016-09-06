@@ -35,8 +35,8 @@ extends GridBaseDataSource<TRow,TDesignedObject> implements GridDataSource<TRow,
     constructor(public params: GridFlatDataSourceFromArrayParams<TRow,TDesignedObject>) {
         super(params);
         // this.arrayObj = params.arrayObj;//.filter((item) => item !== undefined);
-        this.lookupLabelPropName=params.lookupLabelPropName!;
-        this.lookupValuePropName=params.lookupValuePropName!;
+        this.lookupLabelPropName = params.lookupLabelPropName!;
+        this.lookupValuePropName = params.lookupValuePropName!;
 
     }
 
@@ -52,20 +52,20 @@ extends GridBaseDataSource<TRow,TDesignedObject> implements GridDataSource<TRow,
     }
 
     getLookupLabel(lookupValue: any): string {
-        if (this.lookupValuePropName===undefined)
+        if (this.lookupValuePropName === undefined)
             throwError("GridFlatDataSourceFromArray.getLookupLabel(): property 'lookupValuePropName' is not defined");
-        if (this.lookupLabelPropName===undefined)
+        if (this.lookupLabelPropName === undefined)
             throwError("GridFlatDataSourceFromArray.getLookupLabel(): property 'lookupLabelPropName' is not defined");
 
-        for (let i=0; i<this.params.arrayObj.length; i++){
-            if (isDeepEqual(lookupValue,this.params.arrayObj[i][this.lookupValuePropName]))
-                return this.params.arrayObj[i][this.lookupLabelPropName].toString()
+        for (let i = 0; i < this.params.arrayObj.length; i++) {
+            if (isDeepEqual(lookupValue, this.getDataValue(this.params.arrayObj[i], this.lookupValuePropName)))
+                return this.getDataValue(this.params.arrayObj[i], this.lookupLabelPropName).toString();
         }
 
         return "<error>";
     }
 
-    getLookupLabelAsync(lookupValue: any): Promise<string>{
+    getLookupLabelAsync(lookupValue: any): Promise<string> {
         throwAbstractError();
         throw "fake";
     }

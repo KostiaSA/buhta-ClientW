@@ -34,8 +34,8 @@ var GridFlatDataSourceFromArray = (function (_super) {
         if (this.lookupLabelPropName === undefined)
             Error_1.throwError("GridFlatDataSourceFromArray.getLookupLabel(): property 'lookupLabelPropName' is not defined");
         for (var i = 0; i < this.params.arrayObj.length; i++) {
-            if (isDeepEqual_1.isDeepEqual(lookupValue, this.params.arrayObj[i][this.lookupValuePropName]))
-                return this.params.arrayObj[i][this.lookupLabelPropName].toString();
+            if (isDeepEqual_1.isDeepEqual(lookupValue, this.getDataValue(this.params.arrayObj[i], this.lookupValuePropName)))
+                return this.getDataValue(this.params.arrayObj[i], this.lookupLabelPropName).toString();
         }
         return "<error>";
     };

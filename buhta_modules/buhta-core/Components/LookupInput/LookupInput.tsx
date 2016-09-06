@@ -197,7 +197,7 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
             this.closePopupListBox();
         }
         else if (keyCode === Keycode.Enter) {
-            this.setValue(rowData[this.props.lookupDataSource.lookupValuePropName!]);
+            this.setValue(grid.dataSource.getDataValue(rowData, this.props.lookupDataSource.lookupValuePropName!));
             this.closePopupListBox();
             this.inputElement.focus();
         }
@@ -214,7 +214,8 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
     private handleGridExternalFilter = (grid: GridState<GridDataSourceRow,DesignedObject>, rowData: GridDataSourceRow): boolean => {
         grid.filterWords = this.listBoxFilterWords;
         if (this.listBoxFilterRegExp !== undefined) {
-            let label = rowData[this.props.lookupDataSource.lookupValuePropName!] + "\t" + rowData[this.props.lookupDataSource.lookupLabelPropName!];
+            let label = grid.dataSource.getDataValue(rowData, this.props.lookupDataSource.lookupValuePropName!) + "\t" +
+                grid.dataSource.getDataValue(rowData,this.props.lookupDataSource.lookupLabelPropName!);
             for (let i = 0; i < this.listBoxFilterRegExp.length; i++) {
                 if (label.search(this.listBoxFilterRegExp[i]) === -1)
                     return false;

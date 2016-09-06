@@ -54,7 +54,6 @@ import {GridColumn, GridColumnDef} from "../../buhta-core/Components/Grid/GridCo
 import {SchemaTable} from "../../buhta-schema/SchemaTable/SchemaTable";
 import {getApplication} from "../../buhta-core/getApplication";
 import {SchemaQuery, QueryTable, QueryColumn} from "../../buhta-schema/SchemaQuery/SchemaQuery";
-import {SelectExInput} from "../../buhta-core/Components/SelectExInput/SelectExInput";
 import Grid from "../../buhta-core/Components/Grid/Grid";
 import {
     GridTreeDataSourceFromSqlTable,
