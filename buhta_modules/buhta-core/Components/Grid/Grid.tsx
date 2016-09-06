@@ -35,10 +35,11 @@ import {JQueryKeyCodeToReact} from "../../Keycode";
 const MIN_ROW_HEIGHT = 24;
 const MAX_ROW_HEIGHT = 350;
 
+export type GridStateType = GridState<GridDataSourceRow,DesignedObject>;
 
 // GridDataSourceRow - тип объекта для показа
 // DesignedObject - тип объекта для редактирования
-export interface GridProps extends ComponentProps<GridState<GridDataSourceRow,DesignedObject>> {
+export interface GridProps extends ComponentProps<GridStateType> {
 
     dragDropNodes?: boolean;
     dataSource: GridDataSource<GridDataSourceRow,DesignedObject>;
@@ -53,19 +54,21 @@ export interface GridProps extends ComponentProps<GridState<GridDataSourceRow,De
     denyUpdate?: boolean;
     denyDelete?: boolean;
 
-    lookupMode?: "none" | "single" | "multi";
+    lookupMode?: "none" | "listbox" | "single" | "multi";
     showCloseButton?: boolean;
     onLookupOk?: (selectedRows: GridDataSourceRow[]) => any;
     onLookupCancel?: () => any;
 
     sizeColumnsToFit?: boolean; // The columns will scale (growing or shrinking) to fit the available width.
-    onGridSizeChanged?: (grid: GridState<GridDataSourceRow,DesignedObject>) => void; // The grid had to lay out again because it changed size.
+    onGridSizeChanged?: (grid: GridStateType) => void; // The grid had to lay out again because it changed size.
     noBorder?: boolean;  // .ag-root стираем внешний border
     hideColumnsHeaders?: boolean;  //
-    onGetGridState?: (grid: GridState<GridDataSourceRow,DesignedObject>) => void; // получить доступ к GridState
-    onFirstRender?: (grid: GridState<GridDataSourceRow,DesignedObject>) => void; // после первого рендеринга
-    onKeyDown?: (grid: GridState<GridDataSourceRow,DesignedObject>, keyCode: string, rowData: GridDataSourceRow)=>void;
-    onExternalFilter?: (grid: GridState<GridDataSourceRow,DesignedObject>, rowData: GridDataSourceRow)=>boolean;
+    onGetGridState?: (grid: GridStateType) => void; // получить доступ к GridState
+    onFirstRender?: (grid: GridStateType) => void; // после первого рендеринга
+    onKeyDown?: (grid: GridStateType, keyCode: string, rowData: GridDataSourceRow)=>void;
+    onClick?: (grid: GridStateType, rowData: GridDataSourceRow)=>void;
+    onDblClick?: (grid: GridStateType, rowData: GridDataSourceRow)=>void;
+    onExternalFilter?: (grid: GridStateType, rowData: GridDataSourceRow)=>boolean;
 
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
@@ -89,7 +92,7 @@ export interface GridProps extends ComponentProps<GridState<GridDataSourceRow,De
 }
 
 class DragDropState {
-    constructor(public gridState: GridState<GridDataSourceRow,DesignedObject>) {
+    constructor(public gridState: GridStateType) {
 
     }
 
@@ -483,7 +486,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
                         let afterStr = str.substring(pos + this.state.filterWords[i].length);
                         let ret1 = ret.slice(0, retIndex);
                         let ret2 = [beforeStr,
-                            <span className="grid-filter-highlight">{searchStr}</span>, afterStr];
+                            <span key={i} className="grid-filter-highlight">{searchStr}</span>, afterStr];
                         let ret3 = ret.slice(retIndex + 1);
                         ret = ret1.concat(ret2, ret3);
                         break;
@@ -528,6 +531,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
             dataValue = "<array>";
         else
             dataValue = "<invalid type>";
+
         let cell = <span>{icon}{dataValue}</span>;
         return cell;
     };
@@ -538,10 +542,25 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         if (this.props.onKeyDown !== undefined) {
             $(focusedDiv).on("keydown", (e: JQueryKeyEventObject)=> {
                 this.props.onKeyDown!(this.state, JQueryKeyCodeToReact[e.keyCode.toString()], params.data);
-                //console.log(e.charCode);
-                //console.log(e.keyCode);
             });
         }
+        if (this.props.onClick !== undefined) {
+            $(focusedDiv).on("click", (e: JQueryKeyEventObject)=> {
+                this.props.onClick!(this.state, params.data);
+            });
+        }
+        if (this.props.onDblClick !== undefined) {
+            $(focusedDiv).on("dblclick", (e: JQueryKeyEventObject)=> {
+                this.props.onDblClick!(this.state, params.data);
+            });
+        }
+        if (this.props.lookupMode === "listbox")
+            $(focusedDiv).addClass("grid-lookup-mode-listbox");
+        else if (this.props.lookupMode === "single")
+            $(focusedDiv).addClass("grid-lookup-mode-single");
+        else if (this.props.lookupMode === "multi")
+            $(focusedDiv).addClass("grid-lookup-mode-multi");
+
 
         let cell = this.renderCell(params.column, params.node, params.data);
 
@@ -724,7 +743,7 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
         }
     }
 
-    protected didUpdate(prevProps: GridProps, prevState: GridState<GridDataSourceRow,DesignedObject>, prevContext: any) {
+    protected didUpdate(prevProps: GridProps, prevState: GridStateType, prevContext: any) {
         super.didUpdate(prevProps, prevState, prevContext);
         this.disableDragDrop();
         if (this.props.enableDragDrop === true) {

@@ -13,6 +13,7 @@ import Grid from "../Grid/Grid";
 import {Keycode} from "../../Keycode";
 import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {GridState} from "../Grid/Grid";
+import {GridStateType} from "../Grid/Grid";
 
 export enum LookupInputType {Text, Number, Date }
 
@@ -48,6 +49,11 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
 
     protected didMount() {
         super.didMount();
+    }
+
+    protected willUnmount() {
+        super.willUnmount();
+        clearInterval(this.listBoxCloseCheckerInterval);
     }
 
     private inputText: string;
@@ -189,10 +195,10 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
         this.closePopupListBox();
     }
 
-    private listBoxGrid: GridState<GridDataSourceRow,DesignedObject>;
+    private listBoxGrid: GridStateType;
 
 
-    private handleGridKeyDown = (grid: GridState<GridDataSourceRow,DesignedObject>, keyCode: string, rowData: GridDataSourceRow)=> {
+    private handleGridKeyDown = (grid: GridStateType, keyCode: string, rowData: GridDataSourceRow)=> {
         if (keyCode === Keycode.Esc) {
             this.closePopupListBox();
         }
@@ -203,6 +209,12 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
         }
     }
 
+    private handleClick = (grid: GridStateType, rowData: GridDataSourceRow)=> {
+        this.setValue(grid.dataSource.getDataValue(rowData, this.props.lookupDataSource.lookupValuePropName!));
+        this.closePopupListBox();
+        this.inputElement.focus();
+    }
+
     private setValue(value: any) {
         this.props.bindObject[this.props.bindPropName] = value;
         this.inputText = this.props.lookupDataSource.getLookupLabel(value);
@@ -211,11 +223,11 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
         this.forceUpdate();
     }
 
-    private handleGridExternalFilter = (grid: GridState<GridDataSourceRow,DesignedObject>, rowData: GridDataSourceRow): boolean => {
+    private handleGridExternalFilter = (grid: GridStateType, rowData: GridDataSourceRow): boolean => {
         grid.filterWords = this.listBoxFilterWords;
         if (this.listBoxFilterRegExp !== undefined) {
             let label = grid.dataSource.getDataValue(rowData, this.props.lookupDataSource.lookupValuePropName!) + "\t" +
-                grid.dataSource.getDataValue(rowData,this.props.lookupDataSource.lookupLabelPropName!);
+                grid.dataSource.getDataValue(rowData, this.props.lookupDataSource.lookupLabelPropName!);
             for (let i = 0; i < this.listBoxFilterRegExp.length; i++) {
                 if (label.search(this.listBoxFilterRegExp[i]) === -1)
                     return false;
@@ -240,18 +252,20 @@ export class LookupInput extends Component<LookupInputProps<any>, any> {
         let winContent = (
             <div style={{height:"100%"}}>
                 <Grid
+                    lookupMode="listbox"
                     style={{width: $(this.inputElement).outerWidth()}}
                     dataSource={this.props.lookupDataSource}
                     sizeColumnsToFit={true}
                     noBorder={true}
                     hideColumnsHeaders={true}
-                    onFirstRender={(grid: GridState<GridDataSourceRow,DesignedObject>)=>{
+                    onFirstRender={(grid: GridStateType)=>{
                                 this.listBoxGrid=grid;
                                 if (isSetFocusToGrid)
                                     grid.setFocusToFirstRow();
                                 }
                             }
                     onKeyDown={this.handleGridKeyDown}
+                    onClick={this.handleClick}
                     onExternalFilter={this.handleGridExternalFilter}
                 >
                     <GridColumnDef propertyName={this.props.lookupDataSource.lookupLabelPropName}>
