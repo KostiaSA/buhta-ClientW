@@ -2,7 +2,7 @@ import * as React from "react";
 import {ComponentProps, Component} from "../Component";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
 
-export enum InputType {Text, Number, Date }
+export enum InputType {Text, Number, Date, Boolean }
 
 export interface InputProps extends ComponentProps<any>, AutoFormControlProps {
     type: InputType;
@@ -12,6 +12,7 @@ export interface InputProps extends ComponentProps<any>, AutoFormControlProps {
     onClick?: React.ReactEventHandler;
     placeHolder?: string;
     onChange?: () => void;
+    checkboxCaption?: string;
 }
 
 
@@ -31,32 +32,14 @@ export class Input extends Component<InputProps, any> {
                 return this.renderText();
             case InputType.Number:
                 return this.renderNumber();
+            case InputType.Boolean:
+                return this.renderBoolean();
             default:
                 throw  "Input.render():=> unknown InputType '" + this.props.type + "'";
         }
     }
 
-    getText = (): string => {
-        if (this.props.bindObject && this.props.bindPropName) {
-            if (this.props.bindObject[this.props.bindPropName])
-                return this.props.bindObject[this.props.bindPropName].toString();
-            else
-                return "";
-        }
-        else
-            return "<unbinded>";
-    };
 
-    getNumber = (): string => {
-        if (this.props.bindObject && this.props.bindPropName) {
-            if (this.props.bindObject[this.props.bindPropName])
-                return this.props.bindObject[this.props.bindPropName].toString();
-            else
-                return "";
-        }
-        else
-            return "<unbinded>";
-    };
 
     handleOnChangeText = (event: React.SyntheticEvent) => {
         if (this.props.bindObject && this.props.bindPropName)
@@ -67,13 +50,15 @@ export class Input extends Component<InputProps, any> {
 
     };
 
-    handleOnChangeNumber = (event: React.SyntheticEvent) => {
-        if (this.props.bindObject && this.props.bindPropName)
-            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
-        this.forceUpdate();
-        if (this.props.onChange)
-            this.props.onChange();
-
+    getText = (): string => {
+        if (this.props.bindObject && this.props.bindPropName) {
+            if (this.props.bindObject[this.props.bindPropName])
+                return this.props.bindObject[this.props.bindPropName].toString();
+            else
+                return "";
+        }
+        else
+            return "<unbinded>";
     };
 
     renderText(): JSX.Element {
@@ -94,6 +79,27 @@ export class Input extends Component<InputProps, any> {
         );
     }
 
+    getNumber = (): string => {
+        if (this.props.bindObject && this.props.bindPropName) {
+            if (this.props.bindObject[this.props.bindPropName])
+                return this.props.bindObject[this.props.bindPropName].toString();
+            else
+                return "";
+        }
+        else
+            return "<unbinded>";
+    };
+
+
+    handleOnChangeNumber = (event: React.SyntheticEvent) => {
+        if (this.props.bindObject && this.props.bindPropName)
+            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
+        this.forceUpdate();
+        if (this.props.onChange)
+            this.props.onChange();
+
+    };
+
     renderNumber(): JSX.Element {
 
         this.clearStyles();
@@ -109,4 +115,44 @@ export class Input extends Component<InputProps, any> {
             />
         );
     }
+
+    getBoolean = (): boolean => {
+        if (this.props.bindObject && this.props.bindPropName) {
+            if (this.props.bindObject[this.props.bindPropName]===true)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;  // todo как-то надо показать unbinded?
+    };
+
+    handleOnChangeBoolean = (event: React.SyntheticEvent) => {
+        if (this.props.bindObject && this.props.bindPropName)
+            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
+        this.forceUpdate();
+        if (this.props.onChange)
+            this.props.onChange();
+
+    };
+
+    renderBoolean(): JSX.Element {
+
+        this.clearStyles();
+        this.addClassName("checkbox");
+        //this.addStyles({width: 30});
+
+        return (
+            <label className="checkbox">
+                <input
+                    type="checkbox"
+                    value={this.getBoolean()}
+                    onChange={this.handleOnChangeBoolean}
+                    {...this.getRenderProps()}
+                />
+                <span className="caption" style={{marginLeft:5}}>{this.props.checkboxCaption}</span>
+            </label>
+        );
+    }
+
 }

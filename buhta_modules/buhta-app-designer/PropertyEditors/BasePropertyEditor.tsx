@@ -8,7 +8,7 @@ export interface PropertyEditorInfo extends AutoFormControlProps {
     propertyName: string;
     objectType: typeof DesignedObject;
     editorType: typeof BasePropertyEditor;
-    propertyType: typeof Object | typeof String | null;
+    propertyType: typeof Object | typeof String | typeof Boolean | typeof Number | null;
     customParams?: any;
 }
 

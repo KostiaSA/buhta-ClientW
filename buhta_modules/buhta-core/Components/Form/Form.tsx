@@ -3,7 +3,8 @@ import {ComponentProps, Component} from "../Component";
 import {InputDivider} from "../InputDivider/InputDivider";
 import {PropertyEditorInfo} from "../../../buhta-app-designer/PropertyEditors/BasePropertyEditor";
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
-import {InputProps} from "../Input/Input";
+import {InputProps, InputType} from "../Input/Input";
+import {BooleanPropertyEditor} from "../../../buhta-app-designer/PropertyEditors/BooleanPropertyEditor";
 
 
 export interface FormProps extends ComponentProps<any> {
@@ -29,7 +30,7 @@ export class Form extends Component<FormProps, any> {
                 // 2. начало горизонтальной группы, рендерим tr, который включает всю группу
                 // 3. член горизонтальной группы, рендерим пустышку
 
-                let controlProps = control.props as InputProps;
+                let controlProps = control.props as PropertyEditorInfo;
 
                 let mode = 1;
                 if (controlProps.combineWithPrevInput === true) {
@@ -59,15 +60,22 @@ export class Form extends Component<FormProps, any> {
 
                         let extraControls: JSX.Element[] = [];
                         for (let i = index + 1; i < controlArr.length; i++) {
-                            let extraControlProps = controlArr[i].props as InputProps;
+                            let extraControlProps = controlArr[i].props as PropertyEditorInfo;
                             if (extraControlProps.combineWithPrevInput !== true)
                                 break;
+
+                            let caption = extraControlProps.inputCaption;
+                            // if (caption === undefined)
+                            //     caption = extraControlProps.bindPropName;
+                            if (extraControlProps.editorType === BooleanPropertyEditor)
+                                caption = "";
+
                             extraControls.push(
                                 <p className="control">
                                     <span className="caption"
                                           style={{marginLeft:10,marginRight:10}}
                                     >
-                                        {extraControlProps.inputCaption}
+                                        {caption}
                                     </span>
                                     {controlArr[i]}
                                 </p>
@@ -88,13 +96,22 @@ export class Form extends Component<FormProps, any> {
 
                 };
 
-                if (controlProps && (controlProps.inputCaption || controlProps.bindPropName)) {
+                if (controlProps && controlProps.inputCaption) { // || controlProps.bindPropName)) {
+
+                    let caption = controlProps.inputCaption;
+                    // if (caption === undefined)
+                    //     caption = controlProps.bindPropName;
+                    if (controlProps.editorType === BooleanPropertyEditor)
+                        caption = "";
+
+                    console.log(caption);
+                    console.log(controlProps);
 
                     let node =
                         <tr className="control" key={index}>
                             <td style={{textAlign: "right", verticalAlign: "top"}}>
                                 <span
-                                    className="caption">{controlProps.inputCaption ? controlProps.inputCaption : controlProps.bindPropName}
+                                    className="caption">{caption}
                                 </span>
                             </td>
                             <td style={{textAlign: "left", verticalAlign: "middle"}}>

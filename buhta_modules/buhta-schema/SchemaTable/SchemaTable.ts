@@ -9,6 +9,7 @@ import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
 import {StringDataType} from "./DataTypes/StringDataType";
 import {QuerySourceObject} from "../SchemaQuery/SchemaQuery";
 import {SelectTable} from "../../buhta-sql/SelectStmt";
+import {SchemaTableIndex} from "./SchemaTableIndex";
 
 export class SchemaTable extends SchemaObject implements QuerySourceObject {
 
@@ -44,6 +45,22 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
         }
     })
     columns: SchemaTableColumn[] = [];
+
+    @ListEditor({
+        inputTab: "Индексы",
+        enableDragDrop: true,
+        gridColumns: [
+            {caption: "Имя индекса", propertyName: "name"},
+            //{caption: "Тип данных", propertyName: "dataType"},
+            {caption: "Описание", propertyName: "description"}
+        ],
+        getNewListItem: (table: SchemaTable, parentItem?: SchemaTableIndex) => {
+            let index = new SchemaTableIndex(table);
+            index.name = "Новый индекс";
+            return getInstantPromise<DesignedObject>(index);
+        }
+    })
+    indexes: SchemaTableIndex[] = [];
 
     addColumn(initCallback?: (newColumn: SchemaTableColumn) => void): SchemaTableColumn {
         let col = new SchemaTableColumn(this);
