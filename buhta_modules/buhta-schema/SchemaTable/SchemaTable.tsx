@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import {SchemaObject} from "../SchemaObject";
 import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyEditor";
 import {SchemaTableColumn} from "./SchemaTableColumn";
@@ -31,6 +33,12 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
 
     @ListEditor({
         inputTab: "Колонки",
+        onRenderInputTab: (designedObject?: SchemaTable): React.ReactNode => {
+            if (designedObject !== undefined)
+                return "Колонки(" + designedObject.columns.length + ")";
+            else
+                return "Колонки";
+        },
         enableDragDrop: true,
         gridColumns: [
             {caption: "Имя", propertyName: "name"},
@@ -48,6 +56,12 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
 
     @ListEditor({
         inputTab: "Индексы",
+        onRenderInputTab: (designedObject?: SchemaTable): React.ReactNode => {
+            if (designedObject !== undefined)
+                return "Индексы(" + designedObject.indexes.length + ")";
+            else
+                return "Индексы";
+        },
         enableDragDrop: true,
         gridColumns: [
             {caption: "Имя индекса", propertyName: "name"},

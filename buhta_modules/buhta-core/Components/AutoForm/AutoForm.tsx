@@ -12,6 +12,7 @@ import {
     SAVE_BUTTON_ICON, CANCEL_BUTTON_ICON, CLOSE_BUTTON_ICON, CANCEL_BUTTON_TEXT,
     CLOSE_BUTTON_TEXT, SAVE_BUTTON_TEXT
 } from "../../Constants";
+import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 
 
 export interface AutoFormControlProps {
@@ -22,9 +23,11 @@ export interface AutoFormControlProps {
     inputWidthPx?: number;
     inputStyle?: React.CSSProperties;
     combineWithPrevInput?: boolean;
+    onRenderInputTab?: (designedObject?: DesignedObject)=> React.ReactNode;
 }
 
 export interface AutoFormProps extends ComponentProps<any> {
+    designedObject?: DesignedObject;
     inputs?: AutoFormControlProps[];
     sizeTo: "parent" | "content";
     needToSave?: boolean;
@@ -75,6 +78,8 @@ export class AutoForm extends Component<AutoFormProps, any> {
             return this.renderTab(tabs[0]);
         }
         else {
+
+
             return (
                 <Tabs
                     sizeTo="parent"
@@ -82,8 +87,18 @@ export class AutoForm extends Component<AutoFormProps, any> {
                     onChangeActiveTab={ (state, tab) => { console.log("setActiveTab");console.log(tab);}}
                 >
                     { tabs.map<JSX.Element>((tab, index) => {
+
+                        let renderTabTitle = (): React.ReactNode => {
+                            let tabInputs = this.getTabInputs(tab);
+                            for (let i = 0; i < tabInputs.length; i++) {
+                                if ((tabInputs[i].props as AutoFormControlProps).onRenderInputTab !== undefined)
+                                    return (tabInputs[i].props as AutoFormControlProps).onRenderInputTab!(this.props.designedObject);
+                            }
+                            return tab === "" ? emptyTabName : tab;
+                        }
+
                         return (
-                            <Tab key={index} title={tab === "" ? emptyTabName : tab}>
+                            <Tab key={index} title={renderTabTitle()}>
                                 {this.renderTab(tab)}
                             </Tab>
                         );

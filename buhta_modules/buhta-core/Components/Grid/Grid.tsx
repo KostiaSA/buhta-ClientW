@@ -147,6 +147,11 @@ export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends De
             this.agGrid.api!.onFilterChanged();
     }
 
+    dataChanged() {
+        this.grid.forceUpdateParentWindow();
+        console.log("grid-dataChanged2");
+    }
+
     refresh() {
         console.log("grid-refresh");
         (this.component as Grid).rowHeightCache = undefined;

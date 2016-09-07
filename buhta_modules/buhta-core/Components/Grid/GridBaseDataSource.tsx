@@ -176,6 +176,7 @@ implements GridDataSource<TRow,TDesignedObject> {
                     }
                     else
                         grid.refresh();
+                    grid.dataChanged();
                 }
             });
         }
@@ -195,6 +196,7 @@ implements GridDataSource<TRow,TDesignedObject> {
                     onSaveChanges: () => {
                         grid.refresh();
                         grid.setFocusedRow(rowData);
+                        grid.dataChanged();
                     }
                 };
 
@@ -239,6 +241,7 @@ implements GridDataSource<TRow,TDesignedObject> {
                         this.addRow((newDesignedObject as any)as TRow);
                         grid.refresh();
                         grid.setFocusedRow(newDesignedObject as any);
+                        grid.dataChanged();
                     }
                 };
 

@@ -30,13 +30,19 @@ export function objectToHostJavaScript(obj: any, objPropName?: string, refs?: an
 
 
     for (let propName in obj) {
-        if (obj.hasOwnProperty(propName) && propName.substring(0, 2) !== "$$" && !_.isFunction(obj[propName]) && obj[propName]!==undefined) {
+        if (obj.hasOwnProperty(propName) && propName.substring(0, 2) !== "$$" && !_.isFunction(obj[propName]) && obj[propName] !== undefined) {
             let propValue: any = obj[propName];
 
             js.push("obj." + propName + "=");
 
             if (propValue === null)
                 js.push("null");
+            else if (_.isBoolean(propValue)) {
+                if (propValue === true)
+                    js.push("true");
+                else
+                    js.push("false");
+            }
             else if (_.isNumber(propValue))
                 js.push(propValue.toString());
             else if (_.isString(propValue))

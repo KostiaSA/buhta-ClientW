@@ -25,6 +25,7 @@ import {GuidDataType} from "../buhta-schema/SchemaTable/DataTypes/GuidDataType";
 import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
 import {SchemaQuery, QueryColumn, QueryJoinColumn, QueryTable} from "../buhta-schema/SchemaQuery/SchemaQuery";
 import {SchemaTableIndex} from "../buhta-schema/SchemaTable/SchemaTableIndex";
+import {SchemaTableIndexColumn} from "../buhta-schema/SchemaTable/SchemaTableIndexColumn";
 
 export let buhtaHost: any = {};
 
@@ -37,6 +38,7 @@ buhtaHost.SchemaObject = SchemaObject;
 buhtaHost.SchemaTable = SchemaTable;
 buhtaHost.SchemaTableColumn = SchemaTableColumn;
 buhtaHost.SchemaTableIndex = SchemaTableIndex;
+buhtaHost.SchemaTableIndexColumn = SchemaTableIndexColumn;
 
 buhtaHost.BaseDataType = BaseDataType;
 buhtaHost.StringDataType = StringDataType;

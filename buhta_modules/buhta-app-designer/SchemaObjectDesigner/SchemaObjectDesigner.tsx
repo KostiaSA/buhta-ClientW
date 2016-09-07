@@ -168,6 +168,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
                 onSaveChanges={this.handleSaveChanges}
                 onCancelChanges={this.handleCancelChanges}
                 needToSave={this.needToSave}
+                designedObject={this.clonedDesignedObject}
                 {...this.getRenderProps()}>
                 {this.renderPropertyDesigners()}
             </AutoForm>

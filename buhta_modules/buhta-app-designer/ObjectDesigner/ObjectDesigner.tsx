@@ -136,6 +136,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                 onSaveChanges={this.handleSaveChanges}
                 onCancelChanges={this.handleCancelChanges}
                 needToSave={this.needToSave}
+                designedObject={this.clonedDesignedObject}
                 {...this.getRenderProps()}>
                 Object designer
                 {this.renderPropertyDesigners()}

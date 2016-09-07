@@ -122,6 +122,7 @@ var GridBaseDataSource = (function () {
                     }
                     else
                         grid.refresh();
+                    grid.dataChanged();
                 }
             });
         }
@@ -137,6 +138,7 @@ var GridBaseDataSource = (function () {
                     onSaveChanges: function () {
                         grid.refresh();
                         grid.setFocusedRow(rowData);
+                        grid.dataChanged();
                     }
                 };
                 var win = designedObject.$$getDesigner(designerProps);
@@ -173,6 +175,7 @@ var GridBaseDataSource = (function () {
                         _this.addRow(newDesignedObject);
                         grid.refresh();
                         grid.setFocusedRow(newDesignedObject);
+                        grid.dataChanged();
                     }
                 };
                 var win = newDesignedObject.$$getDesigner(designerProps);

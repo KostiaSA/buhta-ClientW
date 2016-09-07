@@ -6,6 +6,9 @@ import {BaseDataType} from "./DataTypes/BaseDataType";
 import {DataTypeEditor} from "../../buhta-app-designer/PropertyEditors/DataTypePropertyEditor";
 import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 import {BooleanEditor} from "../../buhta-app-designer/PropertyEditors/BooleanPropertyEditor";
+import {SchemaTableIndexColumn} from "./SchemaTableIndexColumn";
+import {getInstantPromise} from "../../buhta-core/getInstantPromise";
+import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyEditor";
 
 export class SchemaTableIndex extends DesignedObject {
     constructor(public table: SchemaTable) {
@@ -57,6 +60,21 @@ export class SchemaTableIndex extends DesignedObject {
     })
     @GridColumn({caption: "Кластерный"})
     isClustered: boolean;
+
+
+    @ListEditor({
+        inputTab: "Колонки индекса",
+        enableDragDrop: true,
+        gridColumns: [
+            {caption: "Имя колонки", propertyName: "name"}
+        ],
+        getNewListItem: (tableIndex: SchemaTableIndex, parentItem?: SchemaTableIndexColumn) => {
+            let column = new SchemaTableIndexColumn(tableIndex);
+            column.name = "";
+            return getInstantPromise<DesignedObject>(column);
+        }
+    })
+    columns: SchemaTableIndexColumn[] = [];
 
     toString() {
         return this.name + " of (" + this.table.name + ")";

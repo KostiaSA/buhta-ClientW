@@ -75,8 +75,8 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
 
     nativeElement: HTMLElement;
 
-    getNativeElement(): Element{
-        if (this.nativeElement!==undefined)
+    getNativeElement(): Element {
+        if (this.nativeElement !== undefined)
             return this.nativeElement;
         else
             return ReactDOM.findDOMNode(this);
@@ -98,6 +98,12 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
             parent = parent.parentElement;
         }
         return null;
+    }
+
+    forceUpdateParentWindow() {
+        let win = this.getParentWindow();
+        if (win)
+            win.forceUpdateBody();
     }
 
     getParentUIComponent(): SchemaComponent | null {

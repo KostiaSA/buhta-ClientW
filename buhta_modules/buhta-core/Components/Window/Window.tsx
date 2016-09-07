@@ -224,9 +224,15 @@ export class Window extends Component<WindowProps, WindowState> {
 
         this.state.disabled = newDisabled;
 
-        return oldDisabled !== newDisabled;
+//        return oldDisabled !== newDisabled;
+        return true;
     }
 
+    private bodyElement:any;
+    forceUpdateBody(){
+        this.bodyElement.forceUpdate();
+        console.log("bodyElement.forceUpdate");
+    }
 
     renderRightBottomCornerResizer(): React.ReactNode {
         if (this.state.autoSize === "content") {
@@ -369,7 +375,11 @@ export class Window extends Component<WindowProps, WindowState> {
                             </Layout>
                         </Fixed>
 
-                        <Flex className="window-body" style={{ padding:bodyPadding, overflow:"hidden" }}>
+                        <Flex
+                            className="window-body"
+                            style={{ padding:bodyPadding, overflow:"hidden" }}
+                            ref={ (e: any) => { this.bodyElement = e; }}
+                        >
                             {this.props.children}
                             {this.renderRightBottomCornerResizer()}
                         </Flex>

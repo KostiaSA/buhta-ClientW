@@ -22,6 +22,11 @@ export function isDeepEqual(obj1: any, obj2: any, compared?: any): boolean {
             return false;
     }
 
+    if (_.isBoolean(obj1)) {
+        if (obj1 !== obj2)
+            return false;
+    }
+
     if (_.isArrayBuffer(obj1)) {
         if (!_.isArrayBuffer(obj2))
             return false;

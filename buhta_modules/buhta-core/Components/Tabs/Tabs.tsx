@@ -26,7 +26,7 @@ export class TabsState extends ComponentState<TabsProps> {
 }
 
 export class TabInfo {
-    title: string | undefined;
+    title: React.ReactNode | undefined;
     isActive: boolean;
     content: React.ReactNode;
 }
@@ -140,6 +140,8 @@ export class Tabs extends Component<TabsProps, TabsState> {
                     <a>{tabInfo.title}</a>
                 </li>
             list.push(element);
+
+            console.log("renter-tab: " + tabInfo.title);
         });
 
 
@@ -180,6 +182,8 @@ export class Tabs extends Component<TabsProps, TabsState> {
     }
 
     render() {
+        console.log("render-tabs");
+
         this.addStyles({height: "100%"});
         this.addStyles({position: "relative", overflow: "auto"});
 
@@ -199,7 +203,7 @@ export class Tabs extends Component<TabsProps, TabsState> {
 }
 
 export interface TabProps extends ComponentProps<any> {
-    title?: string;
+    title?: React.ReactNode;
 }
 
 

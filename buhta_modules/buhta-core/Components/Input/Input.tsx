@@ -117,6 +117,8 @@ export class Input extends Component<InputProps, any> {
     }
 
     getBoolean = (): boolean => {
+        console.log("getBoolean");
+        console.log(this.props.bindObject[this.props.bindPropName]);
         if (this.props.bindObject && this.props.bindPropName) {
             if (this.props.bindObject[this.props.bindPropName]===true)
                 return true;
@@ -128,8 +130,10 @@ export class Input extends Component<InputProps, any> {
     };
 
     handleOnChangeBoolean = (event: React.SyntheticEvent) => {
+        console.log(event.target);
+        console.log((event.target as any).checked);
         if (this.props.bindObject && this.props.bindPropName)
-            this.props.bindObject[this.props.bindPropName] = (event.target as any).value;
+            this.props.bindObject[this.props.bindPropName] = (event.target as any).checked;
         this.forceUpdate();
         if (this.props.onChange)
             this.props.onChange();
@@ -146,7 +150,7 @@ export class Input extends Component<InputProps, any> {
             <label className="checkbox">
                 <input
                     type="checkbox"
-                    value={this.getBoolean()}
+                    checked={this.getBoolean()}
                     onChange={this.handleOnChangeBoolean}
                     {...this.getRenderProps()}
                 />
