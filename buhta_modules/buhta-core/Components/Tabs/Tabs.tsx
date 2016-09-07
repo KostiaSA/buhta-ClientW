@@ -29,6 +29,7 @@ export class TabInfo {
     title: React.ReactNode | undefined;
     isActive: boolean;
     content: React.ReactNode;
+    tabIndex: number;
 }
 
 export class Tabs extends Component<TabsProps, TabsState> {
@@ -49,7 +50,34 @@ export class Tabs extends Component<TabsProps, TabsState> {
             let tabInfo: TabInfo = {
                 title: tabProps.title,
                 content: tabProps.children as React.ReactNode,
-                isActive: index === 0
+                isActive: index === 0,
+                tabIndex: index
+            }
+
+            this.state.tabs.push(tabInfo);
+        });
+
+    }
+
+    private updateTabsState(nextProps: TabsProps) {
+
+        this.props = nextProps;
+
+        let tabTags = this.getChildren(Tab);
+
+        let activeIndex = this.state.tabs.filter((t)=>t.isActive)[0].tabIndex;
+
+        this.state.tabs = [];
+
+        tabTags.forEach((tabTag, index) => {
+
+            let tabProps = tabTag.props as TabProps;
+
+            let tabInfo: TabInfo = {
+                title: tabProps.title,
+                content: tabProps.children as React.ReactNode,
+                isActive: index === activeIndex,
+                tabIndex: index
             }
 
             this.state.tabs.push(tabInfo);
@@ -60,73 +88,12 @@ export class Tabs extends Component<TabsProps, TabsState> {
     protected willMount() {
         this.createInitTabsState();
         super.willMount();
-
-        // let tabTags = this.getChildren(Tab);
-        //
-        // tabTags.forEach((tabTag, index) => {
-        //
-        //     let tabProps = tabTag.props as TabProps;
-        //
-        //     let tabInfo: TabInfo = {
-        //         title: tabProps.title,
-        //         content: tabProps.children,
-        //         isActive: index === 0
-        //     }
-        //
-        //     this.tabs.push(tabInfo);
-        // });
-
     }
 
-
-    // openWindow(win: JSX.Element): WindowInfo {
-    //     let modal = document.createElement('div');
-    //     modal.id = Math.random().toString(36).slice(2, 12);
-    //     // для поднятия вверх при активации окна
-    //     modal.onclick = (e)=> {
-    //         setTimeout(()=> {
-    //             if (modal.id !== "deleted")
-    //                 this.nativeElement.appendChild(modal);
-    //         }, 1);
-    //     }
-    //
-    //     this.nativeElement.appendChild(modal);
-    //
-    //     let winInstance = ReactDOM.render(win, modal) as Window;
-    //
-    //     let info: WindowInfo = {
-    //         id: modal.id,
-    //         winInstance: winInstance,
-    //         divWrapper: modal
-    //     };
-    //
-    //     this.windows.push(info);
-    //
-    //     return info;
-    // };
-    //
-    // closeWindow(win: Window) {
-    //
-    //     this.windows.forEach((info, index)=> {
-    //         if (info.winInstance === win) {
-    //             info.divWrapper.id = "deleted";
-    //             this.nativeElement.removeChild(info.divWrapper);
-    //             delete this.windows[index];
-    //             return;
-    //         }
-    //     });
-    // }
-    //
-    // activateWindow(win: Window) {
-    //
-    //     this.windows.forEach((info, index)=> {
-    //         if (info.winInstance === win) {
-    //             this.nativeElement.appendChild(info.divWrapper);
-    //             return;
-    //         }
-    //     });
-    // }
-
+    protected willReceiveProps(nextProps: TabsProps) {
+        this.updateTabsState(nextProps);
+        super.willReceiveProps(nextProps);
+    }
 
     renderTabs(): JSX.Element {
 
@@ -173,12 +140,6 @@ export class Tabs extends Component<TabsProps, TabsState> {
         });
 
         return list;
-
-        // return (
-        //     <div ref>
-        //         {list}
-        //     </div>
-        // )
     }
 
     render() {

@@ -231,7 +231,7 @@ export class Window extends Component<WindowProps, WindowState> {
     private bodyElement:any;
     forceUpdateBody(){
         this.bodyElement.forceUpdate();
-        console.log("bodyElement.forceUpdate");
+        console.log("bodyElement.forceUpdate8");
     }
 
     renderRightBottomCornerResizer(): React.ReactNode {
@@ -378,7 +378,7 @@ export class Window extends Component<WindowProps, WindowState> {
                         <Flex
                             className="window-body"
                             style={{ padding:bodyPadding, overflow:"hidden" }}
-                            ref={ (e: any) => { this.bodyElement = e; }}
+                            ref={ (e: any) => { this.bodyElement = e; console.log({flex:e}) }}
                         >
                             {this.props.children}
                             {this.renderRightBottomCornerResizer()}
