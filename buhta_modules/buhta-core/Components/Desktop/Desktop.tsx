@@ -304,7 +304,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                 </div>
             </div>;
 
-        console.log(openParams);
+        //console.log(openParams);
 
         return this.openWindow(win, winParams);
     };

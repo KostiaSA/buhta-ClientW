@@ -146,7 +146,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
 
                         if (!editorProps.inputCaption)
                             editorProps.inputCaption = editorProps.propertyName;
-                        console.log(editorProps);
+                        //console.log(editorProps);
 
                         this.propertyDesigners.push(React.createElement(propInfo.editorType, editorProps, {}));
                     }, this);
@@ -158,6 +158,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
     }
 
     render() {
+        console.log("render-schema-object-designer");
 
         this.addClassName("schema-object-designer");
         this.addProps({onChange: this.props.onChange});

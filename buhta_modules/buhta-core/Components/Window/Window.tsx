@@ -10,6 +10,7 @@ import {Movable, MoveStartEvent, MoveEndEvent} from "../Movable/Movable";
 import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize, PopupAutoPosition} from "../Desktop/Desktop";
 import {throwError} from "../../Error";
 import {saveWindowSizePosition} from "./WindowSizePositionStore";
+import {getRandomString} from "../../getRandomString";
 
 
 export interface WindowProps extends OpenWindowParams, ComponentProps<WindowState> {
@@ -217,22 +218,22 @@ export class Window extends Component<WindowProps, WindowState> {
         e.stopPropagation();
     };
 
-    private shouldComponentUpdate = (nextProps: WindowProps, nextState: WindowState) => {
+    shouldComponentUpdate = (nextProps: WindowProps, nextState: WindowState) => {
 
         let oldDisabled = this.state.disabled === true;
         let newDisabled = nextProps.disabled === true;
 
         this.state.disabled = newDisabled;
 
-//        return oldDisabled !== newDisabled;
-        return true;
+        return oldDisabled !== newDisabled;
+//        return true;
     }
 
-    private bodyElement:any;
-    forceUpdateBody(){
-        this.bodyElement.forceUpdate();
-        console.log("bodyElement.forceUpdate8");
-    }
+    // private bodyElement:any;
+    // forceUpdateBody(){
+    //     this.bodyElement.forceUpdate();
+    //     console.log("bodyElement.forceUpdate10");
+    // }
 
     renderRightBottomCornerResizer(): React.ReactNode {
         if (this.state.autoSize === "content") {
@@ -378,7 +379,6 @@ export class Window extends Component<WindowProps, WindowState> {
                         <Flex
                             className="window-body"
                             style={{ padding:bodyPadding, overflow:"hidden" }}
-                            ref={ (e: any) => { this.bodyElement = e; console.log({flex:e}) }}
                         >
                             {this.props.children}
                             {this.renderRightBottomCornerResizer()}

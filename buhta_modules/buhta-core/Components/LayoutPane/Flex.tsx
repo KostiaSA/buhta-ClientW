@@ -9,6 +9,7 @@ export interface FlexProps extends ComponentProps<any> {
 export class Flex extends Component<FlexProps,any> {
 
     render() {
+
         this.addClassName("Flex");
 
         this.clearStyles();

@@ -40,6 +40,10 @@ const emptyTabName = "закладка";
 
 export class AutoForm extends Component<AutoFormProps, any> {
 
+    protected didMount() {
+        super.didMount();
+        (this.nativeElement as any)["$$autoForm"] = this;
+    }
 
     private getInputs(): AutoFormControlProps[] {
         return React.Children.toArray(this.props.children as React.ReactNode)
@@ -144,7 +148,7 @@ export class AutoForm extends Component<AutoFormProps, any> {
         }
 
         return (
-            <div {...this.getRenderProps()}>
+            <div {...this.getRenderProps()} ref={ (e: any) => { this.nativeElement = e; }}>
                 <Layout type="column" sizeTo="parent">
                     <Flex>
                         {this.renderTabs()}

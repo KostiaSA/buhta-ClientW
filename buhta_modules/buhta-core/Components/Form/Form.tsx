@@ -104,8 +104,8 @@ export class Form extends Component<FormProps, any> {
                     if (controlProps.editorType === BooleanPropertyEditor)
                         caption = "";
 
-                    console.log(caption);
-                    console.log(controlProps);
+                    //console.log(caption);
+                    //console.log(controlProps);
 
                     let node =
                         <tr className="control" key={index}>

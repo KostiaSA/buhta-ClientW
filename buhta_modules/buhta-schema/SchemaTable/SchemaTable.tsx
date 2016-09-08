@@ -34,7 +34,7 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
     @ListEditor({
         inputTab: "Колонки",
         onRenderInputTab: (designedObject?: SchemaTable): React.ReactNode => {
-            if (designedObject !== undefined)
+            if (designedObject !== undefined && designedObject.columns.length>0)
                 return "Колонки(" + designedObject.columns.length + ")";
             else
                 return "Колонки";
@@ -57,7 +57,7 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
     @ListEditor({
         inputTab: "Индексы",
         onRenderInputTab: (designedObject?: SchemaTable): React.ReactNode => {
-            if (designedObject !== undefined)
+            if (designedObject !== undefined && designedObject.indexes.length>0)
                 return "Индексы(" + designedObject.indexes.length + ")";
             else
                 return "Индексы";

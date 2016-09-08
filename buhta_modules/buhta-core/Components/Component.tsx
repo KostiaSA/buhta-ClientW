@@ -8,6 +8,7 @@ import {Desktop, OpenMessageWindowParams} from "./Desktop/Desktop";
 import {throwError} from "../Error";
 import {BaseControl} from "../../buhta-ui/BaseControl";
 import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
+import {AutoForm} from "./AutoForm/AutoForm";
 
 
 export interface XOnClickProps {
@@ -99,12 +100,22 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
         }
         return null;
     }
-
-    forceUpdateParentWindow() {
-        let win = this.getParentWindow();
-        if (win)
-            win.forceUpdateBody();
+    
+    getParentAutoForm(): AutoForm | null {
+        let parent = ReactDOM.findDOMNode(this);
+        while (parent) {
+            if ((parent as any).$$autoForm)
+                return (parent as any).$$autoForm as AutoForm;
+            parent = parent.parentElement;
+        }
+        return null;
     }
+
+    // forceUpdateParentWindow() {
+    //     let win = this.getParentWindow();
+    //     if (win)
+    //         win.forceUpdateBody();
+    // }
 
     getParentUIComponent(): SchemaComponent | null {
         let parent = ReactDOM.findDOMNode(this);
@@ -262,8 +273,8 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     //     return ret;
     // }
     //
-    // private shouldComponentUpdate = (nextProps: P, nextState: S) => {
-    //     return this.shallowCompare(nextProps);
+    // shouldComponentUpdate = (nextProps: P, nextState: S) => {
+    //     return true;
     // }
 
     private componentDidUpdate = (prevProps: P, prevState: S, prevContext: any) => {

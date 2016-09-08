@@ -59,10 +59,7 @@ export class Tabs extends Component<TabsProps, TabsState> {
 
     }
 
-    private updateTabsState(nextProps: TabsProps) {
-
-        this.props = nextProps;
-
+    private updateTabsState() {
         let tabTags = this.getChildren(Tab);
 
         let activeIndex = this.state.tabs.filter((t)=>t.isActive)[0].tabIndex;
@@ -90,10 +87,10 @@ export class Tabs extends Component<TabsProps, TabsState> {
         super.willMount();
     }
 
-    protected willReceiveProps(nextProps: TabsProps) {
-        this.updateTabsState(nextProps);
-        super.willReceiveProps(nextProps);
-    }
+    // protected willReceiveProps(nextProps: TabsProps) {
+    //     this.updateTabsState(nextProps);
+    //     super.willReceiveProps(nextProps);
+    // }
 
     renderTabs(): JSX.Element {
 
@@ -108,7 +105,7 @@ export class Tabs extends Component<TabsProps, TabsState> {
                 </li>
             list.push(element);
 
-            console.log("renter-tab: " + tabInfo.title);
+            //console.log("renter-tab: " + tabInfo.title);
         });
 
 
@@ -143,7 +140,8 @@ export class Tabs extends Component<TabsProps, TabsState> {
     }
 
     render() {
-        console.log("render-tabs");
+        //console.log("render-tabs");
+        this.updateTabsState();
 
         this.addStyles({height: "100%"});
         this.addStyles({position: "relative", overflow: "auto"});

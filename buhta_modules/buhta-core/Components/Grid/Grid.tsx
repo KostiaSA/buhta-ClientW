@@ -148,8 +148,10 @@ export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends De
     }
 
     dataChanged() {
-        this.grid.forceUpdateParentWindow();
-        console.log("grid-dataChanged2");
+        let autoForm = this.grid.getParentAutoForm();
+        if (autoForm)
+            autoForm.forceUpdate();
+        console.log("grid-dataChanged22");
     }
 
     refresh() {
