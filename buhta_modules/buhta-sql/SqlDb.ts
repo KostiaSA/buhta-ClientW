@@ -93,10 +93,10 @@ export class DataColumn {
 }
 
 
-export class DataRow extends DesignedObject {
+export class DataRow {//extends DesignedObject {
     [index: string]: any;
     constructor(public $$table: DataTable) {
-        super();
+        //super();
     }
 
     $$getValue(columnIndex: number): any {

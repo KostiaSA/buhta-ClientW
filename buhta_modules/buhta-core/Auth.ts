@@ -8,7 +8,8 @@ import {SCHEMA_APPLICATION_TYPE_ID} from "./Constants";
 import {getSchema} from "../buhta-schema/Schema";
 import {setApplication} from "./getApplication";
 import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
-import {loadWindowSizePositionStore} from "./Components/Window/WindowSizePositionStore";
+import {loadUserSettingsStore} from "./userSettingsStore";
+//import {loadWindowSizePositionStore} from "./Components/Window/WindowSizePositionStore";
 
 let authOk: boolean;
 let userId: string | null = null;
@@ -135,9 +136,12 @@ export function auth(login: string, password: string): Promise<void> {
         .then((app: SchemaApplication) => {
             setApplication(app);
         })
-        .then(()=>{
+        .then(()=> {
             // загружаем настройки пользователя
-            return loadWindowSizePositionStore();
+            return loadUserSettingsStore();
+        })
+        .catch((error) => {
+            alert("Ошибка загрузки приложения: " + error);
         });
 
     return promise;

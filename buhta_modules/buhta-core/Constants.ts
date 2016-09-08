@@ -58,3 +58,5 @@ export const GUID_DATA_TYPE_DESCRIPTION = "Статистически уника
 
 export const BOOLEAN_TRUE_TEXT = "да";
 export const BOOLEAN_FALSE_TEXT = "нет";
+
+export const USER_SETTINGS_TABLE_NAME = "UserSettings";

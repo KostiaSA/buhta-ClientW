@@ -9,7 +9,7 @@ import {Flex} from "../LayoutPane/Flex";
 import {Movable, MoveStartEvent, MoveEndEvent} from "../Movable/Movable";
 import {OpenWindowParams, Desktop, WindowAutoPosition, WindowAutoSize, PopupAutoPosition} from "../Desktop/Desktop";
 import {throwError} from "../../Error";
-import {saveWindowSizePosition} from "./WindowSizePositionStore";
+import {saveWindowSizePosition, getScreenSizePrefix} from "./WindowSizePositionStore";
 import {getRandomString} from "../../getRandomString";
 
 
@@ -41,6 +41,7 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     noPaddings: boolean;
     popupAutoPosition: PopupAutoPosition;
     popupAnchor: Component<any,any>;
+    sizePositionStoreKey: string;
     // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 }
 
@@ -66,13 +67,14 @@ export class Window extends Component<WindowProps, WindowState> {
         //this.state.disabled = nextProps.disabled;
     }
 
-    // static childContextTypes  = {
-    //     parentWindow: React.PropTypes.any
-    // };
-    //
-    // getChildContext() {
-    //     return {parentWindow: this};
-    // }
+    static childContextTypes  = {
+        windowUserSettingsStoreKey: React.PropTypes.string
+    };
+
+    getChildContext() {
+        console.log("getChildContext():"+this.getUserSettingsStoreKey());
+        return {windowUserSettingsStoreKey: this.getUserSettingsStoreKey()};
+    }
 
     getParentDesktopElement(): HTMLElement {
         let parent = ReactDOM.findDOMNode(this);
@@ -190,8 +192,12 @@ export class Window extends Component<WindowProps, WindowState> {
 
     moveOrResizeEnd = (e: MoveEndEvent): void => {
         if (this.props.sizePositionStoreKey !== undefined)
-            saveWindowSizePosition(this.props.sizePositionStoreKey, this.state.top, this.state.left, this.state.height, this.state.width);
+            saveWindowSizePosition(this.getUserSettingsStoreKey(), this.state.top, this.state.left, this.state.height, this.state.width);
     };
+
+    getUserSettingsStoreKey():string {
+        return getScreenSizePrefix() + "/" + this.props.sizePositionStoreKey;
+    }
 
     resizeRightBottomCornerStart = (e: MoveStartEvent): void => {
         e.bindX(this.state, "width", () => {

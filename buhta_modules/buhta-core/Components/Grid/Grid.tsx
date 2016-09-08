@@ -24,6 +24,8 @@ import {
 } from "../../Constants";
 import {Icon} from "../Icon/Icon";
 import {JQueryKeyCodeToReact} from "../../Keycode";
+import {isDeepEqual} from "../../isDeepEqual";
+import {saveUserSettings, getUserSettings} from "../../userSettingsStore";
 
 
 ///////////// ВНИМАНИЕ !  //////////////////
@@ -69,6 +71,7 @@ export interface GridProps extends ComponentProps<GridStateType> {
     onClick?: (grid: GridStateType, rowData: GridDataSourceRow)=>void;
     onDblClick?: (grid: GridStateType, rowData: GridDataSourceRow)=>void;
     onExternalFilter?: (grid: GridStateType, rowData: GridDataSourceRow)=>boolean;
+    userSettingsStoreKey?: string;
 
     // dataSource: TreeGridDataSource<T>;
     // rowHeight?: number;
@@ -151,11 +154,11 @@ export class GridState<TRow extends GridDataSourceRow,TDesignedObject extends De
         let autoForm = this.grid.getParentAutoForm();
         if (autoForm)
             autoForm.forceUpdate();
-        console.log("grid-dataChanged22");
+        //console.log("grid-dataChanged22");
     }
 
     refresh() {
-        console.log("grid-refresh");
+        //console.log("grid-refresh");
         (this.component as Grid).rowHeightCache = undefined;
         this.agGrid.api!.setRowData(this.dataSource.getRows());
         if (this.component.props.sizeColumnsToFit === true)
@@ -278,6 +281,8 @@ export interface AgCellClassRules {
 }
 
 export default class Grid extends Component<GridProps, GridState<GridDataSourceRow,DesignedObject>> {
+
+
     constructor(props: GridProps, context: any) {
         super(props, context);
 
@@ -533,13 +538,13 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
             if (gridColumnProps.booleanTrueLabel !== undefined)
                 dataValue = gridColumnProps.booleanTrueLabel;
             else
-                dataValue=BOOLEAN_TRUE_TEXT;
+                dataValue = BOOLEAN_TRUE_TEXT;
         }
         else if (dataValue === false) {
             if (gridColumnProps.booleanFalseLabel !== undefined)
                 dataValue = gridColumnProps.booleanFalseLabel;
             else
-                dataValue=BOOLEAN_FALSE_TEXT;
+                dataValue = BOOLEAN_FALSE_TEXT;
         }
         else if (_.isString(dataValue)) {
             // это строка, отставляем как есть, только подсвечиваем фильтрацию
@@ -728,6 +733,35 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
     }
 
 
+    private currentColumnState: any;
+    private checkColumnStateInterval: number;
+    private checkColumnState = () => {
+        let newState = this.state.agGrid.columnApi!.getColumnState();
+        if (!isDeepEqual(newState, this.currentColumnState)) {
+            let storeKey = this.context.windowUserSettingsStoreKey + "/Grid/" + this.getUserSettingsStoreKey() + "/Columns";
+            saveUserSettings(storeKey, newState);
+            this.currentColumnState = newState;
+            //console.log("saveUserSettings: " + storeKey);
+        }
+    }
+
+    private restoreColumnState = () => {
+        let storeKey = this.context.windowUserSettingsStoreKey + "/Grid/" + this.getUserSettingsStoreKey() + "/Columns";
+        let state = getUserSettings(storeKey);
+        //console.log({state: state});
+        if (state !== undefined)
+            this.state.agGrid.columnApi!.setColumnState(state);
+    }
+
+    getUserSettingsStoreKey(): string {
+        return this.props.userSettingsStoreKey || "*";
+    }
+
+    // protected willUnmount() {
+    //     clearInterval(this.checkColumnStateInterval);
+    //     super.willUnmount();
+    // }
+
     protected didMount() {
         super.didMount();
 
@@ -742,6 +776,13 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
         if (this.props.sizeColumnsToFit === true)
             this.state.agGrid.api!.sizeColumnsToFit();
+
+        this.restoreColumnState();
+
+        this.currentColumnState = this.state.agGrid.columnApi!.getColumnState();
+        this.checkColumnStateInterval = setInterval(this.checkColumnState, 1000);
+
+
         // else
         //     this.state.agGrid.columnApi!.autoSizeColumns(this.state.agGrid.columnApi!.getAllColumns());
 
@@ -781,6 +822,8 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
     protected willUnmount() {
         super.willUnmount();
+        clearInterval(this.checkColumnStateInterval);
+        this.checkColumnState();
         this.disableDragDrop();
         this.state.agGrid.api!.destroy();
     }

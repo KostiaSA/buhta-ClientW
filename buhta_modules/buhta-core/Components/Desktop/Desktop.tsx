@@ -16,7 +16,7 @@ import {
     MESSAGE_OK_BUTTON_ICON, MESSAGE_OK_ERROR_BUTTON_ICON, MESSAGE_OK_DANGER_BUTTON_ICON,
     MESSAGE_CANCEL_BUTTON_ICON
 } from "../../Constants";
-import {getWindowSizePosition} from "../Window/WindowSizePositionStore";
+import {getWindowSizePosition, getScreenSizePrefix} from "../Window/WindowSizePositionStore";
 
 
 export interface DesktopProps extends ComponentProps<any> {
@@ -210,7 +210,7 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         if (openParams.sizePositionStoreKey !== undefined) {
             newWin.sizePositionStoreKey = openParams.sizePositionStoreKey;
 
-            let sizePosInfo = getWindowSizePosition(openParams.sizePositionStoreKey);
+            let sizePosInfo = getWindowSizePosition(getScreenSizePrefix() + "/" + openParams.sizePositionStoreKey);
 
             if (sizePosInfo !== undefined) {
                 newWin.left = sizePosInfo.L;
@@ -220,7 +220,6 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                 newWin.autoPosition = "none";
             }
 
-            console.log("да");
         }
         this.state.windows.push(newWin);
         this.forceUpdate();

@@ -46,8 +46,7 @@ export class ComponentState<P> {
 }
 
 export interface ComponentContext {
-    //parentWindow?: Window;
-    //parentDesktop?: Desktop;
+    windowUserSettingsStoreKey:string;
     schemaComponent: SchemaComponent;
 }
 
@@ -68,11 +67,9 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     }
 
     static contextTypes = {
-        //     //parentDesktop: React.PropTypes.any,
-        //     //parentWindow: React.PropTypes.any,
+        windowUserSettingsStoreKey: React.PropTypes.string,
         uiComponent: React.PropTypes.any
     };
-    //
 
     nativeElement: HTMLElement;
 
@@ -91,24 +88,24 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     private renderProps: any = {};
     private renderStyles: any = {};
 
-    getParentWindow(): Window | null {
+    getParentWindow(): Window | undefined {
         let parent = ReactDOM.findDOMNode(this);
         while (parent) {
             if ((parent as any).$$window)
                 return (parent as any).$$window as Window;
             parent = parent.parentElement;
         }
-        return null;
+        return undefined;
     }
-    
-    getParentAutoForm(): AutoForm | null {
+
+    getParentAutoForm(): AutoForm | undefined {
         let parent = ReactDOM.findDOMNode(this);
         while (parent) {
             if ((parent as any).$$autoForm)
                 return (parent as any).$$autoForm as AutoForm;
             parent = parent.parentElement;
         }
-        return null;
+        return undefined;
     }
 
     // forceUpdateParentWindow() {
@@ -117,14 +114,14 @@ export class Component<P extends ComponentProps<S>, S extends ComponentState<P>>
     //         win.forceUpdateBody();
     // }
 
-    getParentUIComponent(): SchemaComponent | null {
+    getParentUIComponent(): SchemaComponent | undefined {
         let parent = ReactDOM.findDOMNode(this);
         while (parent) {
             if ((parent as any).$$uiComponent)
                 return (parent as any).$$uiComponent as SchemaComponent;
             parent = parent.parentElement;
         }
-        return null;
+        return undefined;
     }
 
     focus() {

@@ -1,7 +1,10 @@
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
 import {SchemaObject} from "../SchemaObject";
 import {registerSchemaObjectType} from "../SchemaObjectTypeInfo";
-import {SCHEMA_FOLDER_ICON, SCHEMA_APPLICATION_ICON, SCHEMA_APPLICATION_TYPE_ID} from "../../buhta-core/Constants";
+import {
+    SCHEMA_FOLDER_ICON, SCHEMA_APPLICATION_ICON, SCHEMA_APPLICATION_TYPE_ID,
+    USER_SETTINGS_TABLE_NAME
+} from "../../buhta-core/Constants";
 import {SqlDialect, SqlDialectValues} from "../../buhta-sql/SqlCore";
 import {SelectEditor} from "../../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
 import {SqlDb, SqlBatch} from "../../buhta-sql/SqlDb";
@@ -80,17 +83,18 @@ export class SchemaApplication extends SchemaObject {
     initUserSettingsDb(): Promise<void> {
         let batch: SqlBatch = [];
 
-        return this.getUserSettingsDb().selectToBoolean(new CheckTableExistsStmt("WindowSizePosition"))
+        return this.getUserSettingsDb().selectToBoolean(new CheckTableExistsStmt(USER_SETTINGS_TABLE_NAME))
             .then((isTableExists: boolean) => {
                 if (isTableExists)
-                    throwError("таблица 'WindowSizePosition' уже существует, выберите чистую базу данных");
+                    throwError("таблица '" + USER_SETTINGS_TABLE_NAME + "' уже существует, выберите чистую базу данных");
 
-                let sql = new CreateTableStmt("WindowSizePosition")
+                let sql = new CreateTableStmt(USER_SETTINGS_TABLE_NAME)
                     .column("userId", "guid")
                     .column("storeKey", "text", 0)
                     .column("settingsJson", "text");
 
-                return this.getUserSettingsDb().executeSQL(sql).then(()=>{});
+                return this.getUserSettingsDb().executeSQL(sql).then(()=> {
+                });
             });
 
     }

@@ -98,7 +98,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
 
                         if (!editorProps.inputCaption)
                             editorProps.inputCaption = editorProps.propertyName;
-                        console.log(editorProps);
+                        //console.log(editorProps);
 
                         this.propertyDesigners.push(React.createElement(propInfo.editorType, editorProps, {}));
                     }, this);

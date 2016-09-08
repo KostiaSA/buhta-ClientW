@@ -55,6 +55,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
                 dataSource={dataSource}
                 editable={true}
                 enableDragDrop={customParams.enableDragDrop}
+                userSettingsStoreKey={getObjectConstructorName(this.props.designedObject) + "/" + this.props.propertyName}
             >
             </Grid>
         );
