@@ -58,8 +58,18 @@ var SelectInput = (function (_super) {
         this.clearStyles();
         this.addClassName("select");
         this.addStyles(this.props.style);
+        var errorOption = undefined;
+        var value = this.getValue();
+        if (this.props.bindObject[this.props.bindPropName] === undefined) {
+            errorOption = (React.createElement("option", {value: "-1", key: -1, disabled: true, selected: true}));
+        }
+        else if (value === "-1") {
+            errorOption = (React.createElement("option", {value: "-1", key: -1, disabled: true, selected: true}, "<error>"));
+        }
         return (React.createElement("span", __assign({}, this.getRenderProps()), 
-            React.createElement("select", {type: "text", value: this.getValue(), onChange: this.handleOnChange}, this.renderOptions())
+            React.createElement("select", {type: "text", value: this.getValue(), onChange: this.handleOnChange}, 
+                errorOption, 
+                this.renderOptions())
         ));
     };
     return SelectInput;

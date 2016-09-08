@@ -1,3 +1,4 @@
+import * as React from "react";
 import {DesignedObject} from "../../buhta-app-designer/DesignedObject";
 import {SchemaTable} from "./SchemaTable";
 import {StringEditor} from "../../buhta-app-designer/PropertyEditors/StringPropertyEditor";
@@ -64,13 +65,20 @@ export class SchemaTableIndex extends DesignedObject {
 
     @ListEditor({
         inputTab: "Колонки индекса",
+        onRenderInputTab: (designedObject?: SchemaTableIndex): React.ReactNode => {
+            if (designedObject !== undefined && designedObject.columns.length>0)
+                return "Колонки индекса(" + designedObject.columns.length + ")";
+            else
+                return "Колонки индекса";
+        },
         enableDragDrop: true,
         gridColumns: [
             {caption: "Имя колонки", propertyName: "name"}
         ],
         getNewListItem: (tableIndex: SchemaTableIndex, parentItem?: SchemaTableIndexColumn) => {
+            console.error({tableIndex});
             let column = new SchemaTableIndexColumn(tableIndex);
-            column.name = "";
+            //column.name = "---";
             return getInstantPromise<DesignedObject>(column);
         }
     })

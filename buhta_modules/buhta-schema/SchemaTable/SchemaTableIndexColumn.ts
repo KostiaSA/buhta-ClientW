@@ -6,17 +6,33 @@ import {GridColumn} from "../../buhta-core/Components/Grid/GridColumn";
 import {BaseDataType} from "./DataTypes/BaseDataType";
 import {DataTypeEditor} from "../../buhta-app-designer/PropertyEditors/DataTypePropertyEditor";
 import {SchemaTableIndex} from "./SchemaTableIndex";
+import {SelectEditor} from "../../buhta-app-designer/PropertyEditors/SelectPropertyEditor";
+import {stringCompare} from "../../buhta-core/stringCompare";
+import {SchemaTableColumn} from "./SchemaTableColumn";
 
 export class SchemaTableIndexColumn extends DesignedObject {
     constructor(public index: SchemaTableIndex) {
         super();
     }
 
-    @StringEditor({
+    @SelectEditor({
         inputCaption: "Имя колонки",
         inputTab: "Главная",
         inputGroup: "Основная",
-        inputDescription: "Имя колонки"
+        inputDescription: "Имя колонки",
+        getSelectValues: (indexColumn: SchemaTableIndexColumn) => {
+            let columns = indexColumn.index.table.columns
+                .sort((colA: SchemaTableColumn, colB: SchemaTableColumn) => {
+                    return stringCompare(colA.name, colB.name)
+                })
+                .filter((col: SchemaTableColumn) => {
+                    return col.dataType.getIsAllowedInIndex();
+                });
+
+            return columns.map((col: SchemaTableColumn)=> {
+                return [col.name, col.toString()];
+            });
+        }
     })
     @GridColumn({caption: "Имя колонки"})
     name: string;

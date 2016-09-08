@@ -7,6 +7,7 @@ import {InputType, Input} from "../../buhta-core/Components/Input/Input";
 import {AutoFormControlProps} from "../../buhta-core/Components/AutoForm/AutoForm";
 import {SelectInputDataSource} from "../../buhta-core/Components/SelectInput/SelectInputDataSource";
 import {SelectInput} from "../../buhta-core/Components/SelectInput/SelectInput";
+import {DesignedObject} from "../DesignedObject";
 
 
 export class SelectPropertyEditor extends BasePropertyEditor {
@@ -27,11 +28,17 @@ export class SelectPropertyEditor extends BasePropertyEditor {
 
         this.addProps(autoFormControlProps);
 
+        let selectValues: SelectInputDataSource<any> | any[] = [];
+        if ((this.props as any as SelectEditorParams).selectValues !== undefined)
+            selectValues = (this.props as any as SelectEditorParams).selectValues!;
+        else if ((this.props as any as SelectEditorParams).getSelectValues !== undefined)
+            selectValues = (this.props as any as SelectEditorParams).getSelectValues!(this.props.designedObject);
+
         return (
             <SelectInput
                 bindObject={this.props.designedObject}
                 bindPropName={this.props.propertyName}
-                valuesDataSource={(this.props as any as SelectEditorParams).selectValues}
+                valuesDataSource={selectValues}
                 onChange={this.props.onChange}
                 {...this.getRenderProps()}
             />
@@ -41,7 +48,8 @@ export class SelectPropertyEditor extends BasePropertyEditor {
 }
 
 export interface SelectEditorParams extends AutoFormControlProps {
-    selectValues: SelectInputDataSource<any> | any[];
+    selectValues?: SelectInputDataSource<any> | any[];
+    getSelectValues?: (designedObject: DesignedObject) => SelectInputDataSource<any> | any[];
 }
 
 export function SelectEditor(params: SelectEditorParams): Function {

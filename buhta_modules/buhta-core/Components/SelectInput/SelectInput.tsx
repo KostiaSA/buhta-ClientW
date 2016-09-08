@@ -28,8 +28,8 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
     }
 
     getValue = (): string => {
-        for (let i=0; i<this.ds.getItems().length;i++){
-            if (this.ds.getItems()[i].value===this.props.bindObject[this.props.bindPropName])
+        for (let i = 0; i < this.ds.getItems().length; i++) {
+            if (this.ds.getItems()[i].value === this.props.bindObject[this.props.bindPropName])
                 return i.toString();
         }
         return "-1";
@@ -39,8 +39,8 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
 
         if (this.props.bindObject && this.props.bindPropName)
             this.props.bindObject[this.props.bindPropName] = this.ds.getItems()[(event.target as any).value].value;
-      //  console.log("select");
-      //  console.log(this.ds.getItems()[(event.target as any).value].value);
+        //  console.log("select");
+        //  console.log(this.ds.getItems()[(event.target as any).value].value);
         this.forceUpdate();
         if (this.props.onChange)
             this.props.onChange();
@@ -48,7 +48,6 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
     };
 
     private ds: SelectInputDataSource<any>;
-
 
 
     renderOptions(): JSX.Element[] {
@@ -69,12 +68,30 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
         else
             this.ds = this.props.valuesDataSource as SelectInputDataSource<any>;
 
-        if (this.ds===undefined)
+        if (this.ds === undefined)
             throwError("SelectInput: property 'valuesDataSource' is not defined");
 
         this.clearStyles();
         this.addClassName("select");
         this.addStyles(this.props.style);
+
+        let errorOption: JSX.Element | undefined = undefined;
+        let value = this.getValue();
+
+
+        if (this.props.bindObject[this.props.bindPropName] === undefined) {
+            errorOption = (
+                <option value="-1" key={-1} disabled selected>
+                </option>
+            );
+        }
+        else if (value === "-1") {
+            errorOption = (
+                <option value="-1" key={-1} disabled selected>
+                    {"<error>"}
+                </option>
+            );
+        }
 
         return (
             <span {...this.getRenderProps()}>
@@ -83,6 +100,7 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
                     value={this.getValue()}
                     onChange={this.handleOnChange}
                 >
+                    {errorOption}
                     {this.renderOptions()}
                 </select>
             </span>

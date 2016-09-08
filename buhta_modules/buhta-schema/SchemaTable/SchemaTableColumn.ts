@@ -46,7 +46,7 @@ export class SchemaTableColumn extends DesignedObject {
     primaryKey: boolean;
 
     toString() {
-        return this.name + " of (" + this.table.name + ")";
+        return this.name + " : " + this.dataType.toString();
     }
 
     getSqlName(): string {

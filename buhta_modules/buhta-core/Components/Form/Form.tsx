@@ -5,6 +5,7 @@ import {PropertyEditorInfo} from "../../../buhta-app-designer/PropertyEditors/Ba
 import {AutoFormControlProps} from "../AutoForm/AutoForm";
 import {InputProps, InputType} from "../Input/Input";
 import {BooleanPropertyEditor} from "../../../buhta-app-designer/PropertyEditors/BooleanPropertyEditor";
+import {ListPropertyEditor} from "../../../buhta-app-designer/PropertyEditors/ListPropertyEditor";
 
 
 export interface FormProps extends ComponentProps<any> {
@@ -143,7 +144,10 @@ export class Form extends Component<FormProps, any> {
         this.addClassName("form");
         //this.addStyles({margin:10});
 
-        if (React.Children.toArray(this.props.children as React.ReactNode).length === 1) { // один контрол в форме, обычно treelist
+        let children = React.Children.toArray(this.props.children as React.ReactNode);
+
+        if (children.length === 1 && (children[0] as any).type === ListPropertyEditor) { // один контрол в форме, обычно treelist
+            console.log({children: children});
 
             if (this.props.sizeTo === "parent")
                 this.addStyles({height: "100%"});

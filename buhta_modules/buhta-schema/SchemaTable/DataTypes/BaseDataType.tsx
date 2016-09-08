@@ -41,4 +41,8 @@ export class BaseDataType extends DesignedObject {
     getIsNumeric(): boolean {
         return false;
     }
+
+    getIsAllowedInIndex(): boolean {
+        return true;
+    }
 }
