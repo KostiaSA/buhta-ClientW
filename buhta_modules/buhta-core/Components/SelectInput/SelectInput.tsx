@@ -75,18 +75,18 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
         this.addClassName("select");
         this.addStyles(this.props.style);
 
-        let errorOption: JSX.Element | undefined = undefined;
+        let errorOrEmptyOption: JSX.Element | undefined = undefined;
         let value = this.getValue();
 
 
         if (this.props.bindObject[this.props.bindPropName] === undefined) {
-            errorOption = (
+            errorOrEmptyOption = (
                 <option value="-1" key={-1} disabled selected>
                 </option>
             );
         }
         else if (value === "-1") {
-            errorOption = (
+            errorOrEmptyOption = (
                 <option value="-1" key={-1} disabled selected>
                     {"<error>"}
                 </option>
@@ -100,7 +100,7 @@ export class SelectInput extends Component<SelectInputProps<any>, any> {
                     value={this.getValue()}
                     onChange={this.handleOnChange}
                 >
-                    {errorOption}
+                    {errorOrEmptyOption}
                     {this.renderOptions()}
                 </select>
             </span>

@@ -6,6 +6,7 @@ import {registerGridColumn, GridColumnInfo} from "./registerGridColumn";
 import Grid from "./Grid";
 import {AgCellClassRules} from "./Grid";
 import {AgCellClassRuleParams} from "./Grid";
+import {GridDataSourceRow} from "./GridDataSource";
 //import * as ReactDOM from "react-dom";
 
 
@@ -13,10 +14,13 @@ export interface GridColumnProps extends ComponentProps<any> {
     caption?: string;
     width?: number;
     propertyName?: string;
+    onGetPropertyValue?: (rowData: GridDataSourceRow) => any;  // для calculated columns, вместо propertyName
     showHierarchyTree?: boolean;
     showHierarchyPadding?: boolean;
     order?: number;
     iconPropertyName?: string;
+    booleanTrueLabel?: string;
+    booleanFalseLabel?: string;
 }
 
 export class GridColumnDef extends Component<GridColumnProps, any> {

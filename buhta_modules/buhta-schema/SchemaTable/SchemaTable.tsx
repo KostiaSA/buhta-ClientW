@@ -12,6 +12,7 @@ import {StringDataType} from "./DataTypes/StringDataType";
 import {QuerySourceObject} from "../SchemaQuery/SchemaQuery";
 import {SelectTable} from "../../buhta-sql/SelectStmt";
 import {SchemaTableIndex} from "./SchemaTableIndex";
+import {GridDataSourceRow} from "../../buhta-core/Components/Grid/GridDataSource";
 
 export class SchemaTable extends SchemaObject implements QuerySourceObject {
 
@@ -34,7 +35,7 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
     @ListEditor({
         inputTab: "Колонки",
         onRenderInputTab: (designedObject?: SchemaTable): React.ReactNode => {
-            if (designedObject !== undefined && designedObject.columns.length>0)
+            if (designedObject !== undefined && designedObject.columns.length > 0)
                 return "Колонки(" + designedObject.columns.length + ")";
             else
                 return "Колонки";
@@ -57,7 +58,7 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
     @ListEditor({
         inputTab: "Индексы",
         onRenderInputTab: (designedObject?: SchemaTable): React.ReactNode => {
-            if (designedObject !== undefined && designedObject.indexes.length>0)
+            if (designedObject !== undefined && designedObject.indexes.length > 0)
                 return "Индексы(" + designedObject.indexes.length + ")";
             else
                 return "Индексы";
@@ -65,7 +66,15 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
         enableDragDrop: true,
         gridColumns: [
             {caption: "Имя индекса", propertyName: "name"},
-            //{caption: "Тип данных", propertyName: "dataType"},
+            {
+                caption: "Состав индекса",
+                onGetPropertyValue: (rowData: SchemaTableIndex) => {
+                    return rowData.getColumnsList();
+                }
+            },
+            {caption: "PK", propertyName: "isPrimaryKey", booleanTrueLabel: "PK", booleanFalseLabel: ""},
+            {caption: "Кластерный", propertyName: "isClustered", booleanTrueLabel: "кластерный", booleanFalseLabel: ""},
+            {caption: "Уникальный", propertyName: "isUnique", booleanTrueLabel: "уникальный", booleanFalseLabel: ""},
             {caption: "Описание", propertyName: "description"}
         ],
         getNewListItem: (table: SchemaTable, parentItem?: SchemaTableIndex) => {

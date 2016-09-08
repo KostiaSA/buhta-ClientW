@@ -55,3 +55,6 @@ export const GUID_DATA_TYPE_NAME = "GUID"
 export const GUID_DATA_TYPE_DESCRIPTION = "Статистически уникальный 128-битный идентификатор, он же UUID"
 
 //export const STRING_DATA_TYPE_NAME = "Строка"
+
+export const BOOLEAN_TRUE_TEXT = "да";
+export const BOOLEAN_FALSE_TEXT = "нет";

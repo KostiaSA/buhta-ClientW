@@ -29,7 +29,7 @@ export class ListPropertyEditor extends BasePropertyEditor {
             inputTab: this.props.inputTab,
             inputGroup: this.props.inputGroup,
             inputDescription: this.props.inputDescription,
-            onRenderInputTab: this.props.onRenderInputTab            
+            onRenderInputTab: this.props.onRenderInputTab
         };
 
         this.addProps(autoFormControlProps);

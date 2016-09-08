@@ -20,7 +20,7 @@ import {DesignedObject} from "../../../buhta-app-designer/DesignedObject";
 import {
     INSERT_BUTTON_TEXT, DELETE_BUTTON_TEXT, UPDATE_BUTTON_TEXT, INSERT_BUTTON_ICON,
     UPDATE_BUTTON_ICON, DELETE_BUTTON_ICON, SELECT_BUTTON_TEXT, REJECT_BUTTON_TEXT, CLOSE_BUTTON_TEXT,
-    SELECT_BUTTON_ICON, CLOSE_BUTTON_ICON, REJECT_BUTTON_ICON
+    SELECT_BUTTON_ICON, CLOSE_BUTTON_ICON, REJECT_BUTTON_ICON, BOOLEAN_TRUE_TEXT, BOOLEAN_FALSE_TEXT
 } from "../../Constants";
 import {Icon} from "../Icon/Icon";
 import {JQueryKeyCodeToReact} from "../../Keycode";
@@ -518,12 +518,29 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
             );
         }
 
-        let dataValue: any = this.state.dataSource.getDataValue(data, column.getColDef().field!);
+        let dataValue: any = undefined;
+        if (column.getColDef().field !== undefined)
+            dataValue = this.state.dataSource.getDataValue(data, column.getColDef().field!);
+        if (gridColumnProps.onGetPropertyValue !== undefined)
+            dataValue = gridColumnProps.onGetPropertyValue(data);
+
 
         if (dataValue === undefined)
             dataValue = "";
         else if (dataValue === null)
             dataValue = "<null>";
+        else if (dataValue === true) {
+            if (gridColumnProps.booleanTrueLabel !== undefined)
+                dataValue = gridColumnProps.booleanTrueLabel;
+            else
+                dataValue=BOOLEAN_TRUE_TEXT;
+        }
+        else if (dataValue === false) {
+            if (gridColumnProps.booleanFalseLabel !== undefined)
+                dataValue = gridColumnProps.booleanFalseLabel;
+            else
+                dataValue=BOOLEAN_FALSE_TEXT;
+        }
         else if (_.isString(dataValue)) {
             // это строка, отставляем как есть, только подсвечиваем фильтрацию
             dataValue = this.highlightFilters(dataValue);
@@ -725,6 +742,8 @@ export default class Grid extends Component<GridProps, GridState<GridDataSourceR
 
         if (this.props.sizeColumnsToFit === true)
             this.state.agGrid.api!.sizeColumnsToFit();
+        // else
+        //     this.state.agGrid.columnApi!.autoSizeColumns(this.state.agGrid.columnApi!.getAllColumns());
 
         if (this.props.dataSource.getIsAsync()) {
             this.state.agGrid.api!.showLoadingOverlay();

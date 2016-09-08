@@ -66,7 +66,7 @@ export class SchemaTableIndex extends DesignedObject {
     @ListEditor({
         inputTab: "Колонки индекса",
         onRenderInputTab: (designedObject?: SchemaTableIndex): React.ReactNode => {
-            if (designedObject !== undefined && designedObject.columns.length>0)
+            if (designedObject !== undefined && designedObject.columns.length > 0)
                 return "Колонки индекса(" + designedObject.columns.length + ")";
             else
                 return "Колонки индекса";
@@ -90,6 +90,10 @@ export class SchemaTableIndex extends DesignedObject {
 
     getSqlName(): string {
         return this.name;
+    }
+
+    getColumnsList(): string {
+        return this.columns.map((col)=>col.name).join(", ");
     }
 
 }
