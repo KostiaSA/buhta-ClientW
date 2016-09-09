@@ -58,7 +58,7 @@ function primary_key_exception_test_proc(dialect: SqlDialect, done: () => void) 
 
     let create_sql = new CreateTempTableStmt();
     create_sql.table("#BuhtaTestTempTable");
-    create_sql.column({column: "id", dataType: "int", notNull: true, primaryKey: true});
+    create_sql.column({column: "id", dataType: "int", notNull: true});
     create_sql.column("name", "string", 50);
     batch.push(create_sql);
 

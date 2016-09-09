@@ -21,7 +21,7 @@ function create_table_proc(dialect: SqlDialect, done: () => void) {
 
     let sql = new CreateTableStmt();
     sql.table("BuhtaTestTable");
-    sql.column({column: "guid", dataType: "guid", notNull: true, primaryKey: true});
+    sql.column({column: "guid", dataType: "guid", notNull: true});
     sql.column("str250", "string", 250);
     sql.column("text", "text");
 
@@ -423,7 +423,7 @@ function create_temp_table_proc(dialect: SqlDialect, done: () => void) {
 
     let create_sql = new CreateTempTableStmt();
     create_sql.table("#BuhtaTestTempTable");
-    create_sql.column({column: "id", dataType: "int", notNull: true, primaryKey: true});
+    create_sql.column({column: "id", dataType: "int", notNull: true});
     create_sql.column("name", "string", 50);
     batch.push(create_sql);
 

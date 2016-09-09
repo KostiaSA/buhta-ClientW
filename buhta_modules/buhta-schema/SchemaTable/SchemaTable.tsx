@@ -101,6 +101,26 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
         return getInstantPromise<SelectTable>({tableName: this.name});
     }
 
+    $$validate(errors: string[]) {
+        let errTitle = "Ошибка в таблице '" + this.name + "': ";
+
+        this.name=this.name.trim();
+
+        if (this.name.length===0)
+            errors.push(errTitle + "'имя таблицы' не может быть пустым");
+
+        if (this.name.startsWith("#"))
+            errors.push(errTitle + "'имя таблицы' не может начинаться с символа #");
+
+        if (this.columns.length === 0) {
+            errors.push(errTitle + "список колонок пуст");
+        }
+
+        this.columns.forEach((col: SchemaTableColumn)=> {
+            col.$$validate(errors)
+        });
+    }
+
 }
 
 registerSchemaObjectType({

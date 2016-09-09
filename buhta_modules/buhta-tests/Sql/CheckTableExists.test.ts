@@ -17,7 +17,7 @@ function test_proc(dialect: SqlDialect, done: () => void) {
 
     let create_sql = new CreateTableStmt();
     create_sql.table(tableName);
-    create_sql.column({column: "id", dataType: "int", notNull: true, primaryKey: true});
+    create_sql.column({column: "id", dataType: "int", notNull: true});
     create_sql.column("name", "string", 50);
 
     let check_sql = new CheckTableExistsStmt(tableName);

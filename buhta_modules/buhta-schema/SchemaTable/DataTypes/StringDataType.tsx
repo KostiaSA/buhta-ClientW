@@ -52,7 +52,7 @@ export class StringDataType extends BaseDataType {
             dataType: "string",
             dataLen: this.maxSize,
             notNull: this.column.notNull,
-            primaryKey: this.column.primaryKey,
+            //primaryKey: this.column.primaryKey,
         }
         return [col];
     }

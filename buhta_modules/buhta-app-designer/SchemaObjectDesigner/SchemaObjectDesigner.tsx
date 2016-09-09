@@ -100,6 +100,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
         this.clonedDesignedObject.changeDate = new Date();
         this.clonedDesignedObject.changeUserID = getUserId();
 
+
         this.clonedDesignedObject.save()
             .then(() => {
                 if (this.props.onSaveChanges)
@@ -110,12 +111,17 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
             .catch((error) => {
                 this.showErrorWindow(error);
             });
-
     }
 
     handleCancelChanges = (): void => {
         if (this.props.onCancelChanges)
             this.props.onCancelChanges();
+    }
+
+    handleValidate = (): string[] => {
+        let errors: string[] = [];
+        this.clonedDesignedObject.$$validate(errors);
+        return errors;
     }
 
     propertyDesigners: JSX.Element[];
@@ -168,6 +174,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
                 sizeTo="parent"
                 onSaveChanges={this.handleSaveChanges}
                 onCancelChanges={this.handleCancelChanges}
+                onValidate={this.handleValidate}
                 needToSave={this.needToSave}
                 designedObject={this.clonedDesignedObject}
                 {...this.getRenderProps()}>

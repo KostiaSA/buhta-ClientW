@@ -43,7 +43,7 @@ export class SchemaTableColumn extends DesignedObject {
     description: string;
 
     notNull: boolean;
-    primaryKey: boolean;
+    //primaryKey: boolean;
 
     toString() {
         return this.name + " : " + this.dataType.toString();
@@ -51,6 +51,19 @@ export class SchemaTableColumn extends DesignedObject {
 
     getSqlName(): string {
         return this.name;
+    }
+    
+    $$validate(errors: string[]) {
+        let errTitle = "Ошибка в колонке '" + this.name + "': ";
+
+        this.name=this.name.trim();
+
+        if (this.name.length===0)
+            errors.push(errTitle + "'имя колонки' не может быть пустым");
+
+        if (this.name.startsWith("$$"))
+            errors.push(errTitle + "'имя колонки' не может начинаться с $$");
+
     }
 
 }

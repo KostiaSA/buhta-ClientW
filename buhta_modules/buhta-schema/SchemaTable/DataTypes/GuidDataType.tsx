@@ -41,7 +41,7 @@ export class GuidDataType extends BaseDataType {
             column: this.column.getSqlName(),
             dataType: "guid",
             notNull: this.column.notNull,
-            primaryKey: this.column.primaryKey,
+            //primaryKey: this.column.primaryKey,
         }
         return [col];
     }

@@ -11,7 +11,7 @@ export interface CreateColumn {
     dataLen?: number;
     decimals?: number;
     notNull?: boolean;
-    primaryKey?: boolean;
+    //primaryKey?: boolean;
     raw?: string;
 }
 
@@ -44,7 +44,7 @@ export class CreateTableStmt {
                 dataLen: dataLen,
                 decimals: decimals,
                 notNull: true, 
-                primaryKey: true
+                //primaryKey: true
             });
 
         }
@@ -313,8 +313,8 @@ export class CreateTableStmt {
         this.emitColumnDataType(col, e);
         if (col.notNull)
             e.emit(" NOT NULL");
-        if (col.primaryKey)
-            e.emit(" PRIMARY KEY");
+        // if (col.primaryKey)
+        //     e.emit(" PRIMARY KEY");
         if (col.raw !== undefined)
             e.emit(col.raw);
     }

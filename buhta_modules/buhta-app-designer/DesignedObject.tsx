@@ -63,5 +63,9 @@ export class DesignedObject implements GridDataSourceRow {
         return "ObjectDesigner/" + getObjectConstructorName(this);
     }
 
+    $$validate(errors: string[]) {
+        
+    }
+
 }
 

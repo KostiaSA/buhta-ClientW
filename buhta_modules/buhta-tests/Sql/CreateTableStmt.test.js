@@ -24,7 +24,7 @@ function create_table_proc(dialect, done) {
     db.dialect = dialect;
     var sql = new CreateTableStmt_1.CreateTableStmt();
     sql.table("BuhtaTestTable");
-    sql.column({ column: "guid", dataType: "guid", notNull: true, primaryKey: true });
+    sql.column({ column: "guid", dataType: "guid", notNull: true });
     sql.column("str250", "string", 250);
     sql.column("text", "text");
     sql.column("sbyte", "sbyte");
@@ -347,7 +347,7 @@ function create_temp_table_proc(dialect, done) {
     var batch = [];
     var create_sql = new CreateTempTableStmt_1.CreateTempTableStmt();
     create_sql.table("#BuhtaTestTempTable");
-    create_sql.column({ column: "id", dataType: "int", notNull: true, primaryKey: true });
+    create_sql.column({ column: "id", dataType: "int", notNull: true });
     create_sql.column("name", "string", 50);
     batch.push(create_sql);
     var insert_sql = new InsertStmt_1.InsertStmt();

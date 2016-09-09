@@ -112,10 +112,10 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     handleSaveChanges = () => {
         console.log("save-changes");
         //console.log(this.props.designedObject);
+
         _.assign(this.props.designedObject, this.clonedDesignedObject);
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
-
     }
 
     handleCancelChanges = () => {
@@ -124,6 +124,12 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         if (this.props.onCancelChanges)
             this.props.onCancelChanges();
         //console.log(this.props.designedObject);
+    }
+
+    handleValidate = (): string[] => {
+        let errors: string[] = [];
+        this.clonedDesignedObject.$$validate(errors);
+        return errors;
     }
 
     render() {
@@ -135,6 +141,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
                 sizeTo="parent"
                 onSaveChanges={this.handleSaveChanges}
                 onCancelChanges={this.handleCancelChanges}
+                onValidate={this.handleValidate}
                 needToSave={this.needToSave}
                 designedObject={this.clonedDesignedObject}
                 {...this.getRenderProps()}>

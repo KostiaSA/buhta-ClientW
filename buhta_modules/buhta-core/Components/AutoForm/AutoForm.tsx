@@ -31,6 +31,7 @@ export interface AutoFormProps extends ComponentProps<any> {
     inputs?: AutoFormControlProps[];
     sizeTo: "parent" | "content";
     needToSave?: boolean;
+    onValidate?: () => string[];  // список ошибок
     onSaveChanges?: () => void;
     onCancelChanges?: () => void;
     //onGetNeedToSave?: () => boolean;
@@ -114,8 +115,32 @@ export class AutoForm extends Component<AutoFormProps, any> {
     }
 
     handleSaveButtonClick = (sender: Button, e: React.MouseEvent): void => {
+        if (this.props.onValidate) {
+            let errors = this.props.onValidate();
+            if (errors.length > 0) {
+
+                if (errors.length === 1)
+                    this.showErrorWindow(errors[0]);
+                else {
+
+                    this.showErrorWindow(
+                        <div style={{textAlign: "left"}}>
+                            {errors.map<JSX.Element>((err: string, index: number)=> {
+                                return <div>{index + 1}{". "}{err}</div>
+                            })}
+                        </div>
+
+                    );
+
+                }
+                e.stopPropagation();
+                return;
+            }
+        }
+
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
+
         this.getParentWindow()!.close();
         e.stopPropagation();
 
