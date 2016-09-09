@@ -147,10 +147,22 @@ export class AutoForm extends Component<AutoFormProps, any> {
     }
 
     handleCancelButtonClick = (sender: Button, e: React.MouseEvent): void => {
-        if (this.props.onCancelChanges)
-            this.props.onCancelChanges();
-        this.getParentWindow()!.close();
-        e.stopPropagation();
+        if (this.props.needToSave === true) {
+            this.showDeleteConfirmationWindow("Выйти без сохранения?", (resultOk: boolean) => {
+                if (resultOk){
+                    if (this.props.onCancelChanges)
+                        this.props.onCancelChanges();
+                    this.getParentWindow()!.close();
+                }
+            }, "Да", "Нет");
+            e.stopPropagation();
+        }
+        else {
+            if (this.props.onCancelChanges)
+                this.props.onCancelChanges();
+            this.getParentWindow()!.close();
+            e.stopPropagation();
+        }
     }
 
     render() {
