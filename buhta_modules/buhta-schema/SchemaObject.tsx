@@ -6,17 +6,27 @@ import {Schema} from "./Schema";
 import {getNewGuid} from "../buhta-sql/SqlCore";
 import {throwAbstractError} from "../buhta-core/Error";
 import {SchemaObjectTypeInfo} from "./SchemaObjectTypeInfo";
-import {
-    SchemaObjectDesigner,
-    SchemaObjectDesignerProps
-} from "../buhta-app-designer/SchemaObjectDesigner/SchemaObjectDesigner";
+
 import {getRandomString} from "../buhta-core/getRandomString";
+import {ComponentProps, Component} from "../buhta-core/Components/Component";
+import {deepClone} from "../buhta-core/deepClone";
+import {isDeepEqual} from "../buhta-core/isDeepEqual";
+//import {getUserId} from "../buhta-core/Auth";
+import {
+    PropertyEditorInfo, BasePropertyEditorProps,
+    BasePropertyEditor
+} from "../buhta-app-designer/PropertyEditors/BasePropertyEditor";
+import {AutoForm} from "../buhta-core/Components/AutoForm/AutoForm";
+import {
+    SchemaObjectDesignerProps,
+    SchemaObjectDesigner
+} from "../buhta-app-designer/SchemaObjectDesigner/SchemaObjectDesigner";
 
 export type SchemaObjectId = string;
 
 
 export class SchemaObject extends DesignedObject {
-    constructor(private $$schema: Schema) {
+    constructor(public $$schema: Schema) {
         super();
         this["$$$_ID"]=getRandomString(5);
     }

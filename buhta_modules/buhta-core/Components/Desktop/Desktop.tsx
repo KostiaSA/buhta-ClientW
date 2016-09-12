@@ -60,6 +60,8 @@ export interface OpenWindowParams {
     noPaddings?: boolean;
     popupAutoPosition?: PopupAutoPosition;
     popupAnchor?: Component<any,any>;
+    onModalOk?: ()=>void;
+    onModalCancel?: ()=>void;
     // при добавлении новых properties ищем все места (4 шт.), помеченные как 'new window props place'
 }
 
@@ -95,6 +97,9 @@ export class DesktopWindow implements OpenWindowParams {
     noPaddings: boolean | undefined;
     popupAutoPosition: PopupAutoPosition | undefined;
     popupAnchor: Component<any,any> | undefined;
+    onModalOk: (()=>void) | undefined;
+    onModalCancel: (()=>void) | undefined;
+
     // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 }
 
@@ -138,6 +143,23 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         this.openWindow(winContent, openParams);
     }
 
+    openModalWindow(winContent: React.ReactNode, openParams?: OpenWindowParams): Promise<void> {
+
+        return new Promise<void>(
+            (resolve: () => void, reject: (error: string) => void) => {
+
+                if (openParams === undefined)
+                    openParams = {};
+                openParams.onModalOk = resolve;
+                openParams.onModalCancel = ()=> {
+                    reject("");
+                };
+                this.openWindow(winContent, openParams);
+            });
+
+    }
+
+
     openWindow(winContent: React.ReactNode, openParams?: OpenWindowParams): string {
         if (!openParams)
             openParams = {};
@@ -157,6 +179,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
         newWin.noPaddings = openParams.noPaddings;
         newWin.popupAutoPosition = openParams.popupAutoPosition;
         newWin.popupAnchor = openParams.popupAnchor;
+        newWin.onModalOk = openParams.onModalOk;
+        newWin.onModalCancel = openParams.onModalCancel;
         // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 
 
@@ -430,6 +454,8 @@ export class Desktop extends Component<DesktopProps, DesktopState> {
                             noPaddings={w.noPaddings}
                             popupAutoPosition={w.popupAutoPosition}
                             popupAnchor={w.popupAnchor}
+                            onModalOk={w.onModalOk}
+                            onModalCancel={w.onModalCancel}
                             { /* при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place' */ ...{}}
                             onActivate={  this.handleActivate }
                             onClose={ this.handleClose }

@@ -64,6 +64,7 @@ import {LookupInput} from "../../buhta-core/Components/LookupInput/LookupInput";
 import {SchemaTableColumn} from "../../buhta-schema/SchemaTable/SchemaTableColumn";
 import {deepClone} from "../../buhta-core/deepClone";
 import {deepAssign} from "../../buhta-core/deepAssign";
+import {createDefaultApp} from "../../buhta-core/createDefaultApp";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -1195,6 +1196,11 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                     <button
                                         onClick={() => { getApplication().initUserSettingsDb().then(()=>{alert("ok")}).catch((err)=>{alert(err)}); }}>
                                         init user settings db
+                                    </button>
+                                    <br/>
+                                    <button
+                                        onClick={() => {createDefaultApp().then(()=>{alert("default app ok")}).catch((err)=>{alert(err)}); }}>
+                                        create default app
                                     </button>
                                     <br/>
                                     <button onClick={() => { this.testOpenWindow(); }}> test Promise-Each</button>

@@ -42,6 +42,8 @@ export class WindowState extends ComponentState<WindowProps> implements OpenWind
     popupAutoPosition: PopupAutoPosition;
     popupAnchor: Component<any,any>;
     sizePositionStoreKey: string;
+    onModalOk:()=>void;
+    onModalCancel:()=>void;
     // при добавлении новых properties ищем все места (5 шт.), помеченные как 'new window props place'
 }
 

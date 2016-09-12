@@ -9,7 +9,7 @@ import {registerDataType} from "./DataTypeInfo";
 import {InputType, Input} from "../../../buhta-core/Components/Input/Input";
 
 export class StringDataType extends BaseDataType {
-    constructor(public column: SchemaTableColumn, public maxSize: number) {
+    constructor(column: SchemaTableColumn, public maxSize: number) {
         super(column);
         if (this.maxSize === undefined)
             this.maxSize = 50;

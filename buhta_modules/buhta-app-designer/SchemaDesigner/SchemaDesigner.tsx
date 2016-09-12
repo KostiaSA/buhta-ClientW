@@ -46,9 +46,10 @@ import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/Grid
 import {UUID} from "UUID";
 import {getNewGuid, SqlStmt, SqlGuidValue} from "../../buhta-sql/SqlCore";
 import {GridColumns} from "../../buhta-core/Components/Grid/GridColumns";
-import {SchemaObjectDesignerProps} from "../SchemaObjectDesigner/SchemaObjectDesigner";
+//import {SchemaObjectDesignerProps} from "../SchemaObjectDesigner/SchemaObjectDesigner";
 import {CLOSE_BUTTON_TEXT, SCHEMA_FOLDER_ICON} from "../../buhta-core/Constants";
 import {DeleteStmt} from "../../buhta-sql/DeleteStmt";
+import {SchemaObjectDesignerProps} from "../SchemaObjectDesigner/SchemaObjectDesigner";
 
 
 export interface SchemaDesignerProps extends ComponentProps<SchemaDesignerState> {

@@ -12,8 +12,12 @@ import {getInstantPromise} from "../../buhta-core/getInstantPromise";
 import {ListEditor} from "../../buhta-app-designer/PropertyEditors/ListPropertyEditor";
 
 export class SchemaTableIndex extends DesignedObject {
-    constructor(public table: SchemaTable) {
-        super();
+    constructor(table: SchemaTable) {
+        super(table);
+    }
+    
+    get table(): SchemaTable {
+        return this.$$owner as SchemaTable;
     }
 
     @StringEditor({

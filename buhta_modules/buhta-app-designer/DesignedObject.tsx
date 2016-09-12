@@ -10,6 +10,10 @@ import {ObjectDesigner, ObjectDesignerProps} from "./ObjectDesigner/ObjectDesign
 
 export class DesignedObject implements GridDataSourceRow {
 
+    constructor(public $$owner?: DesignedObject) {
+    }
+
+
     [name: string]: any;
 
     getClassName() {
@@ -64,8 +68,39 @@ export class DesignedObject implements GridDataSourceRow {
     }
 
     $$validate(errors: string[]) {
-        
+
     }
+
+    $$fillOwnerRecursive() {
+        for (let propName in this) {
+            if (this.hasOwnProperty(propName)) {
+                let propValue: any = this[propName];
+
+                if (propName.substring(0, 2) !== "$$") {
+                    if (_.isArray(propValue)) {
+                        this.$$fillArrayItemsOwnerRecursive(propValue)
+                    }
+                    else if (_.isObject(propValue) && propValue.$$fillOwnerRecursive !== undefined) {
+                        propValue.$$owner = this;
+                        propValue.$$fillOwnerRecursive();
+                    }
+                }
+            }
+        }
+    }
+
+    private $$fillArrayItemsOwnerRecursive(arr: any[]) {
+        arr.forEach((item: any)=> {
+            if (_.isArray(item)) {
+                this.$$fillArrayItemsOwnerRecursive(item)
+            }
+            else if (_.isObject(item) && item.$$fillOwnerRecursive !== undefined) {
+                item.$$owner = this;
+                item.$$fillOwnerRecursive();
+            }
+        }, this);
+    }
+
 
 }
 

@@ -11,7 +11,7 @@ import {
 import {registerDataType} from "./DataTypeInfo";
 
 export class GuidDataType extends BaseDataType {
-    constructor(public column: SchemaTableColumn) {
+    constructor(column: SchemaTableColumn) {
         super(column);
     }
 

@@ -21,7 +21,7 @@ import {registeredSchemaObjectTypes} from "../../SchemaObjectTypeInfo";
 import {LookupInput} from "../../../buhta-core/Components/LookupInput/LookupInput";
 
 export class ForeignKeyDataType extends BaseDataType {
-    constructor(public column: SchemaTableColumn) {
+    constructor(column: SchemaTableColumn) {
         super(column);
     }
 

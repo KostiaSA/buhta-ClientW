@@ -9,6 +9,7 @@ import {UpsertStmt} from "../buhta-sql/UpsertStmt";
 import {SqlNewGuidValue, getNewGuid, SqlGuidValue, SqlStringValue} from "../buhta-sql/SqlCore";
 import {objectToHostJavaScript} from "../buhta-core/objectToHostJavaScript";
 import {SelectStmt} from "../buhta-sql/SelectStmt";
+import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 
 
 let defaultSchema: Schema;
@@ -66,6 +67,7 @@ export class Schema {
                                 this.objects_cache[id] = objConstructor;
                                 let obj: any = objConstructor();
                                 obj.$$schema = this;
+                                obj.$$fillOwnerRecursive();
                                 delete this.objects_cache_is_loading[id];
 
                                 // эти два поля может менять грида при DragDrop
@@ -80,8 +82,9 @@ export class Schema {
                     }
                 }
                 else {
-                    let obj: any = objConstructor();
+                    let obj = objConstructor() as SchemaObject;
                     obj.$$schema = this;
+                    obj.$$fillOwnerRecursive();
 
                     resolve(obj as T);
                 }
@@ -89,6 +92,7 @@ export class Schema {
             });
 
     }
+
 
     saveObject(objectToSave: SchemaObject): Promise<void|string> {
 

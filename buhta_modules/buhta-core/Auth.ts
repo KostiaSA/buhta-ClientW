@@ -5,11 +5,16 @@ import {throwError} from "./Error";
 import {SelectStmt} from "../buhta-sql/SelectStmt";
 import {SqlGuidValue} from "../buhta-sql/SqlCore";
 import {SCHEMA_APPLICATION_TYPE_ID} from "./Constants";
+//import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
+import {loadUserSettingsStore} from "./userSettingsStore";
+import {OpenWindowParams, getDesktop} from "./Components/Desktop/Desktop";
+import {SchemaObject} from "../buhta-schema/SchemaObject";
+import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
+//import {SchemaObjectDesignerProps} from "../buhta-app-designer/SchemaObjectDesigner/SchemaObjectDesigner";
+//import {loadWindowSizePositionStore} from "./Components/Window/WindowSizePositionStore";
 import {getSchema} from "../buhta-schema/Schema";
 import {setApplication} from "./getApplication";
-import {SchemaApplication} from "../buhta-schema/SchemaApplication/SchemaApplication";
-import {loadUserSettingsStore} from "./userSettingsStore";
-//import {loadWindowSizePositionStore} from "./Components/Window/WindowSizePositionStore";
+import {DesignedObject} from "../buhta-app-designer/DesignedObject";
 
 let authOk: boolean;
 let userId: string | null = null;
@@ -123,6 +128,40 @@ export function auth(login: string, password: string): Promise<void> {
 
         }
     )
+        .then(()=> {
+            // проверка на наличие хотя бы одного SchemaApplication
+            let sql = new SelectStmt().table("SchemaObject").column({
+                raw: "count(*)",
+                as: "appsCount"
+            }).where("typeId", "=", new SqlGuidValue(SCHEMA_APPLICATION_TYPE_ID));
+
+            return getSchema().db.selectToNumber(sql).then((count)=> {
+                if (count > 0)
+                    return;
+                else {
+                    // вызываем форму на добавление нового SchemaApplication
+
+                    //let app2=new DesignedObject();
+                    //let app1=new SchemaObject(getSchema());
+                    //let app=new SchemaApplication(getSchema());
+                    //app.name="Новое приложение";
+
+                    // let openParam: OpenWindowParams = {
+                    //     title: "Новое приложение",
+                    //     autoPosition: "desktop-center",
+                    //     theme: "blue",
+                    //
+                    // };
+
+                    // let props: SchemaObjectDesignerProps = {
+                    //     designedObject: app,
+                    // };
+                    //
+                    // return getDesktop().openModalWindow(app.$$getDesigner(props), openParam);
+                }
+            });
+
+        })
         .then(()=> {
             // ищем первый попавщийся SchemaApplication, берем его id
             // todo сделать выбор app, вместо top 1

@@ -7,13 +7,13 @@ import {BaseDataType} from "./DataTypes/BaseDataType";
 import {DataTypeEditor} from "../../buhta-app-designer/PropertyEditors/DataTypePropertyEditor";
 
 export class SchemaTableColumn extends DesignedObject {
-    constructor(public table: SchemaTable) {
-        super();
+    constructor(table: SchemaTable) {
+        super(table);
     }
 
-    // get table(): SchemaTable {
-    //     return this.$$table;
-    // }
+    get table(): SchemaTable {
+         return this.$$owner as SchemaTable;
+    }
 
     @StringEditor({
         inputCaption: "Имя колонки",
@@ -56,15 +56,15 @@ export class SchemaTableColumn extends DesignedObject {
     $$validate(errors: string[]) {
         let errTitle = "Ошибка в колонке '" + this.name + "': ";
 
-        this.name=this.name.trim();
+        this.name = this.name.trim();
 
-        if (this.name.length===0)
+        if (this.name.length === 0)
             errors.push(errTitle + "'имя колонки' не может быть пустым");
 
         if (this.name.startsWith("$$"))
             errors.push(errTitle + "'имя колонки' не может начинаться с $$");
 
-        if (this.dataType.column!==this)
+        if (this.dataType.column !== this)
             errors.push(errTitle + "internal error 'dataType.column!==column'");
     }
 

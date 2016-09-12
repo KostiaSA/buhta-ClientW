@@ -52,8 +52,8 @@ function cloneObject(obj: any, refsClones: any): any {
                     cloned[propName] = obj[propName];
             }
             else {
-
-                cloned[propName] = cloneObject$$(propValue, refsClones);
+                if (!_.isString(propValue))
+                    cloned[propName] = cloneObject$$(propValue, refsClones);
             }
         }
     }

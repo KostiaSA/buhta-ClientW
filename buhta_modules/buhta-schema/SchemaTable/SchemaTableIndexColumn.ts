@@ -11,8 +11,12 @@ import {stringCompare} from "../../buhta-core/stringCompare";
 import {SchemaTableColumn} from "./SchemaTableColumn";
 
 export class SchemaTableIndexColumn extends DesignedObject {
-    constructor(public index: SchemaTableIndex) {
+    constructor(index: SchemaTableIndex) {
         super();
+    }
+
+    get index(): SchemaTableIndex {
+        return this.$$owner as SchemaTableIndex;
     }
 
     @SelectEditor({

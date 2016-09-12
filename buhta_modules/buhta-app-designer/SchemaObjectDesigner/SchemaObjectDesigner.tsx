@@ -106,10 +106,17 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
             .then(() => {
                 if (this.props.onSaveChanges)
                     this.props.onSaveChanges();
+
+                let parentWin = this.getParentWindow();
+                if (parentWin !== undefined && parentWin.state.onModalOk !== undefined)
+                    parentWin.state.onModalOk();
                 //console.log("SchemaObject " + this.clonedDesignedObject.name + " saved.");
                 //console.log(this.props.onSaveChanges);
             })
             .catch((error) => {
+                let parentWin = this.getParentWindow();
+                if (parentWin !== undefined && parentWin.state.onModalOk !== undefined)
+                    parentWin.state.onModalCancel();
                 this.showErrorWindow(error);
             });
     }
@@ -117,6 +124,9 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
     handleCancelChanges = (): void => {
         if (this.props.onCancelChanges)
             this.props.onCancelChanges();
+        let parentWin = this.getParentWindow();
+        if (parentWin !== undefined && parentWin.state.onModalOk !== undefined)
+            parentWin.state.onModalCancel();
     }
 
     handleValidate = (): string[] => {

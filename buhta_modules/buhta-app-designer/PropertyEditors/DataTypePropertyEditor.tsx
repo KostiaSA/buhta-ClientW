@@ -42,7 +42,7 @@ export class DataTypePropertyEditor extends BasePropertyEditor {
                         value: getObjectInstanceOfType(dataTypeInfo.type, []) as BaseDataType
                     };
 
-                    retDataSourceItem.value.column = this.props.designedObject as SchemaTableColumn;
+                    retDataSourceItem.value.$$owner = this.props.designedObject as SchemaTableColumn;
 
                     if (this.activeDataType !== undefined && this.activeDataType.getName() === retDataSourceItem.value.getName())
                         retDataSourceItem.value = this.activeDataType;

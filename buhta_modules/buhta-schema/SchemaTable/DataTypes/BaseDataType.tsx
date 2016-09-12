@@ -5,8 +5,12 @@ import {throwAbstractError} from "../../../buhta-core/Error";
 import {CreateColumn} from "../../../buhta-sql/CreateTableStmt";
 
 export class BaseDataType extends DesignedObject {
-    constructor(public column: SchemaTableColumn) {
-        super();
+    constructor(column: SchemaTableColumn) {
+        super(column);
+    }
+    
+    get column(): SchemaTableColumn {
+        return this.$$owner as SchemaTableColumn;
     }
 
     getName(): string {
