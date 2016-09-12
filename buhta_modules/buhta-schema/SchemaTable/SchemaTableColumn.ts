@@ -52,7 +52,7 @@ export class SchemaTableColumn extends DesignedObject {
     getSqlName(): string {
         return this.name;
     }
-    
+
     $$validate(errors: string[]) {
         let errTitle = "Ошибка в колонке '" + this.name + "': ";
 
@@ -64,6 +64,8 @@ export class SchemaTableColumn extends DesignedObject {
         if (this.name.startsWith("$$"))
             errors.push(errTitle + "'имя колонки' не может начинаться с $$");
 
+        if (this.dataType.column!==this)
+            errors.push(errTitle + "internal error 'dataType.column!==column'");
     }
 
 }

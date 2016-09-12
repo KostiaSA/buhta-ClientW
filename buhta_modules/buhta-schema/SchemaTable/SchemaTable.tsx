@@ -47,6 +47,7 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
             {caption: "Описание", propertyName: "description"}
         ],
         getNewListItem: (table: SchemaTable, parentItem?: SchemaTableColumn) => {
+            console.log({tableName:table.name, table:table});
             let column = new SchemaTableColumn(table);
             column.name = "Новая колонка";
             column.dataType = new StringDataType(column, 50);
@@ -117,7 +118,17 @@ export class SchemaTable extends SchemaObject implements QuerySourceObject {
         }
 
         this.columns.forEach((col: SchemaTableColumn)=> {
-            col.$$validate(errors)
+            col.$$validate(errors);
+            if (col.table!==this)
+                errors.push(errTitle + "internal error 'column.table!==table'");
+
+        });
+
+        this.indexes.forEach((tableIndex: SchemaTableIndex)=> {
+            tableIndex.$$validate(errors);
+            if (tableIndex.table!==this)
+                errors.push(errTitle + "internal error 'index.table!==table'");
+
         });
     }
 

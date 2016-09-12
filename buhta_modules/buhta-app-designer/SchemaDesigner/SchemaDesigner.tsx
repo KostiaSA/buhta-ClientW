@@ -6,8 +6,8 @@ import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from ".
 
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
-import {Snapshot} from "../../buhta-core/Snapshot";
-import {deepClone} from "../../buhta-core/deepClone";
+
+//import {deepClone} from "../../buhta-core/deepClone";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
 import {Tabs, Tab} from "../../buhta-core/Components/Tabs/Tabs";
@@ -113,7 +113,7 @@ export class SchemaDesignerState extends ComponentState<SchemaDesignerProps> {
                     parentWindowId: grid.component.getParentWindowId(),
                     theme: "blue",
                     sizePositionStoreKey:designedObject.$$getDesignerWindowSizePosStoreKey()
-                   
+
                 };
 
                 let props: SchemaObjectDesignerProps = {

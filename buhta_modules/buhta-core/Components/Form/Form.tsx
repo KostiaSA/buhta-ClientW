@@ -147,8 +147,6 @@ export class Form extends Component<FormProps, any> {
         let children = React.Children.toArray(this.props.children as React.ReactNode);
 
         if (children.length === 1 && (children[0] as any).type === ListPropertyEditor) { // один контрол в форме, обычно treelist
-            console.log({children: children});
-
             if (this.props.sizeTo === "parent")
                 this.addStyles({height: "100%"});
 

@@ -10,6 +10,7 @@ import {
     SchemaObjectDesigner,
     SchemaObjectDesignerProps
 } from "../buhta-app-designer/SchemaObjectDesigner/SchemaObjectDesigner";
+import {getRandomString} from "../buhta-core/getRandomString";
 
 export type SchemaObjectId = string;
 
@@ -17,6 +18,7 @@ export type SchemaObjectId = string;
 export class SchemaObject extends DesignedObject {
     constructor(private $$schema: Schema) {
         super();
+        this["$$$_ID"]=getRandomString(5);
     }
 
     get schema(): Schema {

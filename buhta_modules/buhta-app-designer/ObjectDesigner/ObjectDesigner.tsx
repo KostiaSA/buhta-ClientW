@@ -6,13 +6,14 @@ import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from ".
 
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
-import {Snapshot} from "../../buhta-core/Snapshot";
+
 //import {Observable} from "../../buhta-core/Observable";
 import {deepClone} from "../../buhta-core/deepClone";
 import {isDeepEqual} from "../../buhta-core/isDeepEqual";
 import {ComponentControl} from "../../buhta-ui/ComponentControl";
 import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
 import {throwError} from "../../buhta-core/Error";
+import {deepAssign} from "../../buhta-core/deepAssign";
 
 
 export interface ObjectDesignerProps extends ComponentProps<any> {
@@ -28,7 +29,7 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
         this.props = props;
     }
 
-    snapshot: Snapshot = new Snapshot();
+   // snapshot: Snapshot = new Snapshot();
 
     needToSave: boolean = false;
     clonedDesignedObject: DesignedObject;
@@ -110,12 +111,35 @@ export class ObjectDesigner extends Component<ObjectDesignerProps, any> {
     }
 
     handleSaveChanges = () => {
-        console.log("save-changes");
+        console.log("save-changes-");
         //console.log(this.props.designedObject);
 
-        _.assign(this.props.designedObject, this.clonedDesignedObject);
+        // _.assignWith(this.props.designedObject, this.clonedDesignedObject, (objValue: any, srcValue: any, key: string)=> {
+        //     if (key.startsWith("$$")) {
+        //         console.log("not assign "+key);
+        //         return objValue;
+        //     }
+        //     else {
+        //         console.log("assign "+key);
+        //         return srcValue;
+        //     }
+        // });
+        // deepReplaceObject(this.props.designedObject, this.props.designedObject, this.clonedDesignedObject);
+
+        deepAssign(this.props.designedObject, this.clonedDesignedObject);
+
+        let errors: string[] = [];
+        this.props.designedObject.$$validate(errors);
+
+        if (errors.length > 0) {
+            throwError("=" + errors.join(", "));
+        }
+
         if (this.props.onSaveChanges)
             this.props.onSaveChanges();
+
+        console.log({designedObject: this.props.designedObject});
+
     }
 
     handleCancelChanges = () => {

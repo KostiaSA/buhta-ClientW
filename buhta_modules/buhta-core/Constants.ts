@@ -48,11 +48,16 @@ export const SCHEMA_TABLE_ICON = "buhta-set-1/table";
 export const SCHEMA_QUERY_TYPE_ID = "98768896-71c2-4a03-bfaf-1eef8c16d2f7";
 export const SCHEMA_QUERY_ICON = "buhta-set-1/tables";
 
+
+// типы данных
 export const STRING_DATA_TYPE_NAME = "Строка"
 export const STRING_DATA_TYPE_DESCRIPTION = "Строка переменной длины"
 
 export const GUID_DATA_TYPE_NAME = "GUID"
 export const GUID_DATA_TYPE_DESCRIPTION = "Статистически уникальный 128-битный идентификатор, он же UUID"
+
+export const FOREIGN_KEY_DATA_TYPE_NAME = "Ссылка(FK)"
+export const FOREIGN_KEY_DATA_TYPE_DESCRIPTION = "Ссылка на запись в другой таблице (FOREIGN KEY)"
 
 //export const STRING_DATA_TYPE_NAME = "Строка"
 

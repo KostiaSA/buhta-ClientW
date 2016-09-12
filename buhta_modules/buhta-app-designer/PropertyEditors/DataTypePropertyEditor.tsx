@@ -12,6 +12,7 @@ import {DataTypeInfo, registeredDataTypes} from "../../buhta-schema/SchemaTable/
 import {stringCompare} from "../../buhta-core/stringCompare";
 import {SelectInputDataSourceFromArray} from "../../buhta-core/Components/SelectInput/SelectInputDataSourceFromArray";
 import {SelectInputDataSource} from "../../buhta-core/Components/SelectInput/SelectInputDataSource";
+import {SchemaTableColumn} from "../../buhta-schema/SchemaTable/SchemaTableColumn";
 
 
 export class DataTypePropertyEditor extends BasePropertyEditor {
@@ -40,6 +41,8 @@ export class DataTypePropertyEditor extends BasePropertyEditor {
                         label: dataTypeInfo.name,
                         value: getObjectInstanceOfType(dataTypeInfo.type, []) as BaseDataType
                     };
+
+                    retDataSourceItem.value.column = this.props.designedObject as SchemaTableColumn;
 
                     if (this.activeDataType !== undefined && this.activeDataType.getName() === retDataSourceItem.value.getName())
                         retDataSourceItem.value = this.activeDataType;

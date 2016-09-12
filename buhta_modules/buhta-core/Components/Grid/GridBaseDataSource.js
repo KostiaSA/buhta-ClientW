@@ -171,7 +171,6 @@ var GridBaseDataSource = (function () {
                     designedObject: newDesignedObject,
                     onSaveChanges: function () {
                         // todo надо как-то уметь получать DataRow из DesignedObject
-                        console.error(newDesignedObject);
                         _this.addRow(newDesignedObject);
                         grid.refresh();
                         grid.setFocusedRow(newDesignedObject);

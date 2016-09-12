@@ -6,7 +6,7 @@ import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from ".
 
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
-import {Snapshot} from "../../buhta-core/Snapshot";
+
 import {deepClone} from "../../buhta-core/deepClone";
 import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
@@ -55,7 +55,7 @@ export class SchemaComponentDesigner extends Component<SchemaComponentDesignerPr
     }
 
     needToSave: boolean;
-    snapshot: Snapshot = new Snapshot();
+    //snapshot: Snapshot = new Snapshot();
     clonedDesignedObject: SchemaComponent;
 
     protected willMount() {

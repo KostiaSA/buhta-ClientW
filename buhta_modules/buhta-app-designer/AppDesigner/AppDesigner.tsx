@@ -22,7 +22,7 @@ import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
 //import {TreeGridColumn} from "../../buhta-core/Components/TreeGrid/TreeGridColumn";
 //import {TreeGridColumns} from "../../buhta-core/Components/TreeGrid/TreeGridColumns";
 import {Button} from "../../buhta-core/Components/Button/Button";
-import {Snapshot} from "../../buhta-core/Snapshot";
+
 import {DesignedObject} from "../DesignedObject";
 //import {TreeGridArrayDataSource} from "../../buhta-core/Components/TreeGrid/TreeGridArrayDataSource";
 import {StringPropertyEditor, StringEditor} from "../PropertyEditors/StringPropertyEditor";
@@ -47,7 +47,7 @@ import {OneWayBinder_JsCode} from "../../buhta-schema/OneWayBinder/OneWayBinder_
 import {SchemaComponent} from "../../buhta-schema/SchemaComponent/SchemaComponent";
 import {PropertyControl} from "../../buhta-ui/PropertyControl";
 import {ComponentControl} from "../../buhta-ui/ComponentControl";
-import enumerate = Reflect.enumerate;
+//import enumerate = Reflect.enumerate;
 import {SchemaComponentDesigner} from "../SchemaComponentDesigner/SchemaComponentDesigner";
 import {SchemaDesigner} from "../SchemaDesigner/SchemaDesigner";
 import {GridColumn, GridColumnDef} from "../../buhta-core/Components/Grid/GridColumn";
@@ -61,6 +61,9 @@ import {
 } from "../../buhta-core/Components/Grid/GridTreeDataSourceFromSqlTable";
 import {GridFlatDataSourceFromArray} from "../../buhta-core/Components/Grid/GridFlatDataSourceFromArray";
 import {LookupInput} from "../../buhta-core/Components/LookupInput/LookupInput";
+import {SchemaTableColumn} from "../../buhta-schema/SchemaTable/SchemaTableColumn";
+import {deepClone} from "../../buhta-core/deepClone";
+import {deepAssign} from "../../buhta-core/deepAssign";
 
 
 export interface AppDesignerProps extends ComponentProps<AppDesignerState> {
@@ -1066,7 +1069,7 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
         let obj = {qqq: "100.13"};
 
-        getApplication().getMainDb().executeSQL("select TOP 3000 Номер,Номер+Название Название from [ТМЦ] order by номер")
+        getApplication().getMainDb().executeSQL("select TOP 1000 Номер,Номер+Название Название from [ТМЦ] order by номер")
             .done((tables: DataTable[]) => {
 
                 let ds = new GridFlatDataSourceFromArray({
@@ -1139,6 +1142,30 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
 
 
     };
+
+    checkDeep() {
+        let table = new SchemaTable(getSchema());
+        let col = new SchemaTableColumn(table);
+        table.columns.push(col);
+
+        console.log(table.columns);
+        if (table !== table.columns[0].table)
+            console.error("пиздец1");
+
+        let clonedTable = deepClone<SchemaTable>(table);
+        if (clonedTable !== clonedTable.columns[0].table)
+            console.error("пиздец2");
+
+        clonedTable.columns[0].name="жопа";
+        clonedTable.name="жопа-табле"
+
+        deepAssign(table,clonedTable);
+        if (table !== table.columns[0].table)
+            console.error("пиздец3");
+
+        console.log(table);
+
+    }
 
     render(): JSX.Element {
         this.addClassName("app-designer");
@@ -1225,9 +1252,13 @@ export class AppDesigner extends Component<AppDesignerProps, AppDesignerState> {
                                         testSelectEx
                                     </button>
                                     <br/>
-                                    <br/>
                                     <button onClick={() => { this.testPopup(); }}>
                                         test POPUP
+                                    </button>
+                                    <br/>
+                                    <br/>
+                                    <button onClick={() => { this.checkDeep(); }}>
+                                        check Deep
                                     </button>
                                 </Fixed>
                                 <Flex className="XXXcontent">

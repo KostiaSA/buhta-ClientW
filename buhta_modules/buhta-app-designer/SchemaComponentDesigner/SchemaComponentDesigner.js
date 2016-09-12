@@ -14,7 +14,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 var React = require("react");
 var Component_1 = require("../../buhta-core/Components/Component");
-var Snapshot_1 = require("../../buhta-core/Snapshot");
 var deepClone_1 = require("../../buhta-core/deepClone");
 var Layout_1 = require("../../buhta-core/Components/LayoutPane/Layout");
 var Flex_1 = require("../../buhta-core/Components/LayoutPane/Flex");
@@ -37,7 +36,6 @@ var SchemaComponentDesigner = (function (_super) {
     function SchemaComponentDesigner(props, context) {
         var _this = this;
         _super.call(this, props, context);
-        this.snapshot = new Snapshot_1.Snapshot();
         this.handleSaveButtonClick = function (sender, e) {
             if (_this.props.onSaveChanges)
                 _this.props.onSaveChanges();

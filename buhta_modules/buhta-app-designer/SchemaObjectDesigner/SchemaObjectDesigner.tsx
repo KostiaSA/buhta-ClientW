@@ -6,7 +6,7 @@ import {BasePropertyEditorProps, PropertyEditorInfo, BasePropertyEditor} from ".
 
 import {Form} from "../../buhta-core/Components/Form/Form";
 import {AutoForm} from "../../buhta-core/Components/AutoForm/AutoForm";
-import {Snapshot} from "../../buhta-core/Snapshot";
+
 import {deepClone} from "../../buhta-core/deepClone";
 // import {Layout} from "../../buhta-core/Components/LayoutPane/Layout";
 // import {Flex} from "../../buhta-core/Components/LayoutPane/Flex";
@@ -52,7 +52,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
     }
 
     needToSave: boolean;
-    snapshot: Snapshot = new Snapshot();
+    //snapshot: Snapshot = new Snapshot();
     clonedDesignedObject: SchemaObject;
 
     protected willMount() {
@@ -100,6 +100,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
         this.clonedDesignedObject.changeDate = new Date();
         this.clonedDesignedObject.changeUserID = getUserId();
 
+        console.log({clonedDesignedObject: this.clonedDesignedObject});
 
         this.clonedDesignedObject.save()
             .then(() => {
@@ -119,6 +120,7 @@ export class SchemaObjectDesigner extends Component<SchemaObjectDesignerProps, a
     }
 
     handleValidate = (): string[] => {
+        console.log({clonedDesignedObjectVVV: this.clonedDesignedObject});
         let errors: string[] = [];
         this.clonedDesignedObject.$$validate(errors);
         return errors;
